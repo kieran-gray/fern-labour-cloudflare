@@ -30,7 +30,7 @@
   ],
   "vars": {
     "ENVIRONMENT": "production",
-    "CONTACT_US_API_URL": "https://contact.fernlabour.com",
+    "CONTACT_US_API_URL": "https://contact-us.fernlabour.com",
     "NOTIFICATIONS_API_URL": "https://notifications.fernlabour.com"
   },
   "env": {
@@ -47,7 +47,7 @@
       ],
       "vars": {
         "ENVIRONMENT": "production",
-        "CONTACT_US_API_URL": "https://contact.fernlabour.com",
+        "CONTACT_US_API_URL": "https://contact-us.fernlabour.com",
         "NOTIFICATIONS_API_URL": "https://notifications.fernlabour.com"
       },
     }

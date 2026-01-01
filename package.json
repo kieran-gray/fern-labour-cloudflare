@@ -10,13 +10,13 @@
   },
   "workspaces": [
     "apps/labour/worker",
-    "services/dashboard",
+    "apps/admin/web",
     "services/auth-service",
     "services/contact-service"
   ],
   "scripts": {
     "dev": "concurrently -n labour,auth,web \"npm run dev --workspace=apps/labour/worker\"  \"npm run dev --workspace=services/auth-service\" \"npm run dev --prefix=apps/labour/web\"",
-    "dev:services": "concurrently -n notifications,contact,admin \"npm run dev --prefix=services/notification-service\" \"npm run dev --workspace=services/contact-service\" \"npm run dev --workspace=services/dashboard\"",
+    "dev:services": "concurrently -n notifications,contact,admin \"npm run dev --prefix=services/notification-service\" \"npm run dev --workspace=services/contact-service\" \"npm run dev --workspace=apps/admin/web\"",
     "preview": "concurrently -n labour,auth,web \"npm run dev --workspace=apps/labour/worker\"  \"npm run dev --workspace=services/auth-service\" \"npm run preview --prefix=apps/labour/web\"",
     "build": "npm run build --workspaces --if-present",
     "build:dev": "npm run build:dev --workspaces --if-present",
@@ -79,7 +79,7 @@
     "eslint-plugin-prettier": "^5.4.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "happy-dom": "^15.11.7",
+    "happy-dom": "^20.0.11",
     "postcss": "^8.5.3",
     "prettier": "3.1.1",
     "prettier-plugin-tailwindcss": "^0.6.14",
