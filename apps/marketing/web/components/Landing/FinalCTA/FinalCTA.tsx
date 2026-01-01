@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { IconArrowRight } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { Box, Button, Container, Stack, Text, Title } from '@mantine/core';
-import CTAParticles from './CTAParticles';
+import CSSParticles from './CSSParticles';
 
 type FinalCTAProps = {
   title: string;
@@ -16,7 +16,7 @@ export const FinalCTA = ({ title, description, cta, subtitle }: FinalCTAProps) =
     <Box bg="var(--mantine-color-pink-3)" py={80} pos="relative" style={{ overflow: 'hidden' }}>
       {/* Particles cover entire section */}
       <Box pos="absolute" top={0} left={0} w="100%" h="100%" style={{ zIndex: 0 }}>
-        <CTAParticles id="cta-particles" color="#ffffff" opacity={0.1} />
+        <CSSParticles id="cta-particles" color="#ffffff" opacity={0.1} />
       </Box>
 
       {/* Content overlay */}
