@@ -1,6 +1,6 @@
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { IconInfoCircle } from '@tabler/icons-react';
-import Turnstile from 'react-turnstile';
 import {
   Alert,
   Button,
@@ -17,9 +17,13 @@ import {
   Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { validateEmail, validateMessage, validateName } from '../../FormValidation/FormValidation';
+import { validateEmail, validateMessage, validateName } from '@/utils/FormValidation';
 import { ContactIconsList } from './ContactIcons';
 import classes from './ContactUs.module.css';
+
+const Turnstile = dynamic(() => import('react-turnstile').then((m) => m.default), {
+  ssr: false,
+});
 
 const categories = [
   { label: 'An Error Report', value: 'error_report' },

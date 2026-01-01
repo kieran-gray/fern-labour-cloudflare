@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { IconArrowRight } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { Badge, Box, Button, Container, ContainerProps, Flex, Stack, Text } from '@mantine/core';
-import CTAParticles from '../FinalCTA/CTAParticles';
+import CSSParticles from '../FinalCTA/CSSParticles';
 import { JumboTitle } from '../JumboTitle/JumboTitle';
 import classes from './HeroMotion.module.css';
 
@@ -25,7 +25,7 @@ export const Hero03 = ({ title, subtitle, description, cta, ...containerProps }:
   >
     <Container component="section" h="90vh" mah={700} mx="auto" size="xl" {...containerProps}>
       <Box pos="absolute" top={0} left={0} w="100%" h="100%" style={{ zIndex: 0 }}>
-        <CTAParticles id="hero-particles" color="#ff7964" opacity={0.1} />
+        <CSSParticles id="hero-particles" color="#ff7964" opacity={0.1} />
       </Box>
       <Flex h="100%" align="center" pos="relative" justify="center">
         <Stack

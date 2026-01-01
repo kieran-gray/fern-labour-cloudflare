@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { ContactPage } from '@/components/Contact/Page';
+import { ContactUs } from '@/components/Contact/ContactUs';
 import { FooterSimple } from '@/components/Footer/Footer';
 import { Header01 } from '@/components/PillHeader/PillHeader';
 
@@ -23,7 +23,10 @@ export default function Contact() {
           radius="50px"
           landingPage={false}
         />
-        <ContactPage />
+        <div style={{ padding: '15px' }}>
+          <ContactUs />
+        </div>
+        <div style={{ flexGrow: 1 }} />
         <FooterSimple />
       </div>
     </>

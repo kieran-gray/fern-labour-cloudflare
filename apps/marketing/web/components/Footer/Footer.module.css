@@ -21,6 +21,7 @@
 
 .sections {
   margin-bottom: var(--mantine-spacing-lg);
+  text-align: center;
 }
 
 @media (max-width: 768px) {

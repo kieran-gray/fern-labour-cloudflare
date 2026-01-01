@@ -10,10 +10,12 @@ import { theme } from '../theme';
 const poppins = Poppins({
   weight: ['400'],
   subsets: ['latin'],
+  display: 'swap',
 });
 
 const quicksand = Quicksand({
   subsets: ['latin'],
+  display: 'swap',
 });
 
 export default function App({ Component, pageProps }: AppProps) {

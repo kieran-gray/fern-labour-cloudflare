@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "npm run eslint && npm run stylelint",
     "lint:fix": "npm run stylelint:fix && npm run prettier:write && npm run eslint:fix",
-    "eslint": "next lint",
+    "eslint": "eslint .",
     "eslint:fix": "eslint . --fix",
     "stylelint": "stylelint '**/*.css' --cache",
     "stylelint:fix": "stylelint '**/*.css' --fix",
@@ -25,9 +25,6 @@
     "@mantine/hooks": "^7.17.2",
     "@next/bundle-analyzer": "^15.1.5",
     "@tabler/icons-react": "^3.28.1",
-    "@tsparticles/engine": "^3.8.1",
-    "@tsparticles/react": "^3.0.0",
-    "@tsparticles/slim": "^3.8.1",
     "motion": "^12.4.7",
     "next": "^15.2.4",
     "react": "^18.3.1",
@@ -56,5 +53,66 @@
     "typescript": "5.7.3",
     "typescript-eslint": "^8.20.0"
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.6.0",
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "plugins": ["@ianvs/prettier-plugin-sort-imports"],
+    "importOrder": [
+      ".*styles.css$",
+      "",
+      "dayjs",
+      "^react$",
+      "^next$",
+      "^next/.*$",
+      "<BUILTIN_MODULES>",
+      "<THIRD_PARTY_MODULES>",
+      "^@mantine/(.*)$",
+      "^@mantinex/(.*)$",
+      "^@mantine-tests/(.*)$",
+      "^@docs/(.*)$",
+      "^@/.*$",
+      "^../(?!.*.css$).*$",
+      "^./(?!.*.css$).*$",
+      "\\.css$"
+    ],
+    "overrides": [
+      {
+        "files": "*.mdx",
+        "options": {
+          "printWidth": 70
+        }
+      }
+    ]
+  },
+  "stylelint": {
+    "extends": ["stylelint-config-standard-scss"],
+    "ignoreFiles": [".next/**", "out/**"],
+    "rules": {
+      "custom-property-pattern": null,
+      "selector-class-pattern": null,
+      "scss/no-duplicate-mixins": null,
+      "declaration-empty-line-before": null,
+      "declaration-block-no-redundant-longhand-properties": null,
+      "alpha-value-notation": null,
+      "custom-property-empty-line-before": null,
+      "property-no-vendor-prefix": null,
+      "color-function-notation": null,
+      "length-zero-no-unit": null,
+      "selector-not-notation": null,
+      "no-descending-specificity": null,
+      "comment-empty-line-before": null,
+      "scss/at-mixin-pattern": null,
+      "scss/at-rule-no-unknown": null,
+      "value-keyword-case": null,
+      "media-feature-range-notation": null,
+      "selector-pseudo-class-no-unknown": [
+        true,
+        {
+          "ignorePseudoClasses": ["global"]
+        }
+      ]
+    }
+  }
 }
