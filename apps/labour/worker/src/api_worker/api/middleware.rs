@@ -30,25 +30,21 @@ where
         return Ok(response);
     }
 
-    let user = if ctx.data.config.auth_enabled {
-        let authorization = match req.headers().get("Authorization").ok().flatten() {
-            Some(auth_header) => auth_header,
-            None => {
-                let response = Response::error("Unauthorised: Not Authenticated".to_string(), 401)?;
-                return Ok(cors_context.add_to_response(response));
-            }
-        };
-        match ctx.data.auth_service.authenticate(&authorization).await {
-            Ok(user) => user,
-            Err(e) => {
-                info!(error = ?e, "User verification failed");
-                let response =
-                    Response::error("Unauthorised: User verification failed".to_string(), 404)?;
-                return Ok(cors_context.add_to_response(response));
-            }
+    let authorization = match req.headers().get("Authorization").ok().flatten() {
+        Some(auth_header) => auth_header,
+        None => {
+            let response = Response::error("Unauthorised: Not Authenticated".to_string(), 401)?;
+            return Ok(cors_context.add_to_response(response));
         }
-    } else {
-        User::internal("labour")
+    };
+    let user = match ctx.data.auth_service.authenticate(&authorization).await {
+        Ok(user) => user,
+        Err(e) => {
+            info!(error = ?e, "User verification failed");
+            let response =
+                Response::error("Unauthorised: User verification failed".to_string(), 404)?;
+            return Ok(cors_context.add_to_response(response));
+        }
     };
 
     handler(req, ctx, cors_context, user).await
@@ -70,32 +66,28 @@ where
         return Ok(response);
     }
 
-    let user = if ctx.data.config.auth_enabled {
-        let Some(protocols) = req.headers().get("Sec-WebSocket-Protocol").ok().flatten() else {
-            let response = Response::error("Unauthorised: Not Authenticated".to_string(), 401)?;
-            return Ok(cors_context.add_to_response(response));
-        };
+    let Some(protocols) = req.headers().get("Sec-WebSocket-Protocol").ok().flatten() else {
+        let response = Response::error("Unauthorised: Not Authenticated".to_string(), 401)?;
+        return Ok(cors_context.add_to_response(response));
+    };
 
-        let Some(authorization) = protocols
-            .split(",")
-            .find(|proto| proto.starts_with(PROTOCOL_HEADER))
-            .and_then(|proto| proto.strip_prefix(PROTOCOL_HEADER))
-        else {
-            let response = Response::error("Unauthorised: Not Authenticated".to_string(), 401)?;
-            return Ok(cors_context.add_to_response(response));
-        };
+    let Some(authorization) = protocols
+        .split(",")
+        .find(|proto| proto.starts_with(PROTOCOL_HEADER))
+        .and_then(|proto| proto.strip_prefix(PROTOCOL_HEADER))
+    else {
+        let response = Response::error("Unauthorised: Not Authenticated".to_string(), 401)?;
+        return Ok(cors_context.add_to_response(response));
+    };
 
-        match ctx.data.auth_service.authenticate(authorization).await {
-            Ok(user) => user,
-            Err(e) => {
-                info!(error = ?e, "User verification failed");
-                let response =
-                    Response::error("Unauthorised: User verification failed".to_string(), 404)?;
-                return Ok(cors_context.add_to_response(response));
-            }
+    let user = match ctx.data.auth_service.authenticate(authorization).await {
+        Ok(user) => user,
+        Err(e) => {
+            info!(error = ?e, "User verification failed");
+            let response =
+                Response::error("Unauthorised: User verification failed".to_string(), 404)?;
+            return Ok(cors_context.add_to_response(response));
         }
-    } else {
-        User::internal("labour")
     };
 
     handler(req, ctx, cors_context, user).await

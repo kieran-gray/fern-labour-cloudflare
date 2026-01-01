@@ -1,5 +1,5 @@
 {
-  "$schema": "../node_modules/wrangler/config-schema.json",
+  "$schema": "../../../node_modules/wrangler/config-schema.json",
   "name": "fern-labour-notification-dispatch-worker-dev",
   "main": "build/worker/shim.mjs",
   "compatibility_date": "2025-11-25",
@@ -36,7 +36,7 @@
     "producers": [
       {
         "binding": "NOTIFICATION_COMMAND_BUS",
-        "queue": "command-bus"
+        "queue": "fern-labour-notification-command-bus"
       }
     ]
   },
@@ -45,6 +45,6 @@
     "ALLOWED_ORIGINS": "",
     "EMAILS_FROM_EMAIL": "hello@fernlabour.com",
     "EMAILS_FROM_NAME": "Fern Labour",
-    "TWILIO_WEBHOOK_URL": "https://notifications.fernlabour.com/api/v1/webhook/twilio"
-  },
+    "TWILIO_WEBHOOK_URL": "https://dispatch.fernlabour.com/api/v1/webhook/twilio",
+  }
 }

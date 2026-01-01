@@ -17,6 +17,7 @@
     "dev": "npm run dev:all --workspace=notification",
     "build": "npm run build --workspaces --if-present",
     "build:dev": "npm run build:dev --workspaces --if-present",
+    "migrate": "npm run migrate --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "lint:check": "npm run lint:check --workspaces --if-present",

@@ -28,6 +28,7 @@ pub struct AppState {
     pub webhook_interpreter: WebhookInterpreterService,
     pub webhook_verification: WebhookVerificationService,
     pub command_producer: Box<dyn QueueProducerTrait<Envelope = CommandEnvelope<QueueMessage>>>,
+    pub internal_service_token: String,
 }
 
 impl AppState {
@@ -100,6 +101,7 @@ impl AppState {
             webhook_interpreter,
             webhook_verification,
             command_producer,
+            internal_service_token: config.internal_service_token,
         })
     }
 }

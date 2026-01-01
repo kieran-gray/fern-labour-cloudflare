@@ -1,5 +1,5 @@
 {
-  "$schema": "../node_modules/wrangler/config-schema.json",
+  "$schema": "../../../node_modules/wrangler/config-schema.json",
   "name": "fern-labour-track-worker",
   "main": "build/worker/shim.mjs",
   "compatibility_date": "2025-11-25",
@@ -65,8 +65,7 @@
   "vars": {
     "ENVIRONMENT": "production",
     "ALLOWED_ORIGINS": "https://app.fernlabour.com,https://admin.fernlabour.com",
-    "PUBLIC_URL": "https://app.fernlabour.com",
-    "AUTH_ENABLED": "true"
+    "PUBLIC_URL": "https://app.fernlabour.com"
   },
   "env": {
     "dev": {
@@ -106,7 +105,6 @@
       "vars": {
         "ENVIRONMENT": "dev",
         "ALLOWED_ORIGINS": "",
-        "AUTH_ENABLED": "true",
         "PUBLIC_URL": "https://app.fernlabour.com",
         "SUBSCRIPTION_TOKEN_SALT": "changeme"
       }

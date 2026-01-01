@@ -9,15 +9,21 @@ use fern_labour_notifications_shared::value_objects::{
 };
 use tracing::error;
 
-use crate::clients::request_utils::{StatusCodeCategory, build_json_post_request, service_headers};
+use crate::clients::request_utils::{
+    StatusCodeCategory, build_json_post_request, internal_auth_headers,
+};
 
 pub struct FetcherNotificationClient {
     fetcher: worker::Fetcher,
+    auth_token: String,
 }
 
 impl FetcherNotificationClient {
-    pub fn create(fetcher: worker::Fetcher) -> Self {
-        Self { fetcher }
+    pub fn create(fetcher: worker::Fetcher, auth_token: String) -> Self {
+        Self {
+            fetcher,
+            auth_token,
+        }
     }
 }
 
@@ -39,8 +45,11 @@ impl NotificationClient for FetcherNotificationClient {
             priority,
         };
 
-        let (init, _) = build_json_post_request(&request, service_headers("notification-service"))
-            .map_err(NotificationClientError::SerializationError)?;
+        let (init, _) = build_json_post_request(
+            &request,
+            internal_auth_headers("notification-service", &self.auth_token),
+        )
+        .map_err(NotificationClientError::SerializationError)?;
 
         let response = self
             .fetcher

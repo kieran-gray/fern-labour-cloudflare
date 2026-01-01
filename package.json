@@ -27,7 +27,7 @@
     "format": "npm run format --workspaces --if-present",
     "format:check": "npm run format:check --workspaces --if-present",
     "clean": "npm run clean --workspaces --if-present && cargo clean",
-    "migrate": "npm run migrate --workspace=services/contact-service"
+    "migrate": "npm run migrate --workspaces --if-present"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.8.0",

@@ -28,10 +28,14 @@ pub fn create_headers(headers: Vec<(&str, &str)>) -> Result<Headers, String> {
     Ok(worker_headers)
 }
 
-pub fn service_headers(service_id: &str) -> Vec<(&str, &str)> {
+pub fn internal_auth_headers<'a>(
+    service_id: &'a str,
+    auth_token: &'a str,
+) -> Vec<(&'a str, &'a str)> {
     vec![
         ("Content-Type", "application/json"),
         ("X-Service-ID", service_id),
+        ("X-Internal-Auth", auth_token),
     ]
 }
 

@@ -101,21 +101,25 @@ impl AppState {
         )))
     }
 
-    fn create_dispatch(env: &Env) -> Result<Box<dyn DispatchClient>> {
+    fn create_dispatch(env: &Env, auth_token: &str) -> Result<Box<dyn DispatchClient>> {
         let dispatch_fetcher = env
             .service("DISPATCH_SERVICE_API")
             .context("Missing binding DISPATCH_SERVICE_API")?;
 
-        Ok(Box::new(FetcherDispatchClient::create(dispatch_fetcher)))
+        Ok(Box::new(FetcherDispatchClient::create(
+            dispatch_fetcher,
+            auth_token.to_string(),
+        )))
     }
 
-    fn create_generation(env: &Env) -> Result<Box<dyn GenerationClient>> {
+    fn create_generation(env: &Env, auth_token: &str) -> Result<Box<dyn GenerationClient>> {
         let generation_fetcher = env
             .service("GENERATION_SERVICE_API")
             .context("Missing binding GENERATION_SERVICE_API")?;
 
         Ok(Box::new(FetcherGenerationClient::create(
             generation_fetcher,
+            auth_token.to_string(),
         )))
     }
 
@@ -135,8 +139,8 @@ impl AppState {
         ));
 
         let do_client = Self::create_do_client(env)?;
-        let generation_client = Self::create_generation(env)?;
-        let dispatch_client = Self::create_dispatch(env)?;
+        let generation_client = Self::create_generation(env, &config.internal_auth_token)?;
+        let dispatch_client = Self::create_dispatch(env, &config.internal_auth_token)?;
 
         Ok(Self {
             config,

@@ -1,5 +1,5 @@
 {
-  "$schema": "../node_modules/wrangler/config-schema.json",
+  "$schema": "../../../node_modules/wrangler/config-schema.json",
   "name": "fern-labour-notification-generation-worker-dev",
   "main": "build/worker/shim.mjs",
   "compatibility_date": "2025-11-25",
@@ -29,7 +29,7 @@
     "producers": [
       {
         "binding": "NOTIFICATION_COMMAND_BUS",
-        "queue": "command-bus"
+        "queue": "fern-labour-notification-command-bus"
       }
     ]
   },
@@ -43,7 +43,7 @@
         "producers": [
           {
             "binding": "NOTIFICATION_COMMAND_BUS",
-            "queue": "command-bus"
+            "queue": "fern-labour-notification-command-bus"
           }
         ]
       },

@@ -1,5 +1,5 @@
 {
-  "$schema": "../node_modules/wrangler/config-schema.json",
+  "$schema": "../../../node_modules/wrangler/config-schema.json",
   "name": "fern-labour-notifications-worker",
   "main": "build/worker/shim.mjs",
   "compatibility_date": "2025-11-25",
@@ -91,8 +91,7 @@
   ],
   "vars": {
     "ENVIRONMENT": "production",
-    "ALLOWED_ORIGINS": "",
-    "AUTH_ENABLED": "true"
+    "ALLOWED_ORIGINS": ""
   },
   "env": {
     "dev": {
@@ -162,8 +161,7 @@
       ],
       "vars": {
         "ENVIRONMENT": "dev",
-        "ALLOWED_ORIGINS": "",
-        "AUTH_ENABLED": "false"
+        "ALLOWED_ORIGINS": ""
       }
     }
   }

@@ -3,7 +3,7 @@ use worker::{Request, Response, Result, RouteContext};
 
 use crate::setup::app_state::AppState;
 
-pub async fn with_service_id<F, Fut>(
+pub async fn internal_auth<F, Fut>(
     handler: F,
     req: Request,
     ctx: RouteContext<AppState>,
@@ -16,11 +16,14 @@ where
         Some(service_header) => service_header,
         None => {
             return Response::from_json(&json!({
-                "error": "Missing X-Service-ID header"
+                "error": "Unauthenticated"
             }))
             .map(|r| r.with_status(401));
         }
     };
+
+    // No need to check internal auth token because this worker is only accessible through
+    // service bindings.
 
     handler(req, ctx, service_id).await
 }
