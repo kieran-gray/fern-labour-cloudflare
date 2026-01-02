@@ -82,13 +82,14 @@
     padding-top: var(--mantine-spacing-lg);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     flex-grow: 1;
     background-color: light-dark(var(--mantine-color-primary-0), var(--mantine-color-primary-3));
   }
 
-  .linksDrawer > * + * {
-    margin-top: var(--mantine-spacing-sm);
+  .menuSection {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: var(--mantine-spacing-sm);
   }
   
   .mainLinks {
@@ -162,7 +163,7 @@
   }
 
   .footer {
-    margin-top: auto;
+    flex-shrink: 0;
     border-top: 1px solid light-dark(var(--mantine-color-primary-1), var(--mantine-color-primary-7));
     padding-top: var(--mantine-spacing-md);
     display: flex;
