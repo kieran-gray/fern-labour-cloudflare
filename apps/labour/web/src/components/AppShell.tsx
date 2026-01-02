@@ -1,7 +1,7 @@
 import { Icon } from '@tabler/icons-react';
 import { Box } from '@mantine/core';
 import { BottomNavigation } from './BottomNavigation';
-import { PillHeader } from './PillHeader';
+import { Header } from './Header/Header';
 
 export interface NavItem {
   id: string;
@@ -44,7 +44,7 @@ export const AppShell = ({ children, navItems, activeNav, onNavChange }: AppShel
         }}
       >
         <div style={{ width: '100%', pointerEvents: 'auto' }}>
-          <PillHeader navItems={navItems} activeNav={activeNav} onNavChange={onNavChange} />
+          <Header navItems={navItems} activeNav={activeNav} onNavChange={onNavChange} />
         </div>
       </Box>
       <Box

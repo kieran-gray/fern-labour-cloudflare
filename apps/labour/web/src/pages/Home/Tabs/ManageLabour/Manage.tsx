@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { ContractionReadModel, LabourReadModel } from '@base/clients/labour_service';
+import { GenericConfirmModal } from '@base/components/Modals/GenericConfirmModal';
+import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
+import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useCompleteLabour, useLabourClient } from '@base/hooks';
-import { GenericConfirmModal } from '@components/GenericConfirmModal';
-import { ResponsiveDescription } from '@components/ResponsiveDescription';
-import { ResponsiveTitle } from '@components/ResponsiveTitle';
 import { dueDateToGestationalAge } from '@lib';
 import { IconConfetti, IconEdit, IconPencil } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +22,7 @@ import {
 } from '@mantine/core';
 import { EditLabourModal } from './EditLabourModal';
 import classes from './Manage.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export function ManageLabour({
   activeContraction,

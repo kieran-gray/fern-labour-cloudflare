@@ -1,12 +1,10 @@
 import { useLabourSession } from '@base/contexts';
 import { useCreateCheckoutSession, useLabourClient } from '@base/hooks';
-import { ResponsiveDescription } from '@components/ResponsiveDescription';
-import { ResponsiveTitle } from '@components/ResponsiveTitle';
+import { Card } from '@components/Cards/Card';
 import { IconArrowUp } from '@tabler/icons-react';
-import { Button, Image, Text } from '@mantine/core';
+import { Button, Text } from '@mantine/core';
 import image from './ShareMore.svg';
-import classes from './PayWall.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export const PayWall = () => {
   const { subscription } = useLabourSession();
@@ -30,7 +28,7 @@ export const PayWall = () => {
       cancelUrl: cancelUrl.toString(),
     });
   };
-  const title = 'Want live notifications?';
+
   const description = (
     <>
       Upgrade your subscription now to get live notifications to your phone.
@@ -40,32 +38,26 @@ export const PayWall = () => {
   );
 
   return (
-    <div className={baseClasses.root}>
-      <div className={baseClasses.body}>
-        <div className={baseClasses.inner}>
-          <div className={baseClasses.flexColumn}>
-            <ResponsiveTitle title={title} />
-            <ResponsiveDescription description={description} marginTop={10} />
-            <div className={classes.imageFlexRow} style={{ marginTop: '20px' }}>
-              <Image src={image} className={classes.smallImage} />
-            </div>
-            <Button
-              leftSection={<IconArrowUp size={18} stroke={1.5} />}
-              variant="filled"
-              radius="xl"
-              size="lg"
-              disabled={createCheckout.isPending || true}
-              onClick={handleUpgrade}
-            >
-              Temporarily Disabled
-            </Button>
-            <Text mt={15} size="xs" className={baseClasses.description}>
-              *SMS messages are only supported for UK (+44) phone numbers{' '}
-            </Text>
-          </div>
-          <Image src={image} className={classes.image} />
-        </div>
-      </div>
-    </div>
+    <Card
+      title="Want live notifications?"
+      description={description}
+      image={{ src: image, width: 460, height: 356 }}
+      mobileImage={{ src: image, width: 280, height: 220 }}
+    >
+      <Button
+        leftSection={<IconArrowUp size={18} stroke={1.5} />}
+        variant="filled"
+        radius="xl"
+        size="lg"
+        mt={10}
+        disabled={createCheckout.isPending || true}
+        onClick={handleUpgrade}
+      >
+        Temporarily Disabled
+      </Button>
+      <Text mt={15} size="xs" className={baseClasses.description}>
+        *SMS messages are only supported for UK (+44) phone numbers{' '}
+      </Text>
+    </Card>
   );
 };

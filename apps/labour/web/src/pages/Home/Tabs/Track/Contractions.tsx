@@ -1,20 +1,20 @@
 import { useEffect, useMemo } from 'react';
 import { LabourReadModel, SubscriberRole } from '@base/clients/labour_service/types';
+import { ImportantText } from '@base/components/Text/ImportantText';
+import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
+import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import { useLabourClient } from '@base/hooks';
 import { flattenContractions, useContractionsInfinite } from '@base/hooks/useInfiniteQueries';
-import { ImportantText } from '@components/ImportantText';
-import { ResponsiveDescription } from '@components/ResponsiveDescription';
-import { ResponsiveTitle } from '@components/ResponsiveTitle';
 import { IconBook } from '@tabler/icons-react';
 import { ActionIcon, Image, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { AlertContainer } from './AlertContainer';
+import { AlertContainer } from './Alerts';
 import { ContractionControls } from './ContractionControls';
 import ContractionTimelineCustom from './ContractionTimelineCustom';
 import { ContractionsHelpModal } from './HelpModal';
 import image from './Track.svg';
 import classes from './Contractions.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 interface ContractionsProps {
   labour: LabourReadModel;

@@ -1,11 +1,11 @@
 import { LabourReadModel } from '@base/clients/labour_service';
-import { ResponsiveDescription } from '@components/ResponsiveDescription';
-import { ResponsiveTitle } from '@components/ResponsiveTitle';
+import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
+import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import image from '@home/Tabs/ManageLabour/Meditate.svg';
 import { dueDateToGestationalAge } from '@lib';
 import { Badge, Image, Text } from '@mantine/core';
-import baseClasses from '@components/shared-styles.module.css';
 import classes from '@home/Tabs/ManageLabour/LabourDetails.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export default function LabourDetails({
   labour,

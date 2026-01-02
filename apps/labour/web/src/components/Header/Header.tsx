@@ -11,8 +11,8 @@ import {
   UnstyledButton,
 } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
-import { MobileUserMenu } from './Header/UserMenu';
-import classes from './PillHeader.module.css';
+import { HeaderMenu } from './HeaderMenu';
+import classes from './Header.module.css';
 
 interface NavItem {
   id: string;
@@ -21,13 +21,13 @@ interface NavItem {
   requiresPaid?: boolean;
 }
 
-interface PillHeaderProps {
+interface HeaderProps {
   navItems?: readonly NavItem[];
   activeNav?: string | null;
   onNavChange?: (nav: string) => void;
 }
 
-export function PillHeader({ navItems, activeNav, onNavChange }: PillHeaderProps) {
+export function Header({ navItems, activeNav, onNavChange }: HeaderProps) {
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
   const isMobile = useMediaQuery('(max-width: 48em)');
   const navigate = useNavigate();
@@ -78,7 +78,7 @@ export function PillHeader({ navItems, activeNav, onNavChange }: PillHeaderProps
           opened={drawerOpened}
           onClose={toggleDrawer}
         >
-          <MobileUserMenu />
+          <HeaderMenu />
         </Drawer>
 
         {/* Center: Navigation (Desktop Only) */}

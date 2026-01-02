@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SubscriberRole } from '@base/clients/labour_service';
+import { FloatingPanel } from '@base/components/Controls/FloatingPanel';
 import { SubscriberSessionState, useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
 import { flattenContractions, useContractionsInfinite } from '@base/hooks/useInfiniteQueries';
@@ -12,7 +13,6 @@ import {
 import { useNetworkState } from '@base/offline/sync/networkDetector';
 import { AppShell } from '@components/AppShell';
 import { ErrorContainer } from '@components/ErrorContainer/ErrorContainer';
-import { FloatingPanel } from '@components/FloatingPanel';
 import { PageLoading } from '@components/PageLoading/PageLoading';
 import { pluraliseName } from '@lib';
 import {

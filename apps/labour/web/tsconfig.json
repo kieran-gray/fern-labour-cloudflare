@@ -27,7 +27,8 @@
       "@lib/*": ["lib/*"],
       "@lib": ["lib/index.ts"],
       "@clients/*": ["clients/*"],
-      "@home/*": ["pages/Home/*"]
+      "@home/*": ["pages/Home/*"],
+      "@styles/*": ["styles/*"]
     }
   },
   "include": ["src"],

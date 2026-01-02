@@ -3,8 +3,8 @@ import { SubscriberRole } from '@base/clients/labour_service';
 import { IconEye, IconHeart, IconUsers } from '@tabler/icons-react';
 import { Button, Modal, Radio, Space, Stack, Text } from '@mantine/core';
 import { getRoleLabel } from './RoleBadge';
-import classes from '@components/Modal.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
+import classes from '@styles/modal.module.css';
 
 interface ChangeRoleModalProps {
   isOpen: boolean;

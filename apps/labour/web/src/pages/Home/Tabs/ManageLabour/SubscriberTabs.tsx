@@ -1,4 +1,5 @@
 import { SubscriptionReadModel, User } from '@base/clients/labour_service/types';
+import { ImportantText } from '@base/components/Text/ImportantText';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
 import {
@@ -8,12 +9,11 @@ import {
   useUnblockSubscriber,
   useUsers,
 } from '@base/hooks/useLabourData';
-import { ImportantText } from '@components/ImportantText';
 import { PageLoadingIcon } from '@components/PageLoading/Loading';
 import { IconUserCheck, IconUserOff, IconUserQuestion } from '@tabler/icons-react';
 import { Badge, Group, Tabs, Text } from '@mantine/core';
 import { SubscribersTable } from './SubscribersTable';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export const ManageSubscribersTabs = () => {
   const { labourId } = useLabourSession();

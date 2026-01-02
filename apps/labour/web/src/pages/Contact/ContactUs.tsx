@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
+import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import { useApiAuth } from '@base/hooks/useApiAuth';
 import { useSubmitContactForm } from '@base/hooks/useContactData';
 import type { CreateContactMessageRequest } from '@clients/contact_service';
-import { ResponsiveDescription } from '@components/ResponsiveDescription';
-import { ResponsiveTitle } from '@components/ResponsiveTitle';
 import { validateMessage } from '@lib';
 import { IconInfoCircle } from '@tabler/icons-react';
 import Turnstile from 'react-turnstile';
@@ -23,7 +23,7 @@ import {
 import { useForm } from '@mantine/form';
 import { ContactIconsList } from './ContactIcons';
 import classes from './ContactUs.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 const categories = [
   { label: 'An Error Report', value: 'error_report' },

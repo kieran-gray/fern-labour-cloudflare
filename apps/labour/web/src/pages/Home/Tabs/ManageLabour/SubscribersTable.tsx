@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SubscriptionReadModel } from '@base/clients/labour_service/types';
-import { ImportantText } from '@components/ImportantText';
+import { ImportantText } from '@base/components/Text/ImportantText';
 import { IconBan, IconCheck, IconX } from '@tabler/icons-react';
 import { ActionIcon, Avatar, Card, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { RoleBadge } from './RoleBadge';

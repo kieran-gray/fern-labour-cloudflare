@@ -7,7 +7,7 @@ import { IconHourglassHigh } from '@tabler/icons-react';
 import { Button, Slider, Space, Text } from '@mantine/core';
 import Stopwatch, { StopwatchHandle } from './Stopwatch';
 import classes from './Contractions.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 function EndContractionButton({
   intensity,

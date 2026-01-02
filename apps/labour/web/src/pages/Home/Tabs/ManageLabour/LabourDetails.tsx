@@ -1,15 +1,15 @@
+import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
+import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourById, useLabourClient } from '@base/hooks';
 import { PageLoadingIcon } from '@components/PageLoading/Loading';
-import { ResponsiveDescription } from '@components/ResponsiveDescription';
-import { ResponsiveTitle } from '@components/ResponsiveTitle';
 import { dueDateToGestationalAge } from '@lib';
 import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Button, Image, Text } from '@mantine/core';
 import image from './Meditate.svg';
 import classes from './LabourDetails.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export default function LabourDetails({ setActiveTab }: { setActiveTab: Function }) {
   const navigate = useNavigate();

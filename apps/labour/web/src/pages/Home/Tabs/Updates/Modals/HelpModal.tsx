@@ -1,7 +1,7 @@
 import { List, Modal, Space, Stack, Text } from '@mantine/core';
 import { LabourUpdate, LabourUpdateProps } from '../LabourUpdate';
 import labourUpdateClasses from '../LabourUpdates.module.css';
-import modalClasses from '@components/Modal.module.css';
+import modalClasses from '@styles/modal.module.css';
 
 type CloseFunctionType = (...args: any[]) => void;
 

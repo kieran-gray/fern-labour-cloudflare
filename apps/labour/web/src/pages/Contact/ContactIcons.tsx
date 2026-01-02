@@ -1,7 +1,7 @@
 import { IconAt, IconBrandInstagram } from '@tabler/icons-react';
 import { ActionIcon, Box, Stack, Text } from '@mantine/core';
 import classes from './ContactIcons.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 interface ContactIconProps extends Omit<React.ComponentPropsWithoutRef<'div'>, 'title'> {
   icon: typeof IconAt;

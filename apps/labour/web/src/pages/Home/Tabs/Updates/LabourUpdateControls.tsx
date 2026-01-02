@@ -8,7 +8,7 @@ import { IconSend, IconSpeakerphone, IconWifiOff } from '@tabler/icons-react';
 import { Button, Group, Switch, Text, Textarea } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import ConfirmAnnouncementModal from './Modals/ConfirmAnnouncement';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export function LabourUpdateControls() {
   const [message, setMessage] = useState('');

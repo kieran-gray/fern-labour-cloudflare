@@ -4,12 +4,10 @@ export default {
   setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
   moduleNameMapper: {
     '^@base/(.*)$': '<rootDir>/src/$1',
-    '^@shared/(.*)$': '<rootDir>/src/shared-components/$1',
+    '^@styles/(.*)$': '<rootDir>/src/styles/$1',
+    '^@components/(.*)$': '<rootDir>/src/components/$1',
     '^@clients/(.*)$': '<rootDir>/src/clients/$1',
-    '^@labour/(.*)$': '<rootDir>/src/pages/Labour/$1',
-    '^@subscription/(.*)$': '<rootDir>/src/pages/Subscription/$1',
-    '^@subscribe/(.*)$': '<rootDir>/src/pages/Subscribe/$1',
-    '^@subscriptions/(.*)$': '<rootDir>/src/pages/Subscriptions/$1',
+    '^@home/(.*)$': '<rootDir>/src/pages/Home/$1',
     '^@lib/(.*)$': '<rootDir>/src/lib/$1',
   },
   testMatch: [

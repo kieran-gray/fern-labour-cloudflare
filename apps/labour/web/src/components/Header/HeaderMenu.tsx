@@ -15,7 +15,7 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Group, Text, UnstyledButton, useMantineColorScheme } from '@mantine/core';
-import classes from './Header.module.css';
+import classes from './HeaderMenu.module.css';
 
 interface UserButtonProps extends React.ComponentPropsWithoutRef<'button'> {
   name: string;
@@ -37,7 +37,7 @@ export const UserButton = forwardRef<HTMLButtonElement, UserButtonProps>(
   )
 );
 
-export function MobileUserMenu() {
+export function HeaderMenu() {
   const { user } = useClerkUser();
   const { signOut, openUserProfile } = useClerk();
   const navigate = useNavigate();
@@ -55,78 +55,80 @@ export function MobileUserMenu() {
 
   return (
     <div className={classes.linksDrawer}>
-      <Group>
-        <Button
-          key="theme"
-          className={classes.mainLink}
-          onClick={() => setColorScheme(colorScheme === 'light' ? 'dark' : 'light')}
-          leftSection={themeIcon}
-          size="md"
-          w="100%"
-          variant="transparent"
-        >
-          {colorScheme === 'light' ? 'Night mode' : 'Day mode'}
-        </Button>
-        {mode === null && pathname !== '/' && (
+      <div className={classes.menuSection}>
+        <Group>
           <Button
-            key="home"
+            key="theme"
             className={classes.mainLink}
-            onClick={() => {
-              navigate('/');
-            }}
-            leftSection={<IconHome size={16} stroke={1.5} />}
+            onClick={() => setColorScheme(colorScheme === 'light' ? 'dark' : 'light')}
+            leftSection={themeIcon}
             size="md"
             w="100%"
             variant="transparent"
           >
-            Home
+            {colorScheme === 'light' ? 'Night mode' : 'Day mode'}
           </Button>
-        )}
-        {mode !== null && (
-          <>
+          {mode === null && pathname !== '/' && (
             <Button
-              key="update"
+              key="home"
               className={classes.mainLink}
               onClick={() => {
-                setMode(switchToMode);
                 navigate('/');
               }}
-              leftSection={<IconSwitchHorizontal size={16} stroke={1.5} />}
+              leftSection={<IconHome size={16} stroke={1.5} />}
               size="md"
               w="100%"
               variant="transparent"
             >
-              {switchToMode === AppMode.Subscriber ? 'Support mode' : 'Birth mode'}
+              Home
             </Button>
-            {mode === AppMode.Birth && ['/history', '/contact'].includes(pathname) && (
+          )}
+          {mode !== null && (
+            <>
               <Button
-                key="history"
-                onClick={() => navigate('/')}
-                leftSection={<IconArrowLeft size={16} stroke={1.5} />}
+                key="update"
                 className={classes.mainLink}
+                onClick={() => {
+                  setMode(switchToMode);
+                  navigate('/');
+                }}
+                leftSection={<IconSwitchHorizontal size={16} stroke={1.5} />}
                 size="md"
                 w="100%"
                 variant="transparent"
               >
-                Go to your labour
+                {switchToMode === AppMode.Subscriber ? 'Support mode' : 'Birth mode'}
               </Button>
-            )}
-          </>
-        )}
-        {pathname !== '/history' && (
-          <Button
-            key="labour"
-            onClick={() => navigate('/history')}
-            className={classes.mainLink}
-            leftSection={<IconHistory size={16} stroke={1.5} />}
-            size="md"
-            w="100%"
-            variant="transparent"
-          >
-            Labour history
-          </Button>
-        )}
-      </Group>
+              {mode === AppMode.Birth && ['/history', '/contact'].includes(pathname) && (
+                <Button
+                  key="history"
+                  onClick={() => navigate('/')}
+                  leftSection={<IconArrowLeft size={16} stroke={1.5} />}
+                  className={classes.mainLink}
+                  size="md"
+                  w="100%"
+                  variant="transparent"
+                >
+                  Go to your labour
+                </Button>
+              )}
+            </>
+          )}
+          {pathname !== '/history' && (
+            <Button
+              key="labour"
+              onClick={() => navigate('/history')}
+              className={classes.mainLink}
+              leftSection={<IconHistory size={16} stroke={1.5} />}
+              size="md"
+              w="100%"
+              variant="transparent"
+            >
+              Labour history
+            </Button>
+          )}
+        </Group>
+      </div>
 
       <div className={classes.footer}>
         <UserButton

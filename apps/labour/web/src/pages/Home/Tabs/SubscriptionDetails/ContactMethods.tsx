@@ -1,15 +1,15 @@
 import { SubscriptionReadModel } from '@base/clients/labour_service';
+import { ImportantText } from '@base/components/Text/ImportantText';
+import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
+import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import { useApiAuth } from '@base/hooks/useApiAuth';
 import { useClerkUser } from '@base/hooks/useClerkUser';
-import { ImportantText } from '@components/ImportantText';
-import { ResponsiveDescription } from '@components/ResponsiveDescription';
-import { ResponsiveTitle } from '@components/ResponsiveTitle';
 import { useSearchParams } from 'react-router-dom';
 import { Badge, Button, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import ContactMethodsModal from './ContactMethodsModal';
 import classes from './ContactMethodsModal.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export function warnNoNumberSet(
   contactMethods: string[],

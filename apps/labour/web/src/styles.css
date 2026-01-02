@@ -3,10 +3,10 @@
     --header-overlay-height: 64px;
 }
 
-body {
+#root {
     background-color: light-dark(#ffeae6, #121212);
 }
 
-#root {
+body {
     background-color: light-dark(#ffeae6, #121212);
 }
