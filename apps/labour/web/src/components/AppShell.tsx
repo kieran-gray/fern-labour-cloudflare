@@ -1,7 +1,7 @@
 import { Icon } from '@tabler/icons-react';
 import { Box } from '@mantine/core';
 import { BottomNavigation } from './BottomNavigation';
-import { PillHeader } from './PillHeader';
+import { PillHeader } from './Header/PillHeader';
 
 export interface NavItem {
   id: string;

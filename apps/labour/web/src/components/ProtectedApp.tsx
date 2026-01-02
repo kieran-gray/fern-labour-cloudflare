@@ -16,7 +16,6 @@ export const ProtectedApp: React.FC<ProtectedAppProps> = (props) => {
   const { user, isLoaded: isUserLoaded } = useClerkUser();
   const wasOnlineRef = useRef<boolean | null>(null);
 
-  // Handle reconnection - refresh token when coming back online
   useEffect(() => {
     if (wasOnlineRef.current === null) {
       wasOnlineRef.current = isOnline;
@@ -31,27 +30,21 @@ export const ProtectedApp: React.FC<ProtectedAppProps> = (props) => {
     }
 
     if (user || isSignedIn) {
-      getToken({ skipCache: true }).catch(() => {
-        // Token refresh failed, user will be redirected to sign in
-      });
+      getToken({ skipCache: true }).catch(() => {});
     }
   }, [isOnline, user, isSignedIn, getToken]);
 
-  // Handle offline mode with cached user
   if (!isOnline && user) {
     return children;
   }
 
-  // Show loading while auth state is being determined
   if (!isAuthLoaded || !isUserLoaded) {
     return <PageLoading />;
   }
 
-  // If signed in, show the app
   if (isSignedIn) {
     return children;
   }
 
-  // Not signed in, redirect to sign in
   return <RedirectToSignIn />;
 };

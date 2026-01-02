@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { LABOUR_UPDATE_MAX_LENGTH } from '@base/lib/constants';
 import { Button, Group, Modal, Stack, Textarea } from '@mantine/core';
-import classes from '@components/Modal.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
+import classes from '@styles/modal.module.css';
 
 export default function EditLabourUpdateModal({
   message,

@@ -5,8 +5,8 @@ import { IconCalendar, IconPencil } from '@tabler/icons-react';
 import { Button, Group, Modal, Radio, Stack, TextInput } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import modalClasses from '@components/Modal.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
+import modalClasses from '@styles/modal.module.css';
 
 interface EditLabourModalProps {
   labour: LabourReadModel;

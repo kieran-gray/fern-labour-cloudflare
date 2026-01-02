@@ -1,5 +1,5 @@
-import baseClasses from '../shared-styles.module.css';
 import classes from './ErrorContainer.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export function ErrorContainer({ message }: { message: string }) {
   return (

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { SubscriptionStatusReadModel } from '@base/clients/labour_service/types';
+import { ImportantText } from '@base/components/Text/ImportantText';
 import { useLabourSession } from '@base/contexts';
 import { useLabourClient } from '@base/hooks';
 import { useUserSubscribedLabours, useUserSubscriptions } from '@base/hooks/useLabourData';
-import { ImportantText } from '@components/ImportantText';
 import { PageLoadingIcon } from '@components/PageLoading/Loading';
 import { IconArrowRight, IconX } from '@tabler/icons-react';
 import { Avatar, Button, Card, Group, Stack, Text } from '@mantine/core';

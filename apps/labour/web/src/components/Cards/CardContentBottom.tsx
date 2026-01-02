@@ -1,10 +1,10 @@
-import { ResponsiveDescription } from '@components/ResponsiveDescription';
-import { ResponsiveTitle } from '@components/ResponsiveTitle';
+import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
+import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import { Image } from '@mantine/core';
-import baseClasses from '../shared-styles.module.css';
-import classes from './PageContainer.module.css';
+import classes from './CardContentBottom.module.css';
+import baseClasses from '@styles/base.module.css';
 
-interface PageContainerProps {
+interface CardProps {
   title: string;
   description: string;
   image?: string;
@@ -12,13 +12,7 @@ interface PageContainerProps {
   children?: React.ReactNode;
 }
 
-export function PageContainerContentBottom({
-  title,
-  description,
-  image,
-  mobileImage,
-  children,
-}: PageContainerProps) {
+export function CardContentBottom({ title, description, image, mobileImage, children }: CardProps) {
   return (
     <div className={baseClasses.root}>
       <div className={baseClasses.body}>

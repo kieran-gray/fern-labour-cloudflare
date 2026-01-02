@@ -7,7 +7,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Button, Modal, MultiSelect } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import classes from './ContactMethodsModal.module.css';
-import modalClasses from '@components/Modal.module.css';
+import modalClasses from '@styles/modal.module.css';
 
 type CloseFunctionType = (...args: any[]) => void;
 

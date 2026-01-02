@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { LabourUpdateType } from '@base/clients/labour_service';
+import { GenericConfirmModal } from '@base/components/Modals/GenericConfirmModal';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
 import {
@@ -13,9 +14,8 @@ import { ActionIcon, Menu } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import ConfirmAnnouncementModal from './Modals/ConfirmAnnouncement';
-import ConfirmDeleteModal from './Modals/ConfirmDelete';
 import EditLabourUpdateModal from './Modals/EditLabourUpdate';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 interface ManageLabourUpdateMenuProps {
   statusUpdateId: string;
@@ -153,10 +153,12 @@ export function ManageLabourUpdateMenu({
         onConfirm={handleConfirmAnnounce}
         onCancel={handleCancelAnnounce}
       />
-      <ConfirmDeleteModal
-        opened={deleteOpened}
+      <GenericConfirmModal
+        isOpen={deleteOpened}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
+        title="Delete status update?"
+        confirmText="Delete"
       />
     </>
   );

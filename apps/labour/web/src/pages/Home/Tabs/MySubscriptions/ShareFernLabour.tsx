@@ -1,9 +1,7 @@
-import { ResponsiveDescription } from '@components/ResponsiveDescription';
-import { ResponsiveTitle } from '@components/ResponsiveTitle';
-import { CopyButton } from '@home/Tabs/Share/CopyButton';
+import { CopyButton } from '@components/Buttons/CopyButton';
+import { Card } from '@components/Cards/Card';
 import image from '@home/Tabs/Share/share.svg';
-import { Group, Image } from '@mantine/core';
-import baseClasses from '@components/shared-styles.module.css';
+import { Group } from '@mantine/core';
 import classes from '@home/Tabs/Share/ShareLabour.module.css';
 
 export function ShareFernLabour() {
@@ -14,30 +12,23 @@ export function ShareFernLabour() {
   const shareMessage = `Hey! I've been using FernLabour and thought you might find it useful.\n\nIt's a simple way to keep family and friends informed during labour.\n\nCheck it out:`;
 
   return (
-    <div className={baseClasses.root}>
-      <div className={baseClasses.body}>
-        <div className={baseClasses.inner}>
-          <div className={classes.content}>
-            <ResponsiveTitle title={title} />
-            <ResponsiveDescription description={description} marginTop={10} />
-            <div className={classes.imageFlexRow} style={{ marginTop: '20px' }}>
-              <Image src={image} className={classes.smallImage} />
-            </div>
-            <Group mt={30}>
-              <div className={classes.flexRow}>
-                <CopyButton
-                  text={shareMessage}
-                  shareData={{
-                    title: 'Try FernLabour',
-                    url: shareUrl,
-                  }}
-                />
-              </div>
-            </Group>
-          </div>
-          <Image src={image} className={classes.image} />
+    <Card
+      title={title}
+      description={description}
+      image={{ src: image, width: 300, height: 250 }}
+      mobileImage={{ src: image, width: 275, height: 225 }}
+    >
+      <Group mt={30}>
+        <div className={classes.flexRow}>
+          <CopyButton
+            text={shareMessage}
+            shareData={{
+              title: 'Try FernLabour',
+              url: shareUrl,
+            }}
+          />
         </div>
-      </div>
-    </div>
+      </Group>
+    </Card>
   );
 }

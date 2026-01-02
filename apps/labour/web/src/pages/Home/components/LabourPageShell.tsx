@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { AppShell, NavItem } from '@components/AppShell';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 interface LabourPageShellProps {
   activeTab: string | null;

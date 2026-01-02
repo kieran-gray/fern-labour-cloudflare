@@ -1,8 +1,8 @@
 import { LabourReadModel } from '@base/clients/labour_service';
+import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
+import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import { AppMode, useLabourSession } from '@base/contexts';
 import { useLabourClient, usePlanLabour, useUpdateLabourPlan } from '@base/hooks';
-import { ResponsiveDescription } from '@components/ResponsiveDescription';
-import { ResponsiveTitle } from '@components/ResponsiveTitle';
 import { validateLabourName } from '@lib';
 import { IconArrowRight, IconCalendar, IconPencil, IconUpload } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { DatePickerInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import image from './plan.svg';
 import classes from './Plan.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export default function Plan({ labour }: { labour: LabourReadModel | undefined }) {
   const navigate = useNavigate();

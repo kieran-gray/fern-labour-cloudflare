@@ -11,7 +11,7 @@ import {
   UnstyledButton,
 } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
-import { MobileUserMenu } from './Header/UserMenu';
+import { MobileUserMenu } from './UserMenu';
 import classes from './PillHeader.module.css';
 
 interface NavItem {

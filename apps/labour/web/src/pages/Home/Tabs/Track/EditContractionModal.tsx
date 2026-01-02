@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { GenericConfirmModal } from '@base/components/Modals/GenericConfirmModal';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
 import { useDeleteContractionOffline, useUpdateContractionOffline } from '@base/offline/hooks';
-import { GenericConfirmModal } from '@components/GenericConfirmModal';
 import { updateTime } from '@lib/calculations';
 import { IconClock, IconTrash, IconUpload } from '@tabler/icons-react';
 import { Button, Modal, Slider, Space, Text } from '@mantine/core';
@@ -10,7 +10,7 @@ import { TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { ContractionData } from './ContractionTimelineCustom';
 import classes from './Contractions.module.css';
-import modalClasses from '@components/Modal.module.css';
+import modalClasses from '@styles/modal.module.css';
 
 type CloseFunctionType = (...args: any[]) => void;
 

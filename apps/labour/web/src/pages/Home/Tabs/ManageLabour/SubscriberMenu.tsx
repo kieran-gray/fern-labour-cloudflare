@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { SubscriberRole } from '@base/clients/labour_service';
+import { GenericConfirmModal } from '@base/components/Modals/GenericConfirmModal';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
 import {
@@ -7,11 +8,10 @@ import {
   useRemoveSubscriber,
   useUpdateSubscriberRole,
 } from '@base/hooks/useLabourData';
-import { GenericConfirmModal } from '@components/GenericConfirmModal';
 import { IconBan, IconCircleMinus, IconDots, IconSwitchHorizontal } from '@tabler/icons-react';
 import { ActionIcon, Menu } from '@mantine/core';
 import { ChangeRoleModal } from './ChangeRoleModal';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export function ManageSubscriptionMenu({
   subscriptionId,

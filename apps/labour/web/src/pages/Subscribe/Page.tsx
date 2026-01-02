@@ -1,12 +1,13 @@
 import { AppMode, useLabourSession } from '@base/contexts';
 import { useLabourClient, useRequestAccess } from '@base/hooks';
 import { AppShell } from '@components/AppShell';
+import { Card } from '@components/Cards/Card';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Button, Group, Image, PinInput, Space, Text, Title } from '@mantine/core';
+import { Button, Group, PinInput, Space } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import image from './protected.svg';
 import classes from './Form.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 const SUBSCRIBER_TOKEN_LENGTH = 5;
 
@@ -45,62 +46,56 @@ export const SubscribePage: React.FC = () => {
     });
   };
 
+  const description = (
+    <>
+      If the code isn't already filled in, check the share message that was sent to you, or ask the
+      person who shared the link with you for the code.
+    </>
+  );
+
   return (
     <AppShell>
       <div className={baseClasses.flexPageColumn}>
-        <div className={baseClasses.root}>
-          <div className={baseClasses.body}>
-            <div className={baseClasses.inner}>
-              <div className={classes.content}>
-                <Title className={classes.title}>
-                  Congratulations! <br /> Someone wants to share their labour journey with you!
-                </Title>
-                <div className={baseClasses.imageFlexRow}>
-                  <Image src={image} className={baseClasses.smallImage} />
-                </div>
-                <Text className={baseClasses.description} mt="md">
-                  If the code isn't already filled in, check the share message that was sent to you,
-                  or ask the person who shared the link with you for the code.
-                </Text>
-                <Group mt={30}>
-                  <form
-                    onSubmit={form.onSubmit((values) => handleSubscribeTo(values))}
-                    className={classes.form}
-                  >
-                    <div className={baseClasses.flexRowEnd}>
-                      <PinInput
-                        fw={600}
-                        size="lg"
-                        length={SUBSCRIBER_TOKEN_LENGTH}
-                        radius="md"
-                        style={{ justifyContent: 'center' }}
-                        styles={{
-                          input: {
-                            color:
-                              'light-dark(var(--mantine-color-black), var(--mantine-color-gray-1))',
-                          },
-                        }}
-                        key={form.key('token')}
-                        {...form.getInputProps('token')}
-                      />
-                      <Space w="xl" h="xl" />
-                      <Button
-                        size="lg"
-                        radius="lg"
-                        variant="filled"
-                        type="submit"
-                        loading={mutation.isPending}
-                      >
-                        Submit
-                      </Button>
-                    </div>
-                  </form>
-                </Group>
+        <Card
+          title="Congratulations, someone wants to share their labour journey with you!"
+          description={description}
+          image={{ src: image, width: 376, height: 356 }}
+          mobileImage={{ src: image, width: 300, height: 250 }}
+        >
+          <Group mt={30}>
+            <form
+              onSubmit={form.onSubmit((values) => handleSubscribeTo(values))}
+              className={classes.form}
+            >
+              <div className={classes.flexRowEnd}>
+                <PinInput
+                  fw={600}
+                  size="lg"
+                  length={SUBSCRIBER_TOKEN_LENGTH}
+                  radius="md"
+                  style={{ justifyContent: 'center' }}
+                  styles={{
+                    input: {
+                      color: 'light-dark(var(--mantine-color-black), var(--mantine-color-gray-1))',
+                    },
+                  }}
+                  key={form.key('token')}
+                  {...form.getInputProps('token')}
+                />
+                <Space w="xl" h="xl" />
+                <Button
+                  size="lg"
+                  radius="lg"
+                  variant="filled"
+                  type="submit"
+                  loading={mutation.isPending}
+                >
+                  Submit
+                </Button>
               </div>
-              <Image src={image} className={classes.image} />
-            </div>
-          </div>
-        </div>
+            </form>
+          </Group>
+        </Card>
       </div>
     </AppShell>
   );

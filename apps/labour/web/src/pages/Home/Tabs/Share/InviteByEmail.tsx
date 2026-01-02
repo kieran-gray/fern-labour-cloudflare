@@ -1,14 +1,13 @@
 import { useLabourSession } from '@base/contexts';
 import { useLabourClient, useSendLabourInvite } from '@base/hooks';
-import { ResponsiveDescription } from '@components/ResponsiveDescription';
-import { ResponsiveTitle } from '@components/ResponsiveTitle';
+import { Card } from '@components/Cards/Card';
 import { validateEmail } from '@lib';
 import { IconAt, IconSend } from '@tabler/icons-react';
-import { Button, Group, Image, Space, TextInput } from '@mantine/core';
+import { Button, Group, Space, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import image from './invite.svg';
 import classes from './InviteByEmail.module.css';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export function InviteByEmail() {
   const { labourId } = useLabourSession();
@@ -40,73 +39,67 @@ export function InviteByEmail() {
     );
   };
 
-  const title = 'Or send invites by email';
-  const description =
-    "Invite your friends and family, we'll give them instructions on how to sign up and what to expect.";
-
   return (
-    <div className={baseClasses.inner}>
-      <Image src={image} className={classes.image} />
-      <div className={classes.content}>
-        <ResponsiveTitle title={title} />
-        <ResponsiveDescription description={description} marginTop={10} />
-        <div className={classes.imageFlexRow}>
-          <Image src={image} className={classes.smallImage} />
-        </div>
-        <Group className={classes.group}>
-          <form onSubmit={form.onSubmit(handleSubmit)} style={{ width: '100%' }}>
-            <div className={classes.flexRowEnd}>
-              <TextInput
-                withAsterisk
-                radius="lg"
-                mt="md"
-                rightSectionPointerEvents="none"
-                rightSection={<IconAt size={16} />}
-                label="Email"
-                placeholder="friend@email.com"
-                key={form.key('email')}
-                size="lg"
-                classNames={{
-                  description: baseClasses.description,
-                  input: baseClasses.input,
-                  section: baseClasses.section,
-                }}
-                {...form.getInputProps('email')}
-              />
-              <Space w="md" />
-              <Button
-                variant="filled"
-                rightSection={<IconSend size={20} stroke={1.5} />}
-                radius="xl"
-                size="lg"
-                pr={14}
-                mt="var(--mantine-spacing-lg)"
-                loading={sendInviteMutation.isPending}
-                styles={{ section: { marginLeft: 22 }, label: { overflow: 'unset' } }}
-                type="submit"
-                visibleFrom="sm"
-              >
-                Send invite
-              </Button>
-              <Button
-                variant="filled"
-                rightSection={<IconSend size={20} stroke={1.5} />}
-                radius="xl"
-                size="md"
-                pr={14}
-                h={48}
-                mt="var(--mantine-spacing-lg)"
-                loading={sendInviteMutation.isPending}
-                styles={{ section: { marginLeft: 22 }, label: { overflow: 'unset' } }}
-                type="submit"
-                hiddenFrom="sm"
-              >
-                Send invite
-              </Button>
-            </div>
-          </form>
-        </Group>
-      </div>
-    </div>
+    <Card
+      title="Or send invites by email"
+      description="Invite your friends and family, we'll give them instructions on how to sign up and what to expect."
+      image={{ src: image, width: 250, height: 220 }}
+      imagePosition="left"
+      mobileImage={{ src: image, width: 220, height: 200 }}
+    >
+      <Group>
+        <form onSubmit={form.onSubmit(handleSubmit)} style={{ width: '100%' }}>
+          <div className={classes.flexRowEnd}>
+            <TextInput
+              withAsterisk
+              radius="lg"
+              mt="md"
+              rightSectionPointerEvents="none"
+              rightSection={<IconAt size={16} />}
+              label="Email"
+              placeholder="friend@email.com"
+              key={form.key('email')}
+              size="lg"
+              classNames={{
+                description: baseClasses.description,
+                input: baseClasses.input,
+                section: baseClasses.section,
+              }}
+              {...form.getInputProps('email')}
+            />
+            <Space w="md" />
+            <Button
+              variant="filled"
+              rightSection={<IconSend size={20} stroke={1.5} />}
+              radius="xl"
+              size="lg"
+              pr={14}
+              mt="var(--mantine-spacing-lg)"
+              loading={sendInviteMutation.isPending}
+              styles={{ section: { marginLeft: 22 }, label: { overflow: 'unset' } }}
+              type="submit"
+              visibleFrom="sm"
+            >
+              Send invite
+            </Button>
+            <Button
+              variant="filled"
+              rightSection={<IconSend size={20} stroke={1.5} />}
+              radius="xl"
+              size="md"
+              pr={14}
+              h={48}
+              mt="var(--mantine-spacing-md)"
+              loading={sendInviteMutation.isPending}
+              styles={{ section: { marginLeft: 22 }, label: { overflow: 'unset' } }}
+              type="submit"
+              hiddenFrom="sm"
+            >
+              Send invite
+            </Button>
+          </div>
+        </form>
+      </Group>
+    </Card>
   );
 }

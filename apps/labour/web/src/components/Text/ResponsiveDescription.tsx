@@ -1,8 +1,8 @@
 import { Text } from '@mantine/core';
-import classes from './shared-styles.module.css';
+import classes from '@styles/base.module.css';
 
 interface ResponsiveDescriptionProps {
-  description: string | JSX.Element;
+  description: React.ReactNode;
   marginTop: number;
 }
 

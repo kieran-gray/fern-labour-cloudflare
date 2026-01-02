@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { GenericConfirmModal } from '@base/components/Modals/GenericConfirmModal';
+import { ImportantText } from '@base/components/Text/ImportantText';
 import { AppMode, useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useDeleteLabour, useLabourClient, useLabourHistory } from '@base/hooks';
-import { GenericConfirmModal } from '@components/GenericConfirmModal';
-import { ImportantText } from '@components/ImportantText';
 import { PageLoadingIcon } from '@components/PageLoading/Loading';
 import { IconArrowRight, IconCalendar, IconPlus, IconTrash, IconX } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';

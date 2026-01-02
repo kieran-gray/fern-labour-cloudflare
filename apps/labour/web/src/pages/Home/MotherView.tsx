@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { FloatingPanel } from '@base/components/Controls/FloatingPanel';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
 import { flattenContractions, useContractionsInfinite } from '@base/hooks/useInfiniteQueries';
@@ -12,7 +13,6 @@ import { NotFoundError, PermissionDenied } from '@base/lib/errors';
 import { useNetworkState } from '@base/offline/sync/networkDetector';
 import { AppShell } from '@components/AppShell';
 import { ErrorContainer } from '@components/ErrorContainer/ErrorContainer';
-import { FloatingPanel } from '@components/FloatingPanel';
 import { PageLoading } from '@components/PageLoading/PageLoading';
 import {
   IconChartHistogram,
@@ -23,18 +23,19 @@ import {
 } from '@tabler/icons-react';
 import { useSearchParams } from 'react-router-dom';
 import { Space } from '@mantine/core';
-import { CompletedLabourContainer } from '../CompletedLabour/Page';
+import { CompletedLabourCard } from '../CompletedLabour/Page';
 import { LabourPageShell } from './components/LabourPageShell';
 import { ManageLabour } from './Tabs/ManageLabour/Manage';
 import Plan from './Tabs/ManageLabour/Plan';
 import { SubscribersContainer } from './Tabs/ManageLabour/SubscribersContainer';
-import { Share } from './Tabs/Share/Share';
+import { InviteByEmail } from './Tabs/Share/InviteByEmail';
+import { ShareLabour } from './Tabs/Share/ShareLabour';
 import { LabourStatistics } from './Tabs/Statistics/LabourStatistics';
 import { ContractionControls } from './Tabs/Track/ContractionControls';
 import { Contractions } from './Tabs/Track/Contractions';
 import { LabourUpdateControls } from './Tabs/Updates/LabourUpdateControls';
 import { LabourUpdates } from './Tabs/Updates/LabourUpdates';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 const TABS = [
   { id: 'details', label: 'Manage', icon: IconSettings },
@@ -156,7 +157,15 @@ export const MotherView = () => {
       case 'updates':
         return <LabourUpdates labour={labour} />;
       case 'share':
-        return completed ? <CompletedLabourContainer /> : <Share />;
+        return completed ? (
+          <CompletedLabourCard />
+        ) : (
+          <>
+            <ShareLabour />
+            <Space h="xl" />
+            <InviteByEmail />
+          </>
+        );
       default:
         return null;
     }

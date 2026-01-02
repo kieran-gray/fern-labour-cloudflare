@@ -12,7 +12,6 @@ export default tseslint.config(
             "jsx-a11y/no-static-element-interactions" :"off",
             "jsx-a11y/click-events-have-key-events": "off",
             "@typescript-eslint/no-unsafe-function-type": "off",
-            "no-duplicate-imports": "off",
             "no-prototype-builtins": "off"
         }
     }

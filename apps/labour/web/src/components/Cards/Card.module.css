@@ -1,0 +1,45 @@
+.row {
+  display: flex;
+  align-items: stretch;
+  gap: var(--mantine-spacing-xl);
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mantine-spacing-md);
+}
+
+.headerActions {
+  flex-shrink: 0;
+}
+
+.image {
+  flex-shrink: 0;
+
+  @media (max-width: $mantine-breakpoint-md) {
+    display: none;
+  }
+}
+
+.mobileImageContainer {
+  display: none;
+  justify-content: center;
+  margin: var(--mantine-spacing-md) 0;
+
+  @media (max-width: $mantine-breakpoint-md) {
+    display: flex;
+  }
+}
+
+.footer {
+  margin-top: var(--mantine-spacing-md);
+}

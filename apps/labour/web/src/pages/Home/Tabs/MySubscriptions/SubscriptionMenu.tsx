@@ -1,10 +1,10 @@
 import { useState } from 'react';
+import { GenericConfirmModal } from '@base/components/Modals/GenericConfirmModal';
 import { useLabourSession } from '@base/contexts';
 import { useLabourClient, useUnsubscribe } from '@base/hooks';
-import { GenericConfirmModal } from '@components/GenericConfirmModal';
 import { IconDots, IconUserMinus } from '@tabler/icons-react';
 import { ActionIcon, Menu } from '@mantine/core';
-import baseClasses from '@components/shared-styles.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export function ManageSubscriptionMenu({
   labourId,
