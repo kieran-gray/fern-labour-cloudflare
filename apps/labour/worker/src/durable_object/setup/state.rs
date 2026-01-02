@@ -277,7 +277,10 @@ impl LabourRoomServices {
             .service("NOTIFICATION_SERVICE_API")
             .context("Missing binding NOTIFICATION_SERVICE_API")?;
 
-        let notification_client = Box::new(FetcherNotificationClient::create(notification_fetcher));
+        let notification_client = Box::new(FetcherNotificationClient::create(
+            notification_fetcher,
+            config.notification_auth_token.clone(),
+        ));
 
         let subscription_token_generator = Box::new(SplitMix64TokenGenerator::create(
             config.subscription_token_salt.clone(),

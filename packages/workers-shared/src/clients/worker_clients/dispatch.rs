@@ -5,15 +5,21 @@ use fern_labour_notifications_shared::service_clients::{
 use tracing::{debug, error};
 use worker::Response;
 
-use crate::clients::request_utils::{StatusCodeCategory, build_json_post_request, service_headers};
+use crate::clients::request_utils::{
+    StatusCodeCategory, build_json_post_request, internal_auth_headers,
+};
 
 pub struct FetcherDispatchClient {
     fetcher: worker::Fetcher,
+    auth_token: String,
 }
 
 impl FetcherDispatchClient {
-    pub fn create(fetcher: worker::Fetcher) -> Self {
-        Self { fetcher }
+    pub fn create(fetcher: worker::Fetcher, auth_token: String) -> Self {
+        Self {
+            fetcher,
+            auth_token,
+        }
     }
 
     async fn do_dispatch(
@@ -21,8 +27,11 @@ impl FetcherDispatchClient {
         request: DispatchRequest,
         url: &str,
     ) -> Result<Response, DispatchClientError> {
-        let (init, _) = build_json_post_request(&request, service_headers("notification-service"))
-            .map_err(DispatchClientError::SerializationError)?;
+        let (init, _) = build_json_post_request(
+            &request,
+            internal_auth_headers("notification-service", &self.auth_token),
+        )
+        .map_err(DispatchClientError::SerializationError)?;
 
         self.fetcher.fetch(url, Some(init)).await.map_err(|e| {
             error!(error = ?e, "Dispatch service request failed");

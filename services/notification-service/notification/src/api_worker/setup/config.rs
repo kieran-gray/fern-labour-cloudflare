@@ -4,17 +4,17 @@ use worker::Env;
 #[derive(Clone)]
 pub struct Config {
     pub allowed_origins: Vec<String>,
-    pub auth_enabled: bool,
+    pub internal_auth_token: String,
 }
 
 impl ConfigTrait<Config> for Config {
     fn from_env(env: &Env) -> Result<Self, SetupError> {
         let allowed_origins = Config::parse_csv(env, "ALLOWED_ORIGINS")?;
-        let auth_enabled: bool = Config::parse(env, "AUTH_ENABLED")?;
+        let internal_auth_token: String = Config::parse(env, "INTERNAL_AUTH_TOKEN")?;
 
         Ok(Self {
             allowed_origins,
-            auth_enabled,
+            internal_auth_token,
         })
     }
 }

@@ -15,6 +15,7 @@ pub struct AuthenticatedPrincipal {
 }
 
 impl AuthenticatedPrincipal {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         identity_id: String,
         issuer: String,

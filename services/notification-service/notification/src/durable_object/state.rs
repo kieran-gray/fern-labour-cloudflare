@@ -87,21 +87,25 @@ impl AggregateServices {
         Ok(Box::new(NotificationDetailProjector::create(repository)))
     }
 
-    fn create_dispatch_client(env: &Env) -> Result<Box<dyn DispatchClient>> {
+    fn create_dispatch_client(env: &Env, auth_token: &str) -> Result<Box<dyn DispatchClient>> {
         let dispatch_fetcher = env
             .service("DISPATCH_SERVICE_API")
             .context("Missing binding DISPATCH_SERVICE_API")?;
 
-        Ok(Box::new(FetcherDispatchClient::create(dispatch_fetcher)))
+        Ok(Box::new(FetcherDispatchClient::create(
+            dispatch_fetcher,
+            auth_token.to_string(),
+        )))
     }
 
-    fn create_generation_client(env: &Env) -> Result<Box<dyn GenerationClient>> {
+    fn create_generation_client(env: &Env, auth_token: &str) -> Result<Box<dyn GenerationClient>> {
         let generation_fetcher = env
             .service("GENERATION_SERVICE_API")
             .context("Missing binding GENERATION_SERVICE_API")?;
 
         Ok(Box::new(FetcherGenerationClient::create(
             generation_fetcher,
+            auth_token.to_string(),
         )))
     }
 
@@ -141,8 +145,10 @@ impl AggregateServices {
             vec![notification_detail_projector, notification_status_projector];
         let projection_processor = ProjectionProcessor::create(event_store.clone(), projectors);
 
-        let generation_client = Self::create_generation_client(env)?;
-        let dispatch_client = Self::create_dispatch_client(env)?;
+        let internal_auth_token = env.var("INTERNAL_AUTH_TOKEN")?.to_string();
+
+        let generation_client = Self::create_generation_client(env, &internal_auth_token)?;
+        let dispatch_client = Self::create_dispatch_client(env, &internal_auth_token)?;
         let service_command_processor =
             ServiceCommandProcessor::create(command_bus, generation_client, dispatch_client);
 

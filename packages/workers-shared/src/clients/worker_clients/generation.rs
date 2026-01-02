@@ -9,15 +9,21 @@ use tracing::{debug, error};
 use uuid::Uuid;
 use worker::Response;
 
-use crate::clients::request_utils::{StatusCodeCategory, build_json_post_request, service_headers};
+use crate::clients::request_utils::{
+    StatusCodeCategory, build_json_post_request, internal_auth_headers,
+};
 
 pub struct FetcherGenerationClient {
     fetcher: worker::Fetcher,
+    auth_token: String,
 }
 
 impl FetcherGenerationClient {
-    pub fn create(fetcher: worker::Fetcher) -> Self {
-        Self { fetcher }
+    pub fn create(fetcher: worker::Fetcher, auth_token: String) -> Self {
+        Self {
+            fetcher,
+            auth_token,
+        }
     }
 
     async fn do_render(
@@ -33,8 +39,11 @@ impl FetcherGenerationClient {
             template_data,
         };
 
-        let (init, _) = build_json_post_request(&request, service_headers("notification-service"))
-            .map_err(GenerationClientError::SerializationError)?;
+        let (init, _) = build_json_post_request(
+            &request,
+            internal_auth_headers("notification-service", &self.auth_token),
+        )
+        .map_err(GenerationClientError::SerializationError)?;
 
         self.fetcher.fetch(url, Some(init)).await.map_err(|e| {
             error!(error = ?e, "Generation service request failed");

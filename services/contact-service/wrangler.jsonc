@@ -1,5 +1,5 @@
 {
-  "$schema": "../node_modules/wrangler/config-schema.json",
+  "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "fern-labour-contact-us",
   "main": "build/worker/shim.mjs",
   "compatibility_date": "2025-11-25",
@@ -47,7 +47,6 @@
     "ALLOWED_ORIGINS": "https://fernlabour.com,https://track.fernlabour.com,https://app.fernlabour.com",
     "SLACK_CHANNEL": "C08TY0QDY30",
     "SLACK_MESSAGE_URL": "https://slack.com/api/chat.postMessage",
-    "AUTH_ENABLED": "true"
   },
   "env": {
     "dev": {
@@ -70,7 +69,6 @@
         "ALLOWED_ORIGINS": "",
         "SLACK_CHANNEL": "C08TY0QDY30",
         "SLACK_MESSAGE_URL": "https://slack.com/api/chat.postMessage",
-        "AUTH_ENABLED": "true"
       }
     }
   }

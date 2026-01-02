@@ -4,6 +4,7 @@ use worker::Env;
 #[derive(Clone)]
 pub struct Config {
     pub allowed_origins: Vec<String>,
+    pub internal_service_token: String,
     pub sendgrid: Option<SendgridConfig>,
     pub resend: Option<ResendConfig>,
     pub twilio: Option<TwilioConfig>,
@@ -13,6 +14,7 @@ pub struct Config {
 impl ConfigTrait<Config> for Config {
     fn from_env(env: &Env) -> Result<Self, SetupError> {
         let allowed_origins = Config::parse_csv(env, "ALLOWED_ORIGINS")?;
+        let internal_service_token = Config::parse(env, "INTERNAL_SERVICE_TOKEN")?;
         let sendgrid = SendgridConfig::from_env(env).ok();
         let resend = ResendConfig::from_env(env).ok();
         let twilio = TwilioConfig::from_env(env).ok();
@@ -20,6 +22,7 @@ impl ConfigTrait<Config> for Config {
 
         Ok(Self {
             allowed_origins,
+            internal_service_token,
             sendgrid,
             resend,
             twilio,
