@@ -1,0 +1,175 @@
+.header {
+    height: 60px;
+    background-color: var(--mantine-color-primary-3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .drawer {
+    background-color: light-dark(var(--mantine-color-primary-0), var(--mantine-color-primary-3));
+  }
+
+  .body {
+    display: flex;
+    height: 85svh;
+  }
+
+  .drawerLabel {
+    justify-content: center;
+    color: var(--mantine-color-white);
+    font-family: 'Greycliff CF', var(--mantine-font-family);
+    font-weight: 500;
+    font-size: var(--mantine-font-size-sm);
+    margin: auto;
+  }
+
+  .icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+
+  .title {
+    flex-shrink: 1;
+    color: var(--mantine-color-white);
+    font-family: 'Greycliff CF', var(--mantine-font-family);
+    font-weight: 700;
+  }
+
+  .titleRow {
+    height: 84px;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    margin-left: 30px;
+}
+
+  .inner {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+
+    @media (max-width: $mantine-breakpoint-sm) {
+      justify-content: flex-start;
+    }
+  }
+
+  .mobileImage {
+    @media (min-width: 48em) {
+      display: none;
+    }
+  }
+  
+  .desktopImage {
+    @media (max-width: 47.99em) {
+      display: none;
+    }
+  }
+  
+  .links {
+    padding-top: var(--mantine-spacing-lg);
+    height: 84px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .linksDrawer {
+    padding-top: var(--mantine-spacing-lg);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background-color: light-dark(var(--mantine-color-primary-0), var(--mantine-color-primary-3));
+  }
+
+  .menuSection {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: var(--mantine-spacing-sm);
+  }
+  
+  .mainLinks {
+    margin-right: calc(var(--mantie-spacing-sm) * -1);
+  }
+  
+  .mainLink {
+    border-radius: 20px;
+    font-size: var(--mantine-font-size-sm);
+    color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-white));
+    padding: 7px var(--mantine-spacing-sm);
+    font-weight: 600;
+    border: 2px solid transparent;
+    background-color: var(--mantine-color-primary-1);
+    transition:
+      border-color 200ms ease,
+      background-color 200ms ease,
+      color 200ms ease;
+
+    @mixin hover {
+      background-color: var(--mantine-color-primary-2);
+      color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-white));
+      text-decoration: none;
+    }
+
+    &[data-active] {
+      color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-white));
+      border-color: var(--mantine-color-primary-4);
+    }
+  }
+
+  .logoutLink {
+    border-radius: 20px;
+    font-size: var(--mantine-font-size-sm);
+    padding: 7px var(--mantine-spacing-sm);
+    font-weight: 600;
+    border: 2px solid transparent;
+    color: light-dark(var(--mantine-color-red-7), var(--mantine-color-red-0));
+    background-color: light-dark(var(--mantine-color-red-0), var(--mantine-color-red-9));
+    transition:
+      background-color 200ms ease,
+      color 200ms ease;
+
+    @mixin hover {
+      background-color: light-dark(var(--mantine-color-red-1), var(--mantine-color-red-8));
+      text-decoration: none;
+    }
+  }
+
+  .userButton {
+    padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+    padding-bottom: var(--mantine-spacing-md);
+    color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-white));
+    border-radius: var(--mantine-radius-lg);
+    transition: background-color 200ms ease;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .userButton:hover {
+    background-color: light-dark(var(--mantine-color-primary-1), var(--mantine-color-primary-4));
+  }
+
+  .userButtonChevron {
+    color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+    transition: transform 200ms ease;
+  }
+
+  .userButton:hover .userButtonChevron {
+    transform: translateX(2px);
+  }
+
+  .footer {
+    flex-shrink: 0;
+    border-top: 1px solid light-dark(var(--mantine-color-primary-1), var(--mantine-color-primary-7));
+    padding-top: var(--mantine-spacing-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--mantine-spacing-xs);
+  }
+  

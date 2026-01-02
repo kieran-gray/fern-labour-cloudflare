@@ -15,7 +15,7 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Group, Text, UnstyledButton, useMantineColorScheme } from '@mantine/core';
-import classes from './Header.module.css';
+import classes from './HeaderMenu.module.css';
 
 interface UserButtonProps extends React.ComponentPropsWithoutRef<'button'> {
   name: string;
@@ -37,7 +37,7 @@ export const UserButton = forwardRef<HTMLButtonElement, UserButtonProps>(
   )
 );
 
-export function MobileUserMenu() {
+export function HeaderMenu() {
   const { user } = useClerkUser();
   const { signOut, openUserProfile } = useClerk();
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ export function MobileUserMenu() {
   return (
     <div className={classes.linksDrawer}>
       <div className={classes.menuSection}>
-        <Group >
+        <Group>
           <Button
             key="theme"
             className={classes.mainLink}
