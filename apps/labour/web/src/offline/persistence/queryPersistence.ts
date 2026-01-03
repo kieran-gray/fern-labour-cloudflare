@@ -5,10 +5,6 @@ import {
   persistQueryClient,
 } from '@tanstack/react-query-persist-client';
 
-/**
- * IndexedDB-based persister for TanStack Query
- * Uses IndexedDB for larger storage capacity and better performance
- */
 class IndexedDBPersister {
   private dbName = 'FernLabourQueryCache';
   private storeName = 'queryCache';
@@ -115,9 +111,6 @@ export function createIDBPersister(key: string) {
   } satisfies Persister;
 }
 
-/**
- * Initialize query persistence for offline-first functionality
- */
 export async function initializeQueryPersistence(queryClient: QueryClient): Promise<void> {
   try {
     persistQueryClient({
@@ -135,9 +128,6 @@ export async function initializeQueryPersistence(queryClient: QueryClient): Prom
   }
 }
 
-/**
- * Clear all persisted query data
- */
 export async function clearQueryPersistence(): Promise<void> {
   const persister = new IndexedDBPersister();
 
@@ -148,9 +138,6 @@ export async function clearQueryPersistence(): Promise<void> {
   }
 }
 
-/**
- * Get cache statistics for monitoring
- */
 export async function getQueryCacheStats() {
   try {
     const estimate = await navigator.storage?.estimate?.();

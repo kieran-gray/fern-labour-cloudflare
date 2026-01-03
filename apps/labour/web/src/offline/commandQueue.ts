@@ -1,8 +1,3 @@
-/**
- * Simple command queue for offline support
- * Stores commands in IndexedDB and replays them when back online
- */
-
 const DB_NAME = 'FernLabourCommandQueue';
 const STORE_NAME = 'commands';
 const DB_VERSION = 1;

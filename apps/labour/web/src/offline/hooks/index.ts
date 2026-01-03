@@ -1,4 +1,3 @@
-// Offline functionality exports
 export { networkDetector, useNetworkState } from '../sync/networkDetector';
 export { clearQueryPersistence, getQueryCacheStats } from '../persistence/queryPersistence';
 export { syncManager, useSyncState } from '../syncManager';
@@ -18,6 +17,5 @@ export {
   generateContractionId,
 } from '../useOfflineContraction';
 
-// Export types for TypeScript support
 export type { NetworkState } from '../sync/networkDetector';
 export type { QueuedCommand } from '../commandQueue';

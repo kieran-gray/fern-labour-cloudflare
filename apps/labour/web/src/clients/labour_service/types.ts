@@ -509,15 +509,11 @@ export type User = {
   name?: string;
 };
 
-// Paginated Response
-
 export type PaginatedResponse<T> = {
   data: T[];
   next_cursor: string | null;
   has_more: boolean;
 };
-
-// Response types (you can extend these based on your API responses)
 
 export type ApiResponse<T = unknown> = {
   success: boolean;

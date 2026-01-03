@@ -1,8 +1,3 @@
-/**
- * Offline-aware contraction mutation hooks
- * Queues commands when offline and applies optimistic updates
- */
-
 import type { LabourServiceClient } from '@base/clients/labour_service';
 import { useWebSocket } from '@base/contexts/WebsocketContext';
 import { queryKeys } from '@base/hooks/queryKeys';
@@ -24,10 +19,6 @@ interface ContractionPage {
   next_cursor: string | null;
 }
 
-/**
- * Hook for starting a contraction with offline support
- * Generates a UUID v7 for the contraction that will be used for all subsequent operations
- */
 export function useStartContractionOffline(client: LabourServiceClient) {
   const queryClient = useQueryClient();
   const { isConnected } = useWebSocket();
@@ -54,14 +45,12 @@ export function useStartContractionOffline(client: LabourServiceClient) {
         },
       };
 
-      // If offline, queue the command
       if (!navigator.onLine) {
         await enqueueCommand(labourId, command);
         syncManager.refreshPendingCount();
         return { success: true, offline: true, contractionId };
       }
 
-      // Online - execute normally
       const response = await client.startContraction(labourId, startTime, contractionId);
       if (!response.success) {
         throw new Error(response.error || 'Failed to start contraction');
@@ -70,23 +59,20 @@ export function useStartContractionOffline(client: LabourServiceClient) {
     },
 
     onMutate: async ({ labourId, startTime, contractionId }) => {
-      // Cancel outgoing refetches
       await queryClient.cancelQueries({
         queryKey: queryKeys.contractions.infinite(labourId),
       });
 
-      // Snapshot previous value
       const previousData = queryClient.getQueryData<InfiniteData<ContractionPage>>(
         queryKeys.contractions.infinite(labourId)
       );
 
-      // Optimistically add the new contraction with the real UUID
       const optimisticContraction = {
         contraction_id: contractionId,
         labour_id: labourId,
         duration: {
           start_time: startTime.toISOString(),
-          end_time: startTime.toISOString(), // Active contraction
+          end_time: startTime.toISOString(),
         },
         intensity: null,
         notes: null,
@@ -117,7 +103,6 @@ export function useStartContractionOffline(client: LabourServiceClient) {
     },
 
     onError: (error: Error, variables, context) => {
-      // Rollback on error
       if (context?.previousData) {
         queryClient.setQueryData(
           queryKeys.contractions.infinite(variables.labourId),
@@ -132,14 +117,6 @@ export function useStartContractionOffline(client: LabourServiceClient) {
     },
 
     onSuccess: (result, variables) => {
-      if (result.offline) {
-        notifications.show({
-          ...Success,
-          title: 'Saved Offline',
-          message: 'Contraction will sync when back online',
-        });
-      }
-      // If websocket not connected, invalidate to get fresh data
       if (!isConnected && !result.offline) {
         queryClient.invalidateQueries({
           queryKey: queryKeys.contractions.infinite(variables.labourId),
@@ -149,16 +126,10 @@ export function useStartContractionOffline(client: LabourServiceClient) {
   });
 }
 
-/**
- * Generate a new contraction ID (UUID v7)
- */
 export function generateContractionId(): string {
   return uuidv7();
 }
 
-/**
- * Hook for ending a contraction with offline support
- */
 export function useEndContractionOffline(client: LabourServiceClient) {
   const queryClient = useQueryClient();
   const { isConnected } = useWebSocket();
@@ -210,7 +181,6 @@ export function useEndContractionOffline(client: LabourServiceClient) {
         queryKeys.contractions.infinite(labourId)
       );
 
-      // Find and update the contraction by ID
       queryClient.setQueryData<InfiniteData<ContractionPage>>(
         queryKeys.contractions.infinite(labourId),
         (old) => {
@@ -273,9 +243,6 @@ export function useEndContractionOffline(client: LabourServiceClient) {
   });
 }
 
-/**
- * Hook for updating a contraction with offline support
- */
 export function useUpdateContractionOffline(client: LabourServiceClient) {
   const queryClient = useQueryClient();
   const { isConnected } = useWebSocket();
@@ -392,9 +359,6 @@ export function useUpdateContractionOffline(client: LabourServiceClient) {
   });
 }
 
-/**
- * Hook for deleting a contraction with offline support
- */
 export function useDeleteContractionOffline(client: LabourServiceClient) {
   const queryClient = useQueryClient();
   const { isConnected } = useWebSocket();
