@@ -1,6 +1,6 @@
 import { ContractionReadModel, LabourReadModel } from '@base/clients/labour_service';
-import { Space, Tabs } from '@mantine/core';
-import { filterContractions, LabourStatistics } from './LabourStatistics';
+import { Loader, Space, Tabs, Text } from '@mantine/core';
+import { LabourStatisticsData, StatisticsTimeRange } from '../../../../hooks/useLabourStatistics';
 import { LabourStatisticsChart } from './LabourStatisticsChart';
 import { LabourStatisticsTable } from './LabourStatsticsTable';
 import classes from './LabourStatistics.module.css';
@@ -9,15 +9,22 @@ export const LabourStatisticsTabs = ({
   labour,
   contractions,
   statistics,
+  timeRange,
+  onTimeRangeChange,
+  isLoadingMore,
 }: {
   labour: LabourReadModel;
   contractions: ContractionReadModel[];
-  statistics: LabourStatistics;
+  statistics: LabourStatisticsData;
+  timeRange: StatisticsTimeRange;
+  onTimeRangeChange: (range: StatisticsTimeRange) => void;
+  isLoadingMore: boolean;
 }) => {
   return (
     <Tabs
       variant="pills"
-      defaultValue="all"
+      value={timeRange}
+      onChange={(value) => onTimeRangeChange(value as StatisticsTimeRange)}
       orientation="horizontal"
       classNames={{
         root: classes.labourStatsTabsRoot,
@@ -26,40 +33,43 @@ export const LabourStatisticsTabs = ({
       }}
     >
       <Tabs.List justify="space-between" style={{ width: '100%' }}>
-        {statistics.total && <Tabs.Tab value="all">All</Tabs.Tab>}
-        {statistics.last_60_mins && <Tabs.Tab value="60mins">Past 60 Mins</Tabs.Tab>}
-        {statistics.last_30_mins && <Tabs.Tab value="30mins">Past 30 Mins</Tabs.Tab>}
-        {statistics.total && (
-          <Tabs.Panel value="all">
-            <LabourStatisticsTable data={statistics.total} />
-            <Space h="lg" />
-            <LabourStatisticsChart
-              contractions={contractions}
-              endTime={labour.end_time ? new Date(labour.end_time) : undefined}
-            />
-          </Tabs.Panel>
-        )}
-        {statistics.last_60_mins && (
-          <Tabs.Panel value="60mins">
-            <LabourStatisticsTable data={statistics.last_60_mins} />
-            <Space h="lg" />
-            <LabourStatisticsChart
-              minutes={60}
-              contractions={filterContractions(contractions, 60)}
-            />
-          </Tabs.Panel>
-        )}
-        {statistics.last_30_mins && (
-          <Tabs.Panel value="30mins">
-            <LabourStatisticsTable data={statistics.last_30_mins} />
-            <Space h="lg" />
-            <LabourStatisticsChart
-              minutes={30}
-              contractions={filterContractions(contractions, 30)}
-            />
-          </Tabs.Panel>
-        )}
+        <Tabs.Tab value="all">All</Tabs.Tab>
+        <Tabs.Tab value="60mins">Past 60 Mins</Tabs.Tab>
+        <Tabs.Tab value="30mins">Past 30 Mins</Tabs.Tab>
       </Tabs.List>
+
+      <Space h="md" />
+
+      <LabourStatisticsTable data={statistics} />
+
+      <Space h="lg" />
+
+      <div style={{ position: 'relative' }}>
+        <LabourStatisticsChart
+          contractions={contractions}
+          minutes={timeRange === 'all' ? undefined : timeRange === '60mins' ? 60 : 30}
+          endTime={labour.end_time ? new Date(labour.end_time) : undefined}
+        />
+        {isLoadingMore && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(255,255,255,0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Loader size="sm" />
+            <Text size="xs">Loading history...</Text>
+          </div>
+        )}
+      </div>
     </Tabs>
   );
 };

@@ -152,7 +152,7 @@ export const MotherView = () => {
       case 'track':
         return <Contractions labour={labour} />;
       case 'stats':
-        return <LabourStatistics labour={labour} contractions={contractions} />;
+        return <LabourStatistics labour={labour} />;
       case 'updates':
         return <LabourUpdates labour={labour} />;
       case 'share':

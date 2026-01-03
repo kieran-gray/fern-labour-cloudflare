@@ -92,6 +92,7 @@ export default defineConfig({
       '@lib': '/src/lib',
       '@clients': '/src/clients',
       '@home': '/src/pages/Home',
+      '@hooks': '/src/hooks',
     },
   },
   build: {
