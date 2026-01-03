@@ -1,8 +1,3 @@
-/**
- * Sync Manager
- * Replays queued commands when back online
- */
-
 import { useEffect, useState } from 'react';
 import type { LabourServiceClient } from '@base/clients/labour_service';
 import { getPendingCommands, getPendingCount, removeCommand } from './commandQueue';
@@ -23,43 +18,35 @@ class SyncManager {
   private isSyncing = false;
   private listeners = new Set<SyncListener>();
   private state: SyncState = { status: 'idle', pendingCount: 0 };
+  private initialized = false;
 
-  /**
-   * Initialize the sync manager with a client
-   * Must be called before sync can happen
-   */
   initialize(client: LabourServiceClient) {
     this.client = client;
 
-    // Listen for network changes
+    if (this.initialized) {
+      return;
+    }
+    this.initialized = true;
+
     networkDetector.subscribe((networkState) => {
       if (networkState.isOnline && !this.isSyncing) {
-        // Small delay to let connection stabilize
         setTimeout(() => this.sync(), 1000);
       }
     });
 
-    // Initial sync if online
     if (navigator.onLine) {
       this.sync();
     }
 
-    // Update pending count
     this.updatePendingCount();
   }
 
-  /**
-   * Subscribe to sync state changes
-   */
   subscribe(listener: SyncListener): () => void {
     this.listeners.add(listener);
     listener(this.state);
     return () => this.listeners.delete(listener);
   }
 
-  /**
-   * Trigger a sync attempt
-   */
   async sync(): Promise<void> {
     if (!this.client || this.isSyncing || !navigator.onLine) {
       return;
@@ -73,24 +60,20 @@ class SyncManager {
 
       for (const queuedCommand of commands) {
         if (!navigator.onLine) {
-          break; // Stop if we go offline during sync
+          break;
         }
 
         try {
-          // Send the command directly to the API
-          const response = await this.executeCommand(queuedCommand.command);
+          const response = await this.client.executeRawCommand(queuedCommand.command);
 
           if (response.success) {
             await removeCommand(queuedCommand.id);
           } else {
-            // Command failed - could be a conflict or validation error
-            // For now, remove it anyway to prevent stuck queue
-            // In production, you might want to handle conflicts differently
             console.warn('[SyncManager] Command failed:', response.error);
             await removeCommand(queuedCommand.id);
           }
         } catch (error) {
-          // Network error - stop syncing
+          // Skip commands on error. Should be fine.
           console.error('[SyncManager] Sync error:', error);
           this.updateState({
             status: 'error',
@@ -106,53 +89,6 @@ class SyncManager {
       }
     } finally {
       this.isSyncing = false;
-    }
-  }
-
-  /**
-   * Execute a command against the API
-   */
-  private async executeCommand(command: unknown): Promise<{ success: boolean; error?: string }> {
-    if (!this.client) {
-      return { success: false, error: 'Client not initialized' };
-    }
-
-    try {
-      // Use fetch directly since we need to bypass websocket for queued commands
-      // Access private config via bracket notation
-      const clientConfig = (
-        this.client as unknown as {
-          config: { getAccessToken?: () => Promise<string | null>; baseUrl?: string };
-        }
-      ).config;
-      const token = clientConfig?.getAccessToken ? await clientConfig.getAccessToken() : null;
-
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-
-      const baseUrl = clientConfig?.baseUrl || '';
-      const response = await fetch(`${baseUrl}/api/v1/command`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(command),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        return { success: false, error: errorText };
-      }
-
-      return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
     }
   }
 
@@ -176,28 +112,18 @@ class SyncManager {
     });
   }
 
-  /**
-   * Get current sync state
-   */
   getState(): SyncState {
     return this.state;
   }
 
-  /**
-   * Force refresh pending count
-   */
   async refreshPendingCount(): Promise<number> {
     await this.updatePendingCount();
     return this.state.pendingCount;
   }
 }
 
-// Singleton instance
 export const syncManager = new SyncManager();
 
-/**
- * React hook for sync state
- */
 export function useSyncState(): SyncState {
   const [state, setState] = useState<SyncState>(syncManager.getState());
 

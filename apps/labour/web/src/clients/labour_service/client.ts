@@ -127,6 +127,10 @@ export class LabourServiceClient {
     }
   }
 
+  async executeRawCommand(command: unknown): Promise<ApiResponse<void>> {
+    return this.sendCommand(command);
+  }
+
   private async sendPlanLabour(dto: {
     first_labour: boolean;
     due_date: string;

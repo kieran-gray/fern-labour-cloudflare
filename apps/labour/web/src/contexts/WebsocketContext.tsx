@@ -36,6 +36,13 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
     currentLabourIdRef.current = labourId;
 
     const connect = async () => {
+      if (
+        wsRef.current?.readyState === WebSocket.OPEN ||
+        wsRef.current?.readyState === WebSocket.CONNECTING
+      ) {
+        return;
+      }
+
       try {
         const token = await getToken();
         const wsUrl = import.meta.env.VITE_LABOUR_SERVICE_WEBSOCKET || '';
@@ -96,9 +103,17 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
+    const handleOnline = () => {
+      console.log('[WebSocket] Network online, attempting reconnect');
+      clearTimeout(reconnectTimeoutRef.current);
+      connect();
+    };
+
+    window.addEventListener('online', handleOnline);
     connect();
 
     return () => {
+      window.removeEventListener('online', handleOnline);
       clearTimeout(reconnectTimeoutRef.current);
       wsRef.current?.close();
     };

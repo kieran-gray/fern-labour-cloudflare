@@ -1,15 +1,3 @@
-/**
- * Infinite Query Hooks for Paginated Data
- *
- * These hooks use useInfiniteQuery for efficient pagination of append-only streams
- * like contractions and labour updates. Key features:
- *
- * - Single cache entry per labour (no cursor in query key)
- * - Automatic page accumulation managed by React Query
- * - Helper functions for WebSocket cache updates
- * - Connection-aware polling fallback
- */
-
 import type {
   ContractionReadModel,
   Cursor,
@@ -22,11 +10,9 @@ import { useAuth } from '@clerk/clerk-react';
 import { InfiniteData, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from './queryKeys';
 
-// Constants
 const DEFAULT_PAGE_SIZE = 20;
-const POLLING_INTERVAL_WHEN_DISCONNECTED = 30_000; // 30 seconds
+const POLLING_INTERVAL_WHEN_DISCONNECTED = 30_000;
 
-// Helper to decode cursor string to Cursor object
 function decodeCursor(cursorString: string): Cursor {
   try {
     const decoded = atob(cursorString);
@@ -37,14 +23,6 @@ function decodeCursor(cursorString: string): Cursor {
   }
 }
 
-/**
- * Hook to get paginated contractions using infinite query
- *
- * Features:
- * - Single cache entry for all pages
- * - Automatic polling fallback when WebSocket disconnected
- * - Ready for WebSocket cache updates via setQueryData
- */
 export function useContractionsInfinite(
   client: LabourServiceClient,
   labourId: string | null,
@@ -71,15 +49,12 @@ export function useContractionsInfinite(
     },
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage?.next_cursor ?? undefined,
-    enabled: !!labourId && !userId,
+    enabled: !!labourId && !!userId,
     refetchInterval: isConnected ? false : POLLING_INTERVAL_WHEN_DISCONNECTED,
     gcTime: 10 * 60 * 1000,
   });
 }
 
-/**
- * Hook to get paginated labour updates using infinite query
- */
 export function useLabourUpdatesInfinite(
   client: LabourServiceClient,
   labourId: string | null,
@@ -106,23 +81,15 @@ export function useLabourUpdatesInfinite(
     },
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage?.next_cursor ?? undefined,
-    enabled: !!labourId && !userId,
+    enabled: !!labourId && !!userId,
     refetchInterval: isConnected ? false : POLLING_INTERVAL_WHEN_DISCONNECTED,
     gcTime: 10 * 60 * 1000,
   });
 }
 
-// =============================================================================
-// Cache Update Helpers for WebSocket Events
-// =============================================================================
-
 type InfiniteContractionData = InfiniteData<PaginatedResponse<ContractionReadModel>, unknown>;
 type InfiniteLabourUpdateData = InfiniteData<PaginatedResponse<LabourUpdateReadModel>, unknown>;
 
-/**
- * Prepend a new item to the first page of an infinite query
- * Used when WebSocket notifies of a new item creation
- */
 export function prependToInfiniteQuery<
   T extends { contraction_id?: string; labour_update_id?: string },
 >(
@@ -136,7 +103,6 @@ export function prependToInfiniteQuery<
       return old;
     }
 
-    // Check if item already exists to prevent duplicates
     const exists = old.pages.some((page) =>
       page.data.some((item) => item[idField] === newItem[idField])
     );
@@ -144,7 +110,6 @@ export function prependToInfiniteQuery<
       return old;
     }
 
-    // Prepend to first page (newest items)
     const [firstPage, ...rest] = old.pages;
     return {
       ...old,
@@ -159,10 +124,6 @@ export function prependToInfiniteQuery<
   });
 }
 
-/**
- * Update an existing item in the infinite query cache
- * Used when WebSocket notifies of an item update
- */
 export function updateInfiniteQueryItem<
   T extends { contraction_id?: string; labour_update_id?: string },
 >(
@@ -187,10 +148,6 @@ export function updateInfiniteQueryItem<
   });
 }
 
-/**
- * Remove an item from the infinite query cache
- * Used when WebSocket notifies of an item deletion
- */
 export function removeFromInfiniteQuery<
   T extends { contraction_id?: string; labour_update_id?: string },
 >(
@@ -214,14 +171,6 @@ export function removeFromInfiniteQuery<
   });
 }
 
-// =============================================================================
-// Convenience Helpers for Flattening and Deduplicating
-// =============================================================================
-
-/**
- * Flatten infinite query pages and deduplicate by ID
- * Use this in components to get a flat array of items
- */
 export function flattenContractions(
   data: InfiniteContractionData | undefined
 ): ContractionReadModel[] {
@@ -249,9 +198,6 @@ export function flattenContractions(
   );
 }
 
-/**
- * Flatten infinite query pages and deduplicate labour updates
- */
 export function flattenLabourUpdates(
   data: InfiniteLabourUpdateData | undefined
 ): LabourUpdateReadModel[] {

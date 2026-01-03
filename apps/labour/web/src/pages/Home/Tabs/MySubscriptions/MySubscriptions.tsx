@@ -6,7 +6,7 @@ export function ManageSubscriptions() {
   return (
     <CardContentBottom
       title="Manage your subscriptions"
-      description="Here, you can view and manage the labours that you are subscribed to. Update your contact methods for each individually."
+      description="Here, you can view and manage the labours that you are subscribed to."
       image={image}
       mobileImage={image}
     >

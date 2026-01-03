@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { ContractionReadModel, LabourUpdateReadModel } from '@base/clients/labour_service';
 import { useQueryClient } from '@tanstack/react-query';
 import { useWebSocket } from '../contexts/WebsocketContext';
+import { useSyncState } from '../offline/syncManager';
 import { queryKeys } from './queryKeys';
 import {
   prependToInfiniteQuery,
@@ -24,35 +25,73 @@ type LabourEvent = {
   data: LabourEventData;
 };
 
-function handleEvent(queryClient: ReturnType<typeof useQueryClient>, event: LabourEvent) {
+function invalidateOrCollect(
+  queryClient: ReturnType<typeof useQueryClient>,
+  queryKey: readonly unknown[],
+  pendingSet?: Set<string>
+) {
+  if (pendingSet) {
+    pendingSet.add(JSON.stringify(queryKey));
+  } else {
+    queryClient.invalidateQueries({ queryKey });
+  }
+}
+
+function processEvent(
+  queryClient: ReturnType<typeof useQueryClient>,
+  event: LabourEvent,
+  pendingInvalidations?: Set<string>
+) {
   const { type, data } = event;
 
   switch (type) {
     case 'LabourPlanned':
-      queryClient.invalidateQueries({ queryKey: queryKeys.labour.detail(data.labour_id!) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.labour.active(data.labour_id!) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.labour.lists() });
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.labour.detail(data.labour_id!),
+        pendingInvalidations
+      );
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.labour.active(data.labour_id!),
+        pendingInvalidations
+      );
+      invalidateOrCollect(queryClient, queryKeys.labour.lists(), pendingInvalidations);
       break;
 
     case 'LabourPlanUpdated':
-      queryClient.invalidateQueries({ queryKey: queryKeys.labour.detail(data.labour_id!) });
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.labour.detail(data.labour_id!),
+        pendingInvalidations
+      );
       break;
 
     case 'LabourBegun':
-      queryClient.invalidateQueries({ queryKey: queryKeys.labour.detail(data.labour_id!) });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.labourUpdates.infinite(data.labour_id!),
-      });
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.labour.detail(data.labour_id!),
+        pendingInvalidations
+      );
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.labourUpdates.infinite(data.labour_id!),
+        pendingInvalidations
+      );
       break;
 
     case 'LabourCompleted':
-      queryClient.invalidateQueries({ queryKey: queryKeys.labour.detail(data.labour_id!) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.labour.lists() });
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.labour.detail(data.labour_id!),
+        pendingInvalidations
+      );
+      invalidateOrCollect(queryClient, queryKeys.labour.lists(), pendingInvalidations);
       break;
 
     case 'LabourDeleted':
       queryClient.removeQueries({ queryKey: queryKeys.labour.detail(data.labour_id!) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.labour.lists() });
+      invalidateOrCollect(queryClient, queryKeys.labour.lists(), pendingInvalidations);
       break;
 
     case 'LabourInviteSent':
@@ -67,11 +106,17 @@ function handleEvent(queryClient: ReturnType<typeof useQueryClient>, event: Labo
           'contraction_id'
         );
       } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.contractions.infinite(data.labour_id!),
-        });
+        invalidateOrCollect(
+          queryClient,
+          queryKeys.contractions.infinite(data.labour_id!),
+          pendingInvalidations
+        );
       }
-      queryClient.invalidateQueries({ queryKey: queryKeys.labour.detail(data.labour_id!) });
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.labour.detail(data.labour_id!),
+        pendingInvalidations
+      );
       break;
 
     case 'ContractionEnded':
@@ -84,9 +129,11 @@ function handleEvent(queryClient: ReturnType<typeof useQueryClient>, event: Labo
           'contraction_id'
         );
       } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.contractions.infinite(data.labour_id!),
-        });
+        invalidateOrCollect(
+          queryClient,
+          queryKeys.contractions.infinite(data.labour_id!),
+          pendingInvalidations
+        );
       }
       break;
 
@@ -100,9 +147,11 @@ function handleEvent(queryClient: ReturnType<typeof useQueryClient>, event: Labo
           'contraction_id'
         );
       } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.contractions.infinite(data.labour_id!),
-        });
+        invalidateOrCollect(
+          queryClient,
+          queryKeys.contractions.infinite(data.labour_id!),
+          pendingInvalidations
+        );
       }
       break;
 
@@ -124,9 +173,11 @@ function handleEvent(queryClient: ReturnType<typeof useQueryClient>, event: Labo
           'labour_update_id'
         );
       } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.labourUpdates.infinite(data.labour_id!),
-        });
+        invalidateOrCollect(
+          queryClient,
+          queryKeys.labourUpdates.infinite(data.labour_id!),
+          pendingInvalidations
+        );
       }
       break;
 
@@ -140,9 +191,11 @@ function handleEvent(queryClient: ReturnType<typeof useQueryClient>, event: Labo
           'labour_update_id'
         );
       } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.labourUpdates.infinite(data.labour_id!),
-        });
+        invalidateOrCollect(
+          queryClient,
+          queryKeys.labourUpdates.infinite(data.labour_id!),
+          pendingInvalidations
+        );
       }
       break;
 
@@ -156,9 +209,11 @@ function handleEvent(queryClient: ReturnType<typeof useQueryClient>, event: Labo
           'labour_update_id'
         );
       } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.labourUpdates.infinite(data.labour_id!),
-        });
+        invalidateOrCollect(
+          queryClient,
+          queryKeys.labourUpdates.infinite(data.labour_id!),
+          pendingInvalidations
+        );
       }
       break;
 
@@ -177,27 +232,39 @@ function handleEvent(queryClient: ReturnType<typeof useQueryClient>, event: Labo
     case 'SubscriberBlocked':
     case 'SubscriberUnblocked':
     case 'SubscriberRoleUpdated':
-      queryClient.invalidateQueries({ queryKey: queryKeys.subscriptions.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.listByLabour(data.labour_id!) });
+      invalidateOrCollect(queryClient, queryKeys.subscriptions.all, pendingInvalidations);
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.users.listByLabour(data.labour_id!),
+        pendingInvalidations
+      );
       break;
 
     case 'SubscriberNotificationMethodsUpdated':
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.subscriptions.listByLabour(data.labour_id!),
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['subscriptions', 'userSubscription', data.labour_id],
-      });
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.subscriptions.listByLabour(data.labour_id!),
+        pendingInvalidations
+      );
+      invalidateOrCollect(
+        queryClient,
+        ['subscriptions', 'userSubscription', data.labour_id],
+        pendingInvalidations
+      );
       break;
 
     case 'SubscriberApproved':
     case 'SubscriberRemoved':
-      queryClient.invalidateQueries({ queryKey: queryKeys.subscriptions.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.listByLabour(data.labour_id!) });
+      invalidateOrCollect(queryClient, queryKeys.subscriptions.all, pendingInvalidations);
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.users.listByLabour(data.labour_id!),
+        pendingInvalidations
+      );
       break;
 
     case 'SubscriptionTokenSet':
-      queryClient.invalidateQueries({ queryKey: queryKeys.subscriptionToken.all });
+      invalidateOrCollect(queryClient, queryKeys.subscriptionToken.all, pendingInvalidations);
       break;
 
     default:
@@ -205,17 +272,53 @@ function handleEvent(queryClient: ReturnType<typeof useQueryClient>, event: Labo
   }
 }
 
+function handleEvent(queryClient: ReturnType<typeof useQueryClient>, event: LabourEvent) {
+  processEvent(queryClient, event);
+}
+
+function handleEventWithBatching(
+  queryClient: ReturnType<typeof useQueryClient>,
+  event: LabourEvent,
+  pendingInvalidations: Set<string>
+) {
+  processEvent(queryClient, event, pendingInvalidations);
+}
+
 export function useWebSocketInvalidation() {
   const queryClient = useQueryClient();
   const { subscribe } = useWebSocket();
+  const { status } = useSyncState();
+  const isSyncing = status === 'syncing';
+  const pendingInvalidationsRef = useRef<Set<string>>(new Set());
+  const wasSyncingRef = useRef(false);
 
   useEffect(() => {
     const unsubscribe = subscribe((message) => {
       const parsed = typeof message === 'string' ? JSON.parse(message) : message;
       const event = parsed as LabourEvent;
-      handleEvent(queryClient, event);
+
+      if (isSyncing) {
+        handleEventWithBatching(queryClient, event, pendingInvalidationsRef.current);
+      } else {
+        handleEvent(queryClient, event);
+      }
     });
 
     return unsubscribe;
-  }, [subscribe, queryClient]);
+  }, [subscribe, queryClient, isSyncing]);
+
+  useEffect(() => {
+    // Sync complete, now invalidate queries.
+    // Prevents UI flashing while commands catch up.
+    if (wasSyncingRef.current && !isSyncing) {
+      if (pendingInvalidationsRef.current.size > 0) {
+        for (const keyJson of pendingInvalidationsRef.current) {
+          const queryKey = JSON.parse(keyJson);
+          queryClient.invalidateQueries({ queryKey });
+        }
+        pendingInvalidationsRef.current.clear();
+      }
+    }
+    wasSyncingRef.current = isSyncing;
+  }, [isSyncing, queryClient]);
 }

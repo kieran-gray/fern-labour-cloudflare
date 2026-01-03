@@ -91,16 +91,9 @@ export default function ContactMethods({ subscription }: { subscription: Subscri
                 </div>
               )}
               {subscription.contact_methods.length > 0 && (
-                <>
-                  <Text
-                    c="light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2))"
-                    mt="md"
-                    mb="md"
-                  >
-                    Your chosen contact methods:
-                  </Text>
-                  <div className={classes.infoRow}>{selectedContactMethods}</div>
-                </>
+                <div className={classes.infoRow} style={{ marginTop: '10px' }}>
+                  {selectedContactMethods}
+                </div>
               )}
             </div>
           </div>
