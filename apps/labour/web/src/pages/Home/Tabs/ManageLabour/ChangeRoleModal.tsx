@@ -57,7 +57,7 @@ export function ChangeRoleModal({
               </div>
             }
             description={
-              <Text size="sm" c="dimmed">
+              <Text size="sm" className={baseClasses.description}>
                 Can send updates, track contractions, and view statistics
               </Text>
             }
@@ -71,7 +71,7 @@ export function ChangeRoleModal({
               </div>
             }
             description={
-              <Text size="sm" c="dimmed">
+              <Text size="sm" className={baseClasses.description}>
                 Can view updates and statistics
               </Text>
             }
@@ -85,7 +85,7 @@ export function ChangeRoleModal({
               </div>
             }
             description={
-              <Text size="sm" c="dimmed">
+              <Text size="sm" className={baseClasses.description}>
                 Can view updates
               </Text>
             }

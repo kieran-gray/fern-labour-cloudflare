@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
-import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
-import { useApiAuth } from '@base/hooks/useApiAuth';
 import { useSubmitContactForm } from '@base/hooks/useContactData';
+import { useUser } from '@clerk/clerk-react';
 import type { CreateContactMessageRequest } from '@clients/contact_service';
 import { validateMessage } from '@lib';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -34,7 +32,7 @@ const categories = [
 
 export function ContactUs() {
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useApiAuth();
+  const { user } = useUser();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [status, setStatus] = useState({ type: '', message: '' });
   const [rating, setRating] = useState(5);
@@ -57,8 +55,8 @@ export function ContactUs() {
     }
 
     const requestBody: CreateContactMessageRequest = {
-      email: `${user?.email}`,
-      name: `${user?.given_name} ${user?.family_name}`,
+      email: `${user?.primaryEmailAddress?.emailAddress}`,
+      name: `${user?.firstName} ${user?.lastName}`,
       message: values.message,
       token: turnstileToken!,
       category: values.category,
@@ -99,8 +97,12 @@ export function ContactUs() {
         <div className={baseClasses.inner}>
           <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={50}>
             <div>
-              <ResponsiveTitle title={title} />
-              <ResponsiveDescription description={description} marginTop={10} />
+              <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+                {title}
+              </Title>
+              <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description} mt={10}>
+                {description}
+              </Text>
               <Space h="lg" />
               <ContactIconsList />
             </div>

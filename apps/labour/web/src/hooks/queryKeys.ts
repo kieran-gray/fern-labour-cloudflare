@@ -67,9 +67,3 @@ export const queryKeys = {
     listByLabour: (labourId: string) => [...queryKeys.users.lists(), labourId] as const,
   },
 } as const;
-
-export type QueryKeys = typeof queryKeys;
-export type LabourKeys = typeof queryKeys.labour;
-export type ContractionKeys = typeof queryKeys.contractions;
-export type LabourUpdateKeys = typeof queryKeys.labourUpdates;
-export type SubscriptionKeys = typeof queryKeys.subscriptions;

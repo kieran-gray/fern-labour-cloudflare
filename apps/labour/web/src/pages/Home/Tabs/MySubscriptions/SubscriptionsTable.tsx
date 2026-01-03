@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { SubscriptionStatusReadModel } from '@base/clients/labour_service/types';
-import { ImportantText } from '@base/components/Text/ImportantText';
 import { useLabourSession } from '@base/contexts';
 import { useLabourClient } from '@base/hooks';
 import { useUserSubscribedLabours, useUserSubscriptions } from '@base/hooks/useLabourData';
@@ -9,6 +8,7 @@ import { IconArrowRight, IconX } from '@tabler/icons-react';
 import { Avatar, Button, Card, Group, Stack, Text } from '@mantine/core';
 import { ManageSubscriptionMenu } from './SubscriptionMenu';
 import classes from './SubscriptionsTable.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export function SubscriptionsTable() {
   const { subscription, selectSubscription, clearSubscription } = useLabourSession();
@@ -28,7 +28,11 @@ export function SubscriptionsTable() {
   }
 
   if (isError) {
-    return <ImportantText message={error.message} />;
+    return (
+      <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+        {error.message}
+      </Text>
+    );
   }
 
   const toggleSubscription = async (sub: SubscriptionStatusReadModel) => {
@@ -50,7 +54,11 @@ export function SubscriptionsTable() {
   const subscriptions = data.filter((sub) => sub.status === 'SUBSCRIBED');
 
   if (subscriptions.length === 0) {
-    return <ImportantText message="You don't have any subscriptions yet." />;
+    return (
+      <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+        You don't have any subscriptions yet.
+      </Text>
+    );
   }
 
   return (

@@ -1,12 +1,9 @@
 import { useEffect } from 'react';
 import { ContractionReadModel, LabourReadModel } from '@base/clients/labour_service';
-import { ImportantText } from '@base/components/Text/ImportantText';
-import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
-import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import { useLabourClient } from '@base/hooks';
 import { flattenContractions, useContractionsInfinite } from '@base/hooks/useInfiniteQueries';
 import { formatDurationHuman, formatTimeSeconds, pluraliseName } from '@lib';
-import { Image, Space, Text } from '@mantine/core';
+import { Image, Space, Text, Title } from '@mantine/core';
 import { LabourStatisticsTabs } from './LabourStatisticsTabs';
 import image from './statistics.svg';
 import classes from './LabourStatistics.module.css';
@@ -206,11 +203,19 @@ export const LabourStatistics = ({
       {renderTimingInfo()}
       <Space h="sm" />
       {isLoadingMore && (
-        <Text size="sm" c="dimmed" ta="center" mb="sm">
+        <Text size="sm" className={baseClasses.description} ta="center" mb="sm">
           Loading all contractions...
         </Text>
       )}
-      {!labourStatistics.total && !isLoadingMore && <ImportantText message={emptyStateMessage} />}
+      {!labourStatistics.total && !isLoadingMore && (
+        <Text
+          fz={{ base: 'sm', xs: 'md' }}
+          className={baseClasses.importantText}
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          {emptyStateMessage}
+        </Text>
+      )}
       {labourStatistics.total && (
         <LabourStatisticsTabs
           labour={labour}
@@ -240,8 +245,12 @@ export const LabourStatistics = ({
       <div className={baseClasses.body}>
         <div className={baseClasses.inner}>
           <div className={classes.content}>
-            <ResponsiveTitle title={title} />
-            <ResponsiveDescription description={description} marginTop={10} />
+            <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+              {title}
+            </Title>
+            <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description} mt={10}>
+              {description}
+            </Text>
             <div className={baseClasses.imageFlexRow}>
               <Image src={image} className={baseClasses.smallImage} />
             </div>

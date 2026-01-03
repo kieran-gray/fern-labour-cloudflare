@@ -1,83 +1,3 @@
-.header {
-    height: 60px;
-    background-color: var(--mantine-color-primary-3);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .drawer {
-    background-color: light-dark(var(--mantine-color-primary-0), var(--mantine-color-primary-3));
-  }
-
-  .body {
-    display: flex;
-    height: 85svh;
-  }
-
-  .drawerLabel {
-    justify-content: center;
-    color: var(--mantine-color-white);
-    font-family: 'Greycliff CF', var(--mantine-font-family);
-    font-weight: 500;
-    font-size: var(--mantine-font-size-sm);
-    margin: auto;
-  }
-
-  .icon {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-  }
-
-  .title {
-    flex-shrink: 1;
-    color: var(--mantine-color-white);
-    font-family: 'Greycliff CF', var(--mantine-font-family);
-    font-weight: 700;
-  }
-
-  .titleRow {
-    height: 84px;
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    cursor: pointer;
-    margin-left: 30px;
-}
-
-  .inner {
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    
-
-    @media (max-width: $mantine-breakpoint-sm) {
-      justify-content: flex-start;
-    }
-  }
-
-  .mobileImage {
-    @media (min-width: 48em) {
-      display: none;
-    }
-  }
-  
-  .desktopImage {
-    @media (max-width: 47.99em) {
-      display: none;
-    }
-  }
-  
-  .links {
-    padding-top: var(--mantine-spacing-lg);
-    height: 84px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
   .linksDrawer {
     padding-top: var(--mantine-spacing-lg);
     display: flex;
@@ -90,10 +10,6 @@
     flex: 1;
     overflow-y: auto;
     margin-bottom: var(--mantine-spacing-sm);
-  }
-  
-  .mainLinks {
-    margin-right: calc(var(--mantie-spacing-sm) * -1);
   }
   
   .mainLink {

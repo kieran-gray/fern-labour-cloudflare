@@ -1,4 +1,3 @@
-import { ImportantText } from '@base/components/Text/ImportantText';
 import { giftAds } from '@base/config/giftAds';
 import { Card } from '@components/Cards/Card';
 import { Badge, Box, Button, Flex, Image, Space, Text } from '@mantine/core';
@@ -10,6 +9,7 @@ import pure_earth_collection_main from './ads/pureearthcollection/main.jpg';
 import thortful_main from './ads/thortful/Thortful_cover_photo.webp';
 import zello_main from './ads/zello/main.jpg';
 import image from './Gifts.svg';
+import baseClasses from '@styles/base.module.css';
 
 const adImages: Record<string, { mobile: string; desktop: string }> = {
   my1styears: { mobile: my1styears_main, desktop: my1styears_desktop },
@@ -34,7 +34,10 @@ export default function Gifts({ birthingPersonName: motherName }: { birthingPers
         image={{ src: image, width: 300, height: 356 }}
         mobileImage={{ src: image, width: 300, height: 250 }}
         footer={
-          <ImportantText message="Some of our links are affiliate links, which help support the app at no extra cost to you." />
+          <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+            Some of our links are affiliate links, which help support the app at no extra cost to
+            you.
+          </Text>
         }
       />
       {giftAds.map((ad, index) => {

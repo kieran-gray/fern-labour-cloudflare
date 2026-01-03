@@ -1,12 +1,10 @@
 import { LabourReadModel } from '@base/clients/labour_service';
-import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
-import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import { AppMode, useLabourSession } from '@base/contexts';
 import { useLabourClient, usePlanLabour, useUpdateLabourPlan } from '@base/hooks';
 import { validateLabourName } from '@lib';
 import { IconArrowRight, IconCalendar, IconPencil, IconUpload } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Group, Image, Radio, TextInput } from '@mantine/core';
+import { Button, Group, Image, Radio, Text, TextInput, Title } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import image from './plan.svg';
@@ -81,8 +79,12 @@ export default function Plan({ labour }: { labour: LabourReadModel | undefined }
     <form onSubmit={form.onSubmit((values) => handlePlanLabour(values))}>
       <div className={classes.inner} style={{ padding: 0, marginBottom: '25px' }}>
         <div className={classes.content}>
-          <ResponsiveTitle title={title} />
-          <ResponsiveDescription description={description} marginTop={10} />
+          <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+            {title}
+          </Title>
+          <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description} mt={10}>
+            {description}
+          </Text>
           <div className={classes.imageFlexRow}>
             <Image className={classes.smallImage} src={image} />
           </div>

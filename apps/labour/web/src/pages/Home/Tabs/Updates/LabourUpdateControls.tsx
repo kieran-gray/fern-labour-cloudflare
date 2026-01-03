@@ -60,7 +60,7 @@ export function LabourUpdateControls() {
     return (
       <Group justify="center" gap="xs" py="xs">
         <IconWifiOff size={18} color="var(--mantine-color-red-5)" />
-        <Text size="sm" c="dimmed">
+        <Text size="sm" className={baseClasses.description}>
           <Text span fw={500} c="red.6">
             Offline
           </Text>{' '}
