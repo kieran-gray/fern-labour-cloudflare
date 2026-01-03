@@ -24,7 +24,7 @@ import {
 import { useSearchParams } from 'react-router-dom';
 import { Space } from '@mantine/core';
 import { CompletedLabourCard } from '../CompletedLabour/Page';
-import { ManageLabour } from './Tabs/ManageLabour/Manage';
+import { LabourDetails } from './Tabs/ManageLabour/Manage';
 import Plan from './Tabs/ManageLabour/Plan';
 import { SubscribersContainer } from './Tabs/ManageLabour/SubscribersContainer';
 import { InviteByEmail } from './Tabs/Share/InviteByEmail';
@@ -144,7 +144,7 @@ export const MotherView = () => {
       case 'details':
         return (
           <>
-            <ManageLabour activeContraction={activeContraction} labour={labour} />
+            <LabourDetails activeContraction={activeContraction} labour={labour} />
             <Space h="xl" />
             <SubscribersContainer />
           </>

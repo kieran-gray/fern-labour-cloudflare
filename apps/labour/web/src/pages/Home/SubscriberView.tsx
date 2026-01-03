@@ -33,7 +33,7 @@ import { ShareFernLabour } from './Tabs/MySubscriptions/ShareFernLabour';
 import SubscriptionRequestedModal from './Tabs/MySubscriptions/SubscriptionRequestedModal';
 import { LabourStatistics } from './Tabs/Statistics/LabourStatistics';
 import ContactMethods from './Tabs/SubscriptionDetails/ContactMethods';
-import LabourDetailsView from './Tabs/SubscriptionDetails/LabourDetails';
+import { SubscriberLabourDetails } from './Tabs/SubscriptionDetails/LabourDetails';
 import { ContractionControls } from './Tabs/Track/ContractionControls';
 import { Contractions } from './Tabs/Track/Contractions';
 import { LabourUpdateControls } from './Tabs/Updates/LabourUpdateControls';
@@ -201,7 +201,7 @@ export const SubscriberView = () => {
         }
         return (
           <>
-            <LabourDetailsView labour={labour} birthingPersonName={pluralisedMotherName} />
+            <SubscriberLabourDetails labour={labour} motherName={pluralisedMotherName} />
             {labour.end_time == null && subscriptionData && (
               <>
                 <Space h="xl" />

@@ -22,7 +22,7 @@ import { EditLabourModal } from './EditLabourModal';
 import classes from './Manage.module.css';
 import baseClasses from '@styles/base.module.css';
 
-export function ManageLabour({
+export function LabourDetails({
   activeContraction,
   labour,
 }: {
@@ -51,6 +51,11 @@ export function ManageLabour({
       ? 'Not in labour'
       : `In ${labour.current_phase} labour`;
 
+  const title = labour.labour_name || 'Your Labour';
+  const subtitle = isCompleted
+    ? "Welcome back! You're viewing your completed labour journey."
+    : 'Manage your labour details';
+
   const handleCompleteLabour = () => {
     setIsCompleteModalOpen(false);
     completeLabourMutation.mutate(
@@ -75,10 +80,10 @@ export function ManageLabour({
           <Group justify="space-between" align="flex-start">
             <div>
               <Title order={2} className={classes.title}>
-                {labour.labour_name || 'Your Labour'}
+                {title}
               </Title>
               <Text size="sm" className={baseClasses.description} mt={4}>
-                {isCompleted ? 'Your completed labour journey' : 'Manage your labour details'}
+                {subtitle}
               </Text>
             </div>
             {!isCompleted && (
@@ -128,7 +133,7 @@ export function ManageLabour({
             </Card>
           )}
 
-          {/* Complete Labour Section (if not completed) */}
+          {/* Complete Labour Section */}
           {!isCompleted && (
             <>
               <Divider my="sm" />
@@ -211,14 +216,11 @@ export function ManageLabour({
         </Stack>
       </div>
 
-      {/* Edit Modal */}
       <EditLabourModal
         labour={labour}
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
       />
-
-      {/* Complete Confirmation Modal */}
       <GenericConfirmModal
         isOpen={isCompleteModalOpen}
         title="Complete your labour?"

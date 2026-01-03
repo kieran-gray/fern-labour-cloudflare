@@ -46,7 +46,7 @@ const MESSAGES = {
     `You haven't posted any updates about ${firstName} yet.`,
   SUBSCRIBER_TITLE: (possessiveName: string) => `${possessiveName} status updates`,
   SUBSCRIBER_DESCRIPTION_ACTIVE: (firstName: string) =>
-    `Curious about how things are going? ${firstName} can update her status here, giving you a glimpse into her progress. Check in regularly to stay informed without needing to reach out directly.`,
+    `Curious about how things are going? ${firstName} can update her status here, giving you a glimpse into her progress.`,
   SUBSCRIBER_DESCRIPTION_COMPLETED: (firstName: string) =>
     `Here's where ${firstName} kept everyone in the loop during her labour. These were her in-the-moment thoughts and progress notes that you checked in on.`,
   SUBSCRIBER_EMPTY_STATE: (firstName: string) => `${firstName} hasn't posted any updates yet.`,
