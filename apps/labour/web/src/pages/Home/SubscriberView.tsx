@@ -26,7 +26,6 @@ import {
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Space } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { LabourPageShell } from './components/LabourPageShell';
 import { PayWall } from './components/Paywall/PayWall';
 import Gifts from './Tabs/Gifts/Gifts';
 import { ManageSubscriptions } from './Tabs/MySubscriptions/MySubscriptions';
@@ -39,6 +38,7 @@ import { ContractionControls } from './Tabs/Track/ContractionControls';
 import { Contractions } from './Tabs/Track/Contractions';
 import { LabourUpdateControls } from './Tabs/Updates/LabourUpdateControls';
 import { LabourUpdates } from './Tabs/Updates/LabourUpdates';
+import baseClasses from '@styles/base.module.css';
 
 const FULL_ACCESS_TABS = [
   { id: 'subscriptions', label: 'Subscriptions', icon: IconUsers },
@@ -250,14 +250,22 @@ export const SubscriberView = () => {
 
   return (
     <>
-      <LabourPageShell
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        tabs={TABS}
-        swipeHandlers={swipeHandlers}
-        bottomPadding={bottomPadding}
-        floatingPanels={
-          isBirthPartner && labour ? (
+      <div {...swipeHandlers}>
+        <AppShell navItems={TABS} activeNav={activeTab} onNavChange={setActiveTab}>
+          <div className={baseClasses.flexPageColumn} style={{ paddingBottom: bottomPadding }}>
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              {renderTabPanel(activeTab || 'subscriptions')}
+            </div>
+          </div>
+
+          {isBirthPartner && labour && (
             <>
               <FloatingPanel
                 visible={activeTab === 'track' && !completed}
@@ -286,11 +294,9 @@ export const SubscriberView = () => {
                 <LabourUpdateControls />
               </FloatingPanel>
             </>
-          ) : undefined
-        }
-      >
-        {renderTabPanel(activeTab || 'subscriptions')}
-      </LabourPageShell>
+          )}
+        </AppShell>
+      </div>
       <SubscriptionRequestedModal opened={modalOpened} close={closeModal} />
     </>
   );

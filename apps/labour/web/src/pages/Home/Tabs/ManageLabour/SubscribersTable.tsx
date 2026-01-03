@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { SubscriptionReadModel } from '@base/clients/labour_service/types';
-import { ImportantText } from '@base/components/Text/ImportantText';
 import { IconBan, IconCheck, IconX } from '@tabler/icons-react';
 import { ActionIcon, Avatar, Card, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { RoleBadge } from './RoleBadge';
 import { ManageSubscriptionMenu } from './SubscriberMenu';
 import classes from './SubscribersTable.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export function SubscribersTable({
   subscriptions,
@@ -37,7 +37,13 @@ export function SubscribersTable({
 
     return (
       <div style={{ marginTop: '10px' }}>
-        <ImportantText message={message} />
+        <Text
+          fz={{ base: 'sm', xs: 'md' }}
+          className={baseClasses.importantText}
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          {message}
+        </Text>
       </div>
     );
   }

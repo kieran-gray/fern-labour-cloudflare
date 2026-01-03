@@ -1,11 +1,7 @@
 import { SubscriptionReadModel } from '@base/clients/labour_service';
-import { ImportantText } from '@base/components/Text/ImportantText';
-import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
-import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
-import { useApiAuth } from '@base/hooks/useApiAuth';
-import { useClerkUser } from '@base/hooks/useClerkUser';
+import { useUser } from '@clerk/clerk-react';
 import { useSearchParams } from 'react-router-dom';
-import { Badge, Button, Text } from '@mantine/core';
+import { Badge, Button, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import ContactMethodsModal from './ContactMethodsModal';
 import classes from './ContactMethodsModal.module.css';
@@ -39,18 +35,17 @@ export function warnNonUKNumber(
 }
 
 export default function ContactMethods({ subscription }: { subscription: SubscriptionReadModel }) {
-  useApiAuth();
   const [searchParams] = useSearchParams();
   const [opened, { open, close }] = useDisclosure(false);
   const prompt = searchParams.get('prompt');
 
-  const { user, isLoaded } = useClerkUser();
+  const { user, isLoaded } = useUser();
 
   let contactMethodsWarning = null;
   if (isLoaded) {
     contactMethodsWarning =
-      warnNoNumberSet(subscription.contact_methods, user?.phone_number || '') ||
-      warnNonUKNumber(subscription.contact_methods, user?.phone_number || '');
+      warnNoNumberSet(subscription.contact_methods, user?.primaryPhoneNumber?.phoneNumber || '') ||
+      warnNonUKNumber(subscription.contact_methods, user?.primaryPhoneNumber?.phoneNumber || '');
   }
 
   const selectedContactMethods = subscription.contact_methods.map((method) => (
@@ -68,8 +63,12 @@ export default function ContactMethods({ subscription }: { subscription: Subscri
         <div className={baseClasses.body}>
           <div className={baseClasses.inner} style={{ paddingBottom: 0 }}>
             <div className={classes.content} style={{ marginRight: 0 }}>
-              <ResponsiveTitle title="Your contact methods" />
-              <ResponsiveDescription description={description} marginTop={10} />
+              <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+                Your contact methods
+              </Title>
+              <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description} mt={10}>
+                {description}
+              </Text>
             </div>
           </div>
           <div
@@ -79,12 +78,16 @@ export default function ContactMethods({ subscription }: { subscription: Subscri
             <div className={baseClasses.content}>
               {subscription.contact_methods.length === 0 && (
                 <div style={{ marginTop: '10px' }}>
-                  <ImportantText message=" You will only receive live notifications if you add your preferred methods below" />
+                  <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+                    You will only receive live notifications if you add your preferred methods below
+                  </Text>
                 </div>
               )}
               {contactMethodsWarning != null && (
                 <div style={{ marginBottom: '20px' }}>
-                  <ImportantText message={contactMethodsWarning} />
+                  <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+                    {contactMethodsWarning}
+                  </Text>
                 </div>
               )}
               {subscription.contact_methods.length > 0 && (

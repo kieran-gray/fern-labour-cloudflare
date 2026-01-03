@@ -4,7 +4,7 @@ import {
   SubscriberStatus,
   SubscriptionReadModel,
 } from '@base/clients/labour_service/types';
-import { useApiAuth } from '@base/hooks/useApiAuth';
+import { useAuth } from '@clerk/clerk-react';
 
 export enum AppMode {
   Subscriber = 'Subscriber',
@@ -39,8 +39,7 @@ interface LabourSessionContextType extends LabourSessionState {
 const LabourSessionContext = createContext<LabourSessionContextType | undefined>(undefined);
 
 export const LabourSessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useApiAuth();
-  const userId = user?.sub;
+  const { userId } = useAuth();
 
   const [mode, setModeState] = useState<AppMode | null>(() => {
     const stored = localStorage.getItem(`${userId}:appMode`);
@@ -64,25 +63,16 @@ export const LabourSessionProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   useEffect(() => {
-    if (userId) {
-      localStorage.setItem(`${userId}:appMode`, mode || '');
+    if (!userId) {
+      return;
     }
-  }, [mode, userId]);
-
-  useEffect(() => {
-    if (userId) {
-      localStorage.setItem(`${userId}:labourId`, labourId || '');
-    }
-  }, [labourId, userId]);
-
-  useEffect(() => {
-    if (userId) {
-      localStorage.setItem(
-        `${userId}:subscription`,
-        subscription ? JSON.stringify(subscription) : ''
-      );
-    }
-  }, [subscription, userId]);
+    localStorage.setItem(`${userId}:appMode`, mode || '');
+    localStorage.setItem(`${userId}:labourId`, labourId || '');
+    localStorage.setItem(
+      `${userId}:subscription`,
+      subscription ? JSON.stringify(subscription) : ''
+    );
+  }, [mode, labourId, subscription, userId]);
 
   const subscriberState = useMemo((): SubscriberSessionState => {
     if (!subscription) {

@@ -98,10 +98,9 @@
 }
 
 .title {
-    color: var(--mantine-color-white);
-    text-transform: uppercase;
-    font-weight: 700;
-    font-size: var(--mantine-font-size-xl);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .body {

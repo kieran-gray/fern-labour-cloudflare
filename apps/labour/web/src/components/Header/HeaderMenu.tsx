@@ -1,7 +1,6 @@
 import { forwardRef } from 'react';
 import { AppMode, useLabourSession } from '@base/contexts';
-import { useClerkUser } from '@base/hooks/useClerkUser';
-import { useClerk } from '@clerk/clerk-react';
+import { useClerk, useUser } from '@clerk/clerk-react';
 import {
   IconArrowLeft,
   IconChevronRight,
@@ -38,7 +37,7 @@ export const UserButton = forwardRef<HTMLButtonElement, UserButtonProps>(
 );
 
 export function HeaderMenu() {
-  const { user } = useClerkUser();
+  const { user } = useUser();
   const { signOut, openUserProfile } = useClerk();
   const navigate = useNavigate();
   const pathname = window.location.pathname;

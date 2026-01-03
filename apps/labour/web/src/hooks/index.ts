@@ -1,7 +1,6 @@
 /**
  * Central exports for all custom data fetching hooks
  */
-export { useApiAuth } from './useApiAuth';
 export { queryKeys } from './queryKeys';
 
 export { useSubmitContactForm } from './useContactData';

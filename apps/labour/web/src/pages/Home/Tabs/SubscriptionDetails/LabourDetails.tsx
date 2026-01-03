@@ -1,9 +1,7 @@
 import { LabourReadModel } from '@base/clients/labour_service';
-import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
-import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import image from '@home/Tabs/ManageLabour/Meditate.svg';
 import { dueDateToGestationalAge } from '@lib';
-import { Badge, Image, Text } from '@mantine/core';
+import { Badge, Image, Text, Title } from '@mantine/core';
 import classes from '@home/Tabs/ManageLabour/LabourDetails.module.css';
 import baseClasses from '@styles/base.module.css';
 
@@ -32,8 +30,12 @@ export default function LabourDetails({
       <div className={baseClasses.body}>
         <div className={baseClasses.inner} style={{ paddingBottom: 0 }}>
           <div className={classes.content} style={{ marginRight: 0 }}>
-            <ResponsiveTitle title={title} />
-            <ResponsiveDescription description={description} marginTop={10} />
+            <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+              {title}
+            </Title>
+            <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description} mt={10}>
+              {description}
+            </Text>
             <div className={baseClasses.imageFlexRow} style={{ marginTop: 10 }}>
               <Image src={image} className={classes.smallImage} />
             </div>

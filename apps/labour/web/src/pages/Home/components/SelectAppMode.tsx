@@ -1,4 +1,3 @@
-import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
 import { AppMode, useLabourSession } from '@base/contexts/LabourSessionContext';
 import { IconBabyCarriage, IconBulb, IconChevronRight, IconHeart } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
@@ -24,15 +23,10 @@ export function SelectAppMode() {
             <div className={classes.heroContent}>
               <div>
                 <Title order={2}>What brings you here today?</Title>
-                <ResponsiveDescription
-                  description={
-                    <>
-                      Whether you're tracking your own labour journey or following and supporting
-                      someone special, you're in the right place.
-                    </>
-                  }
-                  marginTop={10}
-                />
+                <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description} mt={10}>
+                  Whether you're tracking your own labour journey or following and supporting
+                  someone special, you're in the right place.
+                </Text>
               </div>
 
               <div className={classes.optionsRow}>

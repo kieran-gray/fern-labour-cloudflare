@@ -24,7 +24,6 @@ import {
 import { useSearchParams } from 'react-router-dom';
 import { Space } from '@mantine/core';
 import { CompletedLabourCard } from '../CompletedLabour/Page';
-import { LabourPageShell } from './components/LabourPageShell';
 import { ManageLabour } from './Tabs/ManageLabour/Manage';
 import Plan from './Tabs/ManageLabour/Plan';
 import { SubscribersContainer } from './Tabs/ManageLabour/SubscribersContainer';
@@ -172,13 +171,21 @@ export const MotherView = () => {
   };
 
   return (
-    <LabourPageShell
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
-      tabs={TABS}
-      swipeHandlers={swipeHandlers}
-      bottomPadding={bottomPadding}
-      floatingPanels={
+    <div {...swipeHandlers}>
+      <AppShell navItems={TABS} activeNav={activeTab} onNavChange={setActiveTab}>
+        <div className={baseClasses.flexPageColumn} style={{ paddingBottom: bottomPadding }}>
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            {renderTabPanel(activeTab || 'track')}
+          </div>
+        </div>
+
         <>
           <FloatingPanel
             visible={activeTab === 'track' && !completed}
@@ -207,9 +214,7 @@ export const MotherView = () => {
             <LabourUpdateControls />
           </FloatingPanel>
         </>
-      }
-    >
-      {renderTabPanel(activeTab || 'track')}
-    </LabourPageShell>
+      </AppShell>
+    </div>
   );
 };

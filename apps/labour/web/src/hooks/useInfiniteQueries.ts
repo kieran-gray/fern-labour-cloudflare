@@ -18,9 +18,9 @@ import type {
   PaginatedResponse,
 } from '@base/clients/labour_service';
 import { useWebSocket } from '@base/contexts/WebsocketContext';
+import { useAuth } from '@clerk/clerk-react';
 import { InfiniteData, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from './queryKeys';
-import { useApiAuth } from './useApiAuth';
 
 // Constants
 const DEFAULT_PAGE_SIZE = 20;
@@ -50,7 +50,7 @@ export function useContractionsInfinite(
   labourId: string | null,
   pageSize: number = DEFAULT_PAGE_SIZE
 ) {
-  const { user } = useApiAuth();
+  const { userId } = useAuth();
   const { isConnected } = useWebSocket();
 
   return useInfiniteQuery({
@@ -71,7 +71,7 @@ export function useContractionsInfinite(
     },
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage?.next_cursor ?? undefined,
-    enabled: !!labourId && !!user?.sub,
+    enabled: !!labourId && !userId,
     refetchInterval: isConnected ? false : POLLING_INTERVAL_WHEN_DISCONNECTED,
     gcTime: 10 * 60 * 1000,
   });
@@ -85,7 +85,7 @@ export function useLabourUpdatesInfinite(
   labourId: string | null,
   pageSize: number = DEFAULT_PAGE_SIZE
 ) {
-  const { user } = useApiAuth();
+  const { userId } = useAuth();
   const { isConnected } = useWebSocket();
 
   return useInfiniteQuery({
@@ -106,7 +106,7 @@ export function useLabourUpdatesInfinite(
     },
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage?.next_cursor ?? undefined,
-    enabled: !!labourId && !!user?.sub,
+    enabled: !!labourId && !userId,
     refetchInterval: isConnected ? false : POLLING_INTERVAL_WHEN_DISCONNECTED,
     gcTime: 10 * 60 * 1000,
   });

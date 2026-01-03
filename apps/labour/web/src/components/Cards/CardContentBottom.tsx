@@ -1,6 +1,4 @@
-import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
-import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
-import { Image } from '@mantine/core';
+import { Image, Text, Title } from '@mantine/core';
 import classes from './CardContentBottom.module.css';
 import baseClasses from '@styles/base.module.css';
 
@@ -18,8 +16,12 @@ export function CardContentBottom({ title, description, image, mobileImage, chil
       <div className={baseClasses.body}>
         <div className={baseClasses.inner}>
           <div className={classes.content}>
-            <ResponsiveTitle title={title} />
-            <ResponsiveDescription description={description} marginTop={10} />
+            <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+              {title}
+            </Title>
+            <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description} mt={10}>
+              {description}
+            </Text>
             {mobileImage && (
               <div className={classes.imageFlexRow}>
                 <Image src={mobileImage} className={classes.mobileImage} />

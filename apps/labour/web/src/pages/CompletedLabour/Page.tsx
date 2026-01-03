@@ -1,8 +1,7 @@
-import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
 import { AppShell } from '@components/AppShell';
 import { Card } from '@components/Cards/Card';
 import { useNavigate } from 'react-router-dom';
-import { Button, Mark, Space } from '@mantine/core';
+import { Button, Mark, Space, Text } from '@mantine/core';
 import { ShareFernLabour } from '../Home/Tabs/MySubscriptions/ShareFernLabour';
 import image from './thanks.svg';
 import baseClasses from '@styles/base.module.css';
@@ -34,7 +33,9 @@ export const CompletedLabourCard: React.FC = () => {
       image={{ src: image, width: 420, height: 280 }}
       mobileImage={{ src: image, width: 320, height: 220 }}
     >
-      <ResponsiveDescription description={feedback} marginTop={10} />
+      <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description} mt={10}>
+        {feedback}
+      </Text>
       <Button size="md" mt={20} radius="xl" variant="light" onClick={() => navigate('/contact')}>
         Contact us
       </Button>

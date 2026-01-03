@@ -1,5 +1,8 @@
 .title {
   color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .infoCard {

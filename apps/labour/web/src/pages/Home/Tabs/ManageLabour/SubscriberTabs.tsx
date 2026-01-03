@@ -1,5 +1,4 @@
 import { SubscriptionReadModel, User } from '@base/clients/labour_service/types';
-import { ImportantText } from '@base/components/Text/ImportantText';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
 import {
@@ -48,7 +47,9 @@ export const ManageSubscribersTabs = () => {
 
   if (subscriptions.length === 0) {
     return (
-      <ImportantText message="You don't have any subscribers yet, share invites with loved ones in the Share tab." />
+      <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+        You don't have any subscribers yet, share invites with loved ones in the Share tab.
+      </Text>
     );
   }
 

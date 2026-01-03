@@ -1,12 +1,9 @@
 import { useEffect, useMemo } from 'react';
 import { LabourReadModel, SubscriberRole } from '@base/clients/labour_service/types';
-import { ImportantText } from '@base/components/Text/ImportantText';
-import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
-import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import { useLabourClient } from '@base/hooks';
 import { flattenContractions, useContractionsInfinite } from '@base/hooks/useInfiniteQueries';
 import { IconBook } from '@tabler/icons-react';
-import { ActionIcon, Image, Stack } from '@mantine/core';
+import { ActionIcon, Image, Stack, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { AlertContainer } from './Alerts';
 import { ContractionControls } from './ContractionControls';
@@ -104,7 +101,9 @@ export function Contractions({
       <div className={baseClasses.body}>
         <div className={classes.titleRow}>
           <div className={classes.title} style={{ paddingBottom: 0 }}>
-            <ResponsiveTitle title={title} />
+            <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+              {title}
+            </Title>
           </div>
           <ActionIcon radius="xl" variant="light" size="xl" onClick={open}>
             <IconBook />
@@ -113,16 +112,11 @@ export function Contractions({
         </div>
         <div className={baseClasses.inner} style={{ paddingBottom: 0, paddingTop: 0 }}>
           <div className={classes.content}>
-            <ResponsiveDescription
-              description={
-                completed
-                  ? completedDescription
-                  : sortedContractions.length === 0
-                    ? activeDescription
-                    : ''
-              }
-              marginTop={0}
-            />
+            {(completed || sortedContractions.length === 0) && (
+              <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description}>
+                {completed ? completedDescription : activeDescription}
+              </Text>
+            )}
             <Stack align="stretch" justify="flex-end" mt="20px" style={{ alignItems: 'center' }}>
               {sortedContractions.length > 0 && (
                 <ContractionTimelineCustom
@@ -138,7 +132,13 @@ export function Contractions({
                   <div className={classes.imageFlexRow}>
                     <Image src={image} className={classes.image} />
                   </div>
-                  <ImportantText message={emptyStateMessage} />
+                  <Text
+                    fz={{ base: 'sm', xs: 'md' }}
+                    className={baseClasses.importantText}
+                    style={{ display: 'flex', alignItems: 'center' }}
+                  >
+                    {emptyStateMessage}
+                  </Text>
                 </div>
               )}
             </Stack>

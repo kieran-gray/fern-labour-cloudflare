@@ -1,7 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { useClerkUser } from '@base/hooks/useClerkUser';
 import { useNetworkState } from '@base/offline/sync/networkDetector';
-import { RedirectToSignIn, useAuth } from '@clerk/clerk-react';
+import { RedirectToSignIn, useAuth, useUser } from '@clerk/clerk-react';
 import { PageLoading } from './PageLoading/PageLoading';
 
 interface ProtectedAppProps {
@@ -13,7 +12,7 @@ export const ProtectedApp: React.FC<ProtectedAppProps> = (props) => {
 
   const { isOnline } = useNetworkState();
   const { isLoaded: isAuthLoaded, isSignedIn, getToken } = useAuth();
-  const { user, isLoaded: isUserLoaded } = useClerkUser();
+  const { user, isLoaded: isUserLoaded } = useUser();
   const wasOnlineRef = useRef<boolean | null>(null);
 
   useEffect(() => {

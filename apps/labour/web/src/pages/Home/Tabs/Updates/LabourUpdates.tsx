@@ -4,14 +4,11 @@ import {
   LabourUpdateReadModel,
   SubscriberRole,
 } from '@base/clients/labour_service';
-import { ImportantText } from '@base/components/Text/ImportantText';
-import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
-import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import { useLabourClient } from '@base/hooks';
 import { flattenLabourUpdates, useLabourUpdatesInfinite } from '@base/hooks/useInfiniteQueries';
 import { pluraliseName } from '@lib';
 import { IconBook } from '@tabler/icons-react';
-import { ActionIcon, Button, Image, ScrollArea, Space } from '@mantine/core';
+import { ActionIcon, Button, Image, ScrollArea, Space, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { LabourUpdate, LabourUpdateProps } from './LabourUpdate';
 import { LabourUpdateControls } from './LabourUpdateControls';
@@ -264,7 +261,9 @@ export function LabourUpdates({
           <>
             <div className={classes.titleRow}>
               <div className={classes.title} style={{ paddingBottom: 0 }}>
-                <ResponsiveTitle title={title} />
+                <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+                  {title}
+                </Title>
               </div>
               <ActionIcon radius="xl" variant="light" size="xl" onClick={open}>
                 <IconBook />
@@ -273,7 +272,9 @@ export function LabourUpdates({
             </div>
             <div className={baseClasses.inner} style={{ paddingTop: 0, paddingBottom: 0 }}>
               <div className={classes.content}>
-                <ResponsiveDescription description={description} marginTop={0} />
+                <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description}>
+                  {description}
+                </Text>
                 {hasUpdates && (
                   <ScrollArea.Autosize mt={20} mah="calc(100dvh - 370px)" viewportRef={viewport}>
                     {hasNextPage && (
@@ -296,7 +297,13 @@ export function LabourUpdates({
                     <div className={classes.imageFlexRow}>
                       <Image src={image} className={classes.image} />
                     </div>
-                    <ImportantText message={emptyStateMessage} />
+                    <Text
+                      fz={{ base: 'sm', xs: 'md' }}
+                      className={baseClasses.importantText}
+                      style={{ display: 'flex', alignItems: 'center' }}
+                    >
+                      {emptyStateMessage}
+                    </Text>
                   </>
                 )}
 
@@ -310,8 +317,12 @@ export function LabourUpdates({
           <>
             <div className={baseClasses.inner}>
               <div className={classes.content}>
-                <ResponsiveTitle title={title} />
-                <ResponsiveDescription description={description} marginTop={10} />
+                <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+                  {title}
+                </Title>
+                <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description} mt={10}>
+                  {description}
+                </Text>
                 <Space h="lg" />
                 {hasUpdates ? (
                   <>
@@ -333,7 +344,9 @@ export function LabourUpdates({
                     <Space h="lg" />
                   </>
                 ) : (
-                  <ImportantText message={emptyStateMessage} />
+                  <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+                    {emptyStateMessage}
+                  </Text>
                 )}
               </div>
             </div>

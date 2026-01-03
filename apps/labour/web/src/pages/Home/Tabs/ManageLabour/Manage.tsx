@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { ContractionReadModel, LabourReadModel } from '@base/clients/labour_service';
 import { GenericConfirmModal } from '@base/components/Modals/GenericConfirmModal';
-import { ResponsiveDescription } from '@base/components/Text/ResponsiveDescription';
-import { ResponsiveTitle } from '@base/components/Text/ResponsiveTitle';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useCompleteLabour, useLabourClient } from '@base/hooks';
 import { dueDateToGestationalAge } from '@lib';
@@ -79,7 +77,7 @@ export function ManageLabour({
               <Title order={2} className={classes.title}>
                 {labour.labour_name || 'Your Labour'}
               </Title>
-              <Text size="sm" c="dimmed" mt={4}>
+              <Text size="sm" className={baseClasses.description} mt={4}>
                 {isCompleted ? 'Your completed labour journey' : 'Manage your labour details'}
               </Text>
             </div>
@@ -123,7 +121,7 @@ export function ManageLabour({
           {/* Closing Note (if completed) */}
           {isCompleted && labour.notes && (
             <Card padding="md" radius="lg" className={classes.noteCard}>
-              <Text size="sm" c="dimmed" mb="xs">
+              <Text size="sm" className={baseClasses.description} mb="xs">
                 Your closing note
               </Text>
               <Text>{labour.notes}</Text>
@@ -136,11 +134,13 @@ export function ManageLabour({
               <Divider my="sm" />
 
               <div>
-                <ResponsiveTitle title="Ready to complete your labour?" />
-                <ResponsiveDescription
-                  description="Add an optional closing note to share with your subscribers, then mark your labour as complete."
-                  marginTop={14}
-                />
+                <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+                  Ready to complete your labour?
+                </Title>
+                <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description} mt={14}>
+                  Add an optional closing note to share with your subscribers, then mark your labour
+                  as complete.
+                </Text>
                 <Textarea
                   placeholder="Welcome to the world, little one! Everyone is healthy and happy."
                   rightSection={<IconPencil size={16} stroke={1.5} />}

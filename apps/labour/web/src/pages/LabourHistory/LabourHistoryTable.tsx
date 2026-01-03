@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { GenericConfirmModal } from '@base/components/Modals/GenericConfirmModal';
-import { ImportantText } from '@base/components/Text/ImportantText';
 import { AppMode, useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useDeleteLabour, useLabourClient, useLabourHistory } from '@base/hooks';
 import { PageLoadingIcon } from '@components/PageLoading/Loading';
@@ -18,6 +17,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import classes from './LabourHistoryTable.module.css';
+import baseClasses from '@styles/base.module.css';
 
 export function LabourHistoryTable() {
   const { labourId, setLabourId, clearSession, setMode } = useLabourSession();
@@ -38,7 +38,11 @@ export function LabourHistoryTable() {
   }
 
   if (isError) {
-    return <ImportantText message={error.message} />;
+    return (
+      <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+        {error.message}
+      </Text>
+    );
   }
 
   const sortedLabours = [...labours].sort(
@@ -82,7 +86,7 @@ export function LabourHistoryTable() {
   if (sortedLabours.length === 0) {
     return (
       <Stack align="center" gap="md" pt="lg">
-        <Text size="sm" c="dimmed" ta="center">
+        <Text size="sm" className={baseClasses.description} ta="center">
           No labours recorded yet. Start tracking your first labour to see it here.
         </Text>
         <Button
@@ -131,10 +135,10 @@ export function LabourHistoryTable() {
                       <Badge variant="light" size="sm" className={classes.badge}>
                         {labour.current_phase}
                       </Badge>
-                      <Text size="xs" c="dimmed" className={classes.dateFull}>
+                      <Text size="xs" className={`${baseClasses.description} ${classes.dateFull}`}>
                         {formatDateFull(labour.updated_at)}
                       </Text>
-                      <Text size="xs" c="dimmed" className={classes.dateShort}>
+                      <Text size="xs" className={`${baseClasses.description} ${classes.dateShort}`}>
                         {formatDateShort(labour.updated_at)}
                       </Text>
                     </Group>

@@ -12,12 +12,12 @@ import type {
 } from '@base/clients/labour_service';
 import { useWebSocket } from '@base/contexts/WebsocketContext';
 import { NotFoundError } from '@base/lib/errors';
+import { useAuth } from '@clerk/clerk-react';
 import { Error as ErrorNotification, Success } from '@components/Notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { createMutation, createSimpleMutation } from './createMutation';
 import { queryKeys } from './queryKeys';
-import { useApiAuth } from './useApiAuth';
 
 // =============================================================================
 // Query Hooks
@@ -27,12 +27,10 @@ import { useApiAuth } from './useApiAuth';
  * Hook to get labour by ID or active
  */
 export function useCurrentLabour(client: LabourServiceClient, labourId: string | null) {
-  const { user } = useApiAuth();
+  const { userId } = useAuth();
 
   return useQuery({
-    queryKey: labourId
-      ? queryKeys.labour.detail(labourId)
-      : queryKeys.labour.active(user?.sub || ''),
+    queryKey: labourId ? queryKeys.labour.detail(labourId) : queryKeys.labour.active(userId || ''),
     queryFn: async () => {
       let targetLabourId = labourId;
 
@@ -58,7 +56,7 @@ export function useCurrentLabour(client: LabourServiceClient, labourId: string |
 
       return response.data;
     },
-    enabled: !!user?.sub,
+    enabled: !!userId,
     retry: 0,
   });
 }
@@ -67,7 +65,7 @@ export function useCurrentLabour(client: LabourServiceClient, labourId: string |
  * Hook to get labour by ID
  */
 export function useLabourById(client: LabourServiceClient, labourId: string | null) {
-  const { user } = useApiAuth();
+  const { userId } = useAuth();
 
   return useQuery({
     queryKey: labourId ? queryKeys.labour.detail(labourId) : [],
@@ -84,7 +82,7 @@ export function useLabourById(client: LabourServiceClient, labourId: string | nu
 
       return response.data;
     },
-    enabled: !!labourId && !!user?.sub,
+    enabled: !!labourId && !!userId,
     retry: 0,
   });
 }
@@ -93,10 +91,10 @@ export function useLabourById(client: LabourServiceClient, labourId: string | nu
  * Hook to get labour history
  */
 export function useLabourHistory(client: LabourServiceClient) {
-  const { user } = useApiAuth();
+  const { userId } = useAuth();
 
   return useQuery({
-    queryKey: queryKeys.labour.history(user?.sub || ''),
+    queryKey: queryKeys.labour.history(userId || ''),
     queryFn: async () => {
       const response = await client.getLabourHistory();
 
@@ -106,7 +104,7 @@ export function useLabourHistory(client: LabourServiceClient) {
 
       return response.data;
     },
-    enabled: !!user?.sub,
+    enabled: !!userId,
     retry: 0,
   });
 }
@@ -115,10 +113,10 @@ export function useLabourHistory(client: LabourServiceClient) {
  * Hook to get active labour
  */
 export function useActiveLabour(client: LabourServiceClient) {
-  const { user } = useApiAuth();
+  const { userId } = useAuth();
 
   return useQuery({
-    queryKey: queryKeys.labour.active(user?.sub || ''),
+    queryKey: queryKeys.labour.active(userId || ''),
     queryFn: async () => {
       const response = await client.getActiveLabour();
 
@@ -128,7 +126,7 @@ export function useActiveLabour(client: LabourServiceClient) {
 
       return response.data;
     },
-    enabled: !!user?.sub,
+    enabled: !!userId,
     retry: 0,
   });
 }
@@ -137,7 +135,7 @@ export function useActiveLabour(client: LabourServiceClient) {
  * Hook for fetching subscription token
  */
 export function useSubscriptionToken(client: LabourServiceClient, labourId: string | null) {
-  const { user } = useApiAuth();
+  const { userId } = useAuth();
 
   return useQuery({
     queryKey: labourId ? queryKeys.subscriptionToken.detail(labourId) : [],
@@ -154,7 +152,7 @@ export function useSubscriptionToken(client: LabourServiceClient, labourId: stri
 
       return response.data.token;
     },
-    enabled: !!labourId && !!user?.sub,
+    enabled: !!labourId && !!userId,
     retry: 0,
   });
 }
@@ -163,7 +161,7 @@ export function useSubscriptionToken(client: LabourServiceClient, labourId: stri
  * Hook for fetching subscriptions
  */
 export function useLabourSubscriptions(client: LabourServiceClient, labourId: string | null) {
-  const { user } = useApiAuth();
+  const { userId } = useAuth();
 
   return useQuery({
     queryKey: labourId ? queryKeys.subscriptions.listByLabour(labourId) : [],
@@ -180,16 +178,16 @@ export function useLabourSubscriptions(client: LabourServiceClient, labourId: st
 
       return response.data.data;
     },
-    enabled: !!labourId && !!user?.sub,
+    enabled: !!labourId && !!userId,
     retry: 0,
   });
 }
 
 export function useUserSubscription(client: LabourServiceClient, labourId: string | null) {
-  const { user } = useApiAuth();
+  const { userId } = useAuth();
 
   return useQuery({
-    queryKey: labourId ? queryKeys.subscriptions.userSubscription(labourId, user?.sub || '') : [],
+    queryKey: labourId ? queryKeys.subscriptions.userSubscription(labourId, userId || '') : [],
     queryFn: async () => {
       if (!labourId) {
         throw new Error('Labour ID is required');
@@ -203,16 +201,16 @@ export function useUserSubscription(client: LabourServiceClient, labourId: strin
 
       return response.data;
     },
-    enabled: !!labourId && !!user?.sub,
+    enabled: !!labourId && !!userId,
     retry: 0,
   });
 }
 
 export function useUserSubscribedLabours(client: LabourServiceClient) {
-  const { user } = useApiAuth();
+  const { userId } = useAuth();
 
   return useQuery({
-    queryKey: queryKeys.labour.subscribedLabours(user?.sub || ''),
+    queryKey: queryKeys.labour.subscribedLabours(userId || ''),
     queryFn: async () => {
       const response = await client.getSubscribedLabours();
 
@@ -222,17 +220,17 @@ export function useUserSubscribedLabours(client: LabourServiceClient) {
 
       return response.data;
     },
-    enabled: !!user?.sub,
+    enabled: !!userId,
     retry: 0,
     staleTime: 0,
   });
 }
 
 export function useUserSubscriptions(client: LabourServiceClient) {
-  const { user } = useApiAuth();
+  const { userId } = useAuth();
 
   return useQuery({
-    queryKey: queryKeys.subscriptions.listByUser(user?.sub || ''),
+    queryKey: queryKeys.subscriptions.listByUser(userId || ''),
     queryFn: async () => {
       const response = await client.getUserSubscriptions();
 
@@ -242,7 +240,7 @@ export function useUserSubscriptions(client: LabourServiceClient) {
 
       return response.data;
     },
-    enabled: !!user?.sub,
+    enabled: !!userId,
     retry: 0,
     staleTime: 0,
   });
@@ -252,7 +250,7 @@ export function useUserSubscriptions(client: LabourServiceClient) {
  * Hook for fetching users
  */
 export function useUsers(client: LabourServiceClient, labourId: string | null) {
-  const { user } = useApiAuth();
+  const { userId } = useAuth();
 
   return useQuery({
     queryKey: labourId ? queryKeys.users.listByLabour(labourId) : [],
@@ -269,7 +267,7 @@ export function useUsers(client: LabourServiceClient, labourId: string | null) {
 
       return response.data;
     },
-    enabled: !!labourId && !!user?.sub,
+    enabled: !!labourId && !!userId,
     retry: 0,
   });
 }
