@@ -1,6 +1,6 @@
 import { formatTimeSeconds } from '@lib';
 import { Table } from '@mantine/core';
-import { LabourStatisticsData } from './LabourStatistics';
+import { LabourStatisticsData } from '../../../../hooks/useLabourStatistics';
 import classes from './LabourStatistics.module.css';
 
 export const LabourStatisticsTable = ({ data }: { data: LabourStatisticsData }) => {
