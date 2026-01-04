@@ -1,7 +1,9 @@
 import { ContractionReadModel } from '@base/clients/labour_service';
-import { formatDurationHuman, formatTimeSeconds } from '@lib';
+import { formatTimeSeconds } from '@lib';
+import { IconArrowsMaximize } from '@tabler/icons-react';
 import { ScatterChart } from '@mantine/charts';
-import { Group, Paper, Text } from '@mantine/core';
+import { ActionIcon, Group, Modal, Paper, Text } from '@mantine/core';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import classes from './LabourStatistics.module.css';
 
 interface ChartData {
@@ -36,30 +38,24 @@ const ChartTooltip = ({ payload }: { label: number; payload: any[] | undefined }
         {data.formattedTime}
       </Text>
       <Group justify="space-between" gap="xl">
-        <Text size="xs" c="dimmed">
-          Duration
-        </Text>
+        <Text size="xs">Duration</Text>
         <Text size="xs" fw={500}>
           {formatTimeSeconds(data.duration)}
         </Text>
       </Group>
       {data.intensity !== null && (
         <Group justify="space-between" gap="xl">
-          <Text size="xs" c="dimmed">
-            Intensity
-          </Text>
+          <Text size="xs">Intensity</Text>
           <Text size="xs" fw={500}>
             {data.intensity}/10
           </Text>
         </Group>
       )}
-      {data.gap !== null && (
+      {data.gap !== null && data.gap < 1800 && (
         <Group justify="space-between" gap="xl">
-          <Text size="xs" c="dimmed">
-            Frequency
-          </Text>
+          <Text size="xs">Frequency</Text>
           <Text size="xs" fw={500}>
-            {formatDurationHuman(data.gap)}
+            {formatTimeSeconds(data.gap)}
           </Text>
         </Group>
       )}
@@ -67,15 +63,20 @@ const ChartTooltip = ({ payload }: { label: number; payload: any[] | undefined }
   );
 };
 
-export const LabourStatisticsChart = ({
-  contractions,
-  minutes,
-  endTime,
-}: {
-  contractions: ContractionReadModel[];
+interface ChartConfig {
+  chartData: ChartData[];
+  startTime: number;
+  endX: number;
+  yAxisMax: number;
+  referenceLines: { y: number; label: string; color: string; strokeDasharray: string }[];
   minutes?: number;
-  endTime?: Date;
-}) => {
+}
+
+function useChartData(
+  contractions: ContractionReadModel[],
+  minutes?: number,
+  endTime?: Date
+): ChartConfig {
   let minStartTime: number | null = null;
   let maxDuration = 0;
 
@@ -86,7 +87,7 @@ export const LabourStatisticsChart = ({
   const seriesMap: Record<string, ChartData> = {
     strong: { color: 'var(--mantine-color-red-6)', name: 'Strong (8-10)', data: [] },
     moderate: { color: 'var(--mantine-color-yellow-6)', name: 'Moderate (4-7)', data: [] },
-    mild: { color: 'var(--mantine-color-green-6)', name: 'Mild (1-3)', data: [] },
+    mild: { color: 'var(--mantine-color-green-6)', name: 'Mild (0-3)', data: [] },
     unknown: { color: 'var(--mantine-color-gray-5)', name: 'Unknown', data: [] },
   };
 
@@ -155,9 +156,23 @@ export const LabourStatisticsChart = ({
     seriesMap.unknown,
   ].filter((s) => s.data.length > 0);
 
+  return { chartData, startTime, endX, yAxisMax, referenceLines, minutes };
+}
+
+const ChartContent = ({
+  config,
+  height,
+  className,
+}: {
+  config: ChartConfig;
+  height: number;
+  className?: string;
+}) => {
+  const { chartData, startTime, endX, yAxisMax, referenceLines, minutes } = config;
+
   return (
     <ScatterChart
-      h={350}
+      h={height}
       w="100%"
       data={chartData as any}
       dataKey={{ x: 'time', y: 'duration' }}
@@ -177,6 +192,9 @@ export const LabourStatisticsChart = ({
           const isYesterday =
             date.toDateString() === new Date(now.getTime() - 86400000).toDateString();
 
+          if (minutes) {
+            return date.toTimeString().slice(0, 5);
+          }
           if (isToday) {
             return `Today ${date.toTimeString().slice(0, 5)}`;
           } else if (isYesterday) {
@@ -187,9 +205,62 @@ export const LabourStatisticsChart = ({
         y: (value) => `${value}s`,
       }}
       classNames={{
-        root: classes.labourStatsChartRoot,
+        root: className || classes.labourStatsChartRoot,
         axisLabel: classes.labourStatsChartAxisLabel,
       }}
     />
+  );
+};
+
+export const LabourStatisticsChart = ({
+  contractions,
+  minutes,
+  endTime,
+}: {
+  contractions: ContractionReadModel[];
+  minutes?: number;
+  endTime?: Date;
+}) => {
+  const [fullscreenOpened, { open: openFullscreen, close: closeFullscreen }] = useDisclosure(false);
+  const isMobile = useMediaQuery('(max-width: 48em)');
+  const config = useChartData(contractions, minutes, endTime);
+
+  return (
+    <>
+      <div className={classes.chartWrapper}>
+        <ChartContent config={config} height={350} />
+        {isMobile && (
+          <ActionIcon
+            className={classes.expandChartButton}
+            variant="light"
+            radius="md"
+            size="md"
+            onClick={openFullscreen}
+            aria-label="View fullscreen chart"
+          >
+            <IconArrowsMaximize size={18} />
+          </ActionIcon>
+        )}
+      </div>
+
+      <Modal
+        opened={fullscreenOpened}
+        onClose={closeFullscreen}
+        fullScreen
+        title="Contraction Chart"
+        transitionProps={{ duration: 0 }}
+        classNames={{
+          body: classes.fullscreenChartBody,
+        }}
+      >
+        <div className={classes.fullscreenChartContainer}>
+          <ChartContent
+            config={config}
+            height={window.innerHeight - 120}
+            className={classes.fullscreenChart}
+          />
+        </div>
+      </Modal>
+    </>
   );
 };

@@ -40,29 +40,6 @@
     }
   }
 
-  .titleRow {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-content:end;
-    margin-bottom: 10px;
-
-    @media (max-width: $mantine-breakpoint-sm) {
-      margin-bottom: 8px;
-    }
-
-    @media (max-width: $mantine-breakpoint-xs) {
-      margin-bottom: 2px;
-    }
-  }
-
-  .docsButton {
-    @media (max-width: $mantine-breakpoint-xs) {
-      margin-top: 10px;
-      width: 100%;
-    }
-  }
-
 .controlsBackground {
     display: flex;
     flex-direction: column;
