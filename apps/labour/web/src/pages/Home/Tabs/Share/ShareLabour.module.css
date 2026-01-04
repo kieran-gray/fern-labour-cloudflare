@@ -1,14 +1,138 @@
-.flexRow {
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  align-content: stretch;
+.shareContent {
   width: 100%;
-  flex-basis: stretch;
-  flex-wrap: wrap;
+  max-width: 100%;
+  margin-top: var(--mantine-spacing-sm);
+  overflow: hidden;
+}
 
-  @media (max-width: $mantine-breakpoint-xs) {
-      flex-direction: column;
-      align-items: stretch;
+/* Card Grid Layout */
+.shareCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--mantine-spacing-sm);
+  width: 100%;
+  max-width: 100%;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    grid-template-columns: 1fr;
   }
+}
+
+/* Individual Share Card */
+.shareCard {
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-primary-3));
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-md);
+  display: flex;
+  flex-direction: column;
+  min-height: 140px;
+  min-width: 0;
+  overflow: hidden;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    min-height: auto;
+    padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  }
+}
+
+.shareCardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+  margin-bottom: var(--mantine-spacing-sm);
+}
+
+.shareCardIcon {
+  color: light-dark(var(--mantine-color-pink-6), var(--mantine-color-pink-4));
+  display: flex;
+  align-items: center;
+}
+
+.shareCardTitle {
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
+}
+
+.shareCardContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Link Card Styles */
+.linkInputWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-primary-4));
+  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-primary-5));
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  gap: var(--mantine-spacing-xs);
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.linkText {
+  flex: 1;
+  font-family: monospace;
+  font-size: var(--mantine-font-size-xs);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linkAction {
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-primary-5));
+  }
+}
+
+/* Social Buttons */
+.socialButton {
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-primary-4));
+  color: var(--social-color, var(--mantine-color-gray-7));
+  transition: transform 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-primary-5));
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* QR Code */
+.qrCodeWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-gray-0));
+  border-radius: var(--mantine-radius-sm);
+  padding: var(--mantine-spacing-xs);
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.qrCode {
+  color: var(--mantine-color-gray-9);
+}
+
+/* Approval Note */
+.approvalNote {
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
 }

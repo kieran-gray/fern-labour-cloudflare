@@ -1,12 +1,46 @@
-.flexRowEnd {
-  display: flex;
-  flex-direction: row;
-  align-content: stretch;
-  width: 100%;
-  align-items: end;
+.pillsInput {
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-primary-1));
+  border-color: light-dark(var(--mantine-color-gray-4), var(--mantine-color-primary-1));
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-gray-1));
+  min-height: 56px;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  transition: border-color 0.2s ease;
 
-  @media (max-width: $mantine-breakpoint-xs) {
-      flex-direction: column;
-      align-items: stretch;
+  &::placeholder {
+    color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-6));
+  }
+
+  &:focus-within {
+    border-color: var(--mantine-primary-color-filled);
+  }
+}
+
+.emailPill {
+  background-color: light-dark(var(--mantine-color-primary-1), var(--mantine-color-primary-3));
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-1));
+  font-weight: 500;
+  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}
+
+.emailPillLabel {
+  font-size: var(--mantine-font-size-sm);
+  padding-left: 4px;
+}
+
+.inputLabel {
+  font-size: var(--mantine-font-size-md);
+  font-weight: 600;
+
+  @media (min-width: $mantine-breakpoint-sm) {
+    font-size: var(--mantine-font-size-lg);
+  }
+}
+
+.inputDescription {
+  font-size: var(--mantine-font-size-sm);
+  margin-bottom: var(--mantine-spacing-xs);
+
+  @media (min-width: $mantine-breakpoint-sm) {
+    font-size: var(--mantine-font-size-md);
   }
 }
