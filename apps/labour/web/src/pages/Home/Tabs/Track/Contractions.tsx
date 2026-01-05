@@ -158,8 +158,7 @@ export const Contractions = memo(
                   labourCompleted={completed}
                   activeContraction={activeContraction}
                 />
-
-                </div>
+              </div>
             </Stack>
           </div>
         </div>
