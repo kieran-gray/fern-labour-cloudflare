@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { ContractionReadModel, LabourReadModel } from '@base/clients/labour_service';
 import { useLabourStatistics } from '@hooks/useLabourStatistics';
 import { formatDurationHuman, formatTimeSeconds, pluraliseName } from '@lib';
@@ -62,58 +62,83 @@ const calculateElapsed = (startTime: string): number => {
   return (Date.now() - new Date(startTime).getTime()) / 1000;
 };
 
-export const LabourStatistics = ({
-  labour,
-  contractions: contractionsProp,
-  inContainer = true,
-  isSubscriberView = false,
-}: LabourStatisticsProps) => {
-  const [helpOpened, { open: openHelp, close: closeHelp }] = useDisclosure(false);
+export const LabourStatistics = memo(
+  ({
+    labour,
+    contractions: contractionsProp,
+    inContainer = true,
+    isSubscriberView = false,
+  }: LabourStatisticsProps) => {
+    const [helpOpened, { open: openHelp, close: closeHelp }] = useDisclosure(false);
 
-  const {
-    timeRange,
-    setTimeRange,
-    contractions,
-    statistics,
-    isLoading,
-    isLoadingMore,
-    totalContractionCount,
-  } = useLabourStatistics(labour, contractionsProp);
+    const {
+      timeRange,
+      setTimeRange,
+      contractions,
+      statistics,
+      isLoading,
+      isLoadingMore,
+      totalContractionCount,
+    } = useLabourStatistics(labour, contractionsProp);
 
-  const completed = labour.end_time !== null;
-  const motherName = isSubscriberView ? pluraliseName(labour.mother_name.split(' ')[0]) : '';
+    const completed = labour.end_time !== null;
+    const motherName = isSubscriberView ? pluraliseName(labour.mother_name.split(' ')[0]) : '';
 
-  const [elapsedSeconds, setElapsedSeconds] = useState(() =>
-    labour.start_time ? calculateElapsed(labour.start_time) : 0
-  );
+    const [elapsedSeconds, setElapsedSeconds] = useState(() =>
+      labour.start_time ? calculateElapsed(labour.start_time) : 0
+    );
 
-  const interval = useInterval(() => {
-    if (labour.start_time) {
-      setElapsedSeconds(calculateElapsed(labour.start_time));
-    }
-  }, 1000);
+    const interval = useInterval(() => {
+      if (labour.start_time) {
+        setElapsedSeconds(calculateElapsed(labour.start_time));
+      }
+    }, 1000);
 
-  useEffect(() => {
-    if (!completed && labour.start_time) {
-      interval.start();
-    }
-    return interval.stop;
-  }, [completed, labour.start_time]);
+    useEffect(() => {
+      if (!completed && labour.start_time) {
+        interval.start();
+      }
+      return interval.stop;
+    }, [completed, labour.start_time]);
 
-  const renderTimingInfo = () => {
-    if (!labour.start_time) {
-      return null;
-    }
+    const renderTimingInfo = () => {
+      if (!labour.start_time) {
+        return null;
+      }
 
-    const startDate = new Date(labour.start_time);
-    const startTime = startDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    const startDateStr = startDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      const startDate = new Date(labour.start_time);
+      const startTime = startDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      const startDateStr = startDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
 
-    if (completed && labour.end_time) {
-      const endDate = new Date(labour.end_time);
-      const endTime = endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-      const endDateStr = endDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
-      const durationSeconds = (endDate.getTime() - startDate.getTime()) / 1000;
+      if (completed && labour.end_time) {
+        const endDate = new Date(labour.end_time);
+        const endTime = endDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        const endDateStr = endDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        const durationSeconds = (endDate.getTime() - startDate.getTime()) / 1000;
+
+        return (
+          <div className={classes.timingCardsContainer}>
+            <TimingCard
+              icon={<IconCalendarEvent size={14} />}
+              label="Started"
+              value={startTime}
+              subtext={startDateStr}
+            />
+            <TimingCard
+              icon={<IconFlagFilled size={14} />}
+              label="Ended"
+              value={endTime}
+              subtext={endDateStr}
+            />
+            <TimingCard
+              icon={<IconClock size={14} />}
+              label="Duration"
+              value={formatTimeSeconds(durationSeconds)}
+              subtext="total time"
+            />
+          </div>
+        );
+      }
 
       return (
         <div className={classes.timingCardsContainer}>
@@ -124,129 +149,106 @@ export const LabourStatistics = ({
             subtext={startDateStr}
           />
           <TimingCard
-            icon={<IconFlagFilled size={14} />}
-            label="Ended"
-            value={endTime}
-            subtext={endDateStr}
-          />
-          <TimingCard
-            icon={<IconClock size={14} />}
-            label="Duration"
-            value={formatTimeSeconds(durationSeconds)}
-            subtext="total time"
+            icon={<IconHourglass size={14} />}
+            label="Elapsed"
+            value={formatDurationHuman(elapsedSeconds)}
+            subtext="and counting"
           />
         </div>
       );
+    };
+
+    const emptyStateMessage = isSubscriberView
+      ? MESSAGES.SUBSCRIBER_EMPTY_STATE
+      : completed
+        ? MESSAGES.OWNER_EMPTY_STATE_COMPLETED
+        : MESSAGES.OWNER_EMPTY_STATE_ACTIVE;
+
+    const hasData = totalContractionCount > 0;
+
+    const renderStatisticsContent = () => (
+      <>
+        {renderTimingInfo()}
+        <Space h="sm" />
+
+        {isLoading && (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+            <Loader />
+          </div>
+        )}
+
+        {!hasData && !isLoading && (
+          <Text
+            fz={{ base: 'sm', xs: 'md' }}
+            className={baseClasses.importantText}
+            style={{ display: 'flex', alignItems: 'center' }}
+          >
+            {emptyStateMessage}
+          </Text>
+        )}
+
+        {hasData && (
+          <LabourStatisticsTabs
+            labour={labour}
+            contractions={contractions}
+            statistics={statistics}
+            timeRange={timeRange}
+            onTimeRangeChange={setTimeRange}
+            isLoadingMore={isLoadingMore}
+          />
+        )}
+      </>
+    );
+
+    if (!inContainer) {
+      return renderStatisticsContent();
     }
 
+    const title = isSubscriberView ? MESSAGES.SUBSCRIBER_TITLE(motherName) : MESSAGES.OWNER_TITLE;
+
+    const description = isSubscriberView
+      ? completed
+        ? MESSAGES.SUBSCRIBER_DESCRIPTION_COMPLETED(motherName)
+        : MESSAGES.SUBSCRIBER_DESCRIPTION_ACTIVE(motherName)
+      : completed
+        ? MESSAGES.OWNER_DESCRIPTION_COMPLETED
+        : MESSAGES.OWNER_DESCRIPTION_ACTIVE;
+
     return (
-      <div className={classes.timingCardsContainer}>
-        <TimingCard
-          icon={<IconCalendarEvent size={14} />}
-          label="Started"
-          value={startTime}
-          subtext={startDateStr}
-        />
-        <TimingCard
-          icon={<IconHourglass size={14} />}
-          label="Elapsed"
-          value={formatDurationHuman(elapsedSeconds)}
-          subtext="and counting"
-        />
-      </div>
-    );
-  };
-
-  const emptyStateMessage = isSubscriberView
-    ? MESSAGES.SUBSCRIBER_EMPTY_STATE
-    : completed
-      ? MESSAGES.OWNER_EMPTY_STATE_COMPLETED
-      : MESSAGES.OWNER_EMPTY_STATE_ACTIVE;
-
-  const hasData = totalContractionCount > 0;
-
-  const renderStatisticsContent = () => (
-    <>
-      {renderTimingInfo()}
-      <Space h="sm" />
-
-      {isLoading && (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
-          <Loader />
-        </div>
-      )}
-
-      {!hasData && !isLoading && (
-        <Text
-          fz={{ base: 'sm', xs: 'md' }}
-          className={baseClasses.importantText}
-          style={{ display: 'flex', alignItems: 'center' }}
-        >
-          {emptyStateMessage}
-        </Text>
-      )}
-
-      {hasData && (
-        <LabourStatisticsTabs
-          labour={labour}
-          contractions={contractions}
-          statistics={statistics}
-          timeRange={timeRange}
-          onTimeRangeChange={setTimeRange}
-          isLoadingMore={isLoadingMore}
-        />
-      )}
-    </>
-  );
-
-  if (!inContainer) {
-    return renderStatisticsContent();
-  }
-
-  const title = isSubscriberView ? MESSAGES.SUBSCRIBER_TITLE(motherName) : MESSAGES.OWNER_TITLE;
-
-  const description = isSubscriberView
-    ? completed
-      ? MESSAGES.SUBSCRIBER_DESCRIPTION_COMPLETED(motherName)
-      : MESSAGES.SUBSCRIBER_DESCRIPTION_ACTIVE(motherName)
-    : completed
-      ? MESSAGES.OWNER_DESCRIPTION_COMPLETED
-      : MESSAGES.OWNER_DESCRIPTION_ACTIVE;
-
-  return (
-    <div className={baseClasses.root}>
-      <div className={baseClasses.body}>
-        <div className={baseClasses.docsTitleRow}>
-          <div className={classes.title} style={{ paddingBottom: 0 }}>
-            <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
-              {title}
-            </Title>
+      <div className={baseClasses.root}>
+        <div className={baseClasses.body}>
+          <div className={baseClasses.docsTitleRow}>
+            <div className={classes.title} style={{ paddingBottom: 0 }}>
+              <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+                {title}
+              </Title>
+            </div>
+            <ActionIcon radius="xl" variant="light" size="xl" onClick={openHelp}>
+              <IconBook />
+            </ActionIcon>
+            <StatisticsHelpModal opened={helpOpened} close={closeHelp} />
           </div>
-          <ActionIcon radius="xl" variant="light" size="xl" onClick={openHelp}>
-            <IconBook />
-          </ActionIcon>
-          <StatisticsHelpModal opened={helpOpened} close={closeHelp} />
-        </div>
-        <div className={baseClasses.inner} style={{ paddingBottom: 0, paddingTop: 0 }}>
-          <div className={classes.content}>
-            <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description}>
-              {description}
-            </Text>
-            <Space h="sm" />
-            <div className={baseClasses.imageFlexRow}>
-              <Image src={image} className={classes.smallImage} />
+          <div className={baseClasses.inner} style={{ paddingBottom: 0, paddingTop: 0 }}>
+            <div className={classes.content}>
+              <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description}>
+                {description}
+              </Text>
+              <Space h="sm" />
+              <div className={baseClasses.imageFlexRow}>
+                <Image src={image} className={classes.smallImage} />
+              </div>
+            </div>
+            <div className={baseClasses.flexColumn}>
+              <Image src={image} className={classes.image} />
             </div>
           </div>
-          <div className={baseClasses.flexColumn}>
-            <Image src={image} className={classes.image} />
-          </div>
-        </div>
-        <div className={classes.statsInner}>
-          <div className={baseClasses.flexColumn} style={{ width: '100%' }}>
-            {renderStatisticsContent()}
+          <div className={classes.statsInner}>
+            <div className={baseClasses.flexColumn} style={{ width: '100%' }}>
+              {renderStatisticsContent()}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);

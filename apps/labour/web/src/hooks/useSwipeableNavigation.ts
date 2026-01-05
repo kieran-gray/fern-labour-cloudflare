@@ -1,45 +1,48 @@
+import { useCallback, useMemo } from 'react';
 import { useSwipeable } from 'react-swipeable';
 
 interface UseSwipeableNavigationOptions<T extends string> {
-  /** Currently active tab */
   activeTab: T | null;
-  /** Ordered list of tab IDs */
   tabOrder: readonly T[];
-  /** Callback to change the active tab */
   setActiveTab: (tab: T) => void;
 }
 
-/**
- * Hook that provides swipe handlers for tab navigation.
- * Swipe right goes to previous tab, swipe left goes to next tab.
- */
 export function useSwipeableNavigation<T extends string>({
   activeTab,
   tabOrder,
   setActiveTab,
 }: UseSwipeableNavigationOptions<T>) {
-  return useSwipeable({
-    onSwipedRight: () => {
-      if (activeTab) {
-        const tabIndex = tabOrder.indexOf(activeTab);
-        if (tabIndex > 0) {
-          setActiveTab(tabOrder[tabIndex - 1]);
-        }
+  const onSwipedRight = useCallback(() => {
+    if (activeTab) {
+      const tabIndex = tabOrder.indexOf(activeTab);
+      if (tabIndex > 0) {
+        setActiveTab(tabOrder[tabIndex - 1]);
       }
-    },
-    onSwipedLeft: () => {
-      if (activeTab) {
-        const tabIndex = tabOrder.indexOf(activeTab);
-        if (tabIndex < tabOrder.length - 1) {
-          setActiveTab(tabOrder[tabIndex + 1]);
-        }
+    }
+  }, [activeTab, tabOrder, setActiveTab]);
+
+  const onSwipedLeft = useCallback(() => {
+    if (activeTab) {
+      const tabIndex = tabOrder.indexOf(activeTab);
+      if (tabIndex < tabOrder.length - 1) {
+        setActiveTab(tabOrder[tabIndex + 1]);
       }
-    },
-    delta: 10,
-    swipeDuration: 250,
-    trackTouch: true,
-    preventScrollOnSwipe: true,
-  });
+    }
+  }, [activeTab, tabOrder, setActiveTab]);
+
+  const config = useMemo(
+    () => ({
+      onSwipedRight,
+      onSwipedLeft,
+      delta: 10,
+      swipeDuration: 250,
+      trackTouch: true,
+      preventScrollOnSwipe: true,
+    }),
+    [onSwipedRight, onSwipedLeft]
+  );
+
+  return useSwipeable(config);
 }
 
 /**

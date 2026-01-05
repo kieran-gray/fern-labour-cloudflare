@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SubscriberRole } from '@base/clients/labour_service';
 import { FloatingPanel } from '@base/components/Controls/FloatingPanel';
 import { SubscriberSessionState, useLabourSession } from '@base/contexts/LabourSessionContext';
@@ -108,15 +108,18 @@ export const SubscriberView = () => {
     }
   }, [activeTab, TABS]);
 
-  const handleTabChange = (newTab: string) => {
-    const currentIndex = tabOrder.indexOf(activeTab as any);
-    const newIndex = tabOrder.indexOf(newTab as any);
+  const handleTabChange = useCallback(
+    (newTab: string) => {
+      const currentIndex = tabOrder.indexOf(activeTab as any);
+      const newIndex = tabOrder.indexOf(newTab as any);
 
-    if (newIndex !== -1 && currentIndex !== -1) {
-      setDirection(newIndex > currentIndex ? 'right' : 'left');
-    }
-    setActiveTab(newTab);
-  };
+      if (newIndex !== -1 && currentIndex !== -1) {
+        setDirection(newIndex > currentIndex ? 'right' : 'left');
+      }
+      setActiveTab(newTab);
+    },
+    [activeTab, tabOrder]
+  );
 
   useEffect(() => {
     const isTabAllowed = TABS.some((tab) => tab.id === activeTab);
@@ -208,68 +211,78 @@ export const SubscriberView = () => {
   const motherFirstName = labour?.mother_name?.split(' ')[0];
   const pluralisedMotherName = pluraliseName(motherFirstName || '');
 
-  const renderTabPanel = (tabId: string) => {
-    switch (tabId) {
-      case 'subscriptions':
-        return (
-          <>
-            <ManageSubscriptions />
-            <Space h="xl" />
-            <ShareFernLabour />
-          </>
-        );
-      case 'details':
-        if (!labour) {
-          return <ErrorContainer message="Select a subscription to view details" />;
-        }
-        return (
-          <>
-            <SubscriberLabourDetails labour={labour} motherName={pluralisedMotherName} />
-            {labour.end_time == null && subscriptionData && (
-              <>
-                <Space h="xl" />
-                {subscriptionData.access_level === 'BASIC' ? (
-                  <PayWall />
-                ) : (
-                  <ContactMethods subscription={subscriptionData} />
-                )}
-              </>
-            )}
-          </>
-        );
-      case 'track':
-        if (!labour) {
-          return <ErrorContainer message="Select a subscription to track contractions" />;
-        }
-        return (
-          <Contractions
-            labour={labour}
-            isSubscriberView
-            subscriberRole={subscriberRole || undefined}
-          />
-        );
-      case 'stats':
-        if (!labour) {
-          return <ErrorContainer message="Select a subscription to view statistics" />;
-        }
-        return <LabourStatistics labour={labour} isSubscriberView />;
-      case 'updates':
-        if (!labour) {
-          return <ErrorContainer message="Select a subscription to view updates" />;
-        }
-        return (
-          <LabourUpdates
-            labour={labour}
-            isSubscriberView
-            subscriberRole={subscriberRole || undefined}
-          />
-        );
-      case 'gifts':
-        return <Gifts birthingPersonName={motherFirstName || ''} />;
-      default:
-        return null;
+  const renderTabPanel = useCallback(
+    (tabId: string) => {
+      switch (tabId) {
+        case 'subscriptions':
+          return (
+            <>
+              <ManageSubscriptions />
+              <Space h="xl" />
+              <ShareFernLabour />
+            </>
+          );
+        case 'details':
+          if (!labour) {
+            return <ErrorContainer message="Select a subscription to view details" />;
+          }
+          return (
+            <>
+              <SubscriberLabourDetails labour={labour} motherName={pluralisedMotherName} />
+              {labour.end_time == null && subscriptionData && (
+                <>
+                  <Space h="xl" />
+                  {subscriptionData.access_level === 'BASIC' ? (
+                    <PayWall />
+                  ) : (
+                    <ContactMethods subscription={subscriptionData} />
+                  )}
+                </>
+              )}
+            </>
+          );
+        case 'track':
+          if (!labour) {
+            return <ErrorContainer message="Select a subscription to track contractions" />;
+          }
+          return (
+            <Contractions
+              labour={labour}
+              isSubscriberView
+              subscriberRole={subscriberRole || undefined}
+            />
+          );
+        case 'stats':
+          if (!labour) {
+            return <ErrorContainer message="Select a subscription to view statistics" />;
+          }
+          return <LabourStatistics labour={labour} isSubscriberView />;
+        case 'updates':
+          if (!labour) {
+            return <ErrorContainer message="Select a subscription to view updates" />;
+          }
+          return (
+            <LabourUpdates
+              labour={labour}
+              isSubscriberView
+              subscriberRole={subscriberRole || undefined}
+            />
+          );
+        case 'gifts':
+          return <Gifts birthingPersonName={motherFirstName || ''} />;
+        default:
+          return null;
+      }
+    },
+    [labour, pluralisedMotherName, subscriptionData, subscriberRole, motherFirstName]
+  );
+
+  const handleTransitionEnd = useCallback(() => {
+    const tab = TABS.find((t) => t.id === activeTab);
+    if ((tab as any)?.scrollToTop === false) {
+      scrollMainToBottom(true);
     }
-  };
+  }, [activeTab, TABS]);
 
   return (
     <>
@@ -283,12 +296,7 @@ export const SubscriberView = () => {
               style={{
                 width: '100%',
               }}
-              onTransitionEnd={() => {
-                const tab = TABS.find((t) => t.id === activeTab);
-                if ((tab as any)?.scrollToTop === false) {
-                  scrollMainToBottom(true);
-                }
-              }}
+              onTransitionEnd={handleTransitionEnd}
             />
           </div>
 

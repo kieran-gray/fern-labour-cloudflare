@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   LabourReadModel,
   LabourUpdateReadModel,
@@ -120,199 +120,156 @@ const mapLabourUpdateToProps = (
   }
 };
 
-export function LabourUpdates({
-  labour,
-  isSubscriberView = false,
-  subscriberRole,
-}: LabourUpdatesProps) {
-  const [opened, { open, close }] = useDisclosure(false);
-  const viewport = useRef<HTMLDivElement>(null);
-  const isTransitioning = useTransitionStatus();
+export const LabourUpdates = memo(
+  ({ labour, isSubscriberView = false, subscriberRole }: LabourUpdatesProps) => {
+    const [opened, { open, close }] = useDisclosure(false);
+    const viewport = useRef<HTMLDivElement>(null);
+    const isTransitioning = useTransitionStatus();
 
-  const isOwnerView = !isSubscriberView || subscriberRole === SubscriberRole.BIRTH_PARTNER;
-  const isBirthPartner = isSubscriberView && subscriberRole === SubscriberRole.BIRTH_PARTNER;
+    const isOwnerView = !isSubscriberView || subscriberRole === SubscriberRole.BIRTH_PARTNER;
+    const isBirthPartner = isSubscriberView && subscriberRole === SubscriberRole.BIRTH_PARTNER;
 
-  const client = useLabourClient();
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useLabourUpdatesInfinite(
-    client,
-    labour.labour_id
-  );
+    const client = useLabourClient();
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useLabourUpdatesInfinite(
+      client,
+      labour.labour_id
+    );
 
-  const labourUpdates = useMemo(() => flattenLabourUpdates(data), [data]);
+    const labourUpdates = useMemo(() => flattenLabourUpdates(data), [data]);
 
-  const handleLoadMore = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  };
-
-  const motherFirstName = labour.mother_name.split(' ')[0];
-  const completed = labour.end_time != null;
-
-  const sharedLabourBegunMessage = useMemo(
-    () => MESSAGES.SHARED_LABOUR_BEGUN(motherFirstName),
-    [motherFirstName]
-  );
-
-  const privateLabourBegunMessage = isBirthPartner
-    ? MESSAGES.BIRTH_PARTNER_LABOUR_BEGUN(motherFirstName)
-    : MESSAGES.PRIVATE_LABOUR_BEGUN;
-
-  const scrollToBottom = useCallback((smooth: boolean = false) => {
-    setTimeout(() => {
-      if (viewport.current) {
-        viewport.current.scrollTo({
-          top: viewport.current.scrollHeight,
-          behavior: smooth ? 'smooth' : 'auto',
-        });
+    const handleLoadMore = () => {
+      if (hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
       }
+    };
 
-      const main = document.getElementById('app-main');
-      if (main) {
-        main.scrollTo({ top: main.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
-      }
-    }, 50);
-  }, []);
+    const motherFirstName = labour.mother_name.split(' ')[0];
+    const completed = labour.end_time != null;
 
-  const labourUpdateDisplay = useMemo(() => {
-    const filteredUpdates = isOwnerView
-      ? labourUpdates
-      : labourUpdates.filter(
-          (update) =>
-            update.labour_update_type === 'ANNOUNCEMENT' ||
-            update.labour_update_type === 'STATUS_UPDATE'
+    const sharedLabourBegunMessage = useMemo(
+      () => MESSAGES.SHARED_LABOUR_BEGUN(motherFirstName),
+      [motherFirstName]
+    );
+
+    const privateLabourBegunMessage = isBirthPartner
+      ? MESSAGES.BIRTH_PARTNER_LABOUR_BEGUN(motherFirstName)
+      : MESSAGES.PRIVATE_LABOUR_BEGUN;
+
+    const scrollToBottom = useCallback((smooth: boolean = false) => {
+      setTimeout(() => {
+        if (viewport.current) {
+          viewport.current.scrollTo({
+            top: viewport.current.scrollHeight,
+            behavior: smooth ? 'smooth' : 'auto',
+          });
+        }
+
+        const main = document.getElementById('app-main');
+        if (main) {
+          main.scrollTo({ top: main.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
+        }
+      }, 50);
+    }, []);
+
+    const labourUpdateDisplay = useMemo(() => {
+      const filteredUpdates = isOwnerView
+        ? labourUpdates
+        : labourUpdates.filter(
+            (update) =>
+              update.labour_update_type === 'ANNOUNCEMENT' ||
+              update.labour_update_type === 'STATUS_UPDATE'
+          );
+
+      return filteredUpdates.map((data) => {
+        return (
+          <LabourUpdate
+            data={mapLabourUpdateToProps(
+              data,
+              sharedLabourBegunMessage,
+              privateLabourBegunMessage,
+              completed,
+              !isOwnerView
+            )}
+            key={data.labour_update_id}
+          />
         );
+      });
+    }, [
+      labourUpdates,
+      sharedLabourBegunMessage,
+      privateLabourBegunMessage,
+      completed,
+      isOwnerView,
+    ]);
 
-    return filteredUpdates.map((data) => {
-      return (
-        <LabourUpdate
-          data={mapLabourUpdateToProps(
-            data,
-            sharedLabourBegunMessage,
-            privateLabourBegunMessage,
-            completed,
-            !isOwnerView
-          )}
-          key={data.labour_update_id}
-        />
-      );
-    });
-  }, [labourUpdates, sharedLabourBegunMessage, privateLabourBegunMessage, completed, isOwnerView]);
+    const newestUpdateId =
+      labourUpdates.length > 0 ? labourUpdates[labourUpdates.length - 1].labour_update_id : null;
+    const prevNewestIdRef = useRef<string | null>(null);
 
-  const newestUpdateId =
-    labourUpdates.length > 0 ? labourUpdates[labourUpdates.length - 1].labour_update_id : null;
-  const prevNewestIdRef = useRef<string | null>(null);
+    useEffect(() => {
+      if (labourUpdates.length === 0 || isTransitioning) {
+        return;
+      }
 
-  useEffect(() => {
-    if (labourUpdates.length === 0 || isTransitioning) {
-      return;
-    }
+      scrollToBottom(true);
 
-    scrollToBottom(true);
+      prevNewestIdRef.current = newestUpdateId;
+    }, [labourUpdates.length, newestUpdateId, scrollToBottom, isTransitioning]);
 
-    prevNewestIdRef.current = newestUpdateId;
-  }, [labourUpdates.length, newestUpdateId, scrollToBottom, isTransitioning]);
-
-  const title = !isSubscriberView
-    ? completed
-      ? MESSAGES.OWNER_TITLE_COMPLETED
-      : MESSAGES.OWNER_TITLE_ACTIVE
-    : isBirthPartner
+    const title = !isSubscriberView
       ? completed
-        ? MESSAGES.BIRTH_PARTNER_TITLE_COMPLETED(motherFirstName)
-        : MESSAGES.BIRTH_PARTNER_TITLE_ACTIVE(motherFirstName)
-      : MESSAGES.SUBSCRIBER_TITLE(pluraliseName(motherFirstName));
+        ? MESSAGES.OWNER_TITLE_COMPLETED
+        : MESSAGES.OWNER_TITLE_ACTIVE
+      : isBirthPartner
+        ? completed
+          ? MESSAGES.BIRTH_PARTNER_TITLE_COMPLETED(motherFirstName)
+          : MESSAGES.BIRTH_PARTNER_TITLE_ACTIVE(motherFirstName)
+        : MESSAGES.SUBSCRIBER_TITLE(pluraliseName(motherFirstName));
 
-  const description = !isSubscriberView
-    ? completed
-      ? MESSAGES.OWNER_DESCRIPTION_COMPLETED
-      : MESSAGES.OWNER_DESCRIPTION_ACTIVE
-    : isBirthPartner
+    const description = !isSubscriberView
       ? completed
-        ? MESSAGES.BIRTH_PARTNER_DESCRIPTION_COMPLETED(motherFirstName)
-        : MESSAGES.BIRTH_PARTNER_DESCRIPTION_ACTIVE(motherFirstName)
-      : completed
-        ? MESSAGES.SUBSCRIBER_DESCRIPTION_COMPLETED(motherFirstName)
-        : MESSAGES.SUBSCRIBER_DESCRIPTION_ACTIVE(motherFirstName);
+        ? MESSAGES.OWNER_DESCRIPTION_COMPLETED
+        : MESSAGES.OWNER_DESCRIPTION_ACTIVE
+      : isBirthPartner
+        ? completed
+          ? MESSAGES.BIRTH_PARTNER_DESCRIPTION_COMPLETED(motherFirstName)
+          : MESSAGES.BIRTH_PARTNER_DESCRIPTION_ACTIVE(motherFirstName)
+        : completed
+          ? MESSAGES.SUBSCRIBER_DESCRIPTION_COMPLETED(motherFirstName)
+          : MESSAGES.SUBSCRIBER_DESCRIPTION_ACTIVE(motherFirstName);
 
-  const emptyStateMessage = !isSubscriberView
-    ? MESSAGES.OWNER_EMPTY_STATE
-    : isBirthPartner
-      ? MESSAGES.BIRTH_PARTNER_EMPTY_STATE(motherFirstName)
-      : MESSAGES.SUBSCRIBER_EMPTY_STATE(motherFirstName);
+    const emptyStateMessage = !isSubscriberView
+      ? MESSAGES.OWNER_EMPTY_STATE
+      : isBirthPartner
+        ? MESSAGES.BIRTH_PARTNER_EMPTY_STATE(motherFirstName)
+        : MESSAGES.SUBSCRIBER_EMPTY_STATE(motherFirstName);
 
-  const hasUpdates = labourUpdateDisplay.length > 0;
-  const showOwnerEmptyState = !hasUpdates && !completed && isOwnerView;
+    const hasUpdates = labourUpdateDisplay.length > 0;
+    const showOwnerEmptyState = !hasUpdates && !completed && isOwnerView;
 
-  return (
-    <div className={baseClasses.root}>
-      <div className={baseClasses.body}>
-        {isOwnerView ? (
-          <>
-            <div className={classes.titleRow}>
-              <div className={classes.title} style={{ paddingBottom: 0 }}>
-                <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
-                  {title}
-                </Title>
-              </div>
-              <ActionIcon radius="xl" variant="light" size="lg" onClick={open}>
-                <IconBook size={20} />
-              </ActionIcon>
-              <LabourUpdatesHelpModal close={close} opened={opened} />
-            </div>
-            <div className={classes.inner} style={{ paddingBottom: 0, paddingTop: 0 }}>
-              <div className={classes.content}>
-                <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description}>
-                  {description}
-                </Text>
-                {hasUpdates && (
-                  <ScrollArea.Autosize mt="md" mah="calc(100dvh - 350px)" viewportRef={viewport}>
-                    {hasNextPage && (
-                      <Button
-                        onClick={handleLoadMore}
-                        variant="light"
-                        mb="sm"
-                        fullWidth
-                        loading={isFetchingNextPage}
-                        disabled={isFetchingNextPage}
-                      >
-                        {isFetchingNextPage ? 'Loading...' : 'Load older updates'}
-                      </Button>
-                    )}
-                    <div className={classes.statusUpdateContainer}>{labourUpdateDisplay}</div>
-                  </ScrollArea.Autosize>
-                )}
-                {showOwnerEmptyState && (
-                  <>
-                    <div className={classes.imageFlexRow}>
-                      <Image src={image} className={classes.image} />
-                    </div>
-                    <Text fz="sm" className={baseClasses.importantText}>
-                      {emptyStateMessage}
-                    </Text>
-                  </>
-                )}
-
-                <div className={classes.desktopControls}>
-                  {!completed && <LabourUpdateControls />}
+    return (
+      <div className={baseClasses.root}>
+        <div className={baseClasses.body}>
+          {isOwnerView ? (
+            <>
+              <div className={classes.titleRow}>
+                <div className={classes.title} style={{ paddingBottom: 0 }}>
+                  <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+                    {title}
+                  </Title>
                 </div>
+                <ActionIcon radius="xl" variant="light" size="lg" onClick={open}>
+                  <IconBook size={20} />
+                </ActionIcon>
+                <LabourUpdatesHelpModal close={close} opened={opened} />
               </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className={classes.inner}>
-              <div className={classes.content}>
-                <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
-                  {title}
-                </Title>
-                <Text fz="sm" className={baseClasses.description} mt="sm">
-                  {description}
-                </Text>
-                <Space h="md" />
-                {hasUpdates ? (
-                  <>
-                    <ScrollArea.Autosize mah="60vh" viewportRef={viewport}>
+              <div className={classes.inner} style={{ paddingBottom: 0, paddingTop: 0 }}>
+                <div className={classes.content}>
+                  <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description}>
+                    {description}
+                  </Text>
+                  {hasUpdates && (
+                    <ScrollArea.Autosize mt="md" mah="calc(100dvh - 350px)" viewportRef={viewport}>
                       {hasNextPage && (
                         <Button
                           onClick={handleLoadMore}
@@ -327,18 +284,65 @@ export function LabourUpdates({
                       )}
                       <div className={classes.statusUpdateContainer}>{labourUpdateDisplay}</div>
                     </ScrollArea.Autosize>
-                    <Space h="md" />
-                  </>
-                ) : (
-                  <Text fz="sm" className={baseClasses.importantText}>
-                    {emptyStateMessage}
-                  </Text>
-                )}
+                  )}
+                  {showOwnerEmptyState && (
+                    <>
+                      <div className={classes.imageFlexRow}>
+                        <Image src={image} className={classes.image} />
+                      </div>
+                      <Text fz="sm" className={baseClasses.importantText}>
+                        {emptyStateMessage}
+                      </Text>
+                    </>
+                  )}
+
+                  <div className={classes.desktopControls}>
+                    {!completed && <LabourUpdateControls />}
+                  </div>
+                </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          ) : (
+            <>
+              <div className={classes.inner}>
+                <div className={classes.content}>
+                  <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+                    {title}
+                  </Title>
+                  <Text fz="sm" className={baseClasses.description} mt="sm">
+                    {description}
+                  </Text>
+                  <Space h="md" />
+                  {hasUpdates ? (
+                    <>
+                      <ScrollArea.Autosize mah="60vh" viewportRef={viewport}>
+                        {hasNextPage && (
+                          <Button
+                            onClick={handleLoadMore}
+                            variant="light"
+                            mb="sm"
+                            fullWidth
+                            loading={isFetchingNextPage}
+                            disabled={isFetchingNextPage}
+                          >
+                            {isFetchingNextPage ? 'Loading...' : 'Load older updates'}
+                          </Button>
+                        )}
+                        <div className={classes.statusUpdateContainer}>{labourUpdateDisplay}</div>
+                      </ScrollArea.Autosize>
+                      <Space h="md" />
+                    </>
+                  ) : (
+                    <Text fz="sm" className={baseClasses.importantText}>
+                      {emptyStateMessage}
+                    </Text>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+);
