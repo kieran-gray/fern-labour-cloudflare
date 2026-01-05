@@ -11,115 +11,117 @@
 }
 
 .controls {
-    display: flex;
-  }
-  
-  .content {
-    width: 100%;
-    margin-right: calc(var(--mantine-spacing-xl));
-  
-    @media (max-width: $mantine-breakpoint-md) {
-      max-width: 100%;
-      margin-right: 0;
-    }
-  }
-  
-  .title {
-    padding: calc(var(--mantine-spacing-xl));
-  
-    @media (max-width: $mantine-breakpoint-md) {
-      padding: calc(var(--mantine-spacing-md));
-    }
+  display: flex;
+}
 
-    @media (max-width: $mantine-breakpoint-sm) {
-      padding: calc(var(--mantine-spacing-sm));
-    }
+.content {
+  width: 100%;
+  margin-right: calc(var(--mantine-spacing-xl));
+  padding: 0 var(--mantine-spacing-xl);
 
-    @media (max-width: $mantine-breakpoint-xs) {
-      padding: calc(var(--mantine-spacing-xs));
-    }
+  @media (max-width: $mantine-breakpoint-md) {
+    max-width: 100%;
+    margin-right: 0;
+    padding: 0 var(--mantine-spacing-md);
   }
 
-  .innerContent {
-    padding: 0;
+  @media (max-width: $mantine-breakpoint-sm) {
+    padding: 0 var(--mantine-spacing-xs);
+  }
+}
+
+.title {
+  padding: calc(var(--mantine-spacing-xl));
+
+  @media (max-width: $mantine-breakpoint-md) {
+    padding: calc(var(--mantine-spacing-md));
   }
 
-  .emptyState {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--mantine-spacing-md);
+  @media (max-width: $mantine-breakpoint-sm) {
+    padding: calc(var(--mantine-spacing-sm));
   }
+
+  @media (max-width: $mantine-breakpoint-xs) {
+    padding: calc(var(--mantine-spacing-xs));
+  }
+}
+
+.emptyState {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mantine-spacing-md);
+}
 
 .controlsBackground {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-end;
-    padding: var(--mantine-spacing-md);
-    border-radius: var(--mantine-radius-xl);
-    background-color: var(--mantine-color-primary-1);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  padding: var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-xl);
+  background-color: var(--mantine-color-primary-1);
 }
 
 .slider {
-    margin-bottom: var(--mantine-spacing-sm);
+  margin-bottom: var(--mantine-spacing-sm);
 }
 
 .markLabel {
-    color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
-    font-weight: 500;
-    font-size: var(--mantine-font-size-sm);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  font-weight: 500;
+  font-size: var(--mantine-font-size-sm);
 }
 
 .track {
-    background-color: var(--mantine-color-primary-1);
+  background-color: var(--mantine-color-primary-1);
 }
 
 .timelineLabel {
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2));
-    font-size: var(--mantine-font-size-sm);
-    font-weight: 400;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2));
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 400;
 }
 
 .bulletText {
-    color: light-dark(var(--mantine-color-primary-1), var(--mantine-color-white));
-    font-weight: 700;
-    font-size: var(--mantine-font-size-lg);
+  color: light-dark(var(--mantine-color-primary-1), var(--mantine-color-white));
+  font-weight: 700;
+  font-size: var(--mantine-font-size-lg);
 }
 
 .stopwatchWrapper {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .sliderGroup {
-    width: 100%;
+  width: 100%;
 }
 
 .sliderLabel {
-    text-align: center;
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2));
-    font-weight: 400;
-    margin-bottom: var(--mantine-spacing-xs);
-    font-size: var(--mantine-font-size-md);
+  text-align: center;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2));
+  font-weight: 400;
+  margin-bottom: var(--mantine-spacing-xs);
+  font-size: var(--mantine-font-size-md);
 }
 
 .controlsCenter {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .controlsWrapper {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .controlsContainer {
-    width: 100%;
-    max-width: 600px;
+  width: 100%;
+  max-width: 600px;
 }
 
 .flexRow {
@@ -129,13 +131,17 @@
 }
 
 .image {
-  max-width: 280px;
-  width: 100%;
-  height: auto;
-  opacity: 0.9;
+  width: 320px;
+  height: 280px;
+
+  @media (max-width: $mantine-breakpoint-md) {
+    width: 270px;
+    height: 230px;
+  }
 
   @media (max-width: $mantine-breakpoint-xs) {
-    max-width: 200px;
+    width: 220px;
+    height: 180px;
   }
 }
 

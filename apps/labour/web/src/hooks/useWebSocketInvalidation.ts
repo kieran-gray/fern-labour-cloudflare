@@ -81,11 +81,7 @@ function processEvent(
       break;
 
     case 'LabourCompleted':
-      invalidateOrCollect(
-        queryClient,
-        queryKeys.labour.detail(data.labour_id!),
-        pendingInvalidations
-      );
+      queryClient.removeQueries({ queryKey: queryKeys.labour.detail(data.labour_id!) });
       invalidateOrCollect(queryClient, queryKeys.labour.lists(), pendingInvalidations);
       break;
 

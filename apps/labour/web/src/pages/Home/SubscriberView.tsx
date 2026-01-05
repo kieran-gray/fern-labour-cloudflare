@@ -192,22 +192,6 @@ export const SubscriberView = () => {
     }
   }, [isError, error, clearSession, navigate]);
 
-  if (isPending) {
-    return (
-      <AppShell>
-        <PageLoading />
-      </AppShell>
-    );
-  }
-
-  if (isError && subscriberState === SubscriberSessionState.Active) {
-    return (
-      <AppShell>
-        <ErrorContainer message={error?.message || 'An error occurred'} />
-      </AppShell>
-    );
-  }
-
   const motherFirstName = labour?.mother_name?.split(' ')[0];
   const pluralisedMotherName = pluraliseName(motherFirstName || '');
 
@@ -283,6 +267,22 @@ export const SubscriberView = () => {
       scrollMainToBottom(true);
     }
   }, [activeTab, TABS]);
+
+  if (isPending) {
+    return (
+      <AppShell>
+        <PageLoading />
+      </AppShell>
+    );
+  }
+
+  if (isError && subscriberState === SubscriberSessionState.Active) {
+    return (
+      <AppShell>
+        <ErrorContainer message={error?.message || 'An error occurred'} />
+      </AppShell>
+    );
+  }
 
   return (
     <>

@@ -58,7 +58,6 @@ export const MotherView = () => {
   const [isUpdateControlsExpanded, setIsUpdateControlsExpanded] = useState(true);
   const [isContractionControlsExpanded, setIsContractionControlsExpanded] = useState(true);
 
-  // Scroll to top on tab change, unless it's a tab that auto-scrolls to bottom
   useEffect(() => {
     const tab = TABS.find((t) => t.id === activeTab);
     if ((tab as any)?.scrollToTop !== false) {
@@ -95,14 +94,14 @@ export const MotherView = () => {
   const { data: contractionsData } = useContractionsInfinite(client, currentLabourId);
   const contractions = useMemo(() => flattenContractions(contractionsData), [contractionsData]);
 
-  // Set labour ID if we got it from active labour
   useEffect(() => {
-    if (labour && !currentLabourId && labour.labour_id !== labourId) {
+    // Only sync labourId if we have an active (non-completed) labour
+    // This prevents stale cached data from re-setting the labourId after completing
+    if (labour && !currentLabourId && labour.labour_id !== labourId && labour.end_time === null) {
       setLabourId(labour.labour_id);
     }
   }, [labour, currentLabourId, labourId, setLabourId]);
 
-  // Handle permission errors by cleaning up URL params
   useEffect(() => {
     if (isError && error instanceof PermissionDenied) {
       searchParams.delete('labourId');
@@ -110,63 +109,16 @@ export const MotherView = () => {
     }
   }, [isError, error, searchParams, setSearchParams]);
 
-  if (isPending) {
-    return (
-      <AppShell>
-        <PageLoading />
-      </AppShell>
-    );
-  }
-
-  if (isError) {
-    if (error instanceof NotFoundError) {
-      return (
-        <AppShell>
-          <div className={baseClasses.flexPageColumn}>
-            <div className={baseClasses.root} style={{ width: '100%' }}>
-              <div className={baseClasses.body}>
-                <div className={baseClasses.inner}>
-                  <div className={baseClasses.flexColumn} style={{ flexGrow: 1, width: '100%' }}>
-                    <Plan labour={undefined} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </AppShell>
-      );
-    }
-    return (
-      <AppShell>
-        <ErrorContainer message={error?.message || 'An error occurred'} />
-      </AppShell>
-    );
-  }
-
-  if (!labour) {
-    return (
-      <AppShell>
-        <ErrorContainer message="Labour data not found" />
-      </AppShell>
-    );
-  }
-
-  const completed = labour.end_time !== null;
+  const completed = labour?.end_time !== null;
   const activeContraction = contractions.find(
     (contraction) => contraction.duration.start_time === contraction.duration.end_time
   );
 
-  const bottomPadding = getFloatingControlsPadding({
-    activeTab,
-    completed,
-    isContractionControlsExpanded,
-    isUpdateControlsExpanded,
-    hasActiveContraction: !!activeContraction,
-    isOnline,
-  });
-
   const renderTabPanel = useCallback(
     (tabId: string) => {
+      if (!labour) {
+        return null;
+      }
       switch (tabId) {
         case 'details':
           return (
@@ -205,6 +157,48 @@ export const MotherView = () => {
       scrollMainToBottom(true);
     }
   }, [activeTab]);
+
+  if (isPending) {
+    return (
+      <AppShell>
+        <PageLoading />
+      </AppShell>
+    );
+  }
+
+  if (isError) {
+    if (error instanceof NotFoundError) {
+      return (
+        <AppShell>
+          <div className={baseClasses.flexPageColumn}>
+            <Plan />
+          </div>
+        </AppShell>
+      );
+    }
+    return (
+      <AppShell>
+        <ErrorContainer message={error?.message || 'An error occurred'} />
+      </AppShell>
+    );
+  }
+
+  if (!labour) {
+    return (
+      <AppShell>
+        <ErrorContainer message="Labour data not found" />
+      </AppShell>
+    );
+  }
+
+  const bottomPadding = getFloatingControlsPadding({
+    activeTab,
+    completed,
+    isContractionControlsExpanded,
+    isUpdateControlsExpanded,
+    hasActiveContraction: !!activeContraction,
+    isOnline,
+  });
 
   return (
     <div {...swipeHandlers}>

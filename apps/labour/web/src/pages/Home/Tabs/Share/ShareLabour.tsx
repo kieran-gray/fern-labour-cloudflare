@@ -146,7 +146,12 @@ function LinkCard({ url, onInvalidate, isInvalidating }: LinkCardProps) {
           <MantineCopyButton value={url}>
             {({ copied, copy }) => (
               <Tooltip label={copied ? 'Copied!' : 'Copy'} position="top" withArrow>
-                <ActionIcon variant="subtle" onClick={copy} className={classes.linkAction}>
+                <ActionIcon
+                  variant="subtle"
+                  radius="md"
+                  onClick={copy}
+                  className={classes.linkAction}
+                >
                   {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
                 </ActionIcon>
               </Tooltip>
@@ -155,6 +160,7 @@ function LinkCard({ url, onInvalidate, isInvalidating }: LinkCardProps) {
           <Tooltip label="Generate new link" position="top" withArrow>
             <ActionIcon
               variant="subtle"
+              radius="md"
               onClick={onInvalidate}
               loading={isInvalidating}
               className={`${classes.linkAction} ${classes.linkActionDanger}`}

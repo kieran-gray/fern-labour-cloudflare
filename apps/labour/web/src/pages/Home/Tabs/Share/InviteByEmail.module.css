@@ -1,29 +1,31 @@
 .pillsInput {
-  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-primary-1));
-  border-color: light-dark(var(--mantine-color-gray-4), var(--mantine-color-primary-1));
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-2));
+  border: 2px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
   color: light-dark(var(--mantine-color-black), var(--mantine-color-gray-1));
   min-height: 56px;
   padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
   transition: border-color 0.2s ease;
 
-  &::placeholder {
-    color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-6));
-  }
-
   &:focus-within {
-    border-color: var(--mantine-primary-color-filled);
+    border-color: var(--mantine-primary-color-4);
+  }
+}
+
+.pillsInputField {
+  &::placeholder {
+    color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
   }
 }
 
 .emailPill {
-  background-color: light-dark(var(--mantine-color-primary-1), var(--mantine-color-primary-3));
+  background-color: light-dark(var(--mantine-color-pink-1), var(--mantine-color-dark-4));
   color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-1));
   font-weight: 500;
-  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  border: 1px solid light-dark(var(--mantine-color-pink-2), var(--mantine-color-dark-5));
   transition: background-color 0.15s ease, border-color 0.15s ease;
 
   &:hover {
-    background-color: light-dark(var(--mantine-color-primary-2), var(--mantine-color-primary-4));
+    background-color: light-dark(var(--mantine-color-pink-2), var(--mantine-color-dark-5));
     border-color: light-dark(var(--mantine-color-pink-3), var(--mantine-color-pink-6));
   }
 

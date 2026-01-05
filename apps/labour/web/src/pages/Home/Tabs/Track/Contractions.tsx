@@ -115,47 +115,51 @@ export const Contractions = memo(
             </ActionIcon>
             <ContractionsHelpModal close={close} opened={opened} />
           </div>
-          <div className={classes.innerContent}>
-            <div className={classes.content}>
-              {(completed || sortedContractions.length === 0) && (
-                <Text fz="sm" className={baseClasses.description}>
-                  {completed ? completedDescription : activeDescription}
-                </Text>
+          <div className={classes.content}>
+            {(completed || sortedContractions.length === 0) && (
+              <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.description}>
+                {completed ? completedDescription : activeDescription}
+              </Text>
+            )}
+            <Stack align="center" justify="flex-end" mt="md">
+              {sortedContractions.length > 0 && (
+                <ContractionTimelineCustom
+                  contractions={sortedContractions}
+                  completed={completed}
+                  hasMore={hasNextPage}
+                  onLoadMore={handleLoadMore}
+                  isLoadingMore={isFetchingNextPage}
+                />
               )}
-              <Stack align="center" justify="flex-end" mt="md">
-                {sortedContractions.length > 0 && (
-                  <ContractionTimelineCustom
-                    contractions={sortedContractions}
-                    completed={completed}
-                    hasMore={hasNextPage}
-                    onLoadMore={handleLoadMore}
-                    isLoadingMore={isFetchingNextPage}
-                  />
-                )}
-                {sortedContractions.length === 0 && !completed && (
-                  <div className={classes.emptyState}>
-                    <div className={classes.imageFlexRow}>
-                      <Image src={image} className={classes.image} />
-                    </div>
-                    <Text fz="sm" className={baseClasses.importantText}>
-                      {emptyStateMessage}
-                    </Text>
+              {sortedContractions.length === 0 && !completed && (
+                <div className={classes.emptyState}>
+                  <div className={classes.imageFlexRow}>
+                    <Image src={image} className={classes.image} />
                   </div>
-                )}
-              </Stack>
-              <Stack align="stretch" justify="flex-end" mt="md">
+                  <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+                    {emptyStateMessage}
+                  </Text>
+                </div>
+              )}
+            </Stack>
+            <Stack
+              align="stretch"
+              justify="flex-end"
+              mt={sortedContractions.length === 0 ? 0 : 'md'}
+            >
+              {!completed && (
                 <AlertContainer
                   contractions={sortedContractions}
                   firstLabour={labour.first_labour}
                 />
-                <div className={classes.desktopControls}>
-                  <ContractionControls
-                    labourCompleted={completed}
-                    activeContraction={activeContraction}
-                  />
-                </div>
-              </Stack>
-            </div>
+              )}
+              <div className={classes.desktopControls}>
+                <ContractionControls
+                  labourCompleted={completed}
+                  activeContraction={activeContraction}
+                />
+              </div>
+            </Stack>
           </div>
         </div>
       </div>
