@@ -21,6 +21,7 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
   const subscribersRef = useRef<Set<(message: any) => void>>(new Set());
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
   const currentLabourIdRef = useRef<string | null>(null);
+  const shouldReconnectRef = useRef(false);
   const pendingCommandsRef = useRef<
     Map<
       string,
@@ -30,9 +31,13 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!labourId) {
+      shouldReconnectRef.current = false;
+      clearTimeout(reconnectTimeoutRef.current);
+      wsRef.current?.close();
       return;
     }
 
+    shouldReconnectRef.current = true;
     currentLabourIdRef.current = labourId;
 
     const connect = async () => {
@@ -91,13 +96,13 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
           setIsConnected(false);
           wsRef.current = null;
 
-          if (currentLabourIdRef.current === labourId) {
+          if (shouldReconnectRef.current) {
             reconnectTimeoutRef.current = setTimeout(connect, 3000);
           }
         };
       } catch (error) {
         console.error('[WebSocket] Connection failed:', error);
-        if (currentLabourIdRef.current === labourId) {
+        if (shouldReconnectRef.current) {
           reconnectTimeoutRef.current = setTimeout(connect, 3000);
         }
       }
@@ -113,6 +118,7 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
     connect();
 
     return () => {
+      shouldReconnectRef.current = false;
       window.removeEventListener('online', handleOnline);
       clearTimeout(reconnectTimeoutRef.current);
       wsRef.current?.close();

@@ -35,6 +35,28 @@ const TimingCard = ({ icon, label, value, subtext }: TimingCardProps) => (
   </div>
 );
 
+const ElapsedTimingCard = ({ startTime }: { startTime: string }) => {
+  const [elapsedSeconds, setElapsedSeconds] = useState(() => calculateElapsed(startTime));
+
+  const interval = useInterval(() => {
+    setElapsedSeconds(calculateElapsed(startTime));
+  }, 1000);
+
+  useEffect(() => {
+    interval.start();
+    return interval.stop;
+  }, []);
+
+  return (
+    <TimingCard
+      icon={<IconHourglass size={14} />}
+      label="Elapsed"
+      value={formatDurationHuman(elapsedSeconds)}
+      subtext="and counting"
+    />
+  );
+};
+
 const MESSAGES = {
   OWNER_TITLE: 'Your labour statistics',
   OWNER_DESCRIPTION_ACTIVE:
@@ -84,23 +106,6 @@ export const LabourStatistics = memo(
     const completed = labour.end_time !== null;
     const motherName = isSubscriberView ? pluraliseName(labour.mother_name.split(' ')[0]) : '';
 
-    const [elapsedSeconds, setElapsedSeconds] = useState(() =>
-      labour.start_time ? calculateElapsed(labour.start_time) : 0
-    );
-
-    const interval = useInterval(() => {
-      if (labour.start_time) {
-        setElapsedSeconds(calculateElapsed(labour.start_time));
-      }
-    }, 1000);
-
-    useEffect(() => {
-      if (!completed && labour.start_time) {
-        interval.start();
-      }
-      return interval.stop;
-    }, [completed, labour.start_time]);
-
     const renderTimingInfo = () => {
       if (!labour.start_time) {
         return null;
@@ -148,12 +153,7 @@ export const LabourStatistics = memo(
             value={startTime}
             subtext={startDateStr}
           />
-          <TimingCard
-            icon={<IconHourglass size={14} />}
-            label="Elapsed"
-            value={formatDurationHuman(elapsedSeconds)}
-            subtext="and counting"
-          />
+          <ElapsedTimingCard startTime={labour.start_time} />
         </div>
       );
     };

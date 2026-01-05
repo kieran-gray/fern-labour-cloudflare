@@ -252,8 +252,8 @@ export const LabourUpdates = memo(
         <div className={baseClasses.body}>
           {isOwnerView ? (
             <>
-              <div className={classes.titleRow}>
-                <div className={classes.title} style={{ paddingBottom: 0 }}>
+              <div className={baseClasses.docsTitleRow}>
+                <div className={classes.title}>
                   <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
                     {title}
                   </Title>
@@ -290,7 +290,7 @@ export const LabourUpdates = memo(
                       <div className={classes.imageFlexRow}>
                         <Image src={image} className={classes.image} />
                       </div>
-                      <Text fz="sm" className={baseClasses.importantText}>
+                      <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
                         {emptyStateMessage}
                       </Text>
                     </>
@@ -309,7 +309,7 @@ export const LabourUpdates = memo(
                   <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
                     {title}
                   </Title>
-                  <Text fz="sm" className={baseClasses.description} mt="sm">
+                  <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.description} mt="sm">
                     {description}
                   </Text>
                   <Space h="md" />
@@ -333,7 +333,7 @@ export const LabourUpdates = memo(
                       <Space h="md" />
                     </>
                   ) : (
-                    <Text fz="sm" className={baseClasses.importantText}>
+                    <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
                       {emptyStateMessage}
                     </Text>
                   )}

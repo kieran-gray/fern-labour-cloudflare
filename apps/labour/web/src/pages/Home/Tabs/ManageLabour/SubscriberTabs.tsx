@@ -41,7 +41,7 @@ export const ManageSubscribersTabs = () => {
   if (subscriptions.length === 0) {
     return (
       <div className={baseClasses.emptyState}>
-        <Text size="sm" c="dimmed" ta="center">
+        <Text size="sm" ta="center">
           No subscribers yet. Share your link in the Share tab to invite loved ones.
         </Text>
       </div>

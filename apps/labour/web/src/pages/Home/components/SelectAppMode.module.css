@@ -1,15 +1,57 @@
-
-/* Hero Card */
-.heroCard {
-  position: relative;
-  background: light-dark(var(--mantine-color-white), var(--mantine-color-primary-3));
+/* Container */
+.container {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0;
 }
 
-.heroContent {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  width: 100%;
+.header {
+  text-align: center;
+  margin-bottom: clamp(24px, 5vw, 40px);
+  position: relative;
+}
+
+.headerDecoration {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background-color: var(--mantine-primary-color-4);
+  border-radius: 2px;
+}
+
+.greeting {
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: Poppins, sans-serif;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 700;
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.titleAccent {
+  color: var(--mantine-primary-color-6);
+}
+
+.subtitle {
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto;
 }
 
 .optionsRow {
@@ -29,18 +71,16 @@
   gap: 10px;
   padding: 18px 18px 20px;
   border-radius: var(--mantine-radius-xl);
-  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-primary-2));
-  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-6));
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-1));
+  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
   cursor: pointer;
 }
 
 .modeTile:hover {
   transform: translateY(-2px);
-  border-color: light-dark(var(--mantine-primary-color-2), var(--mantine-color-dark-5));
-  box-shadow:
-    light-dark(0 8px 14px -6px rgba(0, 0, 0, 0.12), 0 8px 14px -6px rgba(0, 0, 0, 0.28));
-  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-primary-3));
+  border-color: light-dark(var(--mantine-primary-color-2), var(--mantine-color-pink-6));
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-2));
 }
 
 .modeTile:active {
@@ -54,8 +94,11 @@
 }
 
 .tileTitle {
-  font-weight: 700;
+  font-family: Poppins, sans-serif;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  font-weight: 600;
   color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-1));
+  margin: 0;
 }
 
 .tileSub {
@@ -128,16 +171,6 @@
   .trustRow :where(svg) {
     transition: none;
   }
-}
-
-.primaryIcon,
-.supportIcon {
-  transition: transform 0.25s ease;
-  box-shadow: 0 6px 18px rgba(236, 72, 153, 0.18);
-}
-
-.supportIcon {
-  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.18);
 }
 
 /* Respect reduced motion preferences */

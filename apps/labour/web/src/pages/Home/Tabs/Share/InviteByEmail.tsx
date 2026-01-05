@@ -126,6 +126,7 @@ export function InviteByEmail() {
         <Pill.Group>
           {emailPills}
           <PillsInput.Field
+            className={classes.pillsInputField}
             placeholder={
               emails.length >= 20
                 ? 'Limit reached'

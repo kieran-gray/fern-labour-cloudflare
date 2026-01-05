@@ -451,10 +451,11 @@ export function usePlanLabour(client: LabourServiceClient) {
   });
 }
 
-// Special case: invalidates labour.all
+// Special case: invalidates labour.all and removes active labour cache
 export function useCompleteLabour(client: LabourServiceClient) {
   const queryClient = useQueryClient();
   const { isConnected } = useWebSocket();
+  const { userId } = useAuth();
 
   return useMutation({
     mutationFn: async ({ labourId, notes }: { labourId: string; notes: string }) => {
@@ -466,7 +467,12 @@ export function useCompleteLabour(client: LabourServiceClient) {
 
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (_, { labourId }) => {
+      if (userId) {
+        queryClient.removeQueries({ queryKey: queryKeys.labour.active(userId) });
+      }
+      queryClient.removeQueries({ queryKey: queryKeys.labour.detail(labourId) });
+
       notifications.show({
         ...Success,
         title: 'Success',

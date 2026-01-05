@@ -53,7 +53,7 @@ export function SubscribersSkeleton() {
         ))}
       </Tabs.List>
       {tabs.map(({ id }) => (
-        <Tabs.Panel value={id}>
+        <Tabs.Panel value={id} key={id}>
           <Stack gap="sm" w="100%" mt="sm">
             <SubscriberCardSkeleton />
           </Stack>

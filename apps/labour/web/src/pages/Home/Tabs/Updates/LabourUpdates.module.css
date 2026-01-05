@@ -133,12 +133,17 @@
 }
 
 .image {
-  width: 240px;
-  height: 180px;
+  width: 320px;
+  height: 280px;
+
+  @media (max-width: $mantine-breakpoint-md) {
+    width: 270px;
+    height: 230px;
+  }
 
   @media (max-width: $mantine-breakpoint-xs) {
-    width: 200px;
-    height: 150px;
+    width: 220px;
+    height: 180px;
   }
 }
 
