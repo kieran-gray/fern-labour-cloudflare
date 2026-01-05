@@ -24,6 +24,7 @@ wasm-bindgen = "0.2.106"
 http-body-util = "0.1"
 serde_qs = "0.15.0"
 base64 = "0.22"
+rand = "0.8"
 
 fern-labour-event-sourcing-rs.workspace = true
 fern-labour-workers-shared.workspace = true

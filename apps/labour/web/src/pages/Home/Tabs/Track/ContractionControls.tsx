@@ -7,6 +7,7 @@ import { IconHourglassLow } from '@tabler/icons-react';
 import { Button } from '@mantine/core';
 import { ActiveContractionControls } from './ActiveContractionControls';
 import { StopwatchHandle } from './Stopwatch';
+import classes from './Contractions.module.css';
 
 function StartContractionButton({ stopwatchRef }: { stopwatchRef: RefObject<StopwatchHandle> }) {
   const { labourId } = useLabourSession();
@@ -24,7 +25,7 @@ function StartContractionButton({ stopwatchRef }: { stopwatchRef: RefObject<Stop
     });
   };
 
-  const icon = <IconHourglassLow size={25} />;
+  const icon = <IconHourglassLow size={22} />;
 
   return (
     <Button
@@ -56,8 +57,8 @@ export function ContractionControls({
   }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-      <div style={{ width: '100%', maxWidth: '600px' }}>
+    <div className={classes.controlsWrapper}>
+      <div className={classes.controlsContainer}>
         {activeContraction ? (
           <ActiveContractionControls
             stopwatchRef={stopwatchRef}
@@ -65,7 +66,7 @@ export function ContractionControls({
             disabled={false}
           />
         ) : (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className={classes.controlsCenter}>
             <StartContractionButton stopwatchRef={stopwatchRef} />
           </div>
         )}

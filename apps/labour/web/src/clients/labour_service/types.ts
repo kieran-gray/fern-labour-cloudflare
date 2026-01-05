@@ -282,12 +282,18 @@ export type UpdateSubscriberRoleCommand = {
   };
 };
 
+export type InvalidateSubscriptionTokenCommand = {
+  type: 'InvalidateSubscriptionToken';
+  payload: { labour_id: string };
+};
+
 export type SubscriptionCommand =
   | ApproveSubscriberCommand
   | RemoveSubscriberCommand
   | BlockSubscriberCommand
   | UnblockSubscriberCommand
-  | UpdateSubscriberRoleCommand;
+  | UpdateSubscriberRoleCommand
+  | InvalidateSubscriptionTokenCommand;
 
 // Top-level API Command (matches Rust ApiCommand enum)
 

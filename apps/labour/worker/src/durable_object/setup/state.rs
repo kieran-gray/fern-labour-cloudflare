@@ -44,7 +44,7 @@ use crate::durable_object::{
     write_side::{
         application::{AdminCommandProcessor, LabourCommandProcessor},
         domain::{Labour, LabourEvent},
-        infrastructure::{SplitMix64TokenGenerator, SqlCache, SqlEventStore, UserStore},
+        infrastructure::{RandomTokenGenerator, SqlCache, SqlEventStore, UserStore},
         process_manager::{EffectLedger, LabourEffectExecutor, ProcessManager},
     },
 };
@@ -282,9 +282,7 @@ impl LabourRoomServices {
             config.notification_auth_token.clone(),
         ));
 
-        let subscription_token_generator = Box::new(SplitMix64TokenGenerator::create(
-            config.subscription_token_salt.clone(),
-        ));
+        let subscription_token_generator = Box::new(RandomTokenGenerator);
 
         let user_storage = UserStore::create(sql);
 

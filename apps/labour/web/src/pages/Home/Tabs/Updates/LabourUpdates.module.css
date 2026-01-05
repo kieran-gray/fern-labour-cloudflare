@@ -6,7 +6,7 @@
 @media (min-width: $mantine-breakpoint-sm) {
   .desktopControls {
     display: block;
-    margin-top: 2rem;
+    margin-top: var(--mantine-spacing-xl);
   }
 }
 
@@ -14,14 +14,14 @@
   display: flex;
   justify-content: space-between;
   flex-direction: row;
-  padding: calc(var(--mantine-spacing-xl));
+  padding: var(--mantine-spacing-xl);
 
   @media (max-width: $mantine-breakpoint-md) {
-    padding: calc(var(--mantine-spacing-md));
+    padding: var(--mantine-spacing-md);
   }
 
   @media (max-width: $mantine-breakpoint-sm) {
-    padding: calc(var(--mantine-spacing-xs));
+    padding: var(--mantine-spacing-xs);
   }
 }
 
@@ -30,18 +30,18 @@
 }
 
 .title {
-  padding: calc(var(--mantine-spacing-xl));
+  padding: var(--mantine-spacing-xl);
 
   @media (max-width: $mantine-breakpoint-md) {
-    padding: calc(var(--mantine-spacing-md));
+    padding: var(--mantine-spacing-md);
   }
 
   @media (max-width: $mantine-breakpoint-sm) {
-    padding: calc(var(--mantine-spacing-sm));
+    padding: var(--mantine-spacing-sm);
   }
 
   @media (max-width: $mantine-breakpoint-xs) {
-    padding: calc(var(--mantine-spacing-xs));
+    padding: var(--mantine-spacing-xs);
   }
 }
 
@@ -64,69 +64,59 @@
 .statusUpdateContainer {
   display: flex;
   flex-direction: column;
-  row-gap: 15px;
-  padding-top: 10px;
+  gap: var(--mantine-spacing-sm);
 }
 
-.privateNotePanel{
-  background-color: light-dark(#fff8e1, #5e553c83);
-  padding: 10px 20px;
+/* Base panel styles */
+.updatePanel {
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
   width: 100%;
+  min-width: 0;
   border-radius: var(--mantine-radius-md);
   position: relative;
-  border-left: 4px solid #ffb300;
-  transition: transform 0.2s ease;
-  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+  border-left: 3px solid var(--panel-accent-color);
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+  overflow-wrap: break-word;
+  word-break: break-word;
 
-  &:hover {
-    transform: translateY(-2px);
+  @media (max-width: $mantine-breakpoint-xs) {
+    padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
   }
 }
 
-.statusUpdatePanel{
-  background-color: light-dark(#f0f9f8, #405c5983);
-  padding: 10px 20px;
-  width: 100%;
-  border-radius: var(--mantine-radius-md);
-  position: relative;
-  border-left: 4px solid #24968b;
-  transition: transform 0.2s ease;
-  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
-
-  &:hover {
-    transform: translateY(-2px);
-  }
+/* Private notes - amber accent for app-generated messages */
+.privateNotePanel {
+  composes: updatePanel;
+  --panel-accent-color: var(--mantine-color-orange-5);
+  background-color: light-dark(var(--mantine-color-orange-0), hsl(40deg 20% 18% / 0.6));
 }
 
-.announcementPanel{
-  background-color: light-dark(var(--mantine-color-pink-0), #69575393);
-  padding: 10px 20px;
-  width: 100%;
-  border-radius: var(--mantine-radius-md);
-  position: relative;
-  border-left: 4px solid var(--mantine-color-pink-6);
-  transition: transform 0.2s ease;
-  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+/* Status updates - subtle teal tint */
+.statusUpdatePanel {
+  composes: updatePanel;
+  --panel-accent-color: var(--mantine-color-teal-6);
+  background-color: light-dark(var(--mantine-color-teal-0), hsl(175deg 20% 18% / 0.5));
+}
 
-  &:hover {
-    transform: translateY(-2px);
-  }
+/* Announcements - subtle pink tint */
+.announcementPanel {
+  composes: updatePanel;
+  --panel-accent-color: var(--mantine-color-pink-5);
+  background-color: light-dark(var(--mantine-color-pink-0), hsl(340deg 20% 18% / 0.5));
 }
 
 .messageFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-  font-size: 0.8rem;
+  gap: var(--mantine-spacing-xs);
+  margin-top: var(--mantine-spacing-sm);
+  padding-top: var(--mantine-spacing-xs);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-6));
 }
 
-.statusUpdateButton {
-  @media (max-width: $mantine-breakpoint-sm) {
-    margin-bottom: 10px
-  }
+.messageFooter > * {
+  min-width: 0;
 }
 
 .flexRow {
@@ -138,26 +128,22 @@
   flex-wrap: wrap;
 
   @media (max-width: $mantine-breakpoint-sm) {
-      flex-direction: column;
+    flex-direction: column;
   }
 }
 
 .image {
-  width: 376px;
-  height: 300px;
-
-  @media (max-width: $mantine-breakpoint-md) {
-    width: 300px;
-    height: 250px;
-  }
+  width: 240px;
+  height: 180px;
 
   @media (max-width: $mantine-breakpoint-xs) {
-    width: 225px;
-    height: 200px;
+    width: 200px;
+    height: 150px;
   }
 }
 
 .imageFlexRow {
   display: flex;
   justify-content: center;
+  padding: var(--mantine-spacing-md) 0;
 }

@@ -24,7 +24,9 @@ use subscription::{
     UpdateSubscriberRole,
 };
 
-use crate::durable_object::write_side::domain::commands::labour::AdvanceLabourPhase;
+use crate::durable_object::write_side::domain::commands::{
+    labour::AdvanceLabourPhase, subscription::InvalidateSubscriptionToken,
+};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum LabourCommand {
@@ -53,6 +55,7 @@ pub enum LabourCommand {
     UpdateAccessLevel(UpdateAccessLevel),
     // Subscription Commands
     SetSubscriptionToken(SetSubscriptionToken),
+    InvalidateSubscriptionToken(InvalidateSubscriptionToken),
     ApproveSubscriber(ApproveSubscriber),
     RemoveSubscriber(RemoveSubscriber),
     BlockSubscriber(BlockSubscriber),
@@ -276,6 +279,11 @@ impl From<SubscriptionCommand> for LabourCommand {
                 subscription_id,
                 role,
             }),
+            SubscriptionCommand::InvalidateSubscriptionToken { labour_id } => {
+                LabourCommand::InvalidateSubscriptionToken(InvalidateSubscriptionToken {
+                    labour_id,
+                })
+            }
         }
     }
 }

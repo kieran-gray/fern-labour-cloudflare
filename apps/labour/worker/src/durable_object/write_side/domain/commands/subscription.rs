@@ -5,8 +5,12 @@ use uuid::Uuid;
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct SetSubscriptionToken {
     pub labour_id: Uuid,
-    pub mother_id: String,
     pub token: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct InvalidateSubscriptionToken {
+    pub labour_id: Uuid,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

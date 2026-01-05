@@ -1,0 +1,35 @@
+/* Skeleton styles for Share Labour loading state */
+
+.linkInputSkeleton {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-primary-4));
+  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-primary-5));
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+}
+
+.linkActionsSkeleton {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.socialButtonsSkeleton {
+  display: flex;
+  gap: var(--mantine-spacing-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.qrCodeSkeleton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-gray-0));
+  border-radius: var(--mantine-radius-sm);
+  padding: var(--mantine-spacing-xs);
+  width: fit-content;
+  margin: 0 auto;
+}

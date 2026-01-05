@@ -6,7 +6,7 @@
 @media (min-width: $mantine-breakpoint-sm) {
   .desktopControls {
     display: block;
-    margin-top: 2rem;
+    margin-top: var(--mantine-spacing-xl);
   }
 }
 
@@ -40,27 +40,16 @@
     }
   }
 
-  .titleRow {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-content:end;
-    margin-bottom: 10px;
-
-    @media (max-width: $mantine-breakpoint-sm) {
-      margin-bottom: 8px;
-    }
-
-    @media (max-width: $mantine-breakpoint-xs) {
-      margin-bottom: 2px;
-    }
+  .innerContent {
+    padding: 0;
   }
 
-  .docsButton {
-    @media (max-width: $mantine-breakpoint-xs) {
-      margin-top: 10px;
-      width: 100%;
-    }
+  .emptyState {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--mantine-spacing-md);
   }
 
 .controlsBackground {
@@ -68,18 +57,18 @@
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-end;
-    padding: 15px;
-    border-radius: 35px;
+    padding: var(--mantine-spacing-md);
+    border-radius: var(--mantine-radius-xl);
     background-color: var(--mantine-color-primary-1);
 }
 
 .slider {
-    margin-bottom: 10px;
+    margin-bottom: var(--mantine-spacing-sm);
 }
 
 .markLabel {
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-5));
-    font-weight: 600;
+    color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+    font-weight: 500;
     font-size: var(--mantine-font-size-sm);
 }
 
@@ -89,14 +78,48 @@
 
 .timelineLabel {
     color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2));
-    font-size: 11pt;
+    font-size: var(--mantine-font-size-sm);
     font-weight: 400;
 }
 
 .bulletText {
     color: light-dark(var(--mantine-color-primary-1), var(--mantine-color-white));
-    font-weight: 1000;
-    font-size: var(--mantine-font-size-xl);
+    font-weight: 700;
+    font-size: var(--mantine-font-size-lg);
+}
+
+.stopwatchWrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.sliderGroup {
+    width: 100%;
+}
+
+.sliderLabel {
+    text-align: center;
+    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2));
+    font-weight: 400;
+    margin-bottom: var(--mantine-spacing-xs);
+    font-size: var(--mantine-font-size-md);
+}
+
+.controlsCenter {
+    display: flex;
+    justify-content: center;
+}
+
+.controlsWrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.controlsContainer {
+    width: 100%;
+    max-width: 600px;
 }
 
 .flexRow {
@@ -106,17 +129,13 @@
 }
 
 .image {
-  width: 376px;
-  height: 300px;
-
-  @media (max-width: $mantine-breakpoint-md) {
-    width: 300px;
-    height: 250px;
-  }
+  max-width: 280px;
+  width: 100%;
+  height: auto;
+  opacity: 0.9;
 
   @media (max-width: $mantine-breakpoint-xs) {
-    width: 225px;
-    height: 200px;
+    max-width: 200px;
   }
 }
 

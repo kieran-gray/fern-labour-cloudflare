@@ -488,6 +488,14 @@ export class LabourServiceClient {
     return this.sendCommand({ type: 'Subscription', payload: command });
   }
 
+  async invalidateSubscriptionToken(labourId: string): Promise<CommandResponse> {
+    const command: SubscriptionCommand = {
+      type: 'InvalidateSubscriptionToken',
+      payload: { labour_id: labourId },
+    };
+    return this.sendCommand({ type: 'Subscription', payload: command });
+  }
+
   // Query Methods
 
   private async sendQuery<T>(query: unknown): Promise<QueryResponse<T>> {

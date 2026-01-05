@@ -3,12 +3,12 @@ use fern_labour_labour_shared::value_objects::subscriber::status::SubscriberStat
 use crate::durable_object::write_side::domain::{
     Labour, LabourError, LabourEvent,
     commands::subscription::{
-        ApproveSubscriber, BlockSubscriber, RemoveSubscriber, SetSubscriptionToken,
-        UnblockSubscriber, UpdateSubscriberRole,
+        ApproveSubscriber, BlockSubscriber, InvalidateSubscriptionToken, RemoveSubscriber,
+        SetSubscriptionToken, UnblockSubscriber, UpdateSubscriberRole,
     },
     events::{
         SubscriberApproved, SubscriberBlocked, SubscriberRemoved, SubscriberRoleUpdated,
-        SubscriberUnblocked, SubscriptionTokenSet,
+        SubscriberUnblocked, SubscriptionTokenInvalidated, SubscriptionTokenSet,
     },
 };
 
@@ -22,8 +22,21 @@ pub fn handle_set_subscription_token(
     Ok(vec![LabourEvent::SubscriptionTokenSet(
         SubscriptionTokenSet {
             labour_id: cmd.labour_id,
-            mother_id: cmd.mother_id,
             token: cmd.token,
+        },
+    )])
+}
+
+pub fn handle_invalidate_subscription_token(
+    state: Option<&Labour>,
+    cmd: InvalidateSubscriptionToken,
+) -> Result<Vec<LabourEvent>, LabourError> {
+    let Some(_) = state else {
+        return Err(LabourError::NotFound);
+    };
+    Ok(vec![LabourEvent::SubscriptionTokenInvalidated(
+        SubscriptionTokenInvalidated {
+            labour_id: cmd.labour_id,
         },
     )])
 }

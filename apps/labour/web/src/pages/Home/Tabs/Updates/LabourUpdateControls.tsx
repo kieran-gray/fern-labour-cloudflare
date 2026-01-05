@@ -6,7 +6,6 @@ import { LABOUR_UPDATE_MAX_LENGTH } from '@base/lib/constants';
 import { useNetworkState } from '@base/offline/sync/networkDetector';
 import { IconSend, IconSpeakerphone, IconWifiOff } from '@tabler/icons-react';
 import { Button, Group, Switch, Text, Textarea } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
 import ConfirmAnnouncementModal from './Modals/ConfirmAnnouncement';
 import baseClasses from '@styles/base.module.css';
 
@@ -16,7 +15,6 @@ export function LabourUpdateControls() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { labourId } = useLabourSession();
   const { isOnline } = useNetworkState();
-  const isDesktop = useMediaQuery('(min-width: 48em)');
 
   const client = useLabourClient();
   const mutation = usePostLabourUpdate(client);
@@ -78,8 +76,8 @@ export function LabourUpdateControls() {
         placeholder={isAnnouncement ? 'Write your announcement...' : "What's happening?"}
         value={message}
         onChange={handleMessageChange}
-        size={isDesktop ? 'md' : 'sm'}
-        radius="lg"
+        size="sm"
+        radius="md"
         minRows={2}
         autosize
         classNames={{
@@ -87,19 +85,19 @@ export function LabourUpdateControls() {
         }}
       />
 
-      <Group justify="space-between" mt="xs" w="100%" wrap="nowrap">
+      <Group justify="space-between" mt="md" w="100%" wrap="nowrap">
         <Switch
           checked={isAnnouncement}
           onChange={(event) => setIsAnnouncement(event.currentTarget.checked)}
           color="pink"
-          size="xl"
-          thumbIcon={<IconSpeakerphone size={18} color="var(--mantine-color-pink-7)" />}
+          size="lg"
+          thumbIcon={<IconSpeakerphone size={14} color="var(--mantine-color-pink-6)" />}
         />
 
         <Button
-          rightSection={<IconSend size={isDesktop ? 18 : 16} />}
-          radius="xl"
-          size={isDesktop ? 'md' : 'sm'}
+          rightSection={<IconSend size={16} />}
+          radius="lg"
+          size="sm"
           variant="filled"
           color={isAnnouncement ? 'pink' : undefined}
           disabled={!hasMessage}

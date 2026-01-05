@@ -28,6 +28,7 @@ export const LabourStatisticsTabs = ({
       orientation="horizontal"
       classNames={{
         root: classes.labourStatsTabsRoot,
+        list: classes.labourStatsTabsList,
         panel: classes.labourStatsTabsPanel,
         tab: classes.labourStatsTabsTab,
       }}
@@ -51,20 +52,7 @@ export const LabourStatisticsTabs = ({
           endTime={labour.end_time ? new Date(labour.end_time) : undefined}
         />
         {isLoadingMore && (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(255,255,255,0.5)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'column',
-            }}
-          >
+          <div className={classes.loadingOverlay}>
             <Loader size="sm" />
             <Text size="xs">Loading history...</Text>
           </div>

@@ -1,14 +1,201 @@
-.flexRow {
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  align-content: stretch;
+.shareContent {
   width: 100%;
-  flex-basis: stretch;
-  flex-wrap: wrap;
+  max-width: 100%;
+  margin-top: var(--mantine-spacing-sm);
+  overflow: hidden;
+}
 
-  @media (max-width: $mantine-breakpoint-xs) {
-      flex-direction: column;
-      align-items: stretch;
+.nativeShareSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mantine-spacing-md);
+  margin: var(--mantine-spacing-lg) 0;
+}
+
+.shareButton {
+  background-color: light-dark(var(--mantine-color-pink-5), var(--mantine-color-pink-7));
+  border: none;
+  box-shadow: 0 2px 8px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.25));
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    background-color: light-dark(var(--mantine-color-pink-6), var(--mantine-color-pink-6));
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3));
   }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+  width: 100%;
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-primary-5));
+}
+
+.dividerText {
+  font-size: var(--mantine-font-size-xs);
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+.shareCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--mantine-spacing-sm);
+  width: 100%;
+  max-width: 100%;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.shareCard {
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-primary-3));
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-md);
+  display: flex;
+  flex-direction: column;
+  min-height: 140px;
+  min-width: 0;
+  overflow: hidden;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    min-height: auto;
+    padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  }
+}
+
+.shareCardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+  margin-bottom: var(--mantine-spacing-sm);
+}
+
+.shareCardIcon {
+  color: light-dark(var(--mantine-color-pink-6), var(--mantine-color-pink-4));
+  display: flex;
+  align-items: center;
+}
+
+.shareCardTitle {
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
+}
+
+.shareCardContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: var(--mantine-spacing-xs) 0;
+  overflow: hidden;
+}
+
+.linkInputWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-primary-4));
+  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-primary-5));
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  gap: var(--mantine-spacing-xs);
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.linkText {
+  flex: 1;
+  font-family: monospace;
+  font-size: var(--mantine-font-size-xs);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linkAction {
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: light-dark(var(--mantine-color-pink-0), var(--mantine-color-pink-9));
+    color: light-dark(var(--mantine-color-pink-6), var(--mantine-color-pink-4));
+  }
+}
+
+.linkActionDanger {
+  &:hover {
+    background-color: light-dark(var(--mantine-color-red-0), var(--mantine-color-red-9));
+    color: light-dark(var(--mantine-color-red-6), var(--mantine-color-red-4));
+  }
+}
+
+.socialButton {
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-primary-4));
+  color: var(--social-color, var(--mantine-color-gray-7));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-primary-5));
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease,
+    background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: light-dark(var(--mantine-color-pink-0), var(--mantine-color-pink-9));
+    border-color: light-dark(var(--mantine-color-pink-3), var(--mantine-color-pink-7));
+    color: light-dark(var(--mantine-color-pink-6), var(--mantine-color-pink-4));
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.qrCodeWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-gray-0));
+  border-radius: var(--mantine-radius-sm);
+  padding: var(--mantine-spacing-xs);
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.qrCode {
+  color: var(--mantine-color-gray-9);
+}
+
+.approvalNote {
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+}
+
+.errorState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 140px;
+  padding: var(--mantine-spacing-xl);
 }

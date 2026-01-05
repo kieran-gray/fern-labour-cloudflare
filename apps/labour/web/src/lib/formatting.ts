@@ -34,36 +34,50 @@ export const formatDurationHuman = (totalSeconds: number): string => {
   }
 
   const seconds = Math.floor(totalSeconds);
-  const days = Math.floor(seconds / 86400);
-  const hours = Math.floor((seconds % 86400) / 3600);
+  const totalHours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = seconds % 60;
 
-  const parts: string[] = [];
-
-  if (days > 0) {
-    parts.push(`${days} day${days === 1 ? '' : 's'}`);
-    if (hours > 0) {
-      parts.push(`${hours} hour${hours === 1 ? '' : 's'}`);
-    }
-    return parts.join(' ');
-  }
-
-  if (hours > 0) {
-    parts.push(`${hours} hour${hours === 1 ? '' : 's'}`);
+  if (totalHours > 0) {
+    const hourLabel = totalHours === 1 ? 'hr' : 'hrs';
     if (minutes > 0) {
-      parts.push(`${minutes} minute${minutes === 1 ? '' : 's'}`);
+      return `${totalHours} ${hourLabel} ${minutes} min`;
     }
-    return parts.join(' ');
+    return `${totalHours} ${hourLabel}`;
   }
 
   if (minutes > 0) {
-    return `${minutes} minute${minutes === 1 ? '' : 's'}`;
+    return `${minutes} min`;
   }
 
-  return `${secs} second${secs === 1 ? '' : 's'}`;
+  return `${secs} sec`;
 };
 
 export function pluraliseName(name: string): string {
   return name.endsWith('s') ? `${name}'` : `${name}'s`;
+}
+
+export function formatDateTime(date: Date): string {
+  const now = new Date();
+  const isToday = date.toDateString() === now.toDateString();
+  const isYesterday = date.toDateString() === new Date(now.getTime() - 86400000).toDateString();
+
+  const timeStr = date.toLocaleTimeString([], {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+
+  if (isToday) {
+    return `Today at ${timeStr}`;
+  }
+  if (isYesterday) {
+    return `Yesterday at ${timeStr}`;
+  }
+
+  return date.toLocaleDateString([], {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
 }

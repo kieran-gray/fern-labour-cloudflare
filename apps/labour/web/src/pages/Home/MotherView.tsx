@@ -14,6 +14,7 @@ import { useNetworkState } from '@base/offline/sync/networkDetector';
 import { AppShell } from '@components/AppShell';
 import { ErrorContainer } from '@components/ErrorContainer/ErrorContainer';
 import { PageLoading } from '@components/PageLoading/PageLoading';
+import { TabTransition } from '@components/TabTransition/TabTransition';
 import {
   IconChartHistogram,
   IconMessage,
@@ -38,10 +39,10 @@ import baseClasses from '@styles/base.module.css';
 
 const TABS = [
   { id: 'details', label: 'Manage', icon: IconSettings },
-  { id: 'updates', label: 'Updates', icon: IconMessage, requiresPaid: true },
-  { id: 'track', label: 'Track', icon: IconStopwatch },
+  { id: 'updates', label: 'Updates', icon: IconMessage, scrollToTop: false },
+  { id: 'track', label: 'Track', icon: IconStopwatch, scrollToTop: false },
   { id: 'stats', label: 'Stats', icon: IconChartHistogram },
-  { id: 'share', label: 'Share', icon: IconSend, requiresPaid: true },
+  { id: 'share', label: 'Share', icon: IconSend },
 ] as const;
 
 const tabOrder = TABS.map((tab) => tab.id);
@@ -53,13 +54,35 @@ export const MotherView = () => {
   const labourIdParam = searchParams.get('labourId');
 
   const [activeTab, setActiveTab] = useState<string | null>('track');
+  const [direction, setDirection] = useState<'left' | 'right' | null>(null);
   const [isUpdateControlsExpanded, setIsUpdateControlsExpanded] = useState(true);
   const [isContractionControlsExpanded, setIsContractionControlsExpanded] = useState(true);
+
+  // Scroll to top on tab change, unless it's a tab that auto-scrolls to bottom
+  useEffect(() => {
+    const tab = TABS.find((t) => t.id === activeTab);
+    if ((tab as any)?.scrollToTop !== false) {
+      const main = document.getElementById('app-main');
+      if (main) {
+        main.scrollTo({ top: 0, behavior: 'instant' });
+      }
+    }
+  }, [activeTab]);
+
+  const handleTabChange = (newTab: string) => {
+    const currentIndex = tabOrder.indexOf(activeTab as (typeof tabOrder)[number]);
+    const newIndex = tabOrder.indexOf(newTab as (typeof tabOrder)[number]);
+
+    if (newIndex !== -1 && currentIndex !== -1) {
+      setDirection(newIndex > currentIndex ? 'right' : 'left');
+    }
+    setActiveTab(newTab);
+  };
 
   const swipeHandlers = useSwipeableNavigation({
     activeTab,
     tabOrder,
-    setActiveTab,
+    setActiveTab: handleTabChange,
   });
 
   const currentLabourId = labourId || labourIdParam;
@@ -172,18 +195,22 @@ export const MotherView = () => {
 
   return (
     <div {...swipeHandlers}>
-      <AppShell navItems={TABS} activeNav={activeTab} onNavChange={setActiveTab}>
+      <AppShell navItems={TABS} activeNav={activeTab} onNavChange={handleTabChange}>
         <div className={baseClasses.flexPageColumn} style={{ paddingBottom: bottomPadding }}>
-          <div
+          <TabTransition
+            activeTab={activeTab || 'track'}
+            renderTab={renderTabPanel}
+            direction={direction}
             style={{
               width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
             }}
-          >
-            {renderTabPanel(activeTab || 'track')}
-          </div>
+            onTransitionEnd={() => {
+              const tab = TABS.find((t) => t.id === activeTab);
+              if ((tab as any)?.scrollToTop === false) {
+                scrollMainToBottom(true);
+              }
+            }}
+          />
         </div>
 
         <>

@@ -31,6 +31,10 @@ pub enum SubscriptionCommand {
         subscription_id: Uuid,
         role: SubscriberRole,
     },
+
+    InvalidateSubscriptionToken {
+        labour_id: Uuid
+    }
 }
 
 impl SubscriptionCommand {
@@ -41,6 +45,7 @@ impl SubscriptionCommand {
             SubscriptionCommand::BlockSubscriber { labour_id, .. } => *labour_id,
             SubscriptionCommand::UnblockSubscriber { labour_id, .. } => *labour_id,
             SubscriptionCommand::UpdateSubscriberRole { labour_id, .. } => *labour_id,
+            SubscriptionCommand::InvalidateSubscriptionToken { labour_id } => *labour_id,
         }
     }
 }

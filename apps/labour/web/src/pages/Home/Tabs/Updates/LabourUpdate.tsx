@@ -18,26 +18,17 @@ export function LabourUpdate({ data }: { data: LabourUpdateProps }) {
   return (
     <div className={data.class}>
       <LoadingOverlay visible={data.id === 'placeholder'} />
-      <Group>
-        <Badge visibleFrom="xs" variant="filled" size="md" radius="md" bg={data.badgeColor}>
+      <Group justify="space-between">
+        <Badge variant="light" size="sm" radius="sm" color={data.badgeColor}>
           {data.badgeText}
         </Badge>
-        <Badge hiddenFrom="xs" variant="filled" size="sm" radius="md" bg={data.badgeColor}>
-          {data.badgeText}
-        </Badge>
-
-        <div style={{ flexGrow: 1 }} />
-        <Text size="xs" c="light-dark(var(--mantine-color-gray-9),var(--mantine-color-gray-0))">
+        <Text size="xs" c="light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-5))">
           {data.sentTime}
         </Text>
       </Group>
-      <Text pt="sm" size="md" fw="400" visibleFrom="xs" style={{ whiteSpace: 'pre-line' }}>
+      <Text pt="sm" size="sm" lh={1.5} style={{ whiteSpace: 'pre-line' }}>
         {data.text}
       </Text>
-      <Text pt="sm" size="sm" fw="400" hiddenFrom="xs" style={{ whiteSpace: 'pre-line' }}>
-        {data.text}
-      </Text>
-      {}
       {data.showFooter && (
         <div className={classes.messageFooter}>
           <Text size="xs">{data?.visibility}</Text>

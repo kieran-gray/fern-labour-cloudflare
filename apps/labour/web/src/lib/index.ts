@@ -24,6 +24,7 @@ export {
   formatTimeMilliseconds,
   formatTimeSeconds,
   formatDurationHuman,
+  formatDateTime,
   pluraliseName,
 } from './formatting';
 

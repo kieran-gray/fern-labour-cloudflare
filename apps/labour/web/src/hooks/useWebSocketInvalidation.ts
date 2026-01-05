@@ -267,6 +267,10 @@ function processEvent(
       invalidateOrCollect(queryClient, queryKeys.subscriptionToken.all, pendingInvalidations);
       break;
 
+    case 'SubscriptionTokenInvalidated':
+      invalidateOrCollect(queryClient, queryKeys.subscriptionToken.all, pendingInvalidations);
+      break;
+
     default:
       break;
   }

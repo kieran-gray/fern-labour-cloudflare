@@ -1,20 +1,20 @@
 /* Custom vertical timeline with labeled connectors for healthcare UX */
 
 .root {
-  --rail-width: 90px;
-  --bullet-size: 64px;
-  --line-width: 4px;
-  --connector-height: 34px;
+  --rail-width: 72px;
+  --bullet-size: 48px;
+  --line-width: 3px;
+  --connector-height: 42px;;
   width: 100%;
-  min-width: 0; /* Allow root to shrink properly */
-  padding: 0 20px;
+  min-width: 0;
+  padding: 0 var(--mantine-spacing-md);
 
   @media (max-width: $mantine-breakpoint-md) {
-    padding: 0 15px;
+    padding: 0 var(--mantine-spacing-sm);
   }
 
   @media (max-width: $mantine-breakpoint-xs) {
-    padding: 0 10px;
+    padding: 0 var(--mantine-spacing-xs);
   }
 }
 
@@ -37,15 +37,15 @@
   display: flex;
   grid-template-columns: 1fr var(--rail-width) 1fr;
   width: 100%;
-  margin-bottom: 16px;
   justify-content: space-around;
-  padding-bottom: 10px;
+  margin-bottom: var(--mantine-spacing-md);
+  padding-bottom: var(--mantine-spacing-sm);
   position: sticky;
   top: 0;
   background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-2));
   z-index: 10;
-  border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-gray-8));
-  gap: 20px;
+  border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+  gap: var(--mantine-spacing-md);
 }
 
 .headerLeft {
@@ -64,38 +64,31 @@
   display: grid;
   grid-template-columns: 1fr var(--rail-width) 1fr;
   align-items: flex-start;
-  gap: 15px;
+  gap: var(--mantine-spacing-md);
   margin: 0;
-  min-width: 0; /* Prevent grid overflow */
-  
+  min-width: 0;
+
   @media (min-width: $mantine-breakpoint-xs) {
-    padding: 4px 0;
+    padding: var(--mantine-spacing-xs) 0;
   }
 }
 
 .daySection {
-  margin: 32px 0 40px;
-  position: relative;
+  border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+  padding-top: var(--mantine-spacing-lg);
+  margin-top: var(--mantine-spacing-xl);
+  margin-bottom: var(--mantine-spacing-xl);
 }
 
 .daySection:first-child {
-  margin-top: 16px;
-}
-
-.daySection::before {
-  content: '';
-  position: absolute;
-  top: -20px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
-  opacity: 0.4;
+  margin-top: var(--mantine-spacing-md);
+  border-top: none;
+  padding-top: 0;
 }
 
 .dayHeader {
   text-align: center;
-  margin: 0 0 24px;
+  margin: 0 0 var(--mantine-spacing-lg);
 }
 
 .dayTitle {
@@ -149,11 +142,9 @@
   height: var(--bullet-size);
   border-radius: 9999px;
   color: light-dark(var(--mantine-color-primary-1), var(--mantine-color-white));
-  font-weight: 900;
-  font-size: 22px;
+  font-weight: 700;
+  font-size: var(--mantine-font-size-lg);
   user-select: none;
-  border: 2px solid light-dark(rgba(255, 255, 255, 0.7), rgba(100, 100, 100, 0.7));
-  box-shadow: inset 0 -8px 18px rgba(0, 0, 0, 0.08);
   position: relative;
   z-index: 2;
 }
@@ -240,9 +231,9 @@
   grid-template-columns: 1fr var(--rail-width) 1fr;
   align-items: center;
   height: var(--connector-height);
-  margin: 8px 0;
+  margin: var(--mantine-spacing-xs) 0;
   position: relative;
-  gap: 20px;
+  gap: var(--mantine-spacing-md);
 
   @media (max-width: $mantine-breakpoint-xs) {
     margin: 0;
@@ -259,10 +250,9 @@
   background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
   color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
   border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
-  padding: 6px 12px;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
   border-radius: 999px;
   white-space: nowrap;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   position: relative;
   z-index: 3;
 }
@@ -274,12 +264,12 @@
 
 @media (max-width: 36em) {
   .root {
-    --rail-width: 70px;
-    --bullet-size: 52px;
-    --connector-height: 32px;
+    --rail-width: 56px;
+    --bullet-size: 40px;
+    --connector-height: var(--mantine-spacing-lg);
   }
 
   .daySection {
-    margin: 24px 0 32px;
+    margin: var(--mantine-spacing-lg) 0 var(--mantine-spacing-xl);
   }
 }

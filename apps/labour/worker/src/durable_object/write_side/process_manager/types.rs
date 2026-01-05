@@ -37,7 +37,6 @@ pub enum Effect {
     },
     GenerateSubscriptionToken {
         labour_id: Uuid,
-        mother_id: String,
         idempotency_key: IdempotencyKey,
     },
 }

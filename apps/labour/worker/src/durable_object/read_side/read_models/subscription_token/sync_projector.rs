@@ -28,14 +28,11 @@ impl SubscriptionTokenProjector {
 
         match event {
             LabourEvent::SubscriptionTokenSet(e) => {
-                let token_read_model = SubscriptionTokenReadModel::new(
-                    e.labour_id,
-                    e.mother_id.clone(),
-                    e.token.clone(),
-                    timestamp,
-                );
+                let token_read_model =
+                    SubscriptionTokenReadModel::new(e.labour_id, e.token.clone(), timestamp);
                 self.repository.overwrite(&token_read_model)
             }
+            LabourEvent::SubscriptionTokenInvalidated(e) => self.repository.delete(e.labour_id),
             _ => Ok(()),
         }
     }

@@ -36,6 +36,7 @@ pub enum LabourEvent {
     LabourUpdateDeleted(LabourUpdateDeleted),
 
     SubscriptionTokenSet(SubscriptionTokenSet),
+    SubscriptionTokenInvalidated(SubscriptionTokenInvalidated),
 
     SubscriberRequested(SubscriberRequested),
     SubscriberUnsubscribed(SubscriberUnsubscribed),
@@ -118,6 +119,7 @@ delegate_event_impl!(
     LabourUpdateTypeUpdated,
     LabourPhaseChanged,
     SubscriptionTokenSet,
+    SubscriptionTokenInvalidated,
     SubscriberApproved,
     SubscriberBlocked,
     SubscriberRequested,

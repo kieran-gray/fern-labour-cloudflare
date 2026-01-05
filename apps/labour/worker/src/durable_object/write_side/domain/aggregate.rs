@@ -9,7 +9,7 @@ use fern_labour_event_sourcing_rs::Aggregate;
 
 use crate::durable_object::write_side::domain::{
     LabourCommand, LabourError, LabourEvent,
-    command_handlers::*,
+    command_handlers::{subscription::handle_invalidate_subscription_token, *},
     entities::{
         contraction::Contraction,
         labour_update::{ANNOUNCEMENT_COOLDOWN_SECONDS, LabourUpdate},
@@ -304,6 +304,9 @@ impl Aggregate for Labour {
             LabourEvent::SubscriptionTokenSet(e) => {
                 self.subscription_token = Some(e.token.clone());
             }
+            LabourEvent::SubscriptionTokenInvalidated(_) => {
+                self.subscription_token = None;
+            }
             LabourEvent::LabourPlanUpdated(_)
             | LabourEvent::LabourInviteSent(_)
             | LabourEvent::LabourDeleted(_) => {}
@@ -353,6 +356,9 @@ impl Aggregate for Labour {
 
             // Subscription commands
             LabourCommand::SetSubscriptionToken(cmd) => handle_set_subscription_token(state, cmd),
+            LabourCommand::InvalidateSubscriptionToken(cmd) => {
+                handle_invalidate_subscription_token(state, cmd)
+            }
             LabourCommand::ApproveSubscriber(cmd) => handle_approve_subscriber(state, cmd),
             LabourCommand::RemoveSubscriber(cmd) => handle_remove_subscriber(state, cmd),
             LabourCommand::BlockSubscriber(cmd) => handle_block_subscriber(state, cmd),

@@ -70,13 +70,14 @@ pub fn required_capability(action: &Action) -> Capability {
     match action {
         Action::Command(cmd) => match cmd {
             LabourCommand::PlanLabour(..)
-            | LabourCommand::DeleteLabour(..)
-            | LabourCommand::SendLabourInvite(..) => Capability::ManageLabour,
-
-            LabourCommand::UpdateLabourPlan(..)
+            | LabourCommand::UpdateLabourPlan(..)
             | LabourCommand::BeginLabour(..)
             | LabourCommand::CompleteLabour(..)
-            | LabourCommand::StartContraction(..)
+            | LabourCommand::DeleteLabour(..)
+            | LabourCommand::SendLabourInvite(..)
+            | LabourCommand::InvalidateSubscriptionToken(..) => Capability::ManageLabour,
+
+            LabourCommand::StartContraction(..)
             | LabourCommand::EndContraction(..)
             | LabourCommand::UpdateContraction(..)
             | LabourCommand::DeleteContraction(..)
