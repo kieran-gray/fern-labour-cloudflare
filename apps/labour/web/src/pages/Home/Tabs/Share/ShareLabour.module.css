@@ -5,7 +5,53 @@
   overflow: hidden;
 }
 
-/* Card Grid Layout */
+.nativeShareSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mantine-spacing-md);
+  margin: var(--mantine-spacing-lg) 0;
+}
+
+.shareButton {
+  background-color: light-dark(var(--mantine-color-pink-5), var(--mantine-color-pink-7));
+  border: none;
+  box-shadow: 0 2px 8px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.25));
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    background-color: light-dark(var(--mantine-color-pink-6), var(--mantine-color-pink-6));
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3));
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+  width: 100%;
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-primary-5));
+}
+
+.dividerText {
+  font-size: var(--mantine-font-size-xs);
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
 .shareCardsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -18,7 +64,6 @@
   }
 }
 
-/* Individual Share Card */
 .shareCard {
   background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-primary-3));
   border-radius: var(--mantine-radius-md);
@@ -60,10 +105,10 @@
   flex-direction: column;
   justify-content: center;
   min-width: 0;
+  padding: var(--mantine-spacing-xs) 0;
   overflow: hidden;
 }
 
-/* Link Card Styles */
 .linkInputWrapper {
   display: flex;
   align-items: center;
@@ -91,20 +136,32 @@
 .linkAction {
   color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
   flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-primary-5));
+    background-color: light-dark(var(--mantine-color-pink-0), var(--mantine-color-pink-9));
+    color: light-dark(var(--mantine-color-pink-6), var(--mantine-color-pink-4));
   }
 }
 
-/* Social Buttons */
+.linkActionDanger {
+  &:hover {
+    background-color: light-dark(var(--mantine-color-red-0), var(--mantine-color-red-9));
+    color: light-dark(var(--mantine-color-red-6), var(--mantine-color-red-4));
+  }
+}
+
 .socialButton {
   background-color: light-dark(var(--mantine-color-white), var(--mantine-color-primary-4));
   color: var(--social-color, var(--mantine-color-gray-7));
-  transition: transform 0.15s ease, background-color 0.15s ease;
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-primary-5));
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease,
+    background-color 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-primary-5));
+    background-color: light-dark(var(--mantine-color-pink-0), var(--mantine-color-pink-9));
+    border-color: light-dark(var(--mantine-color-pink-3), var(--mantine-color-pink-7));
+    color: light-dark(var(--mantine-color-pink-6), var(--mantine-color-pink-4));
     transform: scale(1.05);
   }
 
@@ -113,7 +170,6 @@
   }
 }
 
-/* QR Code */
 .qrCodeWrapper {
   display: flex;
   justify-content: center;
@@ -129,10 +185,17 @@
   color: var(--mantine-color-gray-9);
 }
 
-/* Approval Note */
 .approvalNote {
   max-width: 400px;
   margin-left: auto;
   margin-right: auto;
   color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+}
+
+.errorState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 140px;
+  padding: var(--mantine-spacing-xl);
 }

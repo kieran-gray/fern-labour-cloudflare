@@ -8,21 +8,16 @@ import {
   useUnblockSubscriber,
   useUsers,
 } from '@base/hooks/useLabourData';
-import { PageLoadingIcon } from '@components/PageLoading/Loading';
 import { IconUserCheck, IconUserOff, IconUserQuestion } from '@tabler/icons-react';
 import { Badge, Group, Tabs, Text } from '@mantine/core';
+import { SubscribersSkeleton } from './SubscribersSkeleton';
 import { SubscribersTable } from './SubscribersTable';
 import baseClasses from '@styles/base.module.css';
 
 export const ManageSubscribersTabs = () => {
   const { labourId } = useLabourSession();
   const client = useLabourClient();
-  const {
-    isPending,
-    isError,
-    data: subscriptions,
-    error,
-  } = useLabourSubscriptions(client, labourId!);
+  const { isPending, isError, data: subscriptions } = useLabourSubscriptions(client, labourId!);
   const { isPending: usersPending, data: users = [] } = useUsers(client, labourId!);
 
   const approveSubscriberMutation = useApproveSubscriber(client);
@@ -30,26 +25,26 @@ export const ManageSubscribersTabs = () => {
   const unblockSubscriberMutation = useUnblockSubscriber(client);
 
   if (isPending || usersPending) {
-    return (
-      <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
-        <PageLoadingIcon />
-      </div>
-    );
+    return <SubscribersSkeleton />;
   }
 
   if (isError) {
     return (
-      <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
-        <Text>Something went wrong... {error ? error.message : ''}</Text>
+      <div className={baseClasses.emptyState}>
+        <Text size="sm" c="dimmed">
+          Unable to load subscribers. Please try refreshing the page.
+        </Text>
       </div>
     );
   }
 
   if (subscriptions.length === 0) {
     return (
-      <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
-        You don't have any subscribers yet, share invites with loved ones in the Share tab.
-      </Text>
+      <div className={baseClasses.emptyState}>
+        <Text size="sm" c="dimmed" ta="center">
+          No subscribers yet. Share your link in the Share tab to invite loved ones.
+        </Text>
+      </div>
     );
   }
 

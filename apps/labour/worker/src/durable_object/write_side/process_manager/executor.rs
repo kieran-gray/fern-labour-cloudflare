@@ -286,17 +286,10 @@ impl EffectExecutor for LabourEffectExecutor {
                     .context("Failed to handle internal command")?;
                 Ok(())
             }
-            Effect::GenerateSubscriptionToken {
-                labour_id,
-                mother_id,
-                ..
-            } => {
-                let token = self
-                    .token_generator
-                    .generate(mother_id, &labour_id.to_string());
+            Effect::GenerateSubscriptionToken { labour_id, .. } => {
+                let token = self.token_generator.generate();
                 let command = LabourCommand::SetSubscriptionToken(SetSubscriptionToken {
                     labour_id: *labour_id,
-                    mother_id: mother_id.clone(),
                     token,
                 });
                 let system_user = User::internal("process-manager");

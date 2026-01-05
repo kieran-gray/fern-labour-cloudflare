@@ -6,6 +6,7 @@ import {
 } from '@base/clients/labour_service';
 import { useLabourClient } from '@base/hooks';
 import { flattenLabourUpdates, useLabourUpdatesInfinite } from '@base/hooks/useInfiniteQueries';
+import { useTransitionStatus } from '@components/TabTransition/TransitionStatusContext';
 import { pluraliseName } from '@lib';
 import { IconBook } from '@tabler/icons-react';
 import { ActionIcon, Button, Image, ScrollArea, Space, Text, Title } from '@mantine/core';
@@ -74,7 +75,7 @@ const mapLabourUpdateToProps = (
         return {
           ...baseProps,
           class: classes.privateNotePanel,
-          badgeColor: '#ff8f00',
+          badgeColor: 'orange',
           badgeText: 'Fern Labour',
           text: sharedLabourBegunMessage,
           visibility: isSubscriberView ? '' : 'Broadcast to subscribers',
@@ -85,10 +86,8 @@ const mapLabourUpdateToProps = (
       return {
         ...baseProps,
         class: classes.announcementPanel,
-        badgeColor: isSubscriberView
-          ? 'var(--mantine-primary-color-6)'
-          : 'var(--mantine-color-pink-6)',
-        badgeText: update.labour_update_type.split('_')[0],
+        badgeColor: 'pink',
+        badgeText: 'Announcement',
         text: update.message,
         visibility: isSubscriberView ? '' : 'Broadcast to subscribers',
         showMenu: false,
@@ -99,8 +98,8 @@ const mapLabourUpdateToProps = (
       return {
         ...baseProps,
         class: classes.statusUpdatePanel,
-        badgeColor: '#24968b',
-        badgeText: update.labour_update_type.split('_')[0],
+        badgeColor: 'teal',
+        badgeText: 'Status',
         text: update.message,
         visibility: isSubscriberView ? '' : 'Visible to subscribers',
         showMenu: isSubscriberView ? false : !completed,
@@ -111,7 +110,7 @@ const mapLabourUpdateToProps = (
       return {
         ...baseProps,
         class: classes.privateNotePanel,
-        badgeColor: '#ff8f00',
+        badgeColor: 'orange',
         badgeText: 'Fern Labour',
         text: privateLabourBegunMessage,
         visibility: isSubscriberView ? '' : 'Only visible to you',
@@ -128,6 +127,7 @@ export function LabourUpdates({
 }: LabourUpdatesProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const viewport = useRef<HTMLDivElement>(null);
+  const isTransitioning = useTransitionStatus();
 
   const isOwnerView = !isSubscriberView || subscriberRole === SubscriberRole.BIRTH_PARTNER;
   const isBirthPartner = isSubscriberView && subscriberRole === SubscriberRole.BIRTH_PARTNER;
@@ -202,26 +202,16 @@ export function LabourUpdates({
   const newestUpdateId =
     labourUpdates.length > 0 ? labourUpdates[labourUpdates.length - 1].labour_update_id : null;
   const prevNewestIdRef = useRef<string | null>(null);
-  const hasInitiallyScrolledRef = useRef(false);
 
   useEffect(() => {
-    if (labourUpdates.length === 0) {
+    if (labourUpdates.length === 0 || isTransitioning) {
       return;
     }
 
-    const isInitialLoad = !hasInitiallyScrolledRef.current;
-    const hasNewUpdate =
-      newestUpdateId !== prevNewestIdRef.current && prevNewestIdRef.current !== null;
-
-    if (isInitialLoad) {
-      scrollToBottom(false);
-      hasInitiallyScrolledRef.current = true;
-    } else if (hasNewUpdate) {
-      scrollToBottom(true);
-    }
+    scrollToBottom(true);
 
     prevNewestIdRef.current = newestUpdateId;
-  }, [labourUpdates.length, newestUpdateId, scrollToBottom]);
+  }, [labourUpdates.length, newestUpdateId, scrollToBottom, isTransitioning]);
 
   const title = !isSubscriberView
     ? completed
@@ -265,23 +255,23 @@ export function LabourUpdates({
                   {title}
                 </Title>
               </div>
-              <ActionIcon radius="xl" variant="light" size="xl" onClick={open}>
-                <IconBook />
+              <ActionIcon radius="xl" variant="light" size="lg" onClick={open}>
+                <IconBook size={20} />
               </ActionIcon>
               <LabourUpdatesHelpModal close={close} opened={opened} />
             </div>
-            <div className={baseClasses.inner} style={{ paddingTop: 0, paddingBottom: 0 }}>
+            <div className={classes.inner} style={{ paddingBottom: 0, paddingTop: 0 }}>
               <div className={classes.content}>
                 <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description}>
                   {description}
                 </Text>
                 {hasUpdates && (
-                  <ScrollArea.Autosize mt={20} mah="calc(100dvh - 370px)" viewportRef={viewport}>
+                  <ScrollArea.Autosize mt="md" mah="calc(100dvh - 350px)" viewportRef={viewport}>
                     {hasNextPage && (
                       <Button
                         onClick={handleLoadMore}
                         variant="light"
-                        mb="md"
+                        mb="sm"
                         fullWidth
                         loading={isFetchingNextPage}
                         disabled={isFetchingNextPage}
@@ -297,11 +287,7 @@ export function LabourUpdates({
                     <div className={classes.imageFlexRow}>
                       <Image src={image} className={classes.image} />
                     </div>
-                    <Text
-                      fz={{ base: 'sm', xs: 'md' }}
-                      className={baseClasses.importantText}
-                      style={{ display: 'flex', alignItems: 'center' }}
-                    >
+                    <Text fz="sm" className={baseClasses.importantText}>
                       {emptyStateMessage}
                     </Text>
                   </>
@@ -315,23 +301,23 @@ export function LabourUpdates({
           </>
         ) : (
           <>
-            <div className={baseClasses.inner}>
+            <div className={classes.inner}>
               <div className={classes.content}>
                 <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
                   {title}
                 </Title>
-                <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description} mt={10}>
+                <Text fz="sm" className={baseClasses.description} mt="sm">
                   {description}
                 </Text>
-                <Space h="lg" />
+                <Space h="md" />
                 {hasUpdates ? (
                   <>
-                    <ScrollArea.Autosize mah="calc(100dvh - 390px)" viewportRef={viewport}>
+                    <ScrollArea.Autosize mah="60vh" viewportRef={viewport}>
                       {hasNextPage && (
                         <Button
                           onClick={handleLoadMore}
                           variant="light"
-                          mb="md"
+                          mb="sm"
                           fullWidth
                           loading={isFetchingNextPage}
                           disabled={isFetchingNextPage}
@@ -341,10 +327,10 @@ export function LabourUpdates({
                       )}
                       <div className={classes.statusUpdateContainer}>{labourUpdateDisplay}</div>
                     </ScrollArea.Autosize>
-                    <Space h="lg" />
+                    <Space h="md" />
                   </>
                 ) : (
-                  <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+                  <Text fz="sm" className={baseClasses.importantText}>
                     {emptyStateMessage}
                   </Text>
                 )}

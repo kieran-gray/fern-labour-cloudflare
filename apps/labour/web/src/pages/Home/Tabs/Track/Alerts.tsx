@@ -54,7 +54,7 @@ export function CallMidwifeAlert({ onClose }: AlertProps) {
     <Alert
       variant="light"
       color="red"
-      radius="lg"
+      radius="md"
       withCloseButton
       title="Time to call your midwife"
       icon={<IconPhone />}
@@ -72,7 +72,7 @@ export function GoToHospitalAlert({ onClose }: AlertProps) {
     <Alert
       variant="light"
       color="orange"
-      radius="lg"
+      radius="md"
       withCloseButton
       title="Time to go to the hospital"
       icon={<IconAmbulance />}
@@ -90,7 +90,7 @@ export function PrepareForHospitalAlert({ onClose }: AlertProps) {
     <Alert
       variant="light"
       color="orange"
-      radius="lg"
+      radius="md"
       withCloseButton
       title="Prepare to go to the hospital"
       icon={<IconBackpack />}

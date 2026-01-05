@@ -1,6 +1,8 @@
 .counter {
     color: light-dark(var(--mantine-color-dark-9), var(--mantine-color-gray-1));
-    text-transform: uppercase;
-    font-weight: 700;
-    font-size: 40pt;
+    font-weight: 600;
+    font-size: 3.5rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    line-height: 1;
 }

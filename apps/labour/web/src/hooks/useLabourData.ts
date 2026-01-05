@@ -132,7 +132,13 @@ export function useActiveLabour(client: LabourServiceClient) {
 }
 
 /**
- * Hook for fetching subscription token
+ * Hook for fetching subscription token.
+ *
+ * Handles eventual consistency during token regeneration:
+ * - When a token is invalidated, a new one is generated asynchronously
+ * - During this window, the query returns null (generating state)
+ * - WebSocket events will trigger refetch when the new token is ready
+ * - Fallback polling ensures recovery if WebSocket fails
  */
 export function useSubscriptionToken(client: LabourServiceClient, labourId: string | null) {
   const { userId } = useAuth();
@@ -147,6 +153,12 @@ export function useSubscriptionToken(client: LabourServiceClient, labourId: stri
       const response = await client.getSubscriptionToken(labourId);
 
       if (!response.success || !response.data) {
+        const isGenerating =
+          response.error?.toLowerCase().includes('no subcription token') ||
+          response.error?.toLowerCase().includes('no subscription token');
+        if (isGenerating) {
+          return null;
+        }
         throw new Error(response.error || 'Failed to load subscription token');
       }
 
@@ -154,6 +166,9 @@ export function useSubscriptionToken(client: LabourServiceClient, labourId: stri
     },
     enabled: !!labourId && !!userId,
     retry: 0,
+    refetchInterval: (query) => {
+      return query.state.data === null ? 2000 : false;
+    },
   });
 }
 
@@ -625,4 +640,12 @@ export const useUpdateSubscriberRole = createMutation<{
   invalidateOnError: false,
   successMessage: 'Subscriber role updated',
   errorMessage: 'Failed to update subscriber role',
+});
+
+export const useInvalidateSubscriptionToken = createMutation<{ labourId: string }>({
+  mutationFn: (client, { labourId }) => client.invalidateSubscriptionToken(labourId),
+  getInvalidationKey: ({ labourId }) => queryKeys.subscriptionToken.detail(labourId),
+  invalidateOnError: false,
+  successMessage: 'Subscription token invalidated',
+  errorMessage: 'Failed to invalidate subscription token',
 });

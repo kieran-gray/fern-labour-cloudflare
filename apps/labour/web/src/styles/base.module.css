@@ -273,8 +273,8 @@
         color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-7));
     }
 
-    &:focus {
-        border-color: light-dark(var(--mantine-primary-color-3), var(--mantine-color-gray-6));
+    &:focus-within {
+        border-color: var(--mantine-primary-color-filled);
     }
 }
 
@@ -355,4 +355,15 @@
     @media (max-width: $mantine-breakpoint-xs) {
         margin-bottom: 2px;
     }
+}
+
+.emptyState {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--mantine-spacing-lg) var(--mantine-spacing-md);
+    min-height: 80px;
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-primary-3));
+    border-radius: var(--mantine-radius-md);
+    margin-top: var(--mantine-spacing-sm);
 }

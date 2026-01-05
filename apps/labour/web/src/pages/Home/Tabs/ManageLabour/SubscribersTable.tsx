@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { SubscriptionReadModel } from '@base/clients/labour_service/types';
 import { IconBan, IconCheck, IconX } from '@tabler/icons-react';
-import { ActionIcon, Avatar, Card, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Card, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { RoleBadge } from './RoleBadge';
+import { SubscriberAvatar } from './SubscriberAvatar';
 import { ManageSubscriptionMenu } from './SubscriberMenu';
 import classes from './SubscribersTable.module.css';
 import baseClasses from '@styles/base.module.css';
@@ -27,21 +28,16 @@ export function SubscribersTable({
   if (subscriptions.length === 0) {
     let message = '';
     if (status === 'subscribed') {
-      message =
-        "You don't have any subscribers yet, share invites with loved ones in the invite tab.";
+      message = 'No active subscribers yet. Share your link in the Share tab to invite loved ones.';
     } else if (status === 'requested') {
-      message = "You don't have any subscriber requests.";
+      message = 'No pending requests.';
     } else if (status === 'blocked') {
-      message = "You don't have any blocked subscribers.";
+      message = 'No blocked subscribers.';
     }
 
     return (
-      <div style={{ marginTop: '10px' }}>
-        <Text
-          fz={{ base: 'sm', xs: 'md' }}
-          className={baseClasses.importantText}
-          style={{ display: 'flex', alignItems: 'center' }}
-        >
+      <div className={baseClasses.emptyState}>
+        <Text size="sm" ta="center">
           {message}
         </Text>
       </div>
@@ -72,7 +68,11 @@ export function SubscribersTable({
           >
             <Group justify="space-between" wrap="nowrap">
               <Group gap="sm" wrap="nowrap" style={{ minWidth: 0 }}>
-                <Avatar radius="xl" color="var(--mantine-primary-color-5)" />
+                <SubscriberAvatar
+                  subscriberId={subscriber.id}
+                  firstName={subscriber.firstName}
+                  lastName={subscriber.lastName}
+                />
                 <div style={{ minWidth: 0 }}>
                   <Text fw={500} className={classes.cropText} size="sm">
                     {subscriber.firstName} {subscriber.lastName}

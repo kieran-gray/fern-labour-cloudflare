@@ -25,7 +25,6 @@ impl SqlSubscriptionTokenRepository {
             .exec(
                 "CREATE TABLE IF NOT EXISTS subscription_token (
                     labour_id TEXT PRIMARY KEY,
-                    mother_id TEXT NOT NULL,
                     token TEXT NOT NULL,
                     created_at TEXT NOT NULL,
                     updated_at TEXT NOT NULL
@@ -94,7 +93,6 @@ impl SyncRepositoryTrait<SubscriptionTokenReadModel> for SqlSubscriptionTokenRep
 
         let bindings = vec![
             row.labour_id.into(),
-            row.mother_id.into(),
             row.token.into(),
             row.created_at.into(),
             row.updated_at.into(),
@@ -103,14 +101,13 @@ impl SyncRepositoryTrait<SubscriptionTokenReadModel> for SqlSubscriptionTokenRep
         self.sql
             .exec(
                 "INSERT INTO subscription_token (
-                    labour_id, mother_id, token, created_at, updated_at
+                    labour_id, token, created_at, updated_at
                  )
-                 VALUES (?1, ?2, ?3, ?4, ?5)
+                 VALUES (?1, ?2, ?3, ?4)
                  ON CONFLICT(labour_id)
                  DO UPDATE SET
-                    mother_id = ?2,
-                    token = ?3,
-                    updated_at = ?5",
+                    token = ?2,
+                    updated_at = ?4",
                 Some(bindings),
             )
             .map_err(|err| anyhow!("Failed to upsert subscription token: {err}"))?;
@@ -135,7 +132,6 @@ impl SyncRepositoryTrait<SubscriptionTokenReadModel> for SqlSubscriptionTokenRep
 
         let bindings = vec![
             row.labour_id.into(),
-            row.mother_id.into(),
             row.token.into(),
             row.created_at.into(),
             row.updated_at.into(),
@@ -144,9 +140,9 @@ impl SyncRepositoryTrait<SubscriptionTokenReadModel> for SqlSubscriptionTokenRep
         self.sql
             .exec(
                 "INSERT OR REPLACE INTO subscription_token (
-                    labour_id, mother_id, token, created_at, updated_at
+                    labour_id, token, created_at, updated_at
                  )
-                 VALUES (?1, ?2, ?3, ?4, ?5)",
+                 VALUES (?1, ?2, ?3, ?4)",
                 Some(bindings),
             )
             .context("Failed to overwrite subscription token")?;

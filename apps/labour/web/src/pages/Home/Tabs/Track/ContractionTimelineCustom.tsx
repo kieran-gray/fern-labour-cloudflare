@@ -154,17 +154,17 @@ export default function ContractionTimelineCustom({
         <div className={classes.leftColumn}>
           <div className={classes.durationDisplay}>
             {finished ? (
-              <Text size="lg" fw={600} className={classes.durationText}>
+              <Text size="md" fw={600} className={classes.durationText}>
                 {formatTimeSeconds(durationSeconds)}
               </Text>
             ) : (
-              <Text size="lg" fw={600} className={classes.ongoingText}>
+              <Text size="md" fw={600} className={classes.ongoingText}>
                 Ongoing
               </Text>
             )}
           </div>
           <div className={classes.timeDisplay}>
-            <Text size="sm" className={classes.timeText}>
+            <Text size="xs" fw={500} className={classes.timeText}>
               {formatClock(c.duration.start_time)}
             </Text>
           </div>
@@ -187,7 +187,7 @@ export default function ContractionTimelineCustom({
                   : `Ongoing contraction started at ${formatClock(c.duration.start_time)}`
               }
             >
-              {finished ? (c.intensity ?? 0) : <IconActivityHeartbeat size={28} color="white" />}
+              {finished ? (c.intensity ?? 0) : <IconActivityHeartbeat size={22} color="white" />}
             </div>
           </div>
         </div>
@@ -201,7 +201,7 @@ export default function ContractionTimelineCustom({
         <div className={classes.connectorCenter}>{/* Timeline continues through center */}</div>
         <div className={classes.connectorRight}>
           <div className={classes.frequencyDisplay}>
-            <Text size="sm" fw={500} className={classes.frequencyText}>
+            <Text size="xs" fw={500} className={classes.frequencyText}>
               {formatTimeMilliseconds(nextGap)}
             </Text>
           </div>
@@ -234,7 +234,7 @@ export default function ContractionTimelineCustom({
           </div>
         </div>
       )}
-      <ScrollArea.Autosize mah="calc(100dvh - 360px)" viewportRef={viewport} w="100%">
+      <ScrollArea.Autosize mah="calc(100dvh - 380px)" viewportRef={viewport} w="100%">
         <div className={classes.root}>
           {hasMore && onLoadMore && (
             <Button
@@ -252,12 +252,9 @@ export default function ContractionTimelineCustom({
           {sections.map((section) => (
             <div key={section.key} className={classes.daySection}>
               <div className={classes.dayHeader}>
-                <div>
-                  <Text size="sm" className={classes.dayTitle}>
-                    {section.label}
-                  </Text>
-                  <div className={classes.dayRule} />
-                </div>
+                <Text size="sm" className={classes.dayTitle}>
+                  {section.label}
+                </Text>
               </div>
               {section.items.flatMap((c, i, arr) => renderItem(c, i, arr))}
             </div>

@@ -86,12 +86,12 @@ export function getFloatingControlsPadding({
     if (!isContractionControlsExpanded) {
       return '50px';
     }
-    return hasActiveContraction ? '350px' : '140px';
+    return hasActiveContraction ? '310px' : '140px';
   }
 
   if (activeTab === 'updates') {
     if (isUpdateControlsExpanded) {
-      return isOnline ? '180px' : '120px';
+      return isOnline ? '190px' : '120px';
     }
     return '55px';
   }

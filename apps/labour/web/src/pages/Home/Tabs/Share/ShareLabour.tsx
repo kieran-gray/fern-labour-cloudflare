@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useLabourSession } from '@base/contexts';
 import { useLabourClient } from '@base/hooks';
-import { useSubscriptionToken } from '@base/hooks/useLabourData';
+import { useInvalidateSubscriptionToken, useSubscriptionToken } from '@base/hooks/useLabourData';
 import { Card } from '@components/Cards/Card';
 import { GenericConfirmModal } from '@components/Modals/GenericConfirmModal';
-import { PageLoadingIcon } from '@components/PageLoading/Loading';
 import {
   IconBrandFacebook,
   IconBrandWhatsapp,
@@ -20,12 +19,13 @@ import {
 import { QRCodeSVG } from 'qrcode.react';
 import {
   ActionIcon,
+  Button,
   Group,
   CopyButton as MantineCopyButton,
   Text,
-  Title,
   Tooltip,
 } from '@mantine/core';
+import { ShareLabourSkeleton } from './ShareLabourSkeleton';
 import classes from './ShareLabour.module.css';
 
 interface ShareCardProps {
@@ -85,7 +85,7 @@ function SocialShareButtons({ url, message }: SocialShareButtonsProps) {
   return (
     <Group gap="sm" justify="center" wrap="wrap">
       {shareLinks.map((link) => (
-        <Tooltip key={link.name} label={link.name} position="bottom">
+        <Tooltip key={link.name} label={link.name} position="bottom" withArrow>
           <ActionIcon
             component="a"
             href={link.href}
@@ -96,6 +96,7 @@ function SocialShareButtons({ url, message }: SocialShareButtonsProps) {
             variant="light"
             className={classes.socialButton}
             style={{ '--social-color': link.color } as React.CSSProperties}
+            aria-label={`Share via ${link.name}`}
           >
             <link.icon size={24} />
           </ActionIcon>
@@ -115,7 +116,7 @@ function QRCodeCard({ url }: QRCodeCardProps) {
       <div className={classes.qrCodeWrapper}>
         <QRCodeSVG
           value={url}
-          size={180}
+          size={170}
           bgColor="transparent"
           fgColor="currentColor"
           className={classes.qrCode}
@@ -144,20 +145,19 @@ function LinkCard({ url, onInvalidate, isInvalidating }: LinkCardProps) {
         <Group gap={4}>
           <MantineCopyButton value={url}>
             {({ copied, copy }) => (
-              <Tooltip label={copied ? 'Copied!' : 'Copy'} position="top">
+              <Tooltip label={copied ? 'Copied!' : 'Copy'} position="top" withArrow>
                 <ActionIcon variant="subtle" onClick={copy} className={classes.linkAction}>
                   {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
                 </ActionIcon>
               </Tooltip>
             )}
           </MantineCopyButton>
-          <Tooltip label="Generate new link" position="top">
+          <Tooltip label="Generate new link" position="top" withArrow>
             <ActionIcon
               variant="subtle"
               onClick={onInvalidate}
               loading={isInvalidating}
-              className={classes.linkAction}
-              color="red"
+              className={`${classes.linkAction} ${classes.linkActionDanger}`}
             >
               <IconRefresh size={16} />
             </ActionIcon>
@@ -181,55 +181,91 @@ function QuickShareCard({ url, message }: QuickShareCardProps) {
   );
 }
 
+interface NativeShareSectionProps {
+  url: string;
+  message: string;
+}
+
+function NativeShareSection({ url, message }: NativeShareSectionProps) {
+  const supportsNativeShare = typeof navigator.share === 'function';
+
+  if (!supportsNativeShare) {
+    return null;
+  }
+
+  const handleNativeShare = () => {
+    navigator.share({
+      title: 'Follow My Labour',
+      text: message,
+      url,
+    });
+  };
+
+  return (
+    <>
+      <div className={classes.nativeShareSection}>
+        <Button
+          leftSection={<IconShare size={18} />}
+          variant="filled"
+          size="md"
+          radius="xl"
+          onClick={handleNativeShare}
+          className={classes.shareButton}
+        >
+          Share Link
+        </Button>
+      </div>
+
+      <div className={classes.divider}>
+        <span className={classes.dividerLine} />
+        <Text component="span" className={classes.dividerText}>
+          or
+        </Text>
+        <span className={classes.dividerLine} />
+      </div>
+    </>
+  );
+}
+
 export function ShareLabour() {
   const { labourId } = useLabourSession();
   const client = useLabourClient();
-  const {
-    data: token,
-    isPending,
-    isError,
-    error,
-    refetch,
-  } = useSubscriptionToken(client, labourId);
+  const { data: token, isPending, isError } = useSubscriptionToken(client, labourId);
+  const mutation = useInvalidateSubscriptionToken(client);
   const [showInvalidateModal, setShowInvalidateModal] = useState(false);
   const [isInvalidating, setIsInvalidating] = useState(false);
 
   const handleInvalidateLink = async () => {
     setIsInvalidating(true);
     try {
-      // TODO: Implement backend call to invalidate token
-      // await client.invalidateSubscriptionToken(labourId);
-      // Then refetch to get new token:
-      await refetch();
+      mutation.mutate({ labourId: labourId! });
     } finally {
       setIsInvalidating(false);
       setShowInvalidateModal(false);
     }
   };
 
-  if (isPending) {
+  if (isPending || token === null) {
     return (
-      <Card>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <PageLoadingIcon />
-        </div>
+      <Card
+        title="Share with your loved ones"
+        description="Send this link to anyone you'd like to keep in the loop. When they sign up, you'll be able to approve their request."
+      >
+        <ShareLabourSkeleton />
       </Card>
     );
   }
 
   if (isError) {
     return (
-      <Card>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Title order={3}>Error :(</Title>
-          <Text>{error.message}</Text>
+      <Card
+        title="Share with your loved ones"
+        description="Send this link to anyone you'd like to keep in the loop. When they sign up, you'll be able to approve their request."
+      >
+        <div className={classes.errorState}>
+          <Text size="sm" c="dimmed">
+            Unable to load share link. Please try refreshing the page.
+          </Text>
         </div>
       </Card>
     );
@@ -256,6 +292,8 @@ export function ShareLabour() {
         description="Send this link to anyone you'd like to keep in the loop. When they sign up, you'll be able to approve their request."
       >
         <div className={classes.shareContent}>
+          <NativeShareSection url={shareUrl} message={shareMessage} />
+
           <div className={classes.shareCardsGrid}>
             <LinkCard
               url={shareUrl}

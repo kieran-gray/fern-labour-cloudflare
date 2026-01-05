@@ -143,7 +143,6 @@ mod tests {
         let token = "test-token".to_string();
         let set_token_cmd = LabourCommand::SetSubscriptionToken(SetSubscriptionToken {
             labour_id: Uuid::parse_str(&aggregate.aggregate_id()).unwrap(),
-            mother_id: mother_id.to_string(),
             token: token.clone(),
         });
         let events = Labour::handle_command(Some(&aggregate), set_token_cmd).unwrap();
@@ -681,7 +680,6 @@ mod tests {
 
         let action = Action::Command(LabourCommand::SetSubscriptionToken(SetSubscriptionToken {
             labour_id: Uuid::parse_str(&aggregate.aggregate_id()).unwrap(),
-            mother_id: aggregate.mother_id().to_string(),
             token: "TEST_TOKEN".to_string(),
         }));
 

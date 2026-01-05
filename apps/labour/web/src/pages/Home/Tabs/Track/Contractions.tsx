@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { LabourReadModel, SubscriberRole } from '@base/clients/labour_service/types';
 import { useLabourClient } from '@base/hooks';
 import { flattenContractions, useContractionsInfinite } from '@base/hooks/useInfiniteQueries';
+import { useTransitionStatus } from '@components/TabTransition/TransitionStatusContext';
 import { IconBook } from '@tabler/icons-react';
 import { ActionIcon, Image, Stack, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -47,6 +48,7 @@ export function Contractions({
     client,
     labour.labour_id
   );
+  const isTransitioning = useTransitionStatus();
 
   const isBirthPartner = isSubscriberView && subscriberRole === SubscriberRole.BIRTH_PARTNER;
   const motherFirstName = labour.mother_name.split(' ')[0];
@@ -60,11 +62,14 @@ export function Contractions({
   };
 
   useEffect(() => {
+    if (isTransitioning) {
+      return;
+    }
     const main = document.getElementById('app-main');
     if (main) {
       main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' });
     }
-  }, [labour]);
+  }, [labour, isTransitioning]);
 
   const completed = labour.end_time !== null;
   const activeContraction = sortedContractions.find(
@@ -72,13 +77,16 @@ export function Contractions({
   );
 
   useEffect(() => {
+    if (isTransitioning) {
+      return;
+    }
     if (activeContraction) {
       const main = document.getElementById('app-main');
       if (main) {
         main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' });
       }
     }
-  }, [activeContraction?.contraction_id]);
+  }, [activeContraction?.contraction_id, isTransitioning]);
 
   const title = isBirthPartner
     ? MESSAGES.BIRTH_PARTNER_TITLE(motherFirstName)
@@ -100,7 +108,7 @@ export function Contractions({
     <div className={baseClasses.root}>
       <div className={baseClasses.body}>
         <div className={baseClasses.docsTitleRow}>
-          <div className={classes.title} style={{ paddingBottom: 0 }}>
+          <div className={classes.title}>
             <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
               {title}
             </Title>
@@ -110,14 +118,14 @@ export function Contractions({
           </ActionIcon>
           <ContractionsHelpModal close={close} opened={opened} />
         </div>
-        <div className={baseClasses.inner} style={{ paddingBottom: 0, paddingTop: 0 }}>
+        <div className={classes.innerContent}>
           <div className={classes.content}>
             {(completed || sortedContractions.length === 0) && (
-              <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description}>
+              <Text fz="sm" className={baseClasses.description}>
                 {completed ? completedDescription : activeDescription}
               </Text>
             )}
-            <Stack align="stretch" justify="flex-end" mt="20px" style={{ alignItems: 'center' }}>
+            <Stack align="center" justify="flex-end" mt="md">
               {sortedContractions.length > 0 && (
                 <ContractionTimelineCustom
                   contractions={sortedContractions}
@@ -128,35 +136,25 @@ export function Contractions({
                 />
               )}
               {sortedContractions.length === 0 && !completed && (
-                <div style={{ width: '100%' }}>
+                <div className={classes.emptyState}>
                   <div className={classes.imageFlexRow}>
                     <Image src={image} className={classes.image} />
                   </div>
-                  <Text
-                    fz={{ base: 'sm', xs: 'md' }}
-                    className={baseClasses.importantText}
-                    style={{ display: 'flex', alignItems: 'center' }}
-                  >
+                  <Text fz="sm" className={baseClasses.importantText}>
                     {emptyStateMessage}
                   </Text>
                 </div>
               )}
             </Stack>
-            <div className={baseClasses.flexColumnEnd}>
-              <Stack align="stretch" justify="flex-end">
-                <AlertContainer
-                  contractions={sortedContractions}
-                  firstLabour={labour.first_labour}
+            <Stack align="stretch" justify="flex-end" mt="md">
+              <AlertContainer contractions={sortedContractions} firstLabour={labour.first_labour} />
+              <div className={classes.desktopControls}>
+                <ContractionControls
+                  labourCompleted={completed}
+                  activeContraction={activeContraction}
                 />
-                {/* Desktop controls - only show on larger screens */}
-                <div className={classes.desktopControls}>
-                  <ContractionControls
-                    labourCompleted={completed}
-                    activeContraction={activeContraction}
-                  />
-                </div>
-              </Stack>
-            </div>
+              </div>
+            </Stack>
           </div>
         </div>
       </div>

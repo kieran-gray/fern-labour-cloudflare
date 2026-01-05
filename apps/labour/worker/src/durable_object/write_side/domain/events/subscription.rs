@@ -5,8 +5,13 @@ use uuid::Uuid;
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct SubscriptionTokenSet {
     pub labour_id: Uuid,
-    pub mother_id: String,
     pub token: String,
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub struct SubscriptionTokenInvalidated {
+    pub labour_id: Uuid,
+}
+
 impl_event!(SubscriptionTokenSet, labour_id);
+impl_event!(SubscriptionTokenInvalidated, labour_id);
