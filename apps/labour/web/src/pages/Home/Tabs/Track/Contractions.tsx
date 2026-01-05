@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import { LabourReadModel, SubscriberRole } from '@base/clients/labour_service/types';
 import { useLabourClient } from '@base/hooks';
 import { flattenContractions, useContractionsInfinite } from '@base/hooks/useInfiniteQueries';
@@ -36,128 +36,129 @@ const MESSAGES = {
     `You haven't logged any contractions for ${firstName} yet`,
 };
 
-export function Contractions({
-  labour,
-  isSubscriberView = false,
-  subscriberRole,
-}: ContractionsProps) {
-  const [opened, { open, close }] = useDisclosure(false);
+export const Contractions = memo(
+  ({ labour, isSubscriberView = false, subscriberRole }: ContractionsProps) => {
+    const [opened, { open, close }] = useDisclosure(false);
 
-  const client = useLabourClient();
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useContractionsInfinite(
-    client,
-    labour.labour_id
-  );
-  const isTransitioning = useTransitionStatus();
+    const client = useLabourClient();
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useContractionsInfinite(
+      client,
+      labour.labour_id
+    );
+    const isTransitioning = useTransitionStatus();
 
-  const isBirthPartner = isSubscriberView && subscriberRole === SubscriberRole.BIRTH_PARTNER;
-  const motherFirstName = labour.mother_name.split(' ')[0];
+    const isBirthPartner = isSubscriberView && subscriberRole === SubscriberRole.BIRTH_PARTNER;
+    const motherFirstName = labour.mother_name.split(' ')[0];
 
-  const sortedContractions = useMemo(() => flattenContractions(data), [data]);
+    const sortedContractions = useMemo(() => flattenContractions(data), [data]);
 
-  const handleLoadMore = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  };
+    const handleLoadMore = () => {
+      if (hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    };
 
-  useEffect(() => {
-    if (isTransitioning) {
-      return;
-    }
-    const main = document.getElementById('app-main');
-    if (main) {
-      main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' });
-    }
-  }, [labour, isTransitioning]);
-
-  const completed = labour.end_time !== null;
-  const activeContraction = sortedContractions.find(
-    (contraction) => contraction.duration.start_time === contraction.duration.end_time
-  );
-
-  useEffect(() => {
-    if (isTransitioning) {
-      return;
-    }
-    if (activeContraction) {
+    useEffect(() => {
+      if (isTransitioning) {
+        return;
+      }
       const main = document.getElementById('app-main');
       if (main) {
         main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' });
       }
-    }
-  }, [activeContraction?.contraction_id, isTransitioning]);
+    }, [labour, isTransitioning]);
 
-  const title = isBirthPartner
-    ? MESSAGES.BIRTH_PARTNER_TITLE(motherFirstName)
-    : MESSAGES.OWNER_TITLE;
+    const completed = labour.end_time !== null;
+    const activeContraction = sortedContractions.find(
+      (contraction) => contraction.duration.start_time === contraction.duration.end_time
+    );
 
-  const activeDescription = isBirthPartner
-    ? MESSAGES.BIRTH_PARTNER_DESCRIPTION_ACTIVE(motherFirstName)
-    : MESSAGES.OWNER_DESCRIPTION_ACTIVE;
+    useEffect(() => {
+      if (isTransitioning) {
+        return;
+      }
+      if (activeContraction) {
+        const main = document.getElementById('app-main');
+        if (main) {
+          main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' });
+        }
+      }
+    }, [activeContraction?.contraction_id, isTransitioning]);
 
-  const completedDescription = isBirthPartner
-    ? MESSAGES.BIRTH_PARTNER_DESCRIPTION_COMPLETED(motherFirstName)
-    : MESSAGES.OWNER_DESCRIPTION_COMPLETED;
+    const title = isBirthPartner
+      ? MESSAGES.BIRTH_PARTNER_TITLE(motherFirstName)
+      : MESSAGES.OWNER_TITLE;
 
-  const emptyStateMessage = isBirthPartner
-    ? MESSAGES.BIRTH_PARTNER_EMPTY_STATE(motherFirstName)
-    : MESSAGES.OWNER_EMPTY_STATE;
+    const activeDescription = isBirthPartner
+      ? MESSAGES.BIRTH_PARTNER_DESCRIPTION_ACTIVE(motherFirstName)
+      : MESSAGES.OWNER_DESCRIPTION_ACTIVE;
 
-  return (
-    <div className={baseClasses.root}>
-      <div className={baseClasses.body}>
-        <div className={baseClasses.docsTitleRow}>
-          <div className={classes.title}>
-            <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
-              {title}
-            </Title>
+    const completedDescription = isBirthPartner
+      ? MESSAGES.BIRTH_PARTNER_DESCRIPTION_COMPLETED(motherFirstName)
+      : MESSAGES.OWNER_DESCRIPTION_COMPLETED;
+
+    const emptyStateMessage = isBirthPartner
+      ? MESSAGES.BIRTH_PARTNER_EMPTY_STATE(motherFirstName)
+      : MESSAGES.OWNER_EMPTY_STATE;
+
+    return (
+      <div className={baseClasses.root}>
+        <div className={baseClasses.body}>
+          <div className={baseClasses.docsTitleRow}>
+            <div className={classes.title}>
+              <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
+                {title}
+              </Title>
+            </div>
+            <ActionIcon radius="xl" variant="light" size="xl" onClick={open}>
+              <IconBook />
+            </ActionIcon>
+            <ContractionsHelpModal close={close} opened={opened} />
           </div>
-          <ActionIcon radius="xl" variant="light" size="xl" onClick={open}>
-            <IconBook />
-          </ActionIcon>
-          <ContractionsHelpModal close={close} opened={opened} />
-        </div>
-        <div className={classes.innerContent}>
-          <div className={classes.content}>
-            {(completed || sortedContractions.length === 0) && (
-              <Text fz="sm" className={baseClasses.description}>
-                {completed ? completedDescription : activeDescription}
-              </Text>
-            )}
-            <Stack align="center" justify="flex-end" mt="md">
-              {sortedContractions.length > 0 && (
-                <ContractionTimelineCustom
-                  contractions={sortedContractions}
-                  completed={completed}
-                  hasMore={hasNextPage}
-                  onLoadMore={handleLoadMore}
-                  isLoadingMore={isFetchingNextPage}
-                />
+          <div className={classes.innerContent}>
+            <div className={classes.content}>
+              {(completed || sortedContractions.length === 0) && (
+                <Text fz="sm" className={baseClasses.description}>
+                  {completed ? completedDescription : activeDescription}
+                </Text>
               )}
-              {sortedContractions.length === 0 && !completed && (
-                <div className={classes.emptyState}>
-                  <div className={classes.imageFlexRow}>
-                    <Image src={image} className={classes.image} />
+              <Stack align="center" justify="flex-end" mt="md">
+                {sortedContractions.length > 0 && (
+                  <ContractionTimelineCustom
+                    contractions={sortedContractions}
+                    completed={completed}
+                    hasMore={hasNextPage}
+                    onLoadMore={handleLoadMore}
+                    isLoadingMore={isFetchingNextPage}
+                  />
+                )}
+                {sortedContractions.length === 0 && !completed && (
+                  <div className={classes.emptyState}>
+                    <div className={classes.imageFlexRow}>
+                      <Image src={image} className={classes.image} />
+                    </div>
+                    <Text fz="sm" className={baseClasses.importantText}>
+                      {emptyStateMessage}
+                    </Text>
                   </div>
-                  <Text fz="sm" className={baseClasses.importantText}>
-                    {emptyStateMessage}
-                  </Text>
-                </div>
-              )}
-            </Stack>
-            <Stack align="stretch" justify="flex-end" mt="md">
-              <AlertContainer contractions={sortedContractions} firstLabour={labour.first_labour} />
-              <div className={classes.desktopControls}>
-                <ContractionControls
-                  labourCompleted={completed}
-                  activeContraction={activeContraction}
+                )}
+              </Stack>
+              <Stack align="stretch" justify="flex-end" mt="md">
+                <AlertContainer
+                  contractions={sortedContractions}
+                  firstLabour={labour.first_labour}
                 />
-              </div>
-            </Stack>
+                <div className={classes.desktopControls}>
+                  <ContractionControls
+                    labourCompleted={completed}
+                    activeContraction={activeContraction}
+                  />
+                </div>
+              </Stack>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+);

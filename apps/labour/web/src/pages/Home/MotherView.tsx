@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FloatingPanel } from '@base/components/Controls/FloatingPanel';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
@@ -69,15 +69,18 @@ export const MotherView = () => {
     }
   }, [activeTab]);
 
-  const handleTabChange = (newTab: string) => {
-    const currentIndex = tabOrder.indexOf(activeTab as (typeof tabOrder)[number]);
-    const newIndex = tabOrder.indexOf(newTab as (typeof tabOrder)[number]);
+  const handleTabChange = useCallback(
+    (newTab: string) => {
+      const currentIndex = tabOrder.indexOf(activeTab as (typeof tabOrder)[number]);
+      const newIndex = tabOrder.indexOf(newTab as (typeof tabOrder)[number]);
 
-    if (newIndex !== -1 && currentIndex !== -1) {
-      setDirection(newIndex > currentIndex ? 'right' : 'left');
-    }
-    setActiveTab(newTab);
-  };
+      if (newIndex !== -1 && currentIndex !== -1) {
+        setDirection(newIndex > currentIndex ? 'right' : 'left');
+      }
+      setActiveTab(newTab);
+    },
+    [activeTab]
+  );
 
   const swipeHandlers = useSwipeableNavigation({
     activeTab,
@@ -162,36 +165,46 @@ export const MotherView = () => {
     isOnline,
   });
 
-  const renderTabPanel = (tabId: string) => {
-    switch (tabId) {
-      case 'details':
-        return (
-          <>
-            <LabourDetails activeContraction={activeContraction} labour={labour} />
-            <Space h="xl" />
-            <SubscribersContainer />
-          </>
-        );
-      case 'track':
-        return <Contractions labour={labour} />;
-      case 'stats':
-        return <LabourStatistics labour={labour} />;
-      case 'updates':
-        return <LabourUpdates labour={labour} />;
-      case 'share':
-        return completed ? (
-          <CompletedLabourCard />
-        ) : (
-          <>
-            <ShareLabour />
-            <Space h="xl" />
-            <InviteByEmail />
-          </>
-        );
-      default:
-        return null;
+  const renderTabPanel = useCallback(
+    (tabId: string) => {
+      switch (tabId) {
+        case 'details':
+          return (
+            <>
+              <LabourDetails activeContraction={activeContraction} labour={labour} />
+              <Space h="xl" />
+              <SubscribersContainer />
+            </>
+          );
+        case 'track':
+          return <Contractions labour={labour} />;
+        case 'stats':
+          return <LabourStatistics labour={labour} />;
+        case 'updates':
+          return <LabourUpdates labour={labour} />;
+        case 'share':
+          return completed ? (
+            <CompletedLabourCard />
+          ) : (
+            <>
+              <ShareLabour />
+              <Space h="xl" />
+              <InviteByEmail />
+            </>
+          );
+        default:
+          return null;
+      }
+    },
+    [activeContraction, labour, completed]
+  );
+
+  const handleTransitionEnd = useCallback(() => {
+    const tab = TABS.find((t) => t.id === activeTab);
+    if ((tab as any)?.scrollToTop === false) {
+      scrollMainToBottom(true);
     }
-  };
+  }, [activeTab]);
 
   return (
     <div {...swipeHandlers}>
@@ -204,12 +217,7 @@ export const MotherView = () => {
             style={{
               width: '100%',
             }}
-            onTransitionEnd={() => {
-              const tab = TABS.find((t) => t.id === activeTab);
-              if ((tab as any)?.scrollToTop === false) {
-                scrollMainToBottom(true);
-              }
-            }}
+            onTransitionEnd={handleTransitionEnd}
           />
         </div>
 

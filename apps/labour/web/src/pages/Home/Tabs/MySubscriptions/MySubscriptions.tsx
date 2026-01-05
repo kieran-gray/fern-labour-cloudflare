@@ -1,8 +1,9 @@
+import { memo } from 'react';
 import { CardContentBottom } from '@base/components/Cards/CardContentBottom';
 import image from './subscriptions.svg';
 import { SubscriptionsTable } from './SubscriptionsTable';
 
-export function ManageSubscriptions() {
+export const ManageSubscriptions = memo(() => {
   return (
     <CardContentBottom
       title="Manage your subscriptions"
@@ -13,4 +14,4 @@ export function ManageSubscriptions() {
       <SubscriptionsTable />
     </CardContentBottom>
   );
-}
+});
