@@ -15,9 +15,16 @@ interface AppShellProps {
   navItems?: readonly NavItem[];
   activeNav?: string | null;
   onNavChange?: (nav: string) => void;
+  preAuth?: boolean;
 }
 
-export const AppShell = ({ children, navItems, activeNav, onNavChange }: AppShellProps) => {
+export const AppShell = ({
+  children,
+  navItems,
+  activeNav,
+  onNavChange,
+  preAuth,
+}: AppShellProps) => {
   return (
     <Box
       component="div"
@@ -44,7 +51,12 @@ export const AppShell = ({ children, navItems, activeNav, onNavChange }: AppShel
         }}
       >
         <div style={{ width: '100%', pointerEvents: 'auto' }}>
-          <Header navItems={navItems} activeNav={activeNav} onNavChange={onNavChange} />
+          <Header
+            navItems={navItems}
+            activeNav={activeNav}
+            onNavChange={onNavChange}
+            preAuth={preAuth}
+          />
         </div>
       </Box>
       <Box

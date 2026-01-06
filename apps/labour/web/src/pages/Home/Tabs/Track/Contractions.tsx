@@ -105,7 +105,7 @@ export const Contractions = memo(
       <div className={baseClasses.root}>
         <div className={baseClasses.body}>
           <div className={baseClasses.docsTitleRow}>
-            <div className={classes.title}>
+            <div className={classes.title} style={{ paddingBottom: 0 }}>
               <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
                 {title}
               </Title>

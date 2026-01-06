@@ -1,128 +1,132 @@
 .modalRoot {
-    display: flex;
-    flex-wrap: wrap;
-    border: none;
-    background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-4));
-    border-radius: var(--mantine-radius-xl);
-    box-shadow:
-      0 10px 25px -5px rgb(0 0 0 / 0.15),
-      0 8px 10px -6px rgb(0 0 0 / 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  border: none;
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-4));
+  border-radius: var(--mantine-radius-xl);
+  box-shadow:
+    0 10px 25px -5px rgb(0 0 0 / 0.15),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
 
-    @media (max-width: $mantine-breakpoint-sm) {
-      flex-direction: column;
-    }
+  @media (max-width: $mantine-breakpoint-sm) {
+    flex-direction: column;
   }
+}
 
-  .helpModalRoot {
-    display: flex;
-    flex-wrap: wrap;
-    border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
-    background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-4));
-    border-radius: var(--mantine-radius-xl);
-    box-shadow:
-      0 4px 6px -1px rgb(0 0 0 / 0.1),
-      0 2px 4px -2px rgb(0 0 0 / 0.1);
+.helpModalRoot {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-4));
+  border-radius: var(--mantine-radius-xl);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.modal {
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-0));
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: var(--mantine-font-size-md);
+}
+
+.modalTitle {
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+  font-weight: 600;
+  font-size: var(--mantine-font-size-md);
+}
+
+.modalBody {
+  width: 100%;
+  padding: var(--mantine-spacing-lg);
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    padding: var(--mantine-spacing-md);
   }
-  
-  .modal {
-    color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-0));
-    text-transform: uppercase;
-    font-weight: 600;
-    font-size: var(--mantine-font-size-md);
-  }
+}
 
-  .modalTitle {
-    color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
-    font-weight: 600;
-    font-size: var(--mantine-font-size-md);
-  }
+.modalHeader {
+  width: 100%;
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-4));
+  border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 
-  .modalBody {
-    width: 100%;
-    padding: var(--mantine-spacing-lg);
-
-    @media (max-width: $mantine-breakpoint-sm) {
-      padding: var(--mantine-spacing-md);
-    }
-  }
-
-  .modalHeader {
-    width: 100%;
-    background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-4));
-    border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
-    padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-
-    @media (max-width: $mantine-breakpoint-sm) {
-      padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-    }
-  }
-  
-  .modalText {
-    color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
-    line-height: 1.5;
-    font-weight: 400;
-    font-size: var(--mantine-font-size-md);
-  }
-  
-  .checkBoxLabelText {
-    color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-2));
-    font-size: var(--mantine-font-size-md);
-    font-weight: 700;
-  }
-
-  .modalCloseButton {
-    display: none;
-  }
-
-  .closeButton {
-    color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
-
-    &:hover {
-      background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
-    }
-  }
-
-  .modalInnerText {
-    color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-2));
-    font-weight: 500;
-    font-size: var(--mantine-font-size-lg);
-  }
-
-  .modalInnerTextContainer {
-    border-radius: var(--mantine-radius-md);
-    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
-    border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+  @media (max-width: $mantine-breakpoint-sm) {
     padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
   }
+}
 
-  .modalMessageText {
-    color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-2));
-  }
+.modalText {
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  line-height: 1.5;
+  font-weight: 400;
+  font-size: var(--mantine-font-size-md);
+}
 
-  .helpSection {
-    padding: var(--mantine-spacing-md);
-    border-radius: var(--mantine-radius-md);
-    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-5));
-    border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
-  }
+.checkBoxLabelText {
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-2));
+  font-size: var(--mantine-font-size-md);
+  font-weight: 700;
+}
 
-  .helpSectionTitle {
-    color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
-    font-weight: 600;
-    font-size: var(--mantine-font-size-sm);
-    margin-bottom: var(--mantine-spacing-xs);
-  }
+.modalCloseButton {
+  display: none;
+}
 
-  .helpText {
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
-    font-size: var(--mantine-font-size-sm);
-    line-height: 1.5;
-  }
+.closeButton {
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
 
-  .helpList {
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
-    font-size: var(--mantine-font-size-sm);
+  &:hover {
+    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
   }
+}
+
+.modalInnerText {
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-2));
+  font-weight: 500;
+  font-size: var(--mantine-font-size-lg);
+}
+
+.modalInnerTextContainer {
+  border-radius: var(--mantine-radius-md);
+  background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+}
+
+.modalMessageText {
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-2));
+}
+
+.helpSection {
+  padding: var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-md);
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-5));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+}
+
+.helpSectionTitle {
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+  font-weight: 600;
+  font-size: var(--mantine-font-size-sm);
+  margin-bottom: var(--mantine-spacing-xs);
+}
+
+.helpText {
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
+  font-size: var(--mantine-font-size-sm);
+  line-height: 1.5;
+}
+
+.helpList {
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
+  font-size: var(--mantine-font-size-sm);
+}
+
+.inputLabel {
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2));
+}

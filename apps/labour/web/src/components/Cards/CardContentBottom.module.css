@@ -8,6 +8,26 @@
   }
 }
 
+.title {
+  padding: var(--mantine-spacing-xl);
+  padding-bottom: 0;
+
+  @media (max-width: $mantine-breakpoint-md) {
+    padding: var(--mantine-spacing-md);
+    padding-bottom: 0;
+  }
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    padding: var(--mantine-spacing-sm);
+    padding-bottom: 0;
+  }
+
+  @media (max-width: $mantine-breakpoint-xs) {
+    padding: var(--mantine-spacing-xs);
+    padding-bottom: 0;
+  }
+}
+
 .image {
   width: 300px;
   height: 356px;

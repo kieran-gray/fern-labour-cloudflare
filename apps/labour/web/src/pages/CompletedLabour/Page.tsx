@@ -44,7 +44,7 @@ export const CompletedLabourCard: React.FC = () => {
             radius="xl"
             variant="light"
             leftSection={<IconMessageHeart size={18} />}
-            onClick={() => navigate('/contact')}
+            onClick={() => navigate('/contact?show=testimonial')}
           >
             Share feedback
           </Button>

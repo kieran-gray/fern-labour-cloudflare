@@ -12,8 +12,8 @@ import {
 import { NotFoundError, PermissionDenied } from '@base/lib/errors';
 import { useNetworkState } from '@base/offline/sync/networkDetector';
 import { AppShell } from '@components/AppShell';
+import { PageSkeleton } from '@components/Cards/CardSkeleton';
 import { ErrorContainer } from '@components/ErrorContainer/ErrorContainer';
-import { PageLoading } from '@components/PageLoading/PageLoading';
 import { TabTransition } from '@components/TabTransition/TabTransition';
 import {
   IconChartHistogram,
@@ -95,8 +95,6 @@ export const MotherView = () => {
   const contractions = useMemo(() => flattenContractions(contractionsData), [contractionsData]);
 
   useEffect(() => {
-    // Only sync labourId if we have an active (non-completed) labour
-    // This prevents stale cached data from re-setting the labourId after completing
     if (labour && !currentLabourId && labour.labour_id !== labourId && labour.end_time === null) {
       setLabourId(labour.labour_id);
     }
@@ -159,11 +157,7 @@ export const MotherView = () => {
   }, [activeTab]);
 
   if (isPending) {
-    return (
-      <AppShell>
-        <PageLoading />
-      </AppShell>
-    );
+    return <PageSkeleton />;
   }
 
   if (isError) {
