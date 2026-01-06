@@ -64,8 +64,6 @@ const LOVED_ONE_TABS = [
   { id: 'gifts', label: 'Gifts', icon: IconShoppingBag },
 ] as const;
 
-const LIMITED_TABS = [{ id: 'subscriptions', label: 'Subscriptions', icon: IconUsers }] as const;
-
 export const SubscriberView = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -77,7 +75,7 @@ export const SubscriberView = () => {
 
   const TABS = useMemo(() => {
     if (subscriberState !== SubscriberSessionState.Active) {
-      return LIMITED_TABS;
+      return [];
     }
     switch (subscriberRole) {
       case SubscriberRole.BIRTH_PARTNER:

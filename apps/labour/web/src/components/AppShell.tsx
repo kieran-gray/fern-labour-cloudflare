@@ -76,7 +76,7 @@ export const AppShell = ({
         {children}
       </Box>
       <Box component="footer" style={{ position: 'relative', zIndex: 140 }}>
-        {navItems && (
+        {navItems && navItems.length > 0 && (
           <BottomNavigation
             items={navItems}
             activeItem={activeNav ?? null}
