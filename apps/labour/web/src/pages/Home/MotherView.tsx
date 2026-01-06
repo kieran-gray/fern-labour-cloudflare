@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FloatingPanel } from '@base/components/Controls/FloatingPanel';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
@@ -52,11 +52,30 @@ export const MotherView = () => {
   const { labourId, setLabourId } = useLabourSession();
   const [searchParams, setSearchParams] = useSearchParams();
   const labourIdParam = searchParams.get('labourId');
+  const tabParam = searchParams.get('tab');
 
-  const [activeTab, setActiveTab] = useState<string | null>('track');
+  const activeTab = useMemo((): string => {
+    if (tabParam && TABS.some((tab) => tab.id === tabParam)) {
+      return tabParam;
+    }
+    return 'details';
+  }, [tabParam]);
+
+  const prevTabRef = useRef(activeTab);
   const [direction, setDirection] = useState<'left' | 'right' | null>(null);
   const [isUpdateControlsExpanded, setIsUpdateControlsExpanded] = useState(true);
   const [isContractionControlsExpanded, setIsContractionControlsExpanded] = useState(true);
+
+  useEffect(() => {
+    if (prevTabRef.current !== activeTab) {
+      const currentIndex = tabOrder.indexOf(prevTabRef.current as (typeof tabOrder)[number]);
+      const newIndex = tabOrder.indexOf(activeTab as (typeof tabOrder)[number]);
+      if (newIndex !== -1 && currentIndex !== -1) {
+        setDirection(newIndex > currentIndex ? 'right' : 'left');
+      }
+      prevTabRef.current = activeTab;
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     const tab = TABS.find((t) => t.id === activeTab);
@@ -70,15 +89,12 @@ export const MotherView = () => {
 
   const handleTabChange = useCallback(
     (newTab: string) => {
-      const currentIndex = tabOrder.indexOf(activeTab as (typeof tabOrder)[number]);
-      const newIndex = tabOrder.indexOf(newTab as (typeof tabOrder)[number]);
-
-      if (newIndex !== -1 && currentIndex !== -1) {
-        setDirection(newIndex > currentIndex ? 'right' : 'left');
-      }
-      setActiveTab(newTab);
+      setSearchParams((prev) => {
+        prev.set('tab', newTab);
+        return prev;
+      });
     },
-    [activeTab]
+    [setSearchParams]
   );
 
   const swipeHandlers = useSwipeableNavigation({
@@ -199,7 +215,7 @@ export const MotherView = () => {
       <AppShell navItems={TABS} activeNav={activeTab} onNavChange={handleTabChange}>
         <div className={baseClasses.flexPageColumn} style={{ paddingBottom: bottomPadding }}>
           <TabTransition
-            activeTab={activeTab || 'track'}
+            activeTab={activeTab}
             renderTab={renderTabPanel}
             direction={direction}
             style={{

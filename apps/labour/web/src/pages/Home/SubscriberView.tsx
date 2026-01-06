@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SubscriberRole } from '@base/clients/labour_service';
 import { PageSkeleton } from '@base/components/Cards/CardSkeleton';
 import { FloatingPanel } from '@base/components/Controls/FloatingPanel';
@@ -26,12 +26,10 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Space } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import { PayWall } from './components/Paywall/PayWall';
 import Gifts from './Tabs/Gifts/Gifts';
 import { ManageSubscriptions } from './Tabs/MySubscriptions/MySubscriptions';
 import { ShareFernLabour } from './Tabs/MySubscriptions/ShareFernLabour';
-import SubscriptionRequestedModal from './Tabs/MySubscriptions/SubscriptionRequestedModal';
 import { LabourStatistics } from './Tabs/Statistics/LabourStatistics';
 import ContactMethods from './Tabs/SubscriptionDetails/ContactMethods';
 import { SubscriberLabourDetails } from './Tabs/SubscriptionDetails/LabourDetails';
@@ -66,12 +64,11 @@ const LOVED_ONE_TABS = [
 
 export const SubscriberView = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { labourId, subscriberState, subscriberRole, clearSession, updateSubscription } =
     useLabourSession();
   const { isOnline } = useNetworkState();
-  const promptParam = searchParams.get('prompt');
-  const [modalOpened, { close: closeModal }] = useDisclosure(promptParam === 'requested');
+  const tabParam = searchParams.get('tab');
 
   const TABS = useMemo(() => {
     if (subscriberState !== SubscriberSessionState.Active) {
@@ -90,12 +87,29 @@ export const SubscriberView = () => {
 
   const tabOrder = TABS.map((tab) => tab.id);
 
-  const [activeTab, setActiveTab] = useState<string | null>('subscriptions');
+  const activeTab = useMemo((): string => {
+    if (tabParam && TABS.some((tab) => tab.id === tabParam)) {
+      return tabParam;
+    }
+    return 'subscriptions';
+  }, [tabParam, TABS]);
+
+  const prevTabRef = useRef(activeTab);
   const [direction, setDirection] = useState<'left' | 'right' | null>(null);
   const [isUpdateControlsExpanded, setIsUpdateControlsExpanded] = useState(true);
   const [isContractionControlsExpanded, setIsContractionControlsExpanded] = useState(true);
 
-  // Scroll to top on tab change, unless it's a tab that auto-scrolls to bottom
+  useEffect(() => {
+    if (prevTabRef.current !== activeTab) {
+      const currentIndex = tabOrder.indexOf(prevTabRef.current as any);
+      const newIndex = tabOrder.indexOf(activeTab as any);
+      if (newIndex !== -1 && currentIndex !== -1) {
+        setDirection(newIndex > currentIndex ? 'right' : 'left');
+      }
+      prevTabRef.current = activeTab;
+    }
+  }, [activeTab, tabOrder]);
+
   useEffect(() => {
     const tab = TABS.find((t) => t.id === activeTab);
     if ((tab as any)?.scrollToTop !== false) {
@@ -108,23 +122,13 @@ export const SubscriberView = () => {
 
   const handleTabChange = useCallback(
     (newTab: string) => {
-      const currentIndex = tabOrder.indexOf(activeTab as any);
-      const newIndex = tabOrder.indexOf(newTab as any);
-
-      if (newIndex !== -1 && currentIndex !== -1) {
-        setDirection(newIndex > currentIndex ? 'right' : 'left');
-      }
-      setActiveTab(newTab);
+      setSearchParams((prev) => {
+        prev.set('tab', newTab);
+        return prev;
+      });
     },
-    [activeTab, tabOrder]
+    [setSearchParams]
   );
-
-  useEffect(() => {
-    const isTabAllowed = TABS.some((tab) => tab.id === activeTab);
-    if (!isTabAllowed) {
-      setActiveTab('subscriptions');
-    }
-  }, [activeTab, TABS]);
 
   const swipeHandlers = useSwipeableNavigation({
     activeTab,
@@ -284,7 +288,7 @@ export const SubscriberView = () => {
         <AppShell navItems={TABS} activeNav={activeTab} onNavChange={handleTabChange}>
           <div className={baseClasses.flexPageColumn} style={{ paddingBottom: bottomPadding }}>
             <TabTransition
-              activeTab={activeTab || 'subscriptions'}
+              activeTab={activeTab}
               renderTab={renderTabPanel}
               direction={direction}
               style={{
@@ -326,7 +330,6 @@ export const SubscriberView = () => {
           )}
         </AppShell>
       </div>
-      <SubscriptionRequestedModal opened={modalOpened} close={closeModal} />
     </>
   );
 };

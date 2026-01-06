@@ -1,8 +1,8 @@
 import { CardContentBottom } from '@base/components/Cards/CardContentBottom';
-import image from '@base/pages/Subscribe/protected.svg';
 import { IconBook } from '@tabler/icons-react';
 import { ActionIcon } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import image from './protected.svg';
 import { SubscribersHelpModal } from './SubscribersHelpModal';
 import { ManageSubscribersTabs } from './SubscriberTabs';
 

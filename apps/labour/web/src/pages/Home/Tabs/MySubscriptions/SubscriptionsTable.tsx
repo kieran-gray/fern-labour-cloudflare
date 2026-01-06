@@ -4,6 +4,7 @@ import { useLabourSession } from '@base/contexts';
 import { useLabourClient } from '@base/hooks';
 import { useUserSubscribedLabours, useUserSubscriptions } from '@base/hooks/useLabourData';
 import { IconArrowRight, IconX } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Card, Group, Stack, Text } from '@mantine/core';
 import { ManageSubscriptionMenu } from './SubscriptionMenu';
 import { SubscriptionsSkeleton } from './SubscriptionsSkeleton';
@@ -14,6 +15,7 @@ export function SubscriptionsTable() {
   const { subscription, selectSubscription, clearSubscription } = useLabourSession();
   const selectedSubscriptionId = subscription?.subscription_id;
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const client = useLabourClient();
   const { isPending, isError, data, error } = useUserSubscriptions(client);
@@ -41,6 +43,7 @@ export function SubscriptionsTable() {
         if (fullSubscription.success && fullSubscription.data) {
           selectSubscription(fullSubscription.data);
         }
+        navigate(`/?tab=details`);
       }
     } finally {
       setLoadingId(null);

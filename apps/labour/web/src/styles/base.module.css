@@ -372,3 +372,7 @@
     background-color: light-dark(var(--mantine-color-primary-1), var(--mantine-color-primary-4));
     width: 100%;
 }
+
+.emptyStateGray {
+    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-primary-4));
+}
