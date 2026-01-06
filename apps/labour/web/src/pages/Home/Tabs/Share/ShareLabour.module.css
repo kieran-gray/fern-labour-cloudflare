@@ -65,7 +65,7 @@
 }
 
 .shareCard {
-  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-primary-3));
+  background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-primary-3));
   border-radius: var(--mantine-radius-lg);
   padding: var(--mantine-spacing-md);
   display: flex;
@@ -174,7 +174,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-gray-0));
   border-radius: var(--mantine-radius-sm);
   padding: var(--mantine-spacing-xs);
   width: fit-content;

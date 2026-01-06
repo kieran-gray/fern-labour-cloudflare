@@ -36,7 +36,7 @@ export function SubscribersTable({
     }
 
     return (
-      <div className={baseClasses.emptyState}>
+      <div className={`${baseClasses.emptyState} ${baseClasses.emptyStateGray}`}>
         <Text size="sm" ta="center">
           {message}
         </Text>

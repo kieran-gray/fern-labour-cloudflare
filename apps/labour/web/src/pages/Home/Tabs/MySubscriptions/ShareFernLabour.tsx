@@ -72,7 +72,7 @@ export function ShareFernLabour() {
                 onClick={handleNativeShare}
                 className={classes.shareButton}
               >
-                Share FernLabour
+                Share Fern Labour
               </Button>
             </div>
           )}

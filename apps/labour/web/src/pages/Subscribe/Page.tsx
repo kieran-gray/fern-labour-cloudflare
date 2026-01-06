@@ -1,101 +1,139 @@
+import { useEffect, useRef, useState } from 'react';
 import { AppMode, useLabourSession } from '@base/contexts';
 import { useLabourClient, useRequestAccess } from '@base/hooks';
 import { AppShell } from '@components/AppShell';
-import { Card } from '@components/Cards/Card';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Button, Group, PinInput, Space } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import image from './protected.svg';
-import classes from './Form.module.css';
+import { IconAlertCircle, IconCheck, IconHome, IconLoader2 } from '@tabler/icons-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import classes from './Page.module.css';
 import baseClasses from '@styles/base.module.css';
 
-const SUBSCRIBER_TOKEN_LENGTH = 5;
+type Status = 'pending' | 'success' | 'error';
 
 export const SubscribePage: React.FC = () => {
-  const { id } = useParams<'id'>();
-  const [searchParams] = useSearchParams();
+  const { id, token } = useParams();
   const navigate = useNavigate();
   const { setMode } = useLabourSession();
-  const token = searchParams.get('token');
-  if (!id) {
-    throw new Error('id is required');
+  const hasTriggered = useRef(false);
+  const [status, setStatus] = useState<Status>('pending');
+
+  if (!id || !token) {
+    throw new Error('id and token are required');
   }
 
   const labourId = id;
-
-  const form = useForm({
-    mode: 'uncontrolled',
-    initialValues: {
-      token: token || '',
-    },
-    validate: {
-      token: (value) => (value.length !== SUBSCRIBER_TOKEN_LENGTH ? 'Invalid token' : null),
-    },
-  });
-
   const client = useLabourClient();
-  const mutation = useRequestAccess(client);
+  const { mutateAsync } = useRequestAccess(client);
 
-  const handleSubscribeTo = (values: typeof form.values) => {
-    const requestBody = { labourId, token: values.token };
-    mutation.mutate(requestBody, {
-      onSuccess: () => {
+  useEffect(() => {
+    if (hasTriggered.current) {
+      return;
+    }
+    hasTriggered.current = true;
+
+    const subscribe = async () => {
+      try {
+        await mutateAsync({ labourId, token });
         setMode(AppMode.Subscriber);
-        navigate(`/?prompt=requested`);
-      },
-    });
-  };
+        setStatus('success');
+      } catch {
+        setStatus('error');
+      }
+    };
 
-  const description = (
-    <>
-      If the code isn't already filled in, check the share message that was sent to you, or ask the
-      person who shared the link with you for the code.
-    </>
-  );
+    subscribe();
+  }, [labourId, token, mutateAsync, setMode]);
+
+  const handleGoHome = () => {
+    navigate('/');
+  };
 
   return (
     <AppShell>
       <div className={baseClasses.flexPageColumn}>
-        <Card
-          title="Congratulations, someone wants to share their labour journey with you!"
-          description={description}
-          image={{ src: image, width: 376, height: 356 }}
-          mobileImage={{ src: image, width: 300, height: 250 }}
-        >
-          <Group mt={30}>
-            <form
-              onSubmit={form.onSubmit((values) => handleSubscribeTo(values))}
-              className={classes.form}
-            >
-              <div className={classes.flexRowEnd}>
-                <PinInput
-                  fw={600}
-                  size="lg"
-                  length={SUBSCRIBER_TOKEN_LENGTH}
-                  radius="md"
-                  style={{ justifyContent: 'center' }}
-                  styles={{
-                    input: {
-                      color: 'light-dark(var(--mantine-color-black), var(--mantine-color-gray-1))',
-                    },
-                  }}
-                  key={form.key('token')}
-                  {...form.getInputProps('token')}
-                />
-                <Space w="xl" h="xl" />
-                <Button
-                  size="lg"
-                  radius="lg"
-                  variant="filled"
-                  type="submit"
-                  loading={mutation.isPending}
-                >
-                  Submit
-                </Button>
+        <div className={baseClasses.card}>
+          <div className={classes.container}>
+            <header className={classes.header}>
+              <div className={classes.headerDecoration} />
+
+              {status === 'pending' && (
+                <>
+                  <div className={classes.iconContainer}>
+                    <IconLoader2 size={48} className={classes.loadingIcon} />
+                  </div>
+                  <p className={classes.greeting}>Please wait</p>
+                  <h1 className={classes.title}>
+                    <span className={classes.titleAccent}>Subscribing...</span>
+                  </h1>
+                  <p className={classes.subtitle}>
+                    We're setting up your subscription to this labour journey.
+                  </p>
+                </>
+              )}
+
+              {status === 'success' && (
+                <>
+                  <div className={classes.iconContainer}>
+                    <div className={classes.successIcon}>
+                      <IconCheck size={32} stroke={2.5} />
+                    </div>
+                  </div>
+                  <p className={classes.greeting}>Request Sent</p>
+                  <h1 className={classes.title}>
+                    <span className={classes.titleAccent}>Almost there!</span>
+                  </h1>
+                </>
+              )}
+
+              {status === 'error' && (
+                <>
+                  <div className={classes.iconContainer}>
+                    <div className={classes.errorIcon}>
+                      <IconAlertCircle size={32} stroke={2} />
+                    </div>
+                  </div>
+                  <p className={classes.greeting}>Oops</p>
+                  <h1 className={classes.title}>
+                    <span className={classes.titleAccent}>Something went wrong</span>
+                  </h1>
+                </>
+              )}
+            </header>
+
+            {status === 'success' && (
+              <div className={classes.messageCard}>
+                <p className={classes.messageText}>
+                  Your request to join a labour circle has been sent.
+                </p>
+                <p className={classes.messageText}>
+                  They will need to approve your request before you can access their labour.
+                </p>
+                <p className={classes.messageText}>
+                  You'll get an email as soon as you're approved, thanks for your patience!
+                </p>
               </div>
-            </form>
-          </Group>
-        </Card>
+            )}
+
+            {status === 'error' && (
+              <div className={classes.messageCard}>
+                <p className={classes.messageText}>
+                  We couldn't process your subscription request. The link may have expired.
+                </p>
+                <p className={classes.messageText}>
+                  Please ask the person who shared this link with you to send a new one.
+                </p>
+              </div>
+            )}
+
+            {status !== 'pending' && (
+              <div className={classes.actionContainer}>
+                <button type="button" className={classes.homeButton} onClick={handleGoHome}>
+                  <IconHome size={18} />
+                  Go to Home
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </AppShell>
   );

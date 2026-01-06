@@ -1,16 +1,8 @@
-.wrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  max-width: 680px;
-  padding: 0 var(--mantine-spacing-md);
-  box-sizing: border-box;
-}
-
 .container {
   width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0;
 }
 
 .header {
@@ -26,7 +18,7 @@
   transform: translateX(-50%);
   width: 60px;
   height: 4px;
-  background-color: var(--mantine-color-red-4);
+  background-color: var(--mantine-primary-color-4);
   border-radius: 2px;
 }
 
@@ -50,13 +42,48 @@
 }
 
 .titleAccent {
-  color: var(--mantine-color-red-6);
+  color: var(--mantine-primary-color-5);
+}
+
+.subtitle {
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-5));
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto;
 }
 
 .iconContainer {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
+}
+
+.loadingIcon {
+  color: var(--mantine-primary-color-5);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.successIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--mantine-color-green-5),
+    var(--mantine-color-green-6)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 16px rgba(var(--mantine-color-green-5), 0.3);
 }
 
 .errorIcon {
@@ -72,7 +99,7 @@
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 4px 16px light-dark(rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.2));
+  box-shadow: 0 4px 16px rgba(var(--mantine-color-red-5), 0.3);
 }
 
 .messageCard {
@@ -81,9 +108,9 @@
   align-items: center;
   gap: 12px;
   padding: 24px;
-  background: light-dark(var(--mantine-color-red-0), var(--mantine-color-dark-1));
+  background: light-dark(var(--mantine-color-pink-0), var(--mantine-color-dark-1));
   border-radius: 16px;
-  border: 1px solid light-dark(var(--mantine-color-red-2), var(--mantine-color-dark-4));
+  border: 1px solid light-dark(var(--mantine-color-pink-1), var(--mantine-color-dark-4));
   text-align: center;
   margin-bottom: 24px;
 }
@@ -114,7 +141,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  text-decoration: none;
 }
 
 .homeButton:hover {

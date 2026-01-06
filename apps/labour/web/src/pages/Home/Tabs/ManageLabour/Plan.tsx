@@ -75,7 +75,7 @@ export default function Plan() {
         onSuccess: (data) => {
           setMode(AppMode.Birth);
           setLabourId(data.labour_id);
-          setTimeout(() => navigate('/'), 100);
+          setTimeout(() => navigate('/?tab=details'), 100);
         },
       }
     );

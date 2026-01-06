@@ -117,8 +117,8 @@ function QRCodeCard({ url }: QRCodeCardProps) {
         <QRCodeSVG
           value={url}
           size={170}
-          bgColor="transparent"
-          fgColor="currentColor"
+          bgColor="light-dark(var(--mantine-color-gray-1), var(--mantine-color-primary-3))"
+          fgColor="light-dark(var(--mantine-color-gray-9), var(--mantine-color-white))"
           className={classes.qrCode}
         />
       </div>
@@ -277,7 +277,7 @@ export function ShareLabour() {
     );
   }
 
-  const shareUrl = `${window.location.origin}/subscribe/${labourId}?token=${token}`;
+  const shareUrl = `${window.location.origin}/s/${labourId}/${token}`;
   const shareMessage = `I'd love for you to follow along during my labour. Use this link to request access and receive updates.`;
 
   return (

@@ -1,8 +1,7 @@
 import { AppShell } from '@components/AppShell';
 import { IconMessageHeart } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Image, Space } from '@mantine/core';
-import { ShareFernLabour } from '../Home/Tabs/MySubscriptions/ShareFernLabour';
+import { Button, Image } from '@mantine/core';
 import image from './thanks.svg';
 import classes from './Page.module.css';
 import baseClasses from '@styles/base.module.css';
@@ -59,8 +58,6 @@ export const CompletedLabourPage: React.FC = () => {
     <AppShell>
       <div className={baseClasses.flexPageColumn}>
         <CompletedLabourCard />
-        <Space h="xl" />
-        <ShareFernLabour />
       </div>
     </AppShell>
   );
