@@ -25,9 +25,10 @@ interface HeaderProps {
   navItems?: readonly NavItem[];
   activeNav?: string | null;
   onNavChange?: (nav: string) => void;
+  preAuth?: boolean;
 }
 
-export function Header({ navItems, activeNav, onNavChange }: HeaderProps) {
+export function Header({ navItems, activeNav, onNavChange, preAuth }: HeaderProps) {
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
   const isMobile = useMediaQuery('(max-width: 48em)');
   const navigate = useNavigate();
@@ -51,14 +52,16 @@ export function Header({ navItems, activeNav, onNavChange }: HeaderProps) {
       >
         {/* Left: Burger + Logo */}
         <Group gap={0} style={{ flexShrink: 0 }}>
-          <Burger
-            size="sm"
-            opened={drawerOpened}
-            onClick={toggleDrawer}
-            hiddenFrom="sm"
-            color="var(--mantine-color-white)"
-            title="Menu"
-          />
+          {!preAuth && (
+            <Burger
+              size="sm"
+              opened={drawerOpened}
+              onClick={toggleDrawer}
+              hiddenFrom="sm"
+              color="var(--mantine-color-white)"
+              title="Menu"
+            />
+          )}
           <div onClick={() => navigate('/')} className={classes.logoContainer}>
             <img src="/logo/logo.svg" className={classes.icon} alt="Fern Logo" />
             <Text className={classes.title}>Fern Labour</Text>
@@ -66,20 +69,24 @@ export function Header({ navItems, activeNav, onNavChange }: HeaderProps) {
         </Group>
 
         {/* User Menu Drawer */}
-        <Drawer
-          size="xs"
-          classNames={{
-            content: classes.drawer,
-            header: classes.drawer,
-            body: classes.drawerBody,
-          }}
-          overlayProps={{ backgroundOpacity: 0.4, blur: 3 }}
-          position={isMobile ? 'left' : 'right'}
-          opened={drawerOpened}
-          onClose={toggleDrawer}
-        >
-          <HeaderMenu />
-        </Drawer>
+        {!preAuth && (
+          <Drawer
+            size="xs"
+            classNames={{
+              content: classes.drawer,
+              header: classes.drawer,
+              body: classes.drawerBody,
+            }}
+            overlayProps={{ backgroundOpacity: 0.4, blur: 3 }}
+            transitionProps={{ duration: 200 }}
+            position={isMobile ? 'left' : 'right'}
+            opened={drawerOpened}
+            onClose={toggleDrawer}
+            keepMounted={false}
+          >
+            {drawerOpened && <HeaderMenu />}
+          </Drawer>
+        )}
 
         {/* Center: Navigation (Desktop Only) */}
         {navItems && navItems.length > 0 && (
@@ -100,20 +107,22 @@ export function Header({ navItems, activeNav, onNavChange }: HeaderProps) {
         )}
 
         {/* Right: Menu Button */}
-        <Group gap="sm" style={{ flexShrink: 0 }}>
-          <ActionIcon
-            variant="subtle"
-            color="white"
-            size="lg"
-            radius="xl"
-            visibleFrom="sm"
-            className={`${classes.userAction} ${drawerOpened ? classes.userActionActive : ''}`}
-            onClick={toggleDrawer}
-            title="Menu"
-          >
-            <IconMenu2 size={20} />
-          </ActionIcon>
-        </Group>
+        {!preAuth && (
+          <Group gap="sm" style={{ flexShrink: 0 }}>
+            <ActionIcon
+              variant="subtle"
+              color="white"
+              size="lg"
+              radius="xl"
+              visibleFrom="sm"
+              className={`${classes.userAction} ${drawerOpened ? classes.userActionActive : ''}`}
+              onClick={toggleDrawer}
+              title="Menu"
+            >
+              <IconMenu2 size={20} />
+            </ActionIcon>
+          </Group>
+        )}
       </Flex>
     </Container>
   );

@@ -62,7 +62,7 @@ export function GenericConfirmModal({
           <Button
             size="sm"
             radius="md"
-            color={isDangerous ? 'red' : undefined}
+            color={isDangerous ? 'red.8' : undefined}
             onClick={onConfirm}
             loading={isLoading}
           >

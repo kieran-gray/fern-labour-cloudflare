@@ -76,6 +76,7 @@ export function EditLabourModal({ labour, isOpen, onClose }: EditLabourModalProp
               input: baseClasses.input,
               section: baseClasses.section,
               levelsGroup: baseClasses.selectDropdown,
+              label: modalClasses.inputLabel,
             }}
           />
 
@@ -85,10 +86,21 @@ export function EditLabourModal({ labour, isOpen, onClose }: EditLabourModalProp
             label="Is this your first labour?"
             size="sm"
             {...form.getInputProps('firstLabour')}
+            classNames={{ label: modalClasses.inputLabel }}
           >
             <Group mt={4}>
-              <Radio value="true" label="Yes" size="sm" />
-              <Radio value="false" label="No" size="sm" />
+              <Radio
+                value="true"
+                label="Yes"
+                size="sm"
+                classNames={{ label: modalClasses.inputLabel }}
+              />
+              <Radio
+                value="false"
+                label="No"
+                size="sm"
+                classNames={{ label: modalClasses.inputLabel }}
+              />
             </Group>
           </Radio.Group>
 
@@ -103,7 +115,9 @@ export function EditLabourModal({ labour, isOpen, onClose }: EditLabourModalProp
             classNames={{
               input: baseClasses.input,
               section: baseClasses.section,
+              label: modalClasses.inputLabel,
             }}
+            styles={{ input: { padding: '25px 15px' } }}
           />
 
           <Group justify="flex-end" mt="sm">

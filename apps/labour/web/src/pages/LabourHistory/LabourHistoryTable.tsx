@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { GenericConfirmModal } from '@base/components/Modals/GenericConfirmModal';
 import { AppMode, useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useDeleteLabour, useLabourClient, useLabourHistory } from '@base/hooks';
-import { PageLoadingIcon } from '@components/PageLoading/Loading';
 import { IconArrowRight, IconCalendar, IconPlus, IconTrash, IconX } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -16,6 +15,7 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
+import { LabourHistorySkeleton } from './LabourHistorySkeleton';
 import classes from './LabourHistoryTable.module.css';
 import baseClasses from '@styles/base.module.css';
 
@@ -30,11 +30,7 @@ export function LabourHistoryTable() {
   const labours = data || [];
 
   if (isPending) {
-    return (
-      <div className={classes.loadingContainer}>
-        <PageLoadingIcon />
-      </div>
-    );
+    return <LabourHistorySkeleton />;
   }
 
   if (isError) {

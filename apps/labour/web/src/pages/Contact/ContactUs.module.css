@@ -1,46 +1,373 @@
-.wrapper {
-  min-height: 400px;
-  background-color: var(--mantine-color-primary-3);
-  border-radius: var(--mantine-radius-xl);
-  padding: calc(var(--mantine-spacing-xl) * 2.5);
+.container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0;
+}
 
-  @media (max-width: $mantine-breakpoint-sm) {
-    padding: calc(var(--mantine-spacing-xl) * 1.5);
+.header {
+  text-align: center;
+  margin-bottom: 0;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .header {
+    text-align: left;
   }
 }
 
-.title {
-  color: var(--mantine-color-white);
-  line-height: 1;
+.headerDecoration {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background-color: var(--mantine-primary-color-4);
+  border-radius: 2px;
 }
 
-.description {
-  color: var(--mantine-color-primary-0);
-  max-width: 300px;
-  font-weight: 600;
+@media (min-width: 768px) {
+  .headerDecoration {
+    left: 0;
+    transform: none;
+  }
+}
 
-  @media (max-width: $mantine-breakpoint-sm) {
-    max-width: 100%;
+.greeting {
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-5));
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: Poppins, sans-serif;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 700;
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.titleAccent {
+  color: var(--mantine-primary-color-6);
+}
+
+.subtitle {
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-5));
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .subtitle {
+    margin: 0;
   }
 }
 
 .form {
-  padding: var(--mantine-spacing-xl);
-  border-radius: var(--mantine-radius-lg);
+  margin-top: clamp(28px, 5vw, 40px);
+  animation: form-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 
-  @media (max-width: $mantine-breakpoint-sm) {
-    padding: 0;
+@keyframes form-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.social {
-  color: var(--mantine-color-white);
+.fieldGroup {
+  margin-bottom: 20px;
+}
 
-  @mixin hover {
-    color: var(--mantine-color-primary-1);
+.categorySelector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.categoryLabel {
+  font-size: 1rem;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2));
+  font-weight: 500;
+}
+
+.selectInput {
+  background-color: light-dark(#fff, var(--mantine-color-dark-1));
+  border: 2px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: 14px;
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-0));
+  font-weight: 500;
+  font-size: 1rem;
+  min-width: 200px;
+  height: 48px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.selectInput:focus-within {
+  border-color: var(--mantine-primary-color-5);
+}
+
+.selectDropdown {
+  background-color: light-dark(#fff, var(--mantine-color-dark-1));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: 12px;
+}
+
+.selectOption {
+  border-radius: 8px;
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+}
+
+.selectOption:hover,
+.selectOption[data-hovered] {
+  background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-3));
+}
+
+.selectOption[data-selected] {
+  background-color: light-dark(var(--mantine-color-pink-1), var(--mantine-color-dark-4));
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+}
+
+.testimonialCard {
+  padding: 20px;
+  background: light-dark(var(--mantine-color-pink-0), var(--mantine-color-dark-2));
+  border-radius: 16px;
+  border: 1px solid light-dark(var(--mantine-color-pink-1), var(--mantine-color-dark-4));
+  margin-bottom: 20px;
+}
+
+.testimonialHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.testimonialIcon {
+  color: var(--mantine-primary-color-5);
+}
+
+.testimonialTitle {
+  font-family: Poppins, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+}
+
+.hintsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+}
+
+.hintItem {
+  font-size: 0.85rem;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hintItem::before {
+  content: '→';
+  color: var(--mantine-primary-color-4);
+  font-size: 0.75rem;
+}
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid light-dark(var(--mantine-color-pink-2), var(--mantine-color-dark-4));
+}
+
+.ratingLabel {
+  font-size: 0.9rem;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
+  font-weight: 500;
+}
+
+.textareaInput {
+  background-color: light-dark(#fff, var(--mantine-color-dark-1));
+  border: 2px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: 14px;
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-0));
+  padding: 14px 18px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.textareaInput:focus {
+  border-color: var(--mantine-primary-color-5);
+}
+
+.textareaInput::placeholder {
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-6));
+}
+
+.consentRow {
+  margin-top: 16px;
+}
+
+.consentLabel {
+  font-size: 0.85rem;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
+  line-height: 1.5;
+}
+
+.turnstileContainer {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.successAlert {
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+
+
+.submitButton {
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1rem;
+  background-color: var(--mantine-primary-color-5);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: var(--mantine-primary-color-6);
+  transform: translateY(-1px);
+}
+
+.submitButton:active:not(:disabled) {
+  background-color: var(--mantine-primary-color-7);
+  transform: translateY(0);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+}
+
+.loadingSpinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-.inputLabel {
-  color: var(--mantine-color-black);
+.formFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid light-dark(rgba(0, 0, 0, 0.06), var(--mantine-color-dark-4));
+}
+
+.footerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.contactLinks {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+}
+
+.contactLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
+  text-decoration: none;
+  transition: all 0.2s ease;
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-2));
+}
+
+.contactLink:hover {
+  color: var(--mantine-primary-color-5);
+  background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-3));
+}
+
+.contactLinkIcon {
+  opacity: 0.7;
+}
+
+@media (max-width: 640px) {
+  .footerRow {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .submitButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .contactLinks {
+    justify-content: center;
+  }
+
+  .categorySelector {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .selectInput {
+    width: 100%;
+  }
+
+  .ratingRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

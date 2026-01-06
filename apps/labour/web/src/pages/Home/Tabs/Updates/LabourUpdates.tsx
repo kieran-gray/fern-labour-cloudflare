@@ -253,13 +253,13 @@ export const LabourUpdates = memo(
           {isOwnerView ? (
             <>
               <div className={baseClasses.docsTitleRow}>
-                <div className={classes.title}>
+                <div className={classes.title} style={{ paddingBottom: 0 }}>
                   <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
                     {title}
                   </Title>
                 </div>
-                <ActionIcon radius="xl" variant="light" size="lg" onClick={open}>
-                  <IconBook size={20} />
+                <ActionIcon radius="xl" variant="light" size="xl" onClick={open}>
+                  <IconBook />
                 </ActionIcon>
                 <LabourUpdatesHelpModal close={close} opened={opened} />
               </div>

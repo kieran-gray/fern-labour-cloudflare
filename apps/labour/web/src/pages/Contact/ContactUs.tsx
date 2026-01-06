@@ -3,23 +3,11 @@ import { useSubmitContactForm } from '@base/hooks/useContactData';
 import { useUser } from '@clerk/clerk-react';
 import type { CreateContactMessageRequest } from '@clients/contact_service';
 import { validateMessage } from '@lib';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconAt, IconBrandInstagram, IconBulb, IconCheck, IconSend } from '@tabler/icons-react';
+import { useSearchParams } from 'react-router-dom';
 import Turnstile from 'react-turnstile';
-import {
-  Alert,
-  Button,
-  Checkbox,
-  Group,
-  Rating,
-  Select,
-  SimpleGrid,
-  Space,
-  Text,
-  Textarea,
-  Title,
-} from '@mantine/core';
+import { Alert, Checkbox, Rating, Select, Textarea } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { ContactIconsList } from './ContactIcons';
 import classes from './ContactUs.module.css';
 import baseClasses from '@styles/base.module.css';
 
@@ -38,9 +26,13 @@ export function ContactUs() {
   const [rating, setRating] = useState(5);
   const [checked, setChecked] = useState(false);
 
+  const [searchParams] = useSearchParams();
+  const promptParam = searchParams.get('show');
+  const defaultCategory = promptParam ? promptParam : 'error_report';
+
   const form = useForm({
     initialValues: {
-      category: 'error_report',
+      category: defaultCategory,
       message: '',
     },
     validate: { message: (message) => validateMessage(message) },
@@ -84,123 +76,146 @@ export function ContactUs() {
     return 'Share your thoughts or describe the issue...';
   }
 
-  function hideTestimonialInputs(values: typeof form.values): boolean {
-    return values.category !== 'testimonial';
-  }
-
-  const title = 'Send us a message';
-  const description = 'Leave your email and we will get back to you within 24 hours';
+  const isTestimonial = form.values.category === 'testimonial';
 
   return (
-    <div className={baseClasses.root}>
-      <div className={baseClasses.body}>
-        <div className={baseClasses.inner}>
-          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={50}>
-            <div>
-              <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
-                {title}
-              </Title>
-              <Text fz={{ base: 'sm', sm: 'md' }} className={baseClasses.description} mt={10}>
-                {description}
-              </Text>
-              <Space h="lg" />
-              <ContactIconsList />
-            </div>
-            <form
-              className={classes.form}
-              onSubmit={form.onSubmit((values) => handleContactUsSubmission(values))}
+    <div className={baseClasses.card}>
+      <div className={classes.container}>
+        <header className={classes.header}>
+          <div className={classes.headerDecoration} />
+          <p className={classes.greeting}>Get in touch</p>
+          <h1 className={classes.title}>
+            We'd love to <span className={classes.titleAccent}>hear from you</span>
+          </h1>
+          <p className={classes.subtitle}>
+            If you have feedback, an idea, or simply want to get in touch, we’re listening.
+          </p>
+        </header>
+
+        <form
+          className={classes.form}
+          onSubmit={form.onSubmit((values) => handleContactUsSubmission(values))}
+        >
+          {status.type && (
+            <Alert
+              variant="light"
+              color="green"
+              radius="md"
+              title={status.type}
+              icon={<IconCheck size={18} />}
+              className={classes.successAlert}
+              withCloseButton
+              onClose={() => setStatus({ type: '', message: '' })}
             >
-              {status.type && (
-                <Alert
-                  variant="light"
-                  color="green"
-                  radius="md"
-                  title={status.type}
-                  icon={<IconInfoCircle />}
-                  mb={10}
-                  withCloseButton
-                  onClose={() => setStatus({ type: '', message: '' })}
-                >
-                  {status.message}
-                </Alert>
-              )}
-              <Group>
-                <Text>This is</Text>
-                <Select
-                  data={categories}
-                  key={form.key('category')}
-                  defaultValue="error_report"
-                  {...form.getInputProps('category')}
-                  classNames={{
-                    input: baseClasses.input,
-                    label: classes.inputLabel,
-                    dropdown: baseClasses.selectDropdown,
-                  }}
-                  allowDeselect={false}
-                  withAsterisk
-                />
-              </Group>
-              <Group mb={30} gap="xs" display={hideTestimonialInputs(form.values) ? 'none' : ''}>
-                <Title order={5} mt={15} className={baseClasses.description}>
-                  Need ideas? Answer the following questions!
-                </Title>
-                <Text size="sm" className={baseClasses.description}>
-                  • How did Fern Labour fit into your birth plan?
-                </Text>
-                <Text size="sm" className={baseClasses.description}>
-                  • What advice would you give someone considering Fern Labour for their own
-                  journey?
-                </Text>
-                <Text size="sm" className={baseClasses.description}>
-                  • What was your favourite part of Fern Labour?
-                </Text>
-              </Group>
-              <Rating
-                defaultValue={5}
-                size="lg"
-                value={rating}
-                onChange={setRating}
-                display={hideTestimonialInputs(form.values) ? 'none' : ''}
+              {status.message}
+            </Alert>
+          )}
+
+          <div className={classes.fieldGroup}>
+            <div className={classes.categorySelector}>
+              <span className={classes.categoryLabel}>This is</span>
+              <Select
+                data={categories}
+                key={form.key('category')}
+                defaultValue={defaultCategory}
+                {...form.getInputProps('category')}
+                classNames={{
+                  input: classes.selectInput,
+                  dropdown: classes.selectDropdown,
+                  option: classes.selectOption,
+                }}
+                allowDeselect={false}
               />
-              <Textarea
-                required
-                key={form.key('message')}
-                placeholder={getTextAreaPlaceholder(form.values)}
-                minRows={5}
-                maxRows={8}
-                data-autofocus
-                autosize
-                mt="md"
-                classNames={{ input: baseClasses.input, label: classes.inputLabel }}
-                {...form.getInputProps('message')}
-              />
+            </div>
+          </div>
+
+          {isTestimonial && (
+            <div className={classes.testimonialCard}>
+              <div className={classes.testimonialHeader}>
+                <IconBulb size={18} className={classes.testimonialIcon} />
+                <span className={classes.testimonialTitle}>Share your experience</span>
+              </div>
+              <div className={classes.hintsList}>
+                <span className={classes.hintItem}>Your birth journey</span>
+                <span className={classes.hintItem}>Favourite features</span>
+                <span className={classes.hintItem}>Tips for others</span>
+              </div>
+              <div className={classes.ratingRow}>
+                <span className={classes.ratingLabel}>Your rating</span>
+                <Rating defaultValue={5} size="md" value={rating} onChange={setRating} />
+              </div>
+            </div>
+          )}
+
+          <div className={classes.fieldGroup}>
+            <Textarea
+              required
+              key={form.key('message')}
+              placeholder={getTextAreaPlaceholder(form.values)}
+              minRows={5}
+              maxRows={8}
+              data-autofocus
+              autosize
+              classNames={{ input: classes.textareaInput }}
+              {...form.getInputProps('message')}
+            />
+          </div>
+
+          {isTestimonial && (
+            <div className={classes.consentRow}>
               <Checkbox
-                mt={25}
-                label="I give permission to use this testimonial across social channels and other marketing materials."
+                label="I give permission to use this testimonial for marketing."
                 checked={checked}
                 onChange={(event) => setChecked(event.currentTarget.checked)}
-                display={hideTestimonialInputs(form.values) ? 'none' : ''}
+                classNames={{ label: classes.consentLabel }}
               />
-              <Space h={20} />
-              <Group align="center" justify="center" mt={10}>
-                <Turnstile
-                  sitekey={import.meta.env.VITE_CLOUDFLARE_SITEKEY || '1x00000000000000000000AA'}
-                  onVerify={(token) => setTurnstileToken(token)}
-                />
-              </Group>
-              <Group justify="flex-end" mt="md">
-                <Button
-                  type="submit"
-                  variant="filled"
-                  radius="lg"
-                  disabled={isLoading || status.type !== ''}
+            </div>
+          )}
+
+          <div className={classes.turnstileContainer}>
+            <Turnstile
+              sitekey={import.meta.env.VITE_CLOUDFLARE_SITEKEY || '1x00000000000000000000AA'}
+              onVerify={(token) => setTurnstileToken(token)}
+            />
+          </div>
+
+          <div className={classes.formFooter}>
+            <div className={classes.footerRow}>
+              <div className={classes.contactLinks}>
+                <span className={classes.contactLink}>
+                  <IconAt size={14} className={classes.contactLinkIcon} />
+                  support@fernlabour.com
+                </span>
+                <a
+                  href="https://www.instagram.com/fernlabour/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={classes.contactLink}
                 >
-                  {isLoading ? 'Sending...' : 'Submit'}
-                </Button>
-              </Group>
-            </form>
-          </SimpleGrid>
-        </div>
+                  <IconBrandInstagram size={14} className={classes.contactLinkIcon} />
+                  @fernlabour
+                </a>
+              </div>
+              <button
+                type="submit"
+                className={classes.submitButton}
+                disabled={isLoading || status.type !== ''}
+              >
+                {isLoading ? (
+                  <>
+                    <span className={classes.loadingSpinner} />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <IconSend size={18} />
+                    Send Message
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );

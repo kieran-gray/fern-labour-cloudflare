@@ -1,7 +1,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { useNetworkState } from '@base/offline/sync/networkDetector';
 import { RedirectToSignIn, useAuth, useUser } from '@clerk/clerk-react';
-import { PageLoading } from './PageLoading/PageLoading';
+import { PageSkeleton } from './Cards/CardSkeleton';
 
 interface ProtectedAppProps {
   children: ReactNode;
@@ -38,7 +38,7 @@ export const ProtectedApp: React.FC<ProtectedAppProps> = (props) => {
   }
 
   if (!isAuthLoaded || !isUserLoaded) {
-    return <PageLoading />;
+    return <PageSkeleton preAuth />;
   }
 
   if (isSignedIn) {

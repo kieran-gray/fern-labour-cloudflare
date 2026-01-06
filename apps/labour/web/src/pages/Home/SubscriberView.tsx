@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SubscriberRole } from '@base/clients/labour_service';
+import { PageSkeleton } from '@base/components/Cards/CardSkeleton';
 import { FloatingPanel } from '@base/components/Controls/FloatingPanel';
 import { SubscriberSessionState, useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
@@ -13,7 +14,6 @@ import {
 import { useNetworkState } from '@base/offline/sync/networkDetector';
 import { AppShell } from '@components/AppShell';
 import { ErrorContainer } from '@components/ErrorContainer/ErrorContainer';
-import { PageLoading } from '@components/PageLoading/PageLoading';
 import { TabTransition } from '@components/TabTransition/TabTransition';
 import { pluraliseName } from '@lib';
 import {
@@ -269,11 +269,7 @@ export const SubscriberView = () => {
   }, [activeTab, TABS]);
 
   if (isPending) {
-    return (
-      <AppShell>
-        <PageLoading />
-      </AppShell>
-    );
+    return <PageSkeleton />;
   }
 
   if (isError && subscriberState === SubscriberSessionState.Active) {

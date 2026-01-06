@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, memo, useCallback } from 'react';
 import { AppMode, useLabourSession } from '@base/contexts';
 import { useClerk, useUser } from '@clerk/clerk-react';
 import {
@@ -12,7 +12,7 @@ import {
   IconSun,
   IconSwitchHorizontal,
 } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Avatar, Button, Group, Text, UnstyledButton, useMantineColorScheme } from '@mantine/core';
 import classes from './HeaderMenu.module.css';
 
@@ -20,12 +20,14 @@ interface UserButtonProps extends React.ComponentPropsWithoutRef<'button'> {
   name: string;
 }
 
-export const UserButton = forwardRef<HTMLButtonElement, UserButtonProps>(
-  ({ name, ...others }: UserButtonProps, ref) => (
+const flexOneStyle = { flex: 1 } as const;
+
+export const UserButton = memo(
+  forwardRef<HTMLButtonElement, UserButtonProps>(({ name, ...others }: UserButtonProps, ref) => (
     <UnstyledButton ref={ref} className={classes.userButton} {...others}>
       <Group>
         <Avatar radius="xl" />
-        <div style={{ flex: 1 }}>
+        <div style={flexOneStyle}>
           <Text size="sm" fw={500}>
             {name}
           </Text>
@@ -33,17 +35,51 @@ export const UserButton = forwardRef<HTMLButtonElement, UserButtonProps>(
         <IconChevronRight size={16} className={classes.userButtonChevron} />
       </Group>
     </UnstyledButton>
-  )
+  ))
 );
 
-export function HeaderMenu() {
+export const HeaderMenu = memo(() => {
   const { user } = useUser();
   const { signOut, openUserProfile } = useClerk();
   const navigate = useNavigate();
-  const pathname = window.location.pathname;
+  const { pathname } = useLocation();
   const { mode, setMode } = useLabourSession();
-  const switchToMode = mode === AppMode.Birth ? AppMode.Subscriber : AppMode.Birth;
   const { colorScheme, setColorScheme } = useMantineColorScheme();
+
+  const switchToMode = mode === AppMode.Birth ? AppMode.Subscriber : AppMode.Birth;
+
+  const handleThemeToggle = useCallback(() => {
+    setColorScheme(colorScheme === 'light' ? 'dark' : 'light');
+  }, [colorScheme, setColorScheme]);
+
+  const handleNavigateHome = useCallback(() => {
+    navigate('/');
+  }, [navigate]);
+
+  const handleSwitchMode = useCallback(() => {
+    setMode(switchToMode);
+    navigate('/');
+  }, [setMode, switchToMode, navigate]);
+
+  const handleNavigateHistory = useCallback(() => {
+    navigate('/history');
+  }, [navigate]);
+
+  const handleNavigateContact = useCallback(() => {
+    navigate('/contact');
+  }, [navigate]);
+
+  const handleOpenProfile = useCallback(() => {
+    openUserProfile();
+  }, [openUserProfile]);
+
+  const handleLogout = useCallback(
+    (event: React.MouseEvent) => {
+      event.preventDefault();
+      void signOut({ redirectUrl: window.location.origin });
+    },
+    [signOut]
+  );
 
   const themeIcon =
     colorScheme === 'light' ? (
@@ -59,7 +95,7 @@ export function HeaderMenu() {
           <Button
             key="theme"
             className={classes.mainLink}
-            onClick={() => setColorScheme(colorScheme === 'light' ? 'dark' : 'light')}
+            onClick={handleThemeToggle}
             leftSection={themeIcon}
             size="md"
             w="100%"
@@ -71,9 +107,7 @@ export function HeaderMenu() {
             <Button
               key="home"
               className={classes.mainLink}
-              onClick={() => {
-                navigate('/');
-              }}
+              onClick={handleNavigateHome}
               leftSection={<IconHome size={16} stroke={1.5} />}
               size="md"
               w="100%"
@@ -87,10 +121,7 @@ export function HeaderMenu() {
               <Button
                 key="update"
                 className={classes.mainLink}
-                onClick={() => {
-                  setMode(switchToMode);
-                  navigate('/');
-                }}
+                onClick={handleSwitchMode}
                 leftSection={<IconSwitchHorizontal size={16} stroke={1.5} />}
                 size="md"
                 w="100%"
@@ -101,7 +132,7 @@ export function HeaderMenu() {
               {mode === AppMode.Birth && ['/history', '/contact'].includes(pathname) && (
                 <Button
                   key="history"
-                  onClick={() => navigate('/')}
+                  onClick={handleNavigateHome}
                   leftSection={<IconArrowLeft size={16} stroke={1.5} />}
                   className={classes.mainLink}
                   size="md"
@@ -116,7 +147,7 @@ export function HeaderMenu() {
           {pathname !== '/history' && (
             <Button
               key="labour"
-              onClick={() => navigate('/history')}
+              onClick={handleNavigateHistory}
               className={classes.mainLink}
               leftSection={<IconHistory size={16} stroke={1.5} />}
               size="md"
@@ -132,15 +163,12 @@ export function HeaderMenu() {
       <div className={classes.footer}>
         <UserButton
           name={user?.fullName ?? user?.primaryEmailAddress?.emailAddress ?? ''}
-          onClick={() => openUserProfile()}
+          onClick={handleOpenProfile}
         />
         <Button
           key="logout"
           className={classes.logoutLink}
-          onClick={(event) => {
-            event.preventDefault();
-            void signOut({ redirectUrl: window.location.origin });
-          }}
+          onClick={handleLogout}
           size="md"
           w="100%"
           variant="transparent"
@@ -151,7 +179,7 @@ export function HeaderMenu() {
         {pathname !== '/contact' && (
           <Button
             key="contact"
-            onClick={() => navigate('/contact')}
+            onClick={handleNavigateContact}
             className={classes.mainLink}
             leftSection={<IconMessageCircleQuestion size={16} stroke={1.5} />}
             size="md"
@@ -164,4 +192,4 @@ export function HeaderMenu() {
       </div>
     </div>
   );
-}
+});

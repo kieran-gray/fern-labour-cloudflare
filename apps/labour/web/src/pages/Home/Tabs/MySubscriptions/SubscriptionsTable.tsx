@@ -3,10 +3,10 @@ import { SubscriptionStatusReadModel } from '@base/clients/labour_service/types'
 import { useLabourSession } from '@base/contexts';
 import { useLabourClient } from '@base/hooks';
 import { useUserSubscribedLabours, useUserSubscriptions } from '@base/hooks/useLabourData';
-import { PageLoadingIcon } from '@components/PageLoading/Loading';
 import { IconArrowRight, IconX } from '@tabler/icons-react';
 import { Avatar, Button, Card, Group, Stack, Text } from '@mantine/core';
 import { ManageSubscriptionMenu } from './SubscriptionMenu';
+import { SubscriptionsSkeleton } from './SubscriptionsSkeleton';
 import classes from './SubscriptionsTable.module.css';
 import baseClasses from '@styles/base.module.css';
 
@@ -20,11 +20,7 @@ export function SubscriptionsTable() {
   const { data: labours, isPending: laboursLoading } = useUserSubscribedLabours(client);
 
   if (isPending || laboursLoading) {
-    return (
-      <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-        <PageLoadingIcon />
-      </div>
-    );
+    return <SubscriptionsSkeleton />;
   }
 
   if (isError) {
