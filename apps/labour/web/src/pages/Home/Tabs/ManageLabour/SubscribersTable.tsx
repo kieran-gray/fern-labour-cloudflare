@@ -31,9 +31,7 @@ export function SubscribersTable({
   const queryClient = useQueryClient();
   const hasInvalidatedRef = useRef(false);
 
-  const missingSubscribers = subscriptions.some(
-    (sub) => !subscriberById[sub.subscriber_id]
-  );
+  const missingSubscribers = subscriptions.some((sub) => !subscriberById[sub.subscriber_id]);
 
   useEffect(() => {
     if (missingSubscribers && !hasInvalidatedRef.current) {
