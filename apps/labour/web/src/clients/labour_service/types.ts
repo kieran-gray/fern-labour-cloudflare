@@ -53,7 +53,7 @@ export type StartContractionCommand = {
   type: 'StartContraction';
   payload: {
     labour_id: string;
-    start_time: string; // ISO 8601 datetime
+    start_time?: string; // ISO 8601 datetime
     contraction_id: string; // Client-generated UUID v7
   };
 };
@@ -62,7 +62,7 @@ export type EndContractionCommand = {
   type: 'EndContraction';
   payload: {
     labour_id: string;
-    end_time: string; // ISO 8601 datetime
+    end_time?: string; // ISO 8601 datetime
     intensity: number; // u8 in Rust, 0-255
     contraction_id: string; // Must match the started contraction
   };
@@ -513,6 +513,10 @@ export type User = {
   first_name?: string;
   last_name?: string;
   name?: string;
+};
+
+export type ServerTimestamp = {
+  server_timestamp: string;
 };
 
 export type PaginatedResponse<T> = {

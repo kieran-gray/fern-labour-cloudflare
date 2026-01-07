@@ -287,6 +287,40 @@ export function useUsers(client: LabourServiceClient, labourId: string | null) {
   });
 }
 
+export function useServerOffset(client: LabourServiceClient, labourId: string | null) {
+  const { userId } = useAuth();
+
+  return useQuery({
+    queryKey: labourId ? queryKeys.serverTimestamp.offset(labourId) : [],
+    queryFn: async () => {
+      if (!labourId) {
+        throw new Error('Labour ID is required');
+      }
+
+      const beforeTime = Date.now();
+      const response = await client.getServerTimestamp(labourId);
+      const afterTime = Date.now();
+
+      if (!response.success || !response.data) {
+        throw new Error(response.error || 'Failed to fetch server timestamp');
+      }
+
+      const serverTime = new Date(response.data.server_timestamp).getTime();
+      if (isNaN(serverTime)) {
+        return 0;
+      }
+
+      const roundTripTime = afterTime - beforeTime;
+      const estimatedClientTimeAtServer = beforeTime + roundTripTime / 2;
+      const offset = serverTime - estimatedClientTimeAtServer;
+
+      return offset;
+    },
+    enabled: !!labourId && !!userId,
+    retry: 0,
+  });
+}
+
 // =============================================================================
 // Contraction Mutations
 // =============================================================================

@@ -23,8 +23,9 @@ pub async fn handle_websocket_connect(
 
     let upgrade_header = req.headers().get("Upgrade");
 
-    if upgrade_header.is_err() || upgrade_header.unwrap().unwrap() != "websocket" {
-        return Ok(Response::empty()?.with_status(426));
+    match upgrade_header {
+        Ok(Some(header)) if header == "websocket" => (),
+        _ => return Ok(Response::empty()?.with_status(426))
     }
 
     let response = ctx

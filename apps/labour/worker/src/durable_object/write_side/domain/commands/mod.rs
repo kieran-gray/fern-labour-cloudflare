@@ -4,6 +4,7 @@ pub mod labour_update;
 pub mod subscriber;
 pub mod subscription;
 
+use chrono::Utc;
 use fern_labour_labour_shared::{
     ContractionCommand, LabourUpdateCommand, SubscriberCommand, SubscriptionCommand,
     commands::labour::LabourCommand as LabourApiCommand,
@@ -119,22 +120,36 @@ impl From<ContractionCommand> for LabourCommand {
                 labour_id,
                 start_time,
                 contraction_id,
-            } => LabourCommand::StartContraction(StartContraction {
-                labour_id,
-                contraction_id,
-                start_time,
-            }),
+            } => {
+                let datetime = match start_time {
+                    Some(datetime) => datetime,
+                    None => Utc::now(),
+                };
+
+                LabourCommand::StartContraction(StartContraction {
+                    labour_id,
+                    contraction_id,
+                    start_time: datetime,
+                })
+            },
             ContractionCommand::EndContraction {
                 labour_id,
                 contraction_id,
                 end_time,
                 intensity,
-            } => LabourCommand::EndContraction(EndContraction {
-                labour_id,
-                contraction_id,
-                end_time,
-                intensity,
-            }),
+            } => {
+                let datetime = match end_time {
+                    Some(datetime) => datetime,
+                    None => Utc::now(),
+                };
+
+                LabourCommand::EndContraction(EndContraction {
+                    labour_id,
+                    contraction_id,
+                    end_time: datetime,
+                    intensity,
+                })
+            },
             ContractionCommand::UpdateContraction {
                 labour_id,
                 contraction_id,

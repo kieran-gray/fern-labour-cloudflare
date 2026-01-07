@@ -8,6 +8,7 @@ use crate::api_worker::api::routes::commands::handle_command;
 use crate::api_worker::api::routes::labour::get_active_labour;
 use crate::api_worker::api::routes::labour::get_labour_history;
 use crate::api_worker::api::routes::labour::handle_plan_labour;
+use crate::api_worker::api::routes::queries::get_server_timestamp;
 use crate::api_worker::api::routes::queries::handle_query;
 use crate::api_worker::api::routes::subscriptions::get_subscribed_labours;
 use crate::api_worker::api::routes::subscriptions::get_user_subscriptions;
@@ -42,6 +43,10 @@ pub fn create_router(app_state: AppState) -> Router<'static, AppState> {
         .post_async("/api/v1/query", |req, ctx| {
             authenticated(handle_query, req, ctx)
         })
+        .get_async("/api/v1/timestamp/:labour_id",|req, ctx| {
+            authenticated(get_server_timestamp, req, ctx)
+        })
+        .options("/api/v1/timestamp/:labour_id", create_options_handler)
         .on_async("/api/v1/connect/:labour_id", |req, ctx| {
             websocket_authenticated(handle_websocket_connect, req, ctx)
         })
