@@ -95,20 +95,18 @@ export const SubscriberView = () => {
   }, [tabParam, TABS]);
 
   const prevTabRef = useRef(activeTab);
-  const [direction, setDirection] = useState<'left' | 'right' | null>(null);
+  const directionRef = useRef<'left' | 'right' | null>(null);
   const [isUpdateControlsExpanded, setIsUpdateControlsExpanded] = useState(true);
   const [isContractionControlsExpanded, setIsContractionControlsExpanded] = useState(true);
 
-  useEffect(() => {
-    if (prevTabRef.current !== activeTab) {
-      const currentIndex = tabOrder.indexOf(prevTabRef.current as any);
-      const newIndex = tabOrder.indexOf(activeTab as any);
-      if (newIndex !== -1 && currentIndex !== -1) {
-        setDirection(newIndex > currentIndex ? 'right' : 'left');
-      }
-      prevTabRef.current = activeTab;
+  if (prevTabRef.current !== activeTab) {
+    const currentIndex = tabOrder.indexOf(prevTabRef.current as any);
+    const newIndex = tabOrder.indexOf(activeTab as any);
+    if (newIndex !== -1 && currentIndex !== -1) {
+      directionRef.current = newIndex > currentIndex ? 'right' : 'left';
     }
-  }, [activeTab, tabOrder]);
+    prevTabRef.current = activeTab;
+  }
 
   useEffect(() => {
     const tab = TABS.find((t) => t.id === activeTab);
@@ -290,7 +288,7 @@ export const SubscriberView = () => {
             <TabTransition
               activeTab={activeTab}
               renderTab={renderTabPanel}
-              direction={direction}
+              direction={directionRef.current}
               style={{
                 width: '100%',
               }}

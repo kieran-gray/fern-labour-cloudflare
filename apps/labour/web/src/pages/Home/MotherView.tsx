@@ -62,20 +62,18 @@ export const MotherView = () => {
   }, [tabParam]);
 
   const prevTabRef = useRef(activeTab);
-  const [direction, setDirection] = useState<'left' | 'right' | null>(null);
+  const directionRef = useRef<'left' | 'right' | null>(null);
   const [isUpdateControlsExpanded, setIsUpdateControlsExpanded] = useState(true);
   const [isContractionControlsExpanded, setIsContractionControlsExpanded] = useState(true);
 
-  useEffect(() => {
-    if (prevTabRef.current !== activeTab) {
-      const currentIndex = tabOrder.indexOf(prevTabRef.current as (typeof tabOrder)[number]);
-      const newIndex = tabOrder.indexOf(activeTab as (typeof tabOrder)[number]);
-      if (newIndex !== -1 && currentIndex !== -1) {
-        setDirection(newIndex > currentIndex ? 'right' : 'left');
-      }
-      prevTabRef.current = activeTab;
+  if (prevTabRef.current !== activeTab) {
+    const currentIndex = tabOrder.indexOf(prevTabRef.current as (typeof tabOrder)[number]);
+    const newIndex = tabOrder.indexOf(activeTab as (typeof tabOrder)[number]);
+    if (newIndex !== -1 && currentIndex !== -1) {
+      directionRef.current = newIndex > currentIndex ? 'right' : 'left';
     }
-  }, [activeTab]);
+    prevTabRef.current = activeTab;
+  }
 
   useEffect(() => {
     const tab = TABS.find((t) => t.id === activeTab);
@@ -217,7 +215,7 @@ export const MotherView = () => {
           <TabTransition
             activeTab={activeTab}
             renderTab={renderTabPanel}
-            direction={direction}
+            direction={directionRef.current}
             style={{
               width: '100%',
             }}
