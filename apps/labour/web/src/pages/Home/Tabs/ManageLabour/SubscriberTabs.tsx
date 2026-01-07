@@ -139,6 +139,7 @@ export const ManageSubscribersTabs = () => {
         <SubscribersTable
           subscriptions={activeSubscriptions}
           subscriberById={subscriberById}
+          labourId={labourId!}
           status="subscribed"
         />
       </Tabs.Panel>
@@ -146,6 +147,7 @@ export const ManageSubscribersTabs = () => {
         <SubscribersTable
           subscriptions={requestedSubscriptions}
           subscriberById={subscriberById}
+          labourId={labourId!}
           status="requested"
           onApprove={handleApprove}
           onReject={handleReject}
@@ -155,6 +157,7 @@ export const ManageSubscribersTabs = () => {
         <SubscribersTable
           subscriptions={blockedSubscriptions}
           subscriberById={subscriberById}
+          labourId={labourId!}
           status="blocked"
           onUnblock={handleUnblock}
         />
