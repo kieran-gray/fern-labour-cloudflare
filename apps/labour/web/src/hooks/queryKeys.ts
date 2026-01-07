@@ -69,7 +69,8 @@ export const queryKeys = {
 
   serverTimestamp: {
     all: ['serverTimestamps'] as const,
-    byLabour: (labourId: string) => [...queryKeys.serverTimestamp.all, 'byLabour', labourId] as const,
+    byLabour: (labourId: string) =>
+      [...queryKeys.serverTimestamp.all, 'byLabour', labourId] as const,
     offset: (labourId: string) => [...queryKeys.serverTimestamp.all, 'offset', labourId] as const,
-  }
+  },
 } as const;

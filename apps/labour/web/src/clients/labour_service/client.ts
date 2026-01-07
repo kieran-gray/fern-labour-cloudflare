@@ -841,7 +841,10 @@ export class LabourServiceClient {
   async getServerTimestamp(labourId: string): Promise<QueryResponse<ServerTimestamp>> {
     if (this.config.websocket?.isConnected) {
       try {
-        const response = await this.config.websocket.sendMessage({ kind: 'ServerTimestamp', payload: null });
+        const response = await this.config.websocket.sendMessage({
+          kind: 'ServerTimestamp',
+          payload: null,
+        });
 
         if (response.error) {
           return {

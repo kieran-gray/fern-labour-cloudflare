@@ -517,7 +517,7 @@ export type User = {
 
 export type ServerTimestamp = {
   server_timestamp: string;
-}
+};
 
 export type PaginatedResponse<T> = {
   data: T[];
