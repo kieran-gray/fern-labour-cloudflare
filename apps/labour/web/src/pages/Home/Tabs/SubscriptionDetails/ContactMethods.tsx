@@ -17,7 +17,7 @@ export function warnNoNumberSet(
     phone_number === null
   ) {
     warning =
-      "You have selected to receive sms or whatsapp alerts but you don't have a phone number set on your profile. Set one by clicking 'Update Profile' in the app menu.";
+      "You have selected to receive alerts but you don't have a phone number set on your profile. Set one in the app menu.";
   }
   return warning;
 }
