@@ -5,7 +5,10 @@ import { useQueryClient } from '@tanstack/react-query';
 
 interface WebSocketContextValue {
   isConnected: boolean;
-  sendMessage: (message: { kind: 'Command' | 'Query'; payload: any }) => Promise<any>;
+  sendMessage: (message: {
+    kind: 'Command' | 'Query' | 'ServerTimestamp';
+    payload: any;
+  }) => Promise<any>;
   subscribe: (callback: (message: any) => void) => () => void;
 }
 
@@ -125,7 +128,10 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
     };
   }, [labourId, getToken]);
 
-  const sendMessage = (message: { kind: 'Command' | 'Query'; payload: any }): Promise<any> => {
+  const sendMessage = (message: {
+    kind: 'Command' | 'Query' | 'ServerTimestamp';
+    payload: any;
+  }): Promise<any> => {
     return new Promise((resolve, reject) => {
       if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
         reject(new Error('WebSocket not connected'));

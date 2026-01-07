@@ -4,8 +4,11 @@ use crate::durable_object::{
     http::{
         middleware::with_auth_context,
         routes::{
-            admin::handle_admin_command, command::handle_command, events::handle_events_query,
-            labour::handle_labour_domain_command, query::handle_query,
+            admin::handle_admin_command,
+            command::handle_command,
+            events::handle_events_query,
+            labour::handle_labour_domain_command,
+            query::{get_server_timestamp, handle_query},
         },
     },
     setup::state::LabourRoomServices,
@@ -34,6 +37,7 @@ pub async fn route_request(req: Request, services: &LabourRoomServices) -> Resul
         (Method::Post, "/labour/domain") => {
             with_auth_context(handle_labour_domain_command, req, ctx).await
         }
+        (Method::Get, "/api/timestamp") => with_auth_context(get_server_timestamp, req, ctx).await,
 
         _ => Response::error("Not Found", 404),
     }

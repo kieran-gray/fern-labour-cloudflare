@@ -1,5 +1,7 @@
+use chrono::{DateTime, Utc};
 use fern_labour_labour_shared::ApiQuery;
 use fern_labour_workers_shared::User;
+use serde::Serialize;
 use tracing::{error, info};
 use worker::{Request, Response};
 
@@ -33,4 +35,23 @@ pub async fn handle_query(
     }
 
     Ok(ApiResult::from_json_result(result).into_response())
+}
+
+pub async fn get_server_timestamp(
+    _req: Request,
+    _ctx: RequestContext<'_>,
+    user: User,
+) -> worker::Result<Response> {
+    info!(user_id = %user.user_id, "Processing server timestamp query");
+
+    #[derive(Serialize)]
+    struct ServerTimestamp {
+        server_timestamp: DateTime<Utc>,
+    }
+
+    let data = ServerTimestamp {
+        server_timestamp: Utc::now(),
+    };
+
+    Ok(ApiResult::from_json_result(Ok(data)).into_response())
 }

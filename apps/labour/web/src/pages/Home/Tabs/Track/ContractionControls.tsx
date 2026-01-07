@@ -1,7 +1,7 @@
 import { RefObject, useRef } from 'react';
 import { ContractionReadModel } from '@base/clients/labour_service/types';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
-import { useLabourClient } from '@base/hooks';
+import { useLabourClient, useServerOffset } from '@base/hooks';
 import { generateContractionId, useStartContractionOffline } from '@base/offline/hooks';
 import { IconHourglassLow } from '@tabler/icons-react';
 import { Button } from '@mantine/core';
@@ -20,7 +20,6 @@ function StartContractionButton({ stopwatchRef }: { stopwatchRef: RefObject<Stop
     const contractionId = generateContractionId();
     mutation.mutate({
       labourId: labourId!,
-      startTime: new Date(),
       contractionId,
     });
   };
@@ -51,7 +50,11 @@ export function ContractionControls({
   activeContraction,
 }: ContractionControlsProps) {
   const stopwatchRef = useRef<StopwatchHandle>(null);
-  // Don't show controls if labour is completed
+  const { labourId } = useLabourSession();
+  const client = useLabourClient();
+  const { data: offsetData } = useServerOffset(client, labourId);
+  const offset = offsetData || 0;
+
   if (labourCompleted) {
     return null;
   }
@@ -64,6 +67,7 @@ export function ContractionControls({
             stopwatchRef={stopwatchRef}
             activeContraction={activeContraction}
             disabled={false}
+            offset={offset}
           />
         ) : (
           <div className={classes.controlsCenter}>

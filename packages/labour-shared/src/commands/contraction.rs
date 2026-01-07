@@ -8,12 +8,12 @@ pub enum ContractionCommand {
     StartContraction {
         labour_id: Uuid,
         contraction_id: Uuid,
-        start_time: DateTime<Utc>,
+        start_time: Option<DateTime<Utc>>,
     },
     EndContraction {
         labour_id: Uuid,
         contraction_id: Uuid,
-        end_time: DateTime<Utc>,
+        end_time: Option<DateTime<Utc>>,
         intensity: u8,
     },
     UpdateContraction {

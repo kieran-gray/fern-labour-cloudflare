@@ -25,6 +25,7 @@ import type {
   LabourUpdateType,
   PaginatedResponse,
   QueryResponse,
+  ServerTimestamp,
   SubscriberAccessLevel,
   SubscriberCommand,
   SubscriberContactMethod,
@@ -43,7 +44,7 @@ export interface LabourServiceConfig {
   websocket?: {
     isConnected: boolean;
     sendMessage: (message: {
-      kind: 'Command' | 'Query';
+      kind: 'Command' | 'Query' | 'ServerTimestamp';
       payload: any;
     }) => Promise<{ data?: any; error?: string }>;
   };
@@ -182,14 +183,14 @@ export class LabourServiceClient {
 
   async startContraction(
     labourId: string,
-    startTime: Date,
-    contractionId: string
+    contractionId: string,
+    startTime?: Date
   ): Promise<CommandResponse> {
     const command: ContractionCommand = {
       type: 'StartContraction',
       payload: {
         labour_id: labourId,
-        start_time: startTime.toISOString(),
+        start_time: startTime?.toISOString(),
         contraction_id: contractionId,
       },
     };
@@ -198,15 +199,15 @@ export class LabourServiceClient {
 
   async endContraction(
     labourId: string,
-    endTime: Date,
     intensity: number,
-    contractionId: string
+    contractionId: string,
+    endTime?: Date
   ): Promise<CommandResponse> {
     const command: ContractionCommand = {
       type: 'EndContraction',
       payload: {
         labour_id: labourId,
-        end_time: endTime.toISOString(),
+        end_time: endTime?.toISOString(),
         intensity,
         contraction_id: contractionId,
       },
@@ -814,6 +815,55 @@ export class LabourServiceClient {
         headers,
         body: JSON.stringify(request),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        return {
+          success: false,
+          error: errorText || `HTTP ${response.status}: ${response.statusText}`,
+        };
+      }
+
+      const data = await response.json();
+
+      return {
+        success: true,
+        data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
+
+  async getServerTimestamp(labourId: string): Promise<QueryResponse<ServerTimestamp>> {
+    if (this.config.websocket?.isConnected) {
+      try {
+        const response = await this.config.websocket.sendMessage({ kind: 'ServerTimestamp', payload: null });
+
+        if (response.error) {
+          return {
+            success: false,
+            error: response.error,
+          };
+        }
+
+        return {
+          success: true,
+          data: response.data,
+        };
+      } catch (error) {
+        console.warn('[Client] WebSocket query failed, falling back to HTTP', error);
+      }
+    }
+
+    const headers = await this.getHeaders();
+    const url = `${this.config.baseUrl}/api/v1/timestamp/${labourId}`;
+
+    try {
+      const response = await fetch(url, { method: 'GET', headers });
 
       if (!response.ok) {
         const errorText = await response.text();

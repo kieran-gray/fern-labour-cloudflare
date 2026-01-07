@@ -6,7 +6,9 @@ pub mod setup;
 pub mod websocket;
 pub mod write_side;
 
+use chrono::Utc;
 use fern_labour_workers_shared::User;
+use serde_json::json;
 use tracing::{error, info};
 use worker::{
     DurableObject, Env, Request, Response, Result, State, WebSocket, WebSocketIncomingMessage,
@@ -106,6 +108,11 @@ impl DurableObject for LabourRoom {
                     Err(e) => (false, None, Some(e.to_string())),
                 }
             }
+            WebSocketRequest::ServerTimestamp => (
+                true,
+                Some(json!({"server_timestamp": Utc::now()})),
+                None,
+            ),
         };
 
         let response = serde_json::json!({

@@ -26,39 +26,39 @@ export function useStartContractionOffline(client: LabourServiceClient) {
   return useMutation({
     mutationFn: async ({
       labourId,
-      startTime,
       contractionId,
+      startTime,
     }: {
       labourId: string;
-      startTime: Date;
       contractionId: string;
+      startTime?: Date;
     }) => {
-      const command = {
-        type: 'Contraction',
-        payload: {
-          type: 'StartContraction',
-          payload: {
-            labour_id: labourId,
-            start_time: startTime.toISOString(),
-            contraction_id: contractionId,
-          },
-        },
-      };
-
       if (!navigator.onLine) {
+        const offlineStartTime = startTime || new Date();
+        const command = {
+          type: 'Contraction',
+          payload: {
+            type: 'StartContraction',
+            payload: {
+              labour_id: labourId,
+              start_time: offlineStartTime.toISOString(),
+              contraction_id: contractionId,
+            },
+          },
+        };
         await enqueueCommand(labourId, command);
         syncManager.refreshPendingCount();
         return { success: true, offline: true, contractionId };
       }
 
-      const response = await client.startContraction(labourId, startTime, contractionId);
+      const response = await client.startContraction(labourId, contractionId);
       if (!response.success) {
         throw new Error(response.error || 'Failed to start contraction');
       }
       return { success: true, offline: false, contractionId };
     },
 
-    onMutate: async ({ labourId, startTime, contractionId }) => {
+    onMutate: async ({ labourId, contractionId, startTime }) => {
       await queryClient.cancelQueries({
         queryKey: queryKeys.contractions.infinite(labourId),
       });
@@ -67,12 +67,13 @@ export function useStartContractionOffline(client: LabourServiceClient) {
         queryKeys.contractions.infinite(labourId)
       );
 
+      const optimisticStartTime = (startTime || new Date()).toISOString();
       const optimisticContraction = {
         contraction_id: contractionId,
         labour_id: labourId,
         duration: {
-          start_time: startTime.toISOString(),
-          end_time: startTime.toISOString(),
+          start_time: optimisticStartTime,
+          end_time: optimisticStartTime,
         },
         intensity: null,
         notes: null,
@@ -137,42 +138,42 @@ export function useEndContractionOffline(client: LabourServiceClient) {
   return useMutation({
     mutationFn: async ({
       labourId,
-      endTime,
       intensity,
       contractionId,
+      endTime,
     }: {
       labourId: string;
-      endTime: Date;
       intensity: number;
       contractionId: string;
+      endTime?: Date;
     }) => {
-      const command = {
-        type: 'Contraction',
-        payload: {
-          type: 'EndContraction',
-          payload: {
-            labour_id: labourId,
-            end_time: endTime.toISOString(),
-            intensity,
-            contraction_id: contractionId,
-          },
-        },
-      };
-
       if (!navigator.onLine) {
+        const offlineEndTime = endTime || new Date();
+        const command = {
+          type: 'Contraction',
+          payload: {
+            type: 'EndContraction',
+            payload: {
+              labour_id: labourId,
+              end_time: offlineEndTime.toISOString(),
+              intensity,
+              contraction_id: contractionId,
+            },
+          },
+        };
         await enqueueCommand(labourId, command);
         syncManager.refreshPendingCount();
         return { success: true, offline: true };
       }
 
-      const response = await client.endContraction(labourId, endTime, intensity, contractionId);
+      const response = await client.endContraction(labourId, intensity, contractionId);
       if (!response.success) {
         throw new Error(response.error || 'Failed to end contraction');
       }
       return { success: true, offline: false };
     },
 
-    onMutate: async ({ labourId, endTime, intensity, contractionId }) => {
+    onMutate: async ({ labourId, intensity, contractionId, endTime }) => {
       await queryClient.cancelQueries({
         queryKey: queryKeys.contractions.infinite(labourId),
       });
@@ -181,6 +182,7 @@ export function useEndContractionOffline(client: LabourServiceClient) {
         queryKeys.contractions.infinite(labourId)
       );
 
+      const optimisticEndTime = (endTime || new Date()).toISOString();
       queryClient.setQueryData<InfiniteData<ContractionPage>>(
         queryKeys.contractions.infinite(labourId),
         (old) => {
@@ -197,7 +199,7 @@ export function useEndContractionOffline(client: LabourServiceClient) {
                     ...c,
                     duration: {
                       ...c.duration,
-                      end_time: endTime.toISOString(),
+                      end_time: optimisticEndTime,
                     },
                     intensity,
                   };

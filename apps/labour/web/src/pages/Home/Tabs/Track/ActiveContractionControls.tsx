@@ -24,7 +24,6 @@ function EndContractionButton({
   const handleEndContraction = () => {
     mutation.mutate({
       intensity,
-      endTime: new Date(),
       labourId: labourId!,
       contractionId,
     });
@@ -51,10 +50,12 @@ export function ActiveContractionControls({
   stopwatchRef,
   activeContraction,
   disabled,
+  offset,
 }: {
   stopwatchRef: RefObject<StopwatchHandle>;
   activeContraction: ContractionReadModel;
   disabled: boolean;
+  offset: number;
 }) {
   const [intensity, setIntensity] = useState(5);
   const stopwatch = <Stopwatch ref={stopwatchRef} />;
@@ -62,11 +63,11 @@ export function ActiveContractionControls({
   useEffect(() => {
     const startTime = new Date(activeContraction.duration.start_time).getTime();
     const seconds = stopwatchRef.current?.seconds || 0;
-    const secondsElapsed = Math.round((Date.now() - startTime) / 1000);
+    const secondsElapsed = Math.max(0, Math.round((Date.now() + offset - startTime) / 1000));
     if (Math.abs(secondsElapsed - seconds) > 1) {
       stopwatchRef.current?.set(secondsElapsed);
     }
-  }, [stopwatchRef, activeContraction]);
+  }, [stopwatchRef, activeContraction, offset]);
 
   return (
     <Stack gap="lg" align="center">
