@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SubscriptionReadModel } from '@base/clients/labour_service/types';
+import { queryKeys } from '@base/hooks/queryKeys';
 import { IconBan, IconCheck, IconX } from '@tabler/icons-react';
-import { ActionIcon, Card, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { useQueryClient } from '@tanstack/react-query';
+import { ActionIcon, Card, Group, Skeleton, Stack, Text, Tooltip } from '@mantine/core';
 import { RoleBadge } from './RoleBadge';
 import { SubscriberAvatar } from './SubscriberAvatar';
 import { ManageSubscriptionMenu } from './SubscriberMenu';
@@ -11,6 +13,7 @@ import baseClasses from '@styles/base.module.css';
 export function SubscribersTable({
   subscriptions,
   subscriberById,
+  labourId,
   status,
   onApprove,
   onReject,
@@ -18,12 +21,26 @@ export function SubscribersTable({
 }: {
   subscriptions: SubscriptionReadModel[];
   subscriberById: { [k: string]: { id: string; firstName: string; lastName: string } };
+  labourId: string;
   status: string;
   onApprove?: (subscriptionId: string) => void;
   onReject?: (subscriptionId: string) => void;
   onUnblock?: (subscriptionId: string) => void;
 }) {
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const hasInvalidatedRef = useRef(false);
+
+  const missingSubscribers = subscriptions.some((sub) => !subscriberById[sub.subscriber_id]);
+
+  useEffect(() => {
+    if (missingSubscribers && !hasInvalidatedRef.current) {
+      hasInvalidatedRef.current = true;
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.users.listByLabour(labourId),
+      });
+    }
+  }, [missingSubscribers, labourId, queryClient]);
 
   if (subscriptions.length === 0) {
     let message = '';
@@ -68,17 +85,29 @@ export function SubscribersTable({
           >
             <Group justify="space-between" wrap="nowrap">
               <Group gap="sm" wrap="nowrap" style={{ minWidth: 0 }}>
-                <SubscriberAvatar
-                  subscriberId={subscriber.id}
-                  firstName={subscriber.firstName}
-                  lastName={subscriber.lastName}
-                />
-                <div style={{ minWidth: 0 }}>
-                  <Text fw={500} className={classes.cropText} size="sm">
-                    {subscriber.firstName} {subscriber.lastName}
-                  </Text>
-                  {status === 'subscribed' && <RoleBadge role={subscription.role} />}
-                </div>
+                {subscriber ? (
+                  <>
+                    <SubscriberAvatar
+                      subscriberId={subscriber.id}
+                      firstName={subscriber.firstName}
+                      lastName={subscriber.lastName}
+                    />
+                    <div style={{ minWidth: 0 }}>
+                      <Text fw={500} className={classes.cropText} size="sm">
+                        {subscriber.firstName} {subscriber.lastName}
+                      </Text>
+                      {status === 'subscribed' && <RoleBadge role={subscription.role} />}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Skeleton height={40} circle />
+                    <div style={{ minWidth: 0 }}>
+                      <Skeleton height={14} width={120} mb={4} />
+                      {status === 'subscribed' && <Skeleton height={18} width={80} />}
+                    </div>
+                  </>
+                )}
               </Group>
 
               {/* Requested: Show inline Accept/Reject buttons */}
