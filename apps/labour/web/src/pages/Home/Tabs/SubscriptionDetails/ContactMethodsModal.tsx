@@ -63,7 +63,6 @@ export default function ContactMethodsModal({
       label: 'Text',
       disabled: form.values.contactMethods.includes(SubscriberContactMethod.WHATSAPP),
     },
-    { value: 'EMAIL', label: 'Email' },
   ];
 
   return (

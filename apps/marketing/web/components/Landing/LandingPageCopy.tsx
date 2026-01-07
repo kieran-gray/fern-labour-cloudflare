@@ -2,7 +2,7 @@ export const HeroText = {
   title: 'Your Labour Journey, Shared Simply',
   subtitle: 'For expecting mothers in the UK',
   description:
-    'Track contractions and share labour progress automatically with your chosen family members via SMS, email, or WhatsApp.',
+    'Track contractions and share labour progress automatically with your chosen family members via SMS or WhatsApp.',
   cta: 'Start my labour journey',
 };
 
@@ -25,8 +25,8 @@ export const ProblemSolutionText = {
     {
       title: "Everyone's Preferred Way",
       description:
-        'Send the same beautiful updates through SMS, email, or WhatsApp. Everyone receives your news in the format they prefer, making it easy for family to stay connected.',
-      screenshotAlt: 'Multi-channel notification settings showing SMS, email and WhatsApp options',
+        'Send the same beautiful updates through SMS or WhatsApp. Everyone receives your news in the format they prefer, making it easy for family to stay connected.',
+      screenshotAlt: 'Multi-channel notification settings showing SMS and WhatsApp options',
       imageBaseName: 'share',
     },
     {
