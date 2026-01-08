@@ -1,21 +1,160 @@
+/* Manage Component - Title section styling */
+
+.container {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Header Section */
+.header {
+  text-align: center;
+  margin-bottom: clamp(24px, 5vw, 40px);
+  position: relative;
+}
+
+.headerDecoration {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background-color: var(--mantine-primary-color-4);
+  border-radius: 2px;
+}
+
+.greeting {
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
 .title {
+  font-family: Poppins, sans-serif;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 700;
   color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
-  word-wrap: break-word;
-  overflow-wrap: anywhere;
-  hyphens: auto;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
 }
 
-.infoCard {
-  background-color: light-dark(var(--mantine-color-primary-0), var(--mantine-color-primary-4));
-  border: none;
+.titleAccent {
+  color: var(--mantine-primary-color-5);
 }
 
-.labourBadge {
-  color: var(--mantine-color-white);
-  background-color: light-dark(var(--mantine-primary-color-4), var(--mantine-primary-color-4));
+.subtitle {
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto;
 }
 
+/* Stat Cards - copied from LabourStatistics */
+.statCardsContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--mantine-spacing-sm);
+  width: 100%;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.statCard {
+  background-color: light-dark(var(--mantine-color-primary-0), var(--mantine-color-primary-3));
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--mantine-spacing-xs);
+}
+
+.statCardLabel {
+  font-size: var(--mantine-font-size-xs);
+  color: light-dark(var(--mantine-color-pink-7), var(--mantine-color-gray-4));
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statCardValue {
+  font-size: var(--mantine-font-size-xl);
+  font-weight: 700;
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-1));
+  font-variant-numeric: tabular-nums;
+
+  @media (max-width: $mantine-breakpoint-xs) {
+    font-size: var(--mantine-font-size-lg);
+  }
+}
+
+.statCardSubtext {
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 500;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-5));
+}
+
+/* Note Card */
 .noteCard {
   background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
   border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: clamp(20px, 4vw, 32px);
+}
+
+.noteLabel {
+  font-size: 0.85rem;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  margin-bottom: 8px;
+}
+
+.noteText {
+  font-size: 0.95rem;
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+  line-height: 1.6;
+}
+
+/* Complete Labour Section */
+.completeSection {
+  margin-top: clamp(28px, 5vw, 40px);
+  padding-top: clamp(24px, 4vw, 32px);
+  border-top: 1px solid light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.06));
+}
+
+.completeSectionTitle {
+  font-family: Poppins, sans-serif;
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
+  font-weight: 600;
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+  margin-bottom: 12px;
+}
+
+.completeSectionText {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* Button Row */
+.buttonRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    flex-direction: column;
+  }
 }
