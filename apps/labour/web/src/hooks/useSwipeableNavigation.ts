@@ -80,8 +80,7 @@ export function getFloatingControlsPadding({
   isOnline,
   disabled = false,
 }: FloatingControlsPaddingOptions): string {
-  const withSafeArea = (px: number) =>
-    `calc(${px}px + env(safe-area-inset-bottom, 0px))`;
+  const withSafeArea = (px: number) => `calc(${px}px + env(safe-area-inset-bottom, 0px))`;
 
   // No floating controls on desktop (>=768px), when completed, or when disabled
   if (window.innerWidth >= 768 || completed || disabled) {
