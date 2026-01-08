@@ -1,0 +1,48 @@
+name: Contact-Us Service
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'services/contact-service/**'
+      - 'packages/workers-shared/**'
+      - 'Cargo.toml'
+      - '.github/workflows/service-contact-service.yaml'
+      - '.github/workflows/_reusable-worker-*.yaml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'services/contact-service/**'
+      - 'packages/workers-shared/**'
+      - 'Cargo.toml'
+      - '.github/workflows/service-contact-service.yaml'
+      - '.github/workflows/_reusable-worker-*.yaml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_reusable-rust-worker-ci.yaml
+    with:
+      worker-name: fern-labour-contact-us
+      worker-path: services/contact-service
+      has-integration-tests: true
+      has-migrations: true
+
+  deploy:
+    needs: ci
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    uses: ./.github/workflows/_reusable-rust-worker-deploy.yaml
+    with:
+      worker-name: fern-labour-contact-us
+      worker-path: services/contact-service
+    secrets: inherit

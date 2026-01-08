@@ -1,0 +1,52 @@
+name: Notification Generation Service
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'services/notification-service/generation/**'
+      - 'services/notification-service/packages/**'
+      - 'services/notification-service/Cargo.toml'
+      - 'packages/workers-shared/**'
+      - '.github/workflows/service-notification-generation.yaml'
+      - '.github/workflows/_reusable-worker-*.yaml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'services/notification-service/generation/**'
+      - 'services/notification-service/packages/**'
+      - 'services/notification-service/Cargo.toml'
+      - 'packages/workers-shared/**'
+      - '.github/workflows/service-notification-generation.yaml'
+      - '.github/workflows/_reusable-worker-*.yaml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_reusable-rust-worker-ci.yaml
+    with:
+      worker-name: notification-generation
+      worker-path: services/notification-service/generation
+      workspace-path: services/notification-service
+      has-integration-tests: false
+      has-migrations: false
+
+  deploy:
+    needs: ci
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    uses: ./.github/workflows/_reusable-rust-worker-deploy.yaml
+    with:
+      worker-name: notification-generation
+      worker-path: services/notification-service/generation
+      workspace-path: services/notification-service
+    secrets: inherit
