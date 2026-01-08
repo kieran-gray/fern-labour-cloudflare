@@ -2,7 +2,8 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use anyhow::{Context, Result, anyhow};
-use tracing::{debug, error};
+use chrono::Utc;
+use tracing::{debug, error, warn};
 
 use fern_labour_event_sourcing_rs::{
     CheckpointRepository, CheckpointStatus, EventEnvelopeAdapter, EventStoreTrait,
@@ -10,6 +11,8 @@ use fern_labour_event_sourcing_rs::{
 };
 
 use crate::durable_object::write_side::domain::LabourEvent;
+
+const MAX_PROJECTOR_ERROR_COUNT: i64 = 5;
 
 pub struct SyncProjectionProcessor {
     event_store: Rc<dyn EventStoreTrait>,
@@ -41,17 +44,35 @@ impl SyncProjectionProcessor {
     pub fn process_projections(&self) -> Result<()> {
         debug!("Starting checkpoint-based projection processing");
 
+        let mut errors: Vec<String> = Vec::new();
+
         for (projector_name, projector) in &self.projectors {
-            if let Err(e) = self.process_single_projector(projector_name, projector.as_ref()) {
-                error!(
+            if let Ok(Some(checkpoint)) = self.checkpoint_repository.get_checkpoint(projector_name)
+                && checkpoint.status == CheckpointStatus::Error
+                && checkpoint.error_count >= MAX_PROJECTOR_ERROR_COUNT
+            {
+                warn!(
                     projector = %projector_name,
-                    error = %e,
-                    "Failed to process projector"
+                    error_count = checkpoint.error_count,
+                    "Skipping faulted projector - exceeded max error count. Manual reset required."
                 );
+                continue;
+            }
+
+            if let Err(e) = self.process_single_projector(projector_name, projector.as_ref()) {
+                error!(projector = %projector_name, error = %e, "Failed to process projector");
+                errors.push(format!("{}: {}", projector_name, e));
             }
         }
 
-        Ok(())
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(anyhow!(
+                "One or more projectors failed: {}",
+                errors.join("; ")
+            ))
+        }
     }
 
     fn process_single_projector(
@@ -97,9 +118,34 @@ impl SyncProjectionProcessor {
             "Processing events"
         );
 
-        projector
-            .project_batch(&envelopes)
-            .map_err(|err| anyhow!("Projector {projector_name} failed to process batch: {err}",))?;
+        if let Err(err) = projector.project_batch(&envelopes) {
+            let new_error_count = checkpoint.error_count + 1;
+            let error_checkpoint = ProjectionCheckpoint {
+                projector_name: projector_name.to_string(),
+                last_processed_sequence: checkpoint.last_processed_sequence,
+                last_processed_at: checkpoint.last_processed_at,
+                updated_at: Utc::now(),
+                status: CheckpointStatus::Error,
+                error_message: Some(err.to_string()),
+                error_count: new_error_count,
+            };
+
+            if let Err(update_err) = self
+                .checkpoint_repository
+                .update_checkpoint(&error_checkpoint)
+            {
+                error!(
+                    projector = %projector_name,
+                    error = %update_err,
+                    "Failed to update checkpoint with error state"
+                );
+            }
+
+            return Err(anyhow!(
+                "Projector {projector_name} failed to process batch (attempt {}): {err}",
+                new_error_count
+            ));
+        }
 
         let last_envelope = envelopes.last().unwrap();
         let new_checkpoint = ProjectionCheckpoint {
@@ -146,7 +192,15 @@ impl SyncProjectionProcessor {
                     .get_checkpoint(projector_name)
                     .ok()
                     .flatten()
-                    .map(|cp| cp.last_processed_sequence)
+                    .and_then(|cp| {
+                        if cp.status == CheckpointStatus::Error
+                            && cp.error_count >= MAX_PROJECTOR_ERROR_COUNT
+                        {
+                            None
+                        } else {
+                            Some(cp.last_processed_sequence)
+                        }
+                    })
             })
             .min()
             .unwrap_or(0)
