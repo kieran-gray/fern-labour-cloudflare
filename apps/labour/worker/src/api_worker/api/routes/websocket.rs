@@ -25,7 +25,7 @@ pub async fn handle_websocket_connect(
 
     match upgrade_header {
         Ok(Some(header)) if header == "websocket" => (),
-        _ => return Ok(Response::empty()?.with_status(426))
+        _ => return Ok(Response::empty()?.with_status(426)),
     }
 
     let response = ctx
