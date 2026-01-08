@@ -14,7 +14,7 @@ pub enum WebSocketRequest {
         #[serde(flatten)]
         query: ApiQuery,
     },
-    ServerTimestamp
+    ServerTimestamp,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

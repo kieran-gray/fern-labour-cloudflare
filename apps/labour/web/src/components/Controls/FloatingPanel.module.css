@@ -1,7 +1,7 @@
 /* Floating Panel - Collapsible bottom panel */
 .floatingPanel {
   position: fixed;
-  bottom: var(--bottom-bar-height);
+  bottom: calc(var(--bottom-bar-height) + env(safe-area-inset-bottom, 0px));
   left: 0;
   right: 0;
   z-index: 99;

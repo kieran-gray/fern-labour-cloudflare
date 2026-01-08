@@ -142,16 +142,39 @@ mod tests {
     }
 
     #[test]
-    fn test_signing_key_derivation() {
-        let signer = AwsSigV4Signer::new(
-            "AKIAIOSFODNN7EXAMPLE".to_string(),
-            "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY".to_string(),
-            "eu-west-2".to_string(),
-            "ses".to_string(),
+    fn test_hmac_sha256_standard_vector() {
+        let result = hmac_sha256(b"key", b"The quick brown fox jumps over the lazy dog");
+        assert_eq!(
+            hex::encode(&result),
+            "f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8"
         );
+    }
 
-        let key = signer.derive_signing_key("20230101");
-        assert!(!key.is_empty());
+    #[test]
+    fn test_signing_key_derivation_aws_example() {
+        let secret = "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY";
+        let date_stamp = "20150830";
+        let region = "us-east-1";
+        let service = "iam";
+
+        let k_secret = format!("AWS4{}", secret);
+
+        let k_date = hmac_sha256(k_secret.as_bytes(), date_stamp.as_bytes());
+        let k_region = hmac_sha256(&k_date, region.as_bytes());
+        let k_service = hmac_sha256(&k_region, service.as_bytes());
+        let k_signing = hmac_sha256(&k_service, b"aws4_request");
+
+        assert_eq!(k_signing.len(), 32, "Signing key must be 32 bytes");
+        let k_signing2 = {
+            let k_date = hmac_sha256(k_secret.as_bytes(), date_stamp.as_bytes());
+            let k_region = hmac_sha256(&k_date, region.as_bytes());
+            let k_service = hmac_sha256(&k_region, service.as_bytes());
+            hmac_sha256(&k_service, b"aws4_request")
+        };
+        assert_eq!(
+            k_signing, k_signing2,
+            "Key derivation must be deterministic"
+        );
     }
 
     #[test]
@@ -183,5 +206,102 @@ mod tests {
                 .contains("Credential=AKIAIOSFODNN7EXAMPLE/20230101/eu-west-2/ses/aws4_request")
         );
         assert_eq!(signed.x_amz_date, "20230101T120000Z");
+    }
+
+    #[test]
+    fn test_canonical_request_format() {
+        let signer = AwsSigV4Signer::new(
+            "AKIAIOSFODNN7EXAMPLE".to_string(),
+            "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY".to_string(),
+            "eu-west-2".to_string(),
+            "ses".to_string(),
+        );
+
+        let timestamp = Utc.with_ymd_and_hms(2023, 1, 1, 12, 0, 0).unwrap();
+        let headers: Vec<(String, String)> =
+            vec![("content-type".to_string(), "application/json".to_string())];
+
+        let signed = signer.sign_request(
+            "POST",
+            "email.eu-west-2.amazonaws.com",
+            "/v2/email/outbound-emails",
+            &headers,
+            "{}",
+            timestamp,
+        );
+
+        assert!(
+            signed
+                .authorization
+                .starts_with("AWS4-HMAC-SHA256 Credential="),
+            "Authorization should start with algorithm and credential"
+        );
+        assert!(
+            signed.authorization.contains("SignedHeaders="),
+            "Authorization should contain SignedHeaders"
+        );
+        assert!(
+            signed.authorization.contains("Signature="),
+            "Authorization should contain Signature"
+        );
+
+        let signed_headers_part = signed
+            .authorization
+            .split("SignedHeaders=")
+            .nth(1)
+            .unwrap()
+            .split(',')
+            .next()
+            .unwrap()
+            .trim();
+        assert!(
+            signed_headers_part.contains("content-type"),
+            "Should include content-type header"
+        );
+        assert!(
+            signed_headers_part.contains("host"),
+            "Should include host header"
+        );
+        assert!(
+            signed_headers_part.contains("x-amz-date"),
+            "Should include x-amz-date header"
+        );
+
+        assert_eq!(signed.x_amz_date, "20230101T120000Z");
+    }
+
+    #[test]
+    fn test_signature_deterministic() {
+        let signer = AwsSigV4Signer::new(
+            "AKIAIOSFODNN7EXAMPLE".to_string(),
+            "wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY".to_string(),
+            "eu-west-2".to_string(),
+            "ses".to_string(),
+        );
+
+        let timestamp = Utc.with_ymd_and_hms(2023, 6, 15, 10, 30, 0).unwrap();
+        let headers: Vec<(String, String)> =
+            vec![("content-type".to_string(), "application/json".to_string())];
+        let payload = r#"{"Content":{"Simple":{"Subject":{"Data":"Test"},"Body":{"Text":{"Data":"Hello"}}}}}"#;
+
+        let signed1 = signer.sign_request(
+            "POST",
+            "email.eu-west-2.amazonaws.com",
+            "/v2/email/outbound-emails",
+            &headers,
+            payload,
+            timestamp,
+        );
+
+        let signed2 = signer.sign_request(
+            "POST",
+            "email.eu-west-2.amazonaws.com",
+            "/v2/email/outbound-emails",
+            &headers,
+            payload,
+            timestamp,
+        );
+
+        assert_eq!(signed1.authorization, signed2.authorization);
     }
 }

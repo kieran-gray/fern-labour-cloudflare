@@ -108,11 +108,9 @@ impl DurableObject for LabourRoom {
                     Err(e) => (false, None, Some(e.to_string())),
                 }
             }
-            WebSocketRequest::ServerTimestamp => (
-                true,
-                Some(json!({"server_timestamp": Utc::now()})),
-                None,
-            ),
+            WebSocketRequest::ServerTimestamp => {
+                (true, Some(json!({"server_timestamp": Utc::now()})), None)
+            }
         };
 
         let response = serde_json::json!({

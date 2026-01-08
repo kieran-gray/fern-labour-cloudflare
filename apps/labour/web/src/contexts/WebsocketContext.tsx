@@ -125,22 +125,14 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
         const hiddenDuration = hiddenAtRef.current ? Date.now() - hiddenAtRef.current : 0;
         hiddenAtRef.current = null;
 
-        const STALE_THRESHOLD_MS = 20_000;
-
-        if (hiddenDuration > STALE_THRESHOLD_MS) {
-          console.log(
-            `[WebSocket] App was hidden for ${Math.round(hiddenDuration / 1000)}s, forcing reconnect`
-          );
-          if (wsRef.current) {
-            wsRef.current.close();
-          }
-          clearTimeout(reconnectTimeoutRef.current);
-          reconnectTimeoutRef.current = setTimeout(connect, 100);
-        } else if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-          console.log('[WebSocket] App became visible, connection closed, reconnecting');
-          clearTimeout(reconnectTimeoutRef.current);
-          connect();
+        console.log(
+          `[WebSocket] App became visible after ${Math.round(hiddenDuration / 1000)}s, forcing reconnect`
+        );
+        if (wsRef.current) {
+          wsRef.current.close();
         }
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = setTimeout(connect, 100);
       }
     };
 

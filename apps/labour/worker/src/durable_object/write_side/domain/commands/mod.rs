@@ -131,7 +131,7 @@ impl From<ContractionCommand> for LabourCommand {
                     contraction_id,
                     start_time: datetime,
                 })
-            },
+            }
             ContractionCommand::EndContraction {
                 labour_id,
                 contraction_id,
@@ -149,7 +149,7 @@ impl From<ContractionCommand> for LabourCommand {
                     end_time: datetime,
                     intensity,
                 })
-            },
+            }
             ContractionCommand::UpdateContraction {
                 labour_id,
                 contraction_id,
