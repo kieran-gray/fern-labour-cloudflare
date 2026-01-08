@@ -46,7 +46,7 @@
     "CLOUDFLARE_SITEVERIFY_URL": "https://challenges.cloudflare.com/turnstile/v0/siteverify",
     "ALLOWED_ORIGINS": "https://fernlabour.com,https://track.fernlabour.com,https://app.fernlabour.com",
     "SLACK_CHANNEL": "C08TY0QDY30",
-    "SLACK_MESSAGE_URL": "https://slack.com/api/chat.postMessage",
+    "SLACK_MESSAGE_URL": "https://slack.com/api/chat.postMessage"
   },
   "env": {
     "dev": {
@@ -68,7 +68,7 @@
         "CLOUDFLARE_SITEVERIFY_URL": "https://challenges.cloudflare.com/turnstile/v0/siteverify",
         "ALLOWED_ORIGINS": "",
         "SLACK_CHANNEL": "C08TY0QDY30",
-        "SLACK_MESSAGE_URL": "https://slack.com/api/chat.postMessage",
+        "SLACK_MESSAGE_URL": "https://slack.com/api/chat.postMessage"
       }
     }
   }

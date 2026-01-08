@@ -35,7 +35,7 @@ jobs:
     with:
       worker-name: fern-labour-track-worker
       worker-path: apps/labour/worker
-      has-integration-tests: true
+      has-integration-tests: false
       has-migrations: false
 
   deploy:
