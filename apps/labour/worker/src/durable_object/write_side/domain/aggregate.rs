@@ -674,29 +674,65 @@ mod tests {
 
             // Then - should emit LabourBegun before ContractionStarted
             let events = result.expect("should succeed");
-            assert_eq!(events.len(), 2);
+            assert_eq!(events.len(), 3);
             assert!(matches!(events[0], LabourEvent::LabourBegun(_)));
-            assert!(matches!(events[1], LabourEvent::ContractionStarted(_)));
+            assert!(matches!(events[1], LabourEvent::LabourPhaseChanged(_)));
+            assert!(matches!(events[2], LabourEvent::ContractionStarted(_)));
         }
 
         #[test]
-        fn given_active_contraction_when_start_another_then_error() {
+        fn given_completed_contraction_when_start_another_with_same_id_then_error() {
             // Given
             let mut events = begun_labour_events();
+            let contraction_id = Uuid::now_v7();
             events.push(LabourEvent::ContractionStarted(ContractionStarted {
                 labour_id: labour_id(),
-                contraction_id: Uuid::now_v7(),
+                contraction_id: contraction_id,
                 start_time: Utc::now(),
+            }));
+            events.push(LabourEvent::ContractionEnded(ContractionEnded {
+                labour_id: labour_id(),
+                contraction_id,
+                end_time: Utc::now(),
+                intensity: 5,
             }));
             let harness = AggregateTestHarness::given(events);
 
             // When
             let result = harness.when(LabourCommand::StartContraction(StartContraction {
                 labour_id: labour_id(),
-                contraction_id: Uuid::now_v7(),
+                contraction_id,
                 start_time: Utc::now(),
             }));
+            // Then
+            assert!(matches!(result, Err(LabourError::InvalidCommand(_))));
+        }
 
+        #[test]
+        fn given_contraction_in_progress_when_end_twice_then_error() {
+            // Given
+            let mut events = begun_labour_events();
+            let contraction_id = Uuid::now_v7();
+            events.push(LabourEvent::ContractionStarted(ContractionStarted {
+                labour_id: labour_id(),
+                contraction_id: contraction_id,
+                start_time: Utc::now(),
+            }));
+            events.push(LabourEvent::ContractionEnded(ContractionEnded {
+                labour_id: labour_id(),
+                contraction_id,
+                end_time: Utc::now(),
+                intensity: 5,
+            }));
+            let harness = AggregateTestHarness::given(events);
+
+            // When
+            let result = harness.when(LabourCommand::EndContraction(EndContraction {
+                labour_id: labour_id(),
+                contraction_id,
+                end_time: Utc::now(),
+                intensity: 5,
+            }));
             // Then
             assert!(matches!(result, Err(LabourError::InvalidCommand(_))));
         }
@@ -844,7 +880,7 @@ mod tests {
             let active_contraction_id = Uuid::now_v7();
             events.push(LabourEvent::ContractionStarted(ContractionStarted {
                 labour_id: labour_id(),
-                contraction_id: Uuid::now_v7(),
+                contraction_id: active_contraction_id,
                 start_time: Utc::now(),
             }));
             let harness = AggregateTestHarness::given(events);
@@ -877,7 +913,7 @@ mod tests {
             let active_contraction_id = Uuid::now_v7();
             events.push(LabourEvent::ContractionStarted(ContractionStarted {
                 labour_id: labour_id(),
-                contraction_id: Uuid::now_v7(),
+                contraction_id: active_contraction_id,
                 start_time: Utc::now(),
             }));
             let harness = AggregateTestHarness::given(events);
@@ -911,7 +947,7 @@ mod tests {
             let active_contraction_id = Uuid::now_v7();
             events.push(LabourEvent::ContractionStarted(ContractionStarted {
                 labour_id: labour_id(),
-                contraction_id: Uuid::now_v7(),
+                contraction_id: active_contraction_id,
                 start_time: Utc::now(),
             }));
             let harness = AggregateTestHarness::given(events);

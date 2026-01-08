@@ -35,6 +35,12 @@ pub fn handle_start_contraction(
         ));
     }
 
+    if labour.find_contraction(cmd.contraction_id).is_some() {
+        return Err(LabourError::InvalidCommand(
+            "Contraction already exists with ID".to_string(),
+        ));
+    }
+
     let mut events = vec![];
 
     if current_phase == &LabourPhase::PLANNED {
@@ -71,11 +77,17 @@ pub fn handle_end_contraction(
         ));
     }
 
-    if labour.find_contraction(cmd.contraction_id).is_none() {
+    let Some(contraction) = labour.find_contraction(cmd.contraction_id) else {
         return Err(LabourError::InvalidCommand(
             "Contraction not found".to_string(),
         ));
     };
+
+    if !contraction.is_active() {
+        return Err(LabourError::InvalidCommand(
+            "Contraction has already been ended".to_string(),
+        ));
+    }
 
     let contraction_ended = LabourEvent::ContractionEnded(ContractionEnded {
         labour_id: cmd.labour_id,
