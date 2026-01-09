@@ -4,15 +4,15 @@ import { ActionIcon } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import image from './protected.svg';
 import { SubscribersHelpModal } from './SubscribersHelpModal';
-import { ManageSubscribersTabs } from './SubscriberTabs';
+import { SubscribersView } from './SubscribersView';
 
 export function SubscribersContainer() {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
     <CardContentBottom
-      title="Manage your subscribers"
-      description="Here, you can view and manage your subscribers. Stay in control of who can view your labour by removing or blocking unwanted subscribers."
+      title="Your labour circle"
+      description="The people who are following your journey. Birth partners and support people can see real-time updates, while loved ones receive milestone notifications."
       image={image}
       mobileImage={image}
       helpButton={
@@ -24,7 +24,7 @@ export function SubscribersContainer() {
         </>
       }
     >
-      <ManageSubscribersTabs />
+      <SubscribersView />
     </CardContentBottom>
   );
 }

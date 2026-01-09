@@ -202,19 +202,22 @@ export const LabourUpdates = memo(
       isOwnerView,
     ]);
 
-    const newestUpdateId =
-      labourUpdates.length > 0 ? labourUpdates[labourUpdates.length - 1].labour_update_id : null;
-    const prevNewestIdRef = useRef<string | null>(null);
+    const hasInitialScrolled = useRef(false);
 
     useEffect(() => {
       if (labourUpdates.length === 0 || isTransitioning) {
         return;
       }
 
-      scrollToBottom(true);
+      const isInitialLoad = !hasInitialScrolled.current;
 
-      prevNewestIdRef.current = newestUpdateId;
-    }, [labourUpdates.length, newestUpdateId, scrollToBottom, isTransitioning]);
+      if (isInitialLoad) {
+        scrollToBottom(false);
+        hasInitialScrolled.current = true;
+      } else {
+        scrollToBottom(true);
+      }
+    }, [labourUpdates.length, scrollToBottom, isTransitioning]);
 
     const title = !isSubscriberView
       ? completed
@@ -290,7 +293,7 @@ export const LabourUpdates = memo(
                       <div className={classes.imageFlexRow}>
                         <Image src={image} className={classes.image} />
                       </div>
-                      <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+                      <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.emptyState}>
                         {emptyStateMessage}
                       </Text>
                     </>
@@ -333,7 +336,7 @@ export const LabourUpdates = memo(
                       <Space h="md" />
                     </>
                   ) : (
-                    <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+                    <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.emptyState}>
                       {emptyStateMessage}
                     </Text>
                   )}

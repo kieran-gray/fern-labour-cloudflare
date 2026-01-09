@@ -169,8 +169,6 @@ export const LabourStatistics = memo(
     const renderStatisticsContent = () => (
       <>
         {renderTimingInfo()}
-        <Space h="sm" />
-
         {isLoading && (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
             <Loader />
@@ -178,11 +176,7 @@ export const LabourStatistics = memo(
         )}
 
         {!hasData && !isLoading && (
-          <Text
-            fz={{ base: 'sm', xs: 'md' }}
-            className={baseClasses.importantText}
-            style={{ display: 'flex', alignItems: 'center' }}
-          >
+          <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.emptyState}>
             {emptyStateMessage}
           </Text>
         )}

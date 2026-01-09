@@ -3,6 +3,7 @@
     flex-wrap: wrap;
     border-radius: var(--mantine-radius-xl);
     width: 100%;
+    background-color: light-dark(#fff, var(--mantine-color-primary-2));
     max-width: 1100px;
     justify-content: center;
     box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 3px, rgba(0, 0, 0, 0.05) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
@@ -369,8 +370,20 @@
     min-height: 80px;
     border-radius: var(--mantine-radius-lg);
     margin-top: var(--mantine-spacing-sm);
-    background-color: light-dark(var(--mantine-color-primary-1), var(--mantine-color-primary-4));
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-5));
+    border: 2px dashed light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
     width: 100%;
+}
+
+.disabledState {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-lg);
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-5));
+  border: 2px dashed light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
 
 .emptyStateGray {

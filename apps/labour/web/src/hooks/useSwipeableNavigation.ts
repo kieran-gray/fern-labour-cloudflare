@@ -80,6 +80,8 @@ export function getFloatingControlsPadding({
   isOnline,
   disabled = false,
 }: FloatingControlsPaddingOptions): string {
+  const withSafeArea = (px: number) => `calc(${px}px + env(safe-area-inset-bottom, 0px))`;
+
   // No floating controls on desktop (>=768px), when completed, or when disabled
   if (window.innerWidth >= 768 || completed || disabled) {
     return '30px';
@@ -87,16 +89,16 @@ export function getFloatingControlsPadding({
 
   if (activeTab === 'track') {
     if (!isContractionControlsExpanded) {
-      return '50px';
+      return withSafeArea(50);
     }
-    return hasActiveContraction ? '310px' : '140px';
+    return withSafeArea(hasActiveContraction ? 310 : 140);
   }
 
   if (activeTab === 'updates') {
     if (isUpdateControlsExpanded) {
-      return isOnline ? '190px' : '120px';
+      return withSafeArea(isOnline ? 210 : 120);
     }
-    return '55px';
+    return withSafeArea(55);
   }
 
   return '30px';

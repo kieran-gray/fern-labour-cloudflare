@@ -1,0 +1,104 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-lg);
+}
+
+.pendingSection {
+  background-color: light-dark(#fffbf5, var(--mantine-color-dark-2));
+  border: 2px solid light-dark(#e9a84a, #b8860b);
+  border-radius: var(--mantine-radius-lg);
+  padding: var(--mantine-spacing-md);
+}
+
+.pendingLabel {
+  color: light-dark(#b8860b, #e9a84a);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pendingCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-md);
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-3));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  transition: border-color 0.2s ease;
+}
+
+.pendingCard:hover {
+  border-color: light-dark(#daa520, var(--mantine-color-dark-5));
+}
+
+.subscriberCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-md);
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-2));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: var(--mantine-radius-lg);
+  padding: var(--mantine-spacing-md);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.subscriberCard:hover {
+  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-3));
+}
+
+.blockedSection {
+  border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  padding-top: var(--mantine-spacing-md);
+  margin-top: var(--mantine-spacing-sm);
+}
+
+.blockedToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-md);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  transition: background-color 0.15s ease;
+}
+
+.blockedToggle:hover {
+  background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-3));
+}
+
+.blockedRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-sm);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-md);
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-2));
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.blockedRow:hover {
+  opacity: 1;
+}
+
+.blockedName {
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+}
+
+.cropText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.subtleText {
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+}

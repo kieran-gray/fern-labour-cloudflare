@@ -1,11 +1,11 @@
-import { RefObject, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ContractionReadModel } from '@base/clients/labour_service/types';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
 import { useEndContractionOffline } from '@base/offline/hooks';
 import { IconHourglassHigh } from '@tabler/icons-react';
 import { Button, Slider, Stack, Text } from '@mantine/core';
-import Stopwatch, { StopwatchHandle } from './Stopwatch';
+import Stopwatch from './Stopwatch';
 import classes from './Contractions.module.css';
 
 function EndContractionButton({
@@ -47,31 +47,22 @@ function EndContractionButton({
 }
 
 export function ActiveContractionControls({
-  stopwatchRef,
   activeContraction,
   disabled,
   offset,
 }: {
-  stopwatchRef: RefObject<StopwatchHandle>;
   activeContraction: ContractionReadModel;
   disabled: boolean;
   offset: number;
 }) {
   const [intensity, setIntensity] = useState(5);
-  const stopwatch = <Stopwatch ref={stopwatchRef} />;
-
-  useEffect(() => {
-    const startTime = new Date(activeContraction.duration.start_time).getTime();
-    const seconds = stopwatchRef.current?.seconds || 0;
-    const secondsElapsed = Math.max(0, Math.round((Date.now() + offset - startTime) / 1000));
-    if (Math.abs(secondsElapsed - seconds) > 1) {
-      stopwatchRef.current?.set(secondsElapsed);
-    }
-  }, [stopwatchRef, activeContraction, offset]);
+  const startTimestamp = new Date(activeContraction.duration.start_time).getTime();
 
   return (
     <Stack gap="lg" align="center">
-      <div className={classes.stopwatchWrapper}>{stopwatch}</div>
+      <div className={classes.stopwatchWrapper}>
+        <Stopwatch startTimestamp={startTimestamp} offset={offset} />
+      </div>
       <div className={classes.sliderGroup}>
         <Text className={classes.sliderLabel}>Your contraction intensity</Text>
         <Slider

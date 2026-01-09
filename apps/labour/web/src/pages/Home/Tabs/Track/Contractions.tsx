@@ -136,7 +136,7 @@ export const Contractions = memo(
                   <div className={classes.imageFlexRow}>
                     <Image src={image} className={classes.image} />
                   </div>
-                  <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+                  <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.emptyState}>
                     {emptyStateMessage}
                   </Text>
                 </div>

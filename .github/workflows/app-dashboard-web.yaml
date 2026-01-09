@@ -1,0 +1,94 @@
+name: Admin Web CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/admin/web/**'
+      - 'packages/ui/**'
+      - 'package-lock.json'
+      - '.github/workflows/app-dashboard-web.yaml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'apps/admin/web/**'
+      - 'packages/ui/**'
+      - 'package-lock.json'
+      - '.github/workflows/app-dashboard-web.yaml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    name: CI for Admin
+    defaults:
+      run:
+        working-directory: ./apps/admin/web
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        working-directory: .
+        run: npm ci
+
+      - name: Check code formatting
+        run: npm run format:check
+
+      - name: Run linting
+        run: npm run lint:check
+
+      - name: Run type checking
+        run: npm run typecheck
+
+  deploy:
+    needs: ci
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: read
+      deployments: write
+    name: Deploy Cloudflare Worker
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build --workspace=apps/admin/web
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: ./apps/admin/web
+          command: deploy

@@ -1,0 +1,88 @@
+name: Reusable Rust Worker CI
+
+on:
+  workflow_call:
+    inputs:
+      worker-name:
+        description: 'Name of the worker (e.g., passwords, authenticator)'
+        required: true
+        type: string
+      worker-path:
+        description: 'Path to the worker directory (e.g., apps/passwords/worker, services/authentication)'
+        required: true
+        type: string
+      workspace-path:
+        description: 'Path to the Cargo workspace root (defaults to repository root ".")'
+        required: false
+        type: string
+        default: '.'
+      has-integration-tests:
+        description: 'Whether to run integration tests'
+        required: false
+        type: boolean
+        default: true
+      has-migrations:
+        description: 'Whether the worker has database migrations'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    defaults:
+      run:
+        working-directory: ${{ inputs.worker-path }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt, clippy
+          target: wasm32-unknown-unknown
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ inputs.workspace-path }}
+          shared-key: ${{ inputs.worker-name }}
+          key: ${{ hashFiles(format('{0}/Cargo.lock', inputs.workspace-path)) }}
+
+      - name: Build dependencies
+        run: cargo check --target wasm32-unknown-unknown
+
+      - name: Check code formatting
+        run: cargo fmt --check
+
+      - name: Run linting
+        run: cargo clippy --target wasm32-unknown-unknown -- -D warnings
+
+      - name: Run unit tests
+        run: cargo test
+
+      - name: Setup Node.js
+        if: ${{ inputs.has-integration-tests }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        if: ${{ inputs.has-integration-tests }}
+        working-directory: .
+        run: npm ci
+
+      - name: Build worker
+        if: ${{ inputs.has-integration-tests }}
+        run: npm run build:dev
+
+      - name: Run integration tests
+        if: ${{ inputs.has-integration-tests }}
+        run: npm test -- --run

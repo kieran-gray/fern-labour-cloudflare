@@ -8,6 +8,8 @@ import {
   IconActivityHeartbeat,
   IconBabyCarriage,
   IconCalendarEvent,
+  IconChevronDown,
+  IconChevronUp,
   IconConfetti,
   IconEdit,
   IconPencil,
@@ -15,8 +17,9 @@ import {
   IconUserHeart,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Text, Textarea, Title, Tooltip } from '@mantine/core';
+import { Button, Collapse, Text, Textarea, Tooltip, UnstyledButton } from '@mantine/core';
 import { EditLabourModal } from './EditLabourModal';
+import MeditateIllustration from './Meditate.svg';
 import classes from './Manage.module.css';
 import baseClasses from '@styles/base.module.css';
 
@@ -47,6 +50,7 @@ export function LabourDetails({
 }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [isCompleteSectionOpen, setIsCompleteSectionOpen] = useState(false);
   const [labourNotes, setLabourNotes] = useState('');
   const navigate = useNavigate();
 
@@ -70,7 +74,7 @@ export function LabourDetails({
   const title = labour.labour_name || 'Your Labour';
   const subtitle = isCompleted
     ? "You're viewing your completed labour journey. We hope everything went well!"
-    : 'View and manage your labour details from this control panel.';
+    : 'Your labour at a glance.';
 
   const handleCompleteLabour = () => {
     setIsCompleteModalOpen(false);
@@ -91,24 +95,33 @@ export function LabourDetails({
   return (
     <div className={baseClasses.card}>
       <div className={classes.container}>
-        {/* Header */}
+        {/* Header with illustration */}
         <header className={classes.header}>
-          <div className={classes.headerDecoration} />
-          <h1 className={classes.title}>
-            <span className={classes.titleAccent}>{title}</span>
-          </h1>
-          <p className={classes.subtitle}>{subtitle}</p>
-          {!isCompleted && (
-            <Button
-              variant="light"
-              leftSection={<IconEdit size={16} />}
-              radius="xl"
-              mt="md"
-              onClick={() => setIsEditModalOpen(true)}
-            >
-              Edit details
-            </Button>
-          )}
+          <div className={classes.headerContent}>
+            <div className={classes.headerText}>
+              <h1 className={classes.title}>{title}</h1>
+              <p className={classes.subtitle}>{subtitle}</p>
+              {!isCompleted && (
+                <Button
+                  variant="light"
+                  leftSection={<IconEdit size={16} />}
+                  radius="xl"
+                  mt="md"
+                  onClick={() => setIsEditModalOpen(true)}
+                >
+                  Edit details
+                </Button>
+              )}
+            </div>
+            <div className={classes.illustrationWrapper}>
+              <img
+                src={MeditateIllustration}
+                alt=""
+                className={classes.illustration}
+                aria-hidden="true"
+              />
+            </div>
+          </div>
         </header>
 
         {/* Stat Cards */}
@@ -152,79 +165,67 @@ export function LabourDetails({
           </div>
         )}
 
-        {/* Complete Labour Section */}
+        {/* Complete Labour Section - Collapsible */}
         {!isCompleted && (
           <div className={classes.completeSection}>
-            <Title order={2} fz={{ base: 'h4', xs: 'h3', sm: 'h2' }}>
-              Ready to complete your labour?
-            </Title>
-            <p className={classes.completeSectionText}>
-              Add an optional closing note to share with your subscribers, then mark your labour as
-              complete.
-            </p>
-            <Textarea
-              placeholder="Welcome to the world, little one! Everyone is healthy and happy."
-              rightSection={<IconPencil size={16} stroke={1.5} />}
-              radius="md"
-              size="sm"
-              minRows={3}
-              value={labourNotes}
-              onChange={(event) => setLabourNotes(event.currentTarget.value)}
-              classNames={{
-                input: baseClasses.input,
-                section: baseClasses.section,
-              }}
-            />
+            <UnstyledButton
+              className={classes.completeSectionToggle}
+              onClick={() => setIsCompleteSectionOpen((prev) => !prev)}
+            >
+              <div className={classes.completeSectionToggleContent}>
+                <IconConfetti size={18} className={classes.completeSectionIcon} />
+                <span>Ready to complete your labour?</span>
+              </div>
+              {isCompleteSectionOpen ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
+            </UnstyledButton>
 
-            <div className={classes.buttonRow}>
-              {hasActiveContraction ? (
-                <Tooltip label="End your current contraction first">
-                  <Button
-                    data-disabled
-                    leftSection={<IconConfetti size={18} />}
-                    size="sm"
-                    hiddenFrom="sm"
-                    radius="xl"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    Complete labour
-                  </Button>
-                  <Button
-                    data-disabled
-                    leftSection={<IconConfetti size={18} />}
-                    size="md"
-                    visibleFrom="sm"
-                    radius="xl"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    Complete labour
-                  </Button>
-                </Tooltip>
-              ) : (
-                <>
-                  <Button
-                    leftSection={<IconConfetti size={18} />}
-                    size="md"
-                    hiddenFrom="sm"
-                    radius="xl"
-                    onClick={() => setIsCompleteModalOpen(true)}
-                    loading={completeLabourMutation.isPending}
-                  >
-                    Complete labour
-                  </Button>
-                  <Button
-                    leftSection={<IconConfetti size={18} />}
-                    size="lg"
-                    visibleFrom="sm"
-                    radius="xl"
-                    onClick={() => setIsCompleteModalOpen(true)}
-                    loading={completeLabourMutation.isPending}
-                  >
-                    Complete labour
-                  </Button>
-                </>
-              )}
-            </div>
+            <Collapse in={isCompleteSectionOpen}>
+              <div className={classes.completeSectionContent}>
+                <p className={classes.completeSectionText}>
+                  Add an optional closing note to share with your subscribers, then mark your labour
+                  as complete.
+                </p>
+                <Textarea
+                  placeholder="Welcome to the world, little one! Everyone is healthy and happy."
+                  rightSection={<IconPencil size={16} stroke={1.5} />}
+                  radius="md"
+                  size="sm"
+                  minRows={3}
+                  value={labourNotes}
+                  onChange={(event) => setLabourNotes(event.currentTarget.value)}
+                  classNames={{
+                    input: baseClasses.input,
+                    section: baseClasses.section,
+                  }}
+                />
+
+                <div className={classes.buttonRow}>
+                  {hasActiveContraction ? (
+                    <Tooltip label="End your current contraction first">
+                      <Button
+                        data-disabled
+                        leftSection={<IconConfetti size={18} />}
+                        size="sm"
+                        radius="xl"
+                        onClick={(e) => e.preventDefault()}
+                      >
+                        Complete labour
+                      </Button>
+                    </Tooltip>
+                  ) : (
+                    <Button
+                      leftSection={<IconConfetti size={18} />}
+                      size="md"
+                      radius="xl"
+                      onClick={() => setIsCompleteModalOpen(true)}
+                      loading={completeLabourMutation.isPending}
+                    >
+                      Complete labour
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </Collapse>
           </div>
         )}
       </div>

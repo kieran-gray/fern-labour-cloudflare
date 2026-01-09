@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { SubscriberRole } from '@base/clients/labour_service';
-import { IconEye, IconHeart, IconUsers } from '@tabler/icons-react';
-import { Button, Modal, Radio, Space, Stack, Text } from '@mantine/core';
-import { getRoleLabel } from './RoleBadge';
-import baseClasses from '@styles/base.module.css';
-import classes from '@styles/modal.module.css';
+import { IconCheck, IconHeart, IconSparkles, IconUsers } from '@tabler/icons-react';
+import { Button, Group, Modal, Stack, Text, UnstyledButton } from '@mantine/core';
+import classes from './ChangeRoleModal.module.css';
+import modalClasses from '@styles/modal.module.css';
 
 interface ChangeRoleModalProps {
   isOpen: boolean;
@@ -12,6 +11,30 @@ interface ChangeRoleModalProps {
   onConfirm: (newRole: SubscriberRole) => void;
   onCancel: () => void;
 }
+
+const ROLE_OPTIONS = [
+  {
+    role: SubscriberRole.BIRTH_PARTNER,
+    label: 'Birth Partner',
+    description: 'Can send updates, track contractions, and view statistics',
+    icon: IconHeart,
+    color: 'pink',
+  },
+  {
+    role: SubscriberRole.SUPPORT_PERSON,
+    label: 'Support Person',
+    description: 'Can view updates and statistics in real-time',
+    icon: IconSparkles,
+    color: 'violet',
+  },
+  {
+    role: SubscriberRole.LOVED_ONE,
+    label: 'Loved One',
+    description: 'Receives milestone notifications only',
+    icon: IconUsers,
+    color: 'blue',
+  },
+];
 
 export function ChangeRoleModal({
   isOpen,
@@ -29,84 +52,74 @@ export function ChangeRoleModal({
     <Modal
       overlayProps={{ backgroundOpacity: 0.4, blur: 3 }}
       classNames={{
-        content: classes.modalRoot,
-        header: classes.modalHeader,
-        title: classes.modalTitle,
-        body: classes.modalBody,
-        close: classes.closeButton,
+        content: modalClasses.modalRoot,
+        header: modalClasses.modalHeader,
+        title: modalClasses.modalTitle,
+        body: modalClasses.modalBody,
+        close: modalClasses.closeButton,
       }}
       opened={isOpen}
       centered
       onClose={onCancel}
-      title="Change Subscriber Role"
+      title="Change Role"
     >
-      <Text className={classes.modalText}>Select the new role for this subscriber:</Text>
-      <Space h="md" />
+      <Text className={modalClasses.modalText} mb="lg">
+        Choose the level of access for this subscriber.
+      </Text>
 
-      <Radio.Group
-        value={selectedRole}
-        onChange={(value) => setSelectedRole(value as SubscriberRole)}
-      >
-        <Stack gap="md">
-          <Radio
-            value={SubscriberRole.BIRTH_PARTNER}
-            label={
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <IconHeart size={18} />
-                <Text fw={500}>{getRoleLabel(SubscriberRole.BIRTH_PARTNER)}</Text>
-              </div>
-            }
-            description={
-              <Text size="sm" className={baseClasses.description}>
-                Can send updates, track contractions, and view statistics
-              </Text>
-            }
-          />
-          <Radio
-            value={SubscriberRole.SUPPORT_PERSON}
-            label={
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <IconEye size={18} />
-                <Text fw={500}>{getRoleLabel(SubscriberRole.SUPPORT_PERSON)}</Text>
-              </div>
-            }
-            description={
-              <Text size="sm" className={baseClasses.description}>
-                Can view updates and statistics
-              </Text>
-            }
-          />
-          <Radio
-            value={SubscriberRole.LOVED_ONE}
-            label={
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <IconUsers size={18} />
-                <Text fw={500}>{getRoleLabel(SubscriberRole.LOVED_ONE)}</Text>
-              </div>
-            }
-            description={
-              <Text size="sm" className={baseClasses.description}>
-                Can view updates
-              </Text>
-            }
-          />
-        </Stack>
-      </Radio.Group>
+      <Stack gap="sm">
+        {ROLE_OPTIONS.map(({ role, label, description, icon: Icon, color }) => {
+          const isSelected = selectedRole === role;
+          const isCurrent = currentRole === role;
 
-      <Space h="xl" />
-      <div className={baseClasses.flexRowNoBP}>
-        <Button style={{ flex: 1, marginRight: 5 }} variant="light" radius="lg" onClick={onCancel}>
+          return (
+            <UnstyledButton
+              key={role}
+              onClick={() => setSelectedRole(role)}
+              className={classes.roleOption}
+              data-selected={isSelected || undefined}
+              data-color={color}
+            >
+              <div className={classes.roleOptionContent}>
+                <div
+                  className={classes.roleIconWrapper}
+                  data-color={color}
+                  data-selected={isSelected || undefined}
+                >
+                  <Icon size={20} />
+                </div>
+                <div className={classes.roleInfo}>
+                  <Group gap="xs" align="center">
+                    <Text fw={600} size="sm">
+                      {label}
+                    </Text>
+                    {isCurrent && (
+                      <Text size="xs" className={classes.currentBadge}>
+                        Current
+                      </Text>
+                    )}
+                  </Group>
+                  <Text size="xs" className={classes.roleDescription}>
+                    {description}
+                  </Text>
+                </div>
+              </div>
+              <div className={classes.checkCircle} data-selected={isSelected || undefined}>
+                {isSelected && <IconCheck size={14} />}
+              </div>
+            </UnstyledButton>
+          );
+        })}
+      </Stack>
+
+      <Group mt="xl" grow>
+        <Button variant="light" radius="lg" onClick={onCancel}>
           Cancel
         </Button>
-        <Button
-          style={{ flex: 1, marginLeft: 5 }}
-          radius="lg"
-          onClick={handleConfirm}
-          disabled={selectedRole === currentRole}
-        >
+        <Button radius="lg" onClick={handleConfirm} disabled={selectedRole === currentRole}>
           Change Role
         </Button>
-      </div>
+      </Group>
     </Modal>
   );
 }

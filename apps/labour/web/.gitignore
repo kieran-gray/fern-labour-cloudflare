@@ -26,3 +26,5 @@ dist-ssr
 # Cache
 .eslintcache
 .stylelintcache
+
+internal_docs

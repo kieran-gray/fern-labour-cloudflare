@@ -1,0 +1,128 @@
+/* Edit Labour Modal - Styled form sections */
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-lg);
+}
+
+.description {
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  font-size: var(--mantine-font-size-sm);
+  line-height: 1.5;
+}
+
+/* Form sections */
+.section {
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-5));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-md);
+}
+
+.sectionLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+  color: #24968b;
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--mantine-spacing-sm);
+}
+
+/* Input styling */
+.input {
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-4));
+  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-3));
+  border-radius: var(--mantine-radius-md);
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+  transition: border-color 0.15s ease;
+}
+
+.input:focus {
+  border-color: #24968b;
+}
+
+.input::placeholder {
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+}
+
+.inputSection {
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+}
+
+/* Radio option cards */
+.radioGroup {
+  display: flex;
+  gap: var(--mantine-spacing-sm);
+}
+
+.radioOption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mantine-spacing-xs);
+  flex: 1;
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-md);
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-4));
+  border: 2px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-3));
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.radioOption:hover {
+  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-2));
+}
+
+.radioOption[data-selected] {
+  border-color: #24968b;
+  background-color: light-dark(#f0faf9, var(--mantine-color-dark-4));
+}
+
+.radioLabel {
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 500;
+}
+
+.radioOption[data-selected] .radioLabel {
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+}
+
+.radioCheck {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  color: transparent;
+}
+
+.radioOption[data-selected] .radioCheck {
+  border-color: #24968b;
+  background-color: #24968b;
+  color: white;
+}
+
+/* Action buttons */
+.actionRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--mantine-spacing-sm);
+}
+
+.cancelButton {
+  background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
+}
+
+.cancelButton:hover {
+  background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+}

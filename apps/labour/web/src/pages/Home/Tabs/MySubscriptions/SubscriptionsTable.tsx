@@ -54,7 +54,7 @@ export function SubscriptionsTable() {
 
   if (subscriptions.length === 0) {
     return (
-      <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
+      <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.emptyState}>
         You don't have any subscriptions yet.
       </Text>
     );

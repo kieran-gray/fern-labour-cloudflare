@@ -1,15 +1,41 @@
+import { useState } from 'react';
 import { SubscriberContactMethod, SubscriptionReadModel } from '@base/clients/labour_service';
 import { useLabourSession } from '@base/contexts';
 import { useLabourClient } from '@base/hooks';
 import { useUpdateNotificationMethods } from '@base/hooks/useLabourData';
-import { IconSelector, IconUpload } from '@tabler/icons-react';
+import { IconBellOff, IconBrandWhatsapp, IconCheck, IconMessageCircle } from '@tabler/icons-react';
 import { useSearchParams } from 'react-router-dom';
-import { Button, Modal, MultiSelect } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { Button, Modal, Stack, Text, UnstyledButton } from '@mantine/core';
 import classes from './ContactMethodsModal.module.css';
 import modalClasses from '@styles/modal.module.css';
 
 type CloseFunctionType = (...args: any[]) => void;
+
+type NotificationOption = SubscriberContactMethod | 'NONE';
+
+const NOTIFICATION_OPTIONS = [
+  {
+    value: SubscriberContactMethod.WHATSAPP as NotificationOption,
+    name: 'WhatsApp',
+    description: 'Receive updates via WhatsApp messages',
+    icon: IconBrandWhatsapp,
+    dataMethod: 'whatsapp',
+  },
+  {
+    value: SubscriberContactMethod.SMS as NotificationOption,
+    name: 'Text Message',
+    description: 'Receive updates via SMS',
+    icon: IconMessageCircle,
+    dataMethod: 'sms',
+  },
+  {
+    value: 'NONE' as NotificationOption,
+    name: 'None',
+    description: "Don't send me notifications",
+    icon: IconBellOff,
+    dataMethod: 'none',
+  },
+];
 
 export default function ContactMethodsModal({
   subscription,
@@ -24,22 +50,33 @@ export default function ContactMethodsModal({
   const { labourId } = useLabourSession();
   const prompt = searchParams.get('prompt');
 
-  const defaultIcon = <IconUpload size={18} stroke={1.5} />;
+  const getInitialSelection = (): NotificationOption => {
+    if (subscription.contact_methods.includes(SubscriberContactMethod.WHATSAPP)) {
+      return SubscriberContactMethod.WHATSAPP;
+    }
+    if (subscription.contact_methods.includes(SubscriberContactMethod.SMS)) {
+      return SubscriberContactMethod.SMS;
+    }
+    return 'NONE';
+  };
 
-  const form = useForm({
-    mode: 'controlled',
-    initialValues: {
-      contactMethods: subscription.contact_methods,
-    },
-  });
+  const [selected, setSelected] = useState<NotificationOption>(getInitialSelection());
 
   const client = useLabourClient();
   const mutation = useUpdateNotificationMethods(client);
-  const handleUpdateContactMethods = (values: typeof form.values) => {
+
+  const handleClose = () => {
+    searchParams.delete('prompt');
+    setSearchParams(searchParams);
+    close();
+  };
+
+  const handleSave = () => {
+    const methods = selected === 'NONE' ? [] : [selected];
     const requestBody = {
       labourId: labourId!,
       subscriptionId: subscription.subscription_id,
-      methods: values.contactMethods,
+      methods,
     };
     mutation.mutate(requestBody, {
       onSuccess: () => {
@@ -52,29 +89,15 @@ export default function ContactMethodsModal({
     });
   };
 
-  const options = [
-    {
-      value: 'WHATSAPP',
-      label: 'WhatsApp',
-      disabled: form.values.contactMethods.includes(SubscriberContactMethod.SMS),
-    },
-    {
-      value: 'SMS',
-      label: 'Text',
-      disabled: form.values.contactMethods.includes(SubscriberContactMethod.WHATSAPP),
-    },
-  ];
+  const initialSelection = getInitialSelection();
+  const hasChanged = selected !== initialSelection;
 
   return (
     <Modal
       opened={opened}
       closeOnClickOutside
-      onClose={() => {
-        searchParams.delete('prompt');
-        setSearchParams(searchParams);
-        close();
-      }}
-      title="Contact Methods"
+      onClose={handleClose}
+      title="Notification Preferences"
       centered
       overlayProps={{ backgroundOpacity: 0.4, blur: 3 }}
       classNames={{
@@ -85,64 +108,61 @@ export default function ContactMethodsModal({
         close: modalClasses.closeButton,
       }}
     >
-      <div style={{ padding: '20px 10px 10px' }}>
-        <form onSubmit={form.onSubmit((values) => handleUpdateContactMethods(values))}>
-          <div className={classes.flexColumn}>
-            <MultiSelect
-              rightSection={<IconSelector size={18} stroke={1.5} />}
-              key={form.key('contactMethods')}
-              placeholder="Select"
-              label="Update your contact methods"
-              description="How would you like to be notified about updates to this labour?"
-              data={options}
-              size="md"
-              radius="xl"
-              {...form.getInputProps('contactMethods')}
-              classNames={{
-                wrapper: classes.input,
-                pill: classes.pill,
-                description: classes.description,
-                inputField: classes.input,
-                options: classes.options,
-                label: classes.label,
-              }}
-              comboboxProps={{
-                transitionProps: { transition: 'pop', duration: 200 },
-                shadow: 'md',
-              }}
-              clearable
-            />
-            <Button
-              leftSection={defaultIcon}
-              variant="outline"
-              radius="xl"
-              size="md"
-              h={48}
-              className={classes.submitButton}
-              styles={{ section: { marginRight: 22 } }}
-              type="submit"
-              loading={mutation.isPending}
-              visibleFrom="xs"
-            >
-              Update Contact Methods
-            </Button>
-            <Button
-              leftSection={defaultIcon}
-              variant="outline"
-              radius="xl"
-              size="sm"
-              h={48}
-              className={classes.submitButton}
-              styles={{ section: { marginRight: 22 } }}
-              type="submit"
-              loading={mutation.isPending}
-              hiddenFrom="xs"
-            >
-              Update Contact Methods
-            </Button>
-          </div>
-        </form>
-      </div>
+      <Stack gap="lg">
+        <Text className={classes.description}>
+          Choose how you'd like to receive updates about this labour.
+        </Text>
+
+        <div className={classes.methodsGrid}>
+          {NOTIFICATION_OPTIONS.map(({ value, name, description, icon: Icon, dataMethod }) => {
+            const isSelected = selected === value;
+
+            return (
+              <UnstyledButton
+                key={value}
+                onClick={() => setSelected(value)}
+                className={classes.methodCard}
+                data-selected={isSelected || undefined}
+                data-method={dataMethod}
+              >
+                <div className={classes.methodCardContent}>
+                  <div className={classes.methodIconWrapper} data-method={dataMethod}>
+                    <Icon size={22} />
+                  </div>
+                  <div className={classes.methodInfo}>
+                    <Text className={classes.methodName}>{name}</Text>
+                    <Text className={classes.methodDescription}>{description}</Text>
+                  </div>
+                </div>
+                <div className={classes.checkCircle} data-selected={isSelected || undefined}>
+                  {isSelected && <IconCheck size={14} />}
+                </div>
+              </UnstyledButton>
+            );
+          })}
+        </div>
+
+        <div className={classes.actionRow}>
+          <Button
+            size="sm"
+            radius="lg"
+            variant="default"
+            className={classes.cancelButton}
+            onClick={handleClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            radius="lg"
+            onClick={handleSave}
+            loading={mutation.isPending}
+            disabled={!hasChanged}
+          >
+            Save Preferences
+          </Button>
+        </div>
+      </Stack>
     </Modal>
   );
 }

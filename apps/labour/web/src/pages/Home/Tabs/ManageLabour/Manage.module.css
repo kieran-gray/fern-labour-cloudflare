@@ -1,62 +1,84 @@
-/* Manage Component - Title section styling */
+/* Manage Component - Gentle, nurturing design */
 
 .container {
   width: 100%;
-  max-width: 680px;
+  max-width: 720px;
   margin: 0 auto;
   padding: 0;
 }
 
 /* Header Section */
 .header {
-  text-align: center;
-  margin-bottom: clamp(24px, 5vw, 40px);
-  position: relative;
+  margin-bottom: clamp(28px, 5vw, 40px);
 }
 
-.headerDecoration {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 4px;
-  background-color: var(--mantine-primary-color-4);
-  border-radius: 2px;
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-lg);
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
 }
 
-.greeting {
-  font-size: clamp(1rem, 2.5vw, 1.125rem);
-  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  margin-bottom: 8px;
-  text-transform: uppercase;
+.headerText {
+  flex: 1;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.illustrationWrapper {
+  flex-shrink: 0;
+  width: 180px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    width: 140px;
+    height: 90px;
+  }
+
+  @media (max-width: $mantine-breakpoint-xs) {
+    width: 120px;
+    height: 80px;
+  }
+}
+
+.illustration {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .title {
   font-family: Poppins, sans-serif;
-  font-size: clamp(1.75rem, 5vw, 2.5rem);
-  font-weight: 700;
-  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
-  line-height: 1.15;
-  margin-bottom: 12px;
-  letter-spacing: -0.02em;
-}
-
-.titleAccent {
-  color: var(--mantine-primary-color-5);
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  font-weight: 600;
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-0));
+  line-height: 1.2;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
 }
 
 .subtitle {
-  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  font-size: clamp(0.9rem, 2vw, 1rem);
   color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
-  line-height: 1.6;
-  max-width: 480px;
-  margin: 0 auto;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 380px;
 }
 
-/* Stat Cards - copied from LabourStatistics */
+/* Stat Cards */
 .statCardsContainer {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -69,7 +91,8 @@
 }
 
 .statCard {
-  background-color: light-dark(var(--mantine-color-primary-0), var(--mantine-color-primary-3));
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-2));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
   border-radius: var(--mantine-radius-md);
   padding: var(--mantine-spacing-md);
   display: flex;
@@ -77,21 +100,35 @@
   align-items: center;
   text-align: center;
   gap: var(--mantine-spacing-xs);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
+    background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-3));
+  }
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    &:last-child:nth-child(odd) {
+      grid-column: span 2;
+    }
+  }
 }
 
 .statCardLabel {
   font-size: var(--mantine-font-size-xs);
-  color: light-dark(var(--mantine-color-pink-7), var(--mantine-color-gray-4));
-  font-weight: 500;
+  color: #24968b;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .statCardValue {
   font-size: var(--mantine-font-size-xl);
-  font-weight: 700;
-  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-1));
+  font-weight: 600;
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
   font-variant-numeric: tabular-nums;
 
   @media (max-width: $mantine-breakpoint-xs) {
@@ -102,59 +139,101 @@
 .statCardSubtext {
   font-size: var(--mantine-font-size-xs);
   font-weight: 500;
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-5));
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-5));
 }
 
 /* Note Card */
 .noteCard {
-  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
-  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
-  border-radius: 16px;
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-2));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: var(--mantine-radius-lg);
   padding: 20px;
   margin-top: clamp(20px, 4vw, 32px);
 }
 
 .noteLabel {
-  font-size: 0.85rem;
-  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  font-size: 0.8rem;
+  color: #24968b;
   margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .noteText {
   font-size: 0.95rem;
-  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2));
   line-height: 1.6;
+  margin: 0;
 }
 
-/* Complete Labour Section */
+/* Complete Labour Section - Collapsible */
 .completeSection {
   margin-top: clamp(28px, 5vw, 40px);
-  padding-top: clamp(24px, 4vw, 32px);
-  border-top: 1px solid light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.06));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: var(--mantine-radius-lg);
+  overflow: hidden;
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-2));
 }
 
-.completeSectionTitle {
-  font-family: Poppins, sans-serif;
-  font-size: clamp(1.25rem, 4vw, 1.5rem);
-  font-weight: 600;
-  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
-  margin-bottom: 12px;
+.completeSectionToggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 500;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-3));
+  }
+
+  @media (max-width: $mantine-breakpoint-xs) {
+    padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  }
+}
+
+.completeSectionToggleContent {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+}
+
+.completeSectionIcon {
+  color: var(--mantine-primary-color-5);
+}
+
+.completeSectionContent {
+  padding: 0 var(--mantine-spacing-lg) var(--mantine-spacing-lg);
+  border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+
+  @media (max-width: $mantine-breakpoint-xs) {
+    padding: 0 var(--mantine-spacing-md) var(--mantine-spacing-md);
+  }
 }
 
 .completeSectionText {
-  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-size: clamp(0.875rem, 2vw, 0.95rem);
   color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
   line-height: 1.6;
-  margin-bottom: 20px;
+  margin: var(--mantine-spacing-md) 0;
 }
 
 /* Button Row */
 .buttonRow {
   display: flex;
   justify-content: flex-end;
-  margin-top: 20px;
+  margin-top: var(--mantine-spacing-md);
 
   @media (max-width: $mantine-breakpoint-sm) {
-    flex-direction: column;
+    justify-content: stretch;
+
+    & > button,
+    & > div {
+      width: 100%;
+    }
   }
 }

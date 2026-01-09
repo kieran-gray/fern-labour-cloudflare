@@ -15,7 +15,37 @@ function usePrevious<T>(value: T): T | undefined {
   return ref.current;
 }
 
-const DOTTED_LINE_FREQUENCY_GAP = 1800000; // 30 minutes
+const DOTTED_LINE_FREQUENCY_GAP = 1800000;
+const FREQUENCY_URGENT = 180000;
+const FREQUENCY_ALERT = 300000;
+const FREQUENCY_WARMING = 600000;
+
+const getIntensityColor = (intensity: number | null): string => {
+  const value = intensity ?? 0;
+  if (value <= 3) {
+    return '#ff7964';
+  }
+  if (value <= 6) {
+    return '#fe5236';
+  }
+  if (value <= 8) {
+    return '#ff2a09';
+  }
+  return '#cb1500';
+};
+
+const getFrequencyColorClass = (frequencyMs: number): string => {
+  if (frequencyMs < FREQUENCY_URGENT) {
+    return 'frequencyUrgent';
+  }
+  if (frequencyMs < FREQUENCY_ALERT) {
+    return 'frequencyAlert';
+  }
+  if (frequencyMs < FREQUENCY_WARMING) {
+    return 'frequencyWarming';
+  }
+  return 'frequencyNeutral';
+};
 
 export interface ContractionData {
   contractionId: string;
@@ -149,8 +179,10 @@ export default function ContractionTimelineCustom({
     const clickable = finished && !completed;
     const durationSeconds = calculateDurationSeconds(c.duration.start_time, c.duration.end_time);
 
+    const rowClassName = finished ? classes.gridRow : `${classes.gridRow} ${classes.activeRow}`;
+
     const node = (
-      <div key={`${c.contraction_id}-node`} className={classes.gridRow}>
+      <div key={`${c.contraction_id}-node`} className={rowClassName}>
         <div className={classes.leftColumn}>
           <div className={classes.durationDisplay}>
             {finished ? (
@@ -164,7 +196,7 @@ export default function ContractionTimelineCustom({
             )}
           </div>
           <div className={classes.timeDisplay}>
-            <Text size="xs" fw={500} className={classes.timeText}>
+            <Text size="xs" fw={400} className={classes.timeText}>
               {formatClock(c.duration.start_time)}
             </Text>
           </div>
@@ -178,7 +210,7 @@ export default function ContractionTimelineCustom({
           >
             <div
               className={finished ? classes.bullet : `${classes.bullet} ${classes.bulletActive}`}
-              style={{ background: 'var(--mantine-primary-color-4)' }}
+              style={{ background: finished ? getIntensityColor(c.intensity) : undefined }}
               onClick={() => handleClick(c)}
               role={clickable ? 'button' : undefined}
               aria-label={
@@ -191,16 +223,18 @@ export default function ContractionTimelineCustom({
             </div>
           </div>
         </div>
-        <div className={classes.rightColumn}>{/* Notes removed from V2 read model */}</div>
+        <div className={classes.rightColumn} />
       </div>
     );
 
+    const frequencyColorClass = classes[getFrequencyColorClass(nextGap)] || '';
+
     const connector = idx < arr.length - 1 && nextGap > 0 && (
       <div key={`${c.contraction_id}-connector`} className={classes.connectorRow}>
-        <div className={classes.connectorLeft}>{/* Empty space for left column */}</div>
-        <div className={classes.connectorCenter}>{/* Timeline continues through center */}</div>
+        <div className={classes.connectorLeft} />
+        <div className={classes.connectorCenter} />
         <div className={classes.connectorRight}>
-          <div className={classes.frequencyDisplay}>
+          <div className={`${classes.frequencyDisplay} ${frequencyColorClass}`}>
             <Text size="xs" fw={500} className={classes.frequencyText}>
               {formatTimeMilliseconds(nextGap)}
             </Text>

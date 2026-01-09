@@ -1,4 +1,3 @@
-import { RefObject, useRef } from 'react';
 import { ContractionReadModel } from '@base/clients/labour_service/types';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient, useServerOffset } from '@base/hooks';
@@ -6,21 +5,20 @@ import { generateContractionId, useStartContractionOffline } from '@base/offline
 import { IconHourglassLow } from '@tabler/icons-react';
 import { Button } from '@mantine/core';
 import { ActiveContractionControls } from './ActiveContractionControls';
-import { StopwatchHandle } from './Stopwatch';
 import classes from './Contractions.module.css';
 
-function StartContractionButton({ stopwatchRef }: { stopwatchRef: RefObject<StopwatchHandle> }) {
+function StartContractionButton({ offset }: { offset: number }) {
   const { labourId } = useLabourSession();
   const client = useLabourClient();
   const mutation = useStartContractionOffline(client);
 
   const handleStartContraction = () => {
-    stopwatchRef.current?.start();
-
     const contractionId = generateContractionId();
+    const startTime = new Date(Date.now() + offset);
     mutation.mutate({
       labourId: labourId!,
       contractionId,
+      startTime,
     });
   };
 
@@ -49,7 +47,6 @@ export function ContractionControls({
   labourCompleted,
   activeContraction,
 }: ContractionControlsProps) {
-  const stopwatchRef = useRef<StopwatchHandle>(null);
   const { labourId } = useLabourSession();
   const client = useLabourClient();
   const { data: offsetData } = useServerOffset(client, labourId);
@@ -64,14 +61,13 @@ export function ContractionControls({
       <div className={classes.controlsContainer}>
         {activeContraction ? (
           <ActiveContractionControls
-            stopwatchRef={stopwatchRef}
             activeContraction={activeContraction}
             disabled={false}
             offset={offset}
           />
         ) : (
           <div className={classes.controlsCenter}>
-            <StartContractionButton stopwatchRef={stopwatchRef} />
+            <StartContractionButton offset={offset} />
           </div>
         )}
       </div>

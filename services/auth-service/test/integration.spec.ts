@@ -5,13 +5,13 @@ import { describe, it, expect, beforeAll, afterEach } from "vitest";
  * Valid test JWT token with claims:
  * - kid: test-key-123
  * - sub: auth0|test-user-456
- * - iss: https://fernlabour.uk.auth0.com/
+ * - iss: https://quest-lock.uk.auth0.com/
  */
 const TEST_AUTH_TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3Qta2V5LTEyMyJ9.eyJpc3MiOiJodHRwczovL3F1ZXN0LWxvY2sudWsuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfHRlc3QtdXNlci00NTYiLCJhdWQiOlsiaHR0cHM6Ly9hcGkucXVlc3QtbG9jay5jb20iXSwiaWF0IjoxNzYxMTY0NDk1LCJleHAiOjIwNzY1MjQ0OTV9.xBCtYbefeTYejZACZq__prQAll9_W6LUEO41MUqK2tDMbt_MtC0ETqdDAkrfAOUsuK6pqzrp6Mly2KVURpn7qii6fGV8Y8xu8OU6oQTdv1dRPlsvBJ1UJNJkM8nBzjP_LTfkk5Cyy3U3XOJvFyOuEWiwntZHyDh6rN0oqeg39B2sXyAwPddimDP-YBurBlPS_1zDxlNXKvsgV8vkwpH-OJwcMAsD6_08oJh2TWQz1qd4TW2HXhPxRPc1CL4yzELhXFFBhNgLKi_-gXGfsTtH0Cqiusvq4VLXgR_Tm-EAtlY6VzFh904Y83MSwaazgg583TG6NFXmSmDl_RoSLXmc2g";
 
 function setupJwksMock(): void {
   fetchMock
-    .get("https://fernlabour.uk.auth0.com")
+    .get("https://quest-lock.uk.auth0.com")
     .intercept({ method: "GET", path: "/.well-known/jwks.json" })
     .reply(200, JSON.stringify({
       keys: [
