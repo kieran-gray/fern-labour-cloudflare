@@ -67,10 +67,35 @@
   gap: var(--mantine-spacing-md);
   margin: 0;
   min-width: 0;
+  border-radius: var(--mantine-radius-md);
+  transition: background-color 0.2s ease;
 
   @media (min-width: $mantine-breakpoint-xs) {
     padding: var(--mantine-spacing-xs) 0;
   }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    background-color: light-dark(
+      hsla(var(--mantine-primary-color-hue), 70%, 95%, 0.6),
+      hsla(var(--mantine-primary-color-hue), 40%, 20%, 0.4)
+    );
+  }
+
+  50% {
+    background-color: light-dark(
+      hsla(var(--mantine-primary-color-hue), 70%, 92%, 0.9),
+      hsla(var(--mantine-primary-color-hue), 40%, 25%, 0.6)
+    );
+  }
+}
+
+.activeRow {
+  animation: pulse-glow 2s ease-in-out infinite;
+  margin: 0 calc(var(--mantine-spacing-xs) * -1);
+  padding-left: var(--mantine-spacing-xs);
+  padding-right: var(--mantine-spacing-xs);
 }
 
 .daySection {
@@ -92,9 +117,11 @@
 }
 
 .dayTitle {
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
-  font-weight: 700;
-  letter-spacing: 0.2px;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: var(--mantine-font-size-xs);
 }
 
 .railCell {
@@ -149,9 +176,22 @@
   z-index: 2;
 }
 
+@keyframes bulletpulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 hsla(var(--mantine-primary-color-hue), 70%, 50%, 0.4);
+  }
+
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 8px hsla(var(--mantine-primary-color-hue), 70%, 50%, 0);
+  }
+}
+
 .bulletActive {
-  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-white));
-  background: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+  color: white;
+  background: var(--mantine-primary-color-5);
+  animation: bulletpulse 1.5s ease-in-out infinite;
 }
 
 .leftColumn {
@@ -258,8 +298,43 @@
 }
 
 .frequencyText {
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
   font-variant-numeric: tabular-nums;
+}
+
+.frequencyNeutral {
+  background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6));
+  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}
+
+.frequencyNeutral .frequencyText {
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+}
+
+.frequencyWarming {
+  background: light-dark(hsl(45deg, 70%, 95%), hsl(45deg, 30%, 20%));
+  border-color: light-dark(hsl(45deg, 60%, 70%), hsl(45deg, 40%, 35%));
+}
+
+.frequencyWarming .frequencyText {
+  color: light-dark(hsl(35deg, 70%, 35%), hsl(45deg, 60%, 70%));
+}
+
+.frequencyAlert {
+  background: light-dark(hsl(25deg, 80%, 94%), hsl(25deg, 35%, 22%));
+  border-color: light-dark(hsl(25deg, 70%, 65%), hsl(25deg, 50%, 40%));
+}
+
+.frequencyAlert .frequencyText {
+  color: light-dark(hsl(20deg, 75%, 35%), hsl(25deg, 65%, 70%));
+}
+
+.frequencyUrgent {
+  background: light-dark(hsl(5deg, 85%, 94%), hsl(5deg, 40%, 22%));
+  border-color: light-dark(hsl(5deg, 75%, 60%), hsl(5deg, 55%, 45%));
+}
+
+.frequencyUrgent .frequencyText {
+  color: light-dark(hsl(0deg, 70%, 40%), hsl(5deg, 70%, 70%));
 }
 
 @media (max-width: 36em) {

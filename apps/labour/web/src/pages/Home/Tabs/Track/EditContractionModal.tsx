@@ -4,12 +4,12 @@ import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
 import { useDeleteContractionOffline, useUpdateContractionOffline } from '@base/offline/hooks';
 import { updateTime } from '@lib/calculations';
-import { IconClock, IconTrash, IconUpload } from '@tabler/icons-react';
-import { Button, Modal, Slider, Space, Text } from '@mantine/core';
+import { IconClock, IconFlame, IconTrash } from '@tabler/icons-react';
+import { ActionIcon, Button, Modal, Slider, Text } from '@mantine/core';
 import { TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { ContractionData } from './ContractionTimelineCustom';
-import classes from './Contractions.module.css';
+import classes from './EditContractionModal.module.css';
 import modalClasses from '@styles/modal.module.css';
 
 type CloseFunctionType = (...args: any[]) => void;
@@ -106,7 +106,7 @@ export const EditContractionModal = ({
       <Modal
         opened={opened}
         onClose={close}
-        title="Update Contraction"
+        title="Edit Contraction"
         centered
         overlayProps={{ backgroundOpacity: 0.4, blur: 3 }}
         classNames={{
@@ -117,6 +117,10 @@ export const EditContractionModal = ({
           close: modalClasses.closeButton,
         }}
       >
+        <Text className={classes.description} mb="lg">
+          Adjust the timing or intensity of this contraction.
+        </Text>
+
         <form
           onSubmit={form.onSubmit((values) =>
             handleUpdateContraction({
@@ -125,92 +129,99 @@ export const EditContractionModal = ({
             })
           )}
         >
-          <Space h="lg" />
-          <TimeInput
-            rightSection={<IconClock />}
-            withSeconds
-            key={form.key('startTime')}
-            radius="lg"
-            label="Start Time"
-            {...form.getInputProps('startTime')}
-            classNames={{
-              label: classes.timeInputLabel,
-              input: classes.timeInput,
-              section: classes.timeInputSection,
-            }}
-            defaultValue={getTime(contractionData?.startTime) || undefined}
-          />
-          <Space h="lg" />
-          <TimeInput
-            rightSection={<IconClock />}
-            withSeconds
-            key={form.key('endTime')}
-            radius="lg"
-            label="End Time"
-            {...form.getInputProps('endTime')}
-            classNames={{
-              label: classes.timeInputLabel,
-              input: classes.timeInput,
-              section: classes.timeInputSection,
-            }}
-            defaultValue={getTime(contractionData?.endTime) || undefined}
-          />
-          <Space h="lg" />
-          <Text
-            size="sm"
-            fw={500}
-            c="light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2))"
-          >
-            Intensity
-          </Text>
-          <Slider
-            classNames={{
-              root: classes.slider,
-              markLabel: classes.markLabel,
-              track: classes.track,
-            }}
-            key={form.key('intensity')}
-            size="xl"
-            radius="lg"
-            min={0}
-            max={10}
-            step={1}
-            {...form.getInputProps('intensity')}
-            defaultValue={contractionData?.intensity || undefined}
-            marks={[
-              { value: 0, label: '0' },
-              { value: 5, label: 5 },
-              { value: 10, label: 10 },
-            ]}
-          />
-          <Space h="xl" />
-          <div className={classes.flexRow}>
-            <Button
-              leftSection={<IconTrash />}
-              variant="filled"
-              radius="xl"
-              size="md"
-              h={48}
-              w={48}
-              px={0}
-              styles={{ section: { marginLeft: 10 } }}
-              onClick={() => setIsModalOpen(true)}
-              loading={deleteMutation.isPending}
-              aria-label="Delete contraction"
-            />
-            <Button
-              leftSection={<IconUpload />}
-              variant="light"
-              radius="xl"
-              size="md"
-              h={48}
-              flex={1}
-              ml="sm"
-              type="submit"
-              loading={updateMutation.isPending}
-            >
-              Update
-            </Button>
+          <div className={classes.formContainer}>
+            {/* Time Section */}
+            <div className={classes.timeSection}>
+              <div className={classes.timeSectionLabel}>
+                <IconClock size={14} />
+                <span>Timing</span>
+              </div>
+              <div className={classes.timeInputsRow}>
+                <div className={classes.timeInputWrapper}>
+                  <Text className={classes.timeInputLabel}>Start</Text>
+                  <TimeInput
+                    withSeconds
+                    key={form.key('startTime')}
+                    {...form.getInputProps('startTime')}
+                    classNames={{
+                      input: classes.timeInput,
+                      section: classes.timeInputSection,
+                    }}
+                    defaultValue={getTime(contractionData?.startTime) || undefined}
+                    size="md"
+                  />
+                </div>
+                <div className={classes.timeInputWrapper}>
+                  <Text className={classes.timeInputLabel}>End</Text>
+                  <TimeInput
+                    withSeconds
+                    key={form.key('endTime')}
+                    {...form.getInputProps('endTime')}
+                    classNames={{
+                      input: classes.timeInput,
+                      section: classes.timeInputSection,
+                    }}
+                    defaultValue={getTime(contractionData?.endTime) || undefined}
+                    size="md"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Intensity Section */}
+            <div className={classes.intensitySection}>
+              <div className={classes.intensityHeader}>
+                <div className={classes.intensitySectionLabel}>
+                  <IconFlame size={14} />
+                  <span>Intensity</span>
+                </div>
+              </div>
+              <div className={classes.sliderWrapper}>
+                <Slider
+                  classNames={{
+                    root: classes.slider,
+                    markLabel: classes.markLabel,
+                    track: classes.track,
+                  }}
+                  key={form.key('intensity')}
+                  size="lg"
+                  min={0}
+                  max={10}
+                  step={1}
+                  {...form.getInputProps('intensity')}
+                  defaultValue={contractionData?.intensity || undefined}
+                  marks={[
+                    { value: 0, label: '0' },
+                    { value: 5, label: 5 },
+                    { value: 10, label: 10 },
+                  ]}
+                />
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className={classes.actionRow}>
+              <ActionIcon
+                variant="default"
+                size="xl"
+                radius="lg"
+                className={classes.deleteButton}
+                onClick={() => setIsModalOpen(true)}
+                loading={deleteMutation.isPending}
+                aria-label="Delete contraction"
+              >
+                <IconTrash size={18} />
+              </ActionIcon>
+              <Button
+                radius="lg"
+                size="md"
+                className={classes.updateButton}
+                type="submit"
+                loading={updateMutation.isPending}
+              >
+                Save Changes
+              </Button>
+            </div>
           </div>
         </form>
       </Modal>

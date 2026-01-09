@@ -1,5 +1,7 @@
-import { Button, Group, Modal, Stack, Text } from '@mantine/core';
-import classes from '@styles/modal.module.css';
+import { IconAlertTriangle, IconSpeakerphone } from '@tabler/icons-react';
+import { Button, Modal, Stack, Text } from '@mantine/core';
+import classes from './UpdateModals.module.css';
+import modalClasses from '@styles/modal.module.css';
 
 export default function ConfirmAnnouncementModal({
   message,
@@ -16,34 +18,49 @@ export default function ConfirmAnnouncementModal({
     <Modal
       overlayProps={{ backgroundOpacity: 0.4, blur: 3 }}
       classNames={{
-        content: classes.modalRoot,
-        header: classes.modalHeader,
-        title: classes.modalTitle,
-        body: classes.modalBody,
-        close: classes.closeButton,
+        content: modalClasses.modalRoot,
+        header: modalClasses.modalHeader,
+        title: modalClasses.modalTitle,
+        body: modalClasses.modalBody,
+        close: modalClasses.closeButton,
       }}
       opened={opened}
       centered
       closeOnClickOutside
       onClose={() => onCancel()}
-      title="Make announcement?"
+      title="Make Announcement"
     >
       <Stack gap="md">
-        <Text className={classes.modalText}>
-          Announcements will be broadcast to any subscribers who have notifications enabled. The
-          message cannot be edited or deleted.
-        </Text>
-        <div className={classes.modalInnerTextContainer}>
-          <Text className={classes.modalInnerText}>{message}</Text>
+        <div className={classes.warningNotice}>
+          <IconAlertTriangle size={18} className={classes.warningIcon} />
+          <Text className={classes.warningText}>
+            This will notify all subscribers with notifications enabled. Announcements cannot be
+            edited or deleted.
+          </Text>
         </div>
-        <Group justify="flex-end" gap="sm">
-          <Button size="sm" radius="md" variant="default" onClick={() => onCancel()}>
+
+        <div className={classes.messagePreview}>
+          <div className={classes.messagePreviewLabel}>
+            <IconSpeakerphone size={14} />
+            <span>Your message</span>
+          </div>
+          <Text className={classes.messagePreviewText}>{message}</Text>
+        </div>
+
+        <div className={classes.actionRow}>
+          <Button
+            size="sm"
+            radius="lg"
+            variant="default"
+            className={classes.cancelButton}
+            onClick={() => onCancel()}
+          >
             Cancel
           </Button>
-          <Button size="sm" radius="md" onClick={() => onConfirm()}>
-            Announce
+          <Button size="sm" radius="lg" onClick={() => onConfirm()}>
+            Send Announcement
           </Button>
-        </Group>
+        </div>
       </Stack>
     </Modal>
   );

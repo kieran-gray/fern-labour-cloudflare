@@ -35,15 +35,15 @@ export const LabourStatisticsTabs = memo(
           tab: classes.labourStatsTabsTab,
         }}
       >
+        <LabourStatisticsTable data={statistics} />
+
+        <Space h="md" />
+
         <Tabs.List justify="space-between" style={{ width: '100%' }}>
           <Tabs.Tab value="all">All</Tabs.Tab>
           <Tabs.Tab value="60mins">Past 60 Mins</Tabs.Tab>
           <Tabs.Tab value="30mins">Past 30 Mins</Tabs.Tab>
         </Tabs.List>
-
-        <Space h="md" />
-
-        <LabourStatisticsTable data={statistics} />
 
         <Space h="lg" />
 

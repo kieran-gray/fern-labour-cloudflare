@@ -54,10 +54,6 @@
   letter-spacing: -0.02em;
 }
 
-.titleAccent {
-  color: var(--mantine-primary-color-6);
-}
-
 .subtitle {
   font-size: clamp(0.9rem, 2vw, 1.05rem);
   color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-5));

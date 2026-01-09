@@ -1,143 +1,150 @@
-.controls {
-  display: flex;
-}
-
-.inner {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-  padding: calc(var(--mantine-spacing-xl));
-
-  @media (max-width: $mantine-breakpoint-md) {
-    padding: calc(var(--mantine-spacing-md));
-  }
-
-  @media (max-width: $mantine-breakpoint-xs) {
-    padding: calc(var(--mantine-spacing-xs));
-  }
-}
-
-.content {
-  width: 100%
-}
-
-.infoRow {
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  align-content: stretch;
-  width: 100%;
-  flex-wrap: wrap;
-  row-gap: 10px;
-  column-gap: 10px;
-  padding: 20px;
-  margin-bottom: 10px;
-  border-radius: var(--mantine-radius-lg);
-  background-color: light-dark(var(--mantine-color-primary-0), var(--mantine-color-primary-4));
-}
-
-.title {
-  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
-  font-family: Poppins, sans-serif;
-  font-size: 34px;
-  line-height: 1.2;
-  font-weight: 700;
-
-  @media (max-width: $mantine-breakpoint-xs) {
-    font-size: 24px;
-  }
-}
-
-.control {
-  @media (max-width: $mantine-breakpoint-xs) {
-    flex: 1;
-  }
-}
-
-.highlight {
-  position: relative;
-  background-color: var(--mantine-color-blue-light);
-  border-radius: var(--mantine-radius-sm);
-  padding: 4px 12px;
-}
-
-.flexRow {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-content: stretch;
-  width: 100%;
-  flex-basis: stretch;
-  flex-wrap: wrap;
-
-  @media (max-width: $mantine-breakpoint-xs) {
-      flex-direction: column;
-  }
-}
-
-.flexRowEnd {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-content: stretch;
-  width: 100%;
-
-  @media (max-width: $mantine-breakpoint-xs) {
-      flex-direction: column;
-  }
-}
-
-.submitRow {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-content: center;
-  align-items: end;
-  width: 100%;
-  padding-top: 0px;
-
-  @media (max-width: $mantine-breakpoint-md) {
-    padding-top: 0px;
-  }
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  @media (max-width: $mantine-breakpoint-xs) {
-      padding-top: 0px;
-  }
-}
-
-.submitButton {
-  margin-top: 10px;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    width: 100%;
-  }
-}
-
-.pill {
-  background-color: var(--mantine-primary-color-4);
-  color: var(--mantine-color-white);
-  font-weight: 600;
-}
+/* Contact Methods Modal - Selection card styling */
 
 .description {
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2));
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  font-size: var(--mantine-font-size-sm);
+  line-height: 1.5;
 }
 
-.input {
-  &:not(:only-child)::placeholder {
-    color: transparent;
-  }
+/* Method selection cards */
+.methodsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-sm);
 }
 
-.options {
-  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+.methodCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-md);
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-5));
+  border: 2px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  cursor: pointer;
 }
 
-.label {
-  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+.methodCard:hover {
+  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-4));
+  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-3));
+}
+
+.methodCard[data-selected] {
+  border-color: #24968b;
+  background-color: light-dark(#f0faf9, var(--mantine-color-dark-4));
+}
+
+/* None option selected - subtle red tint */
+.methodCard[data-method="none"][data-selected] {
+  border-color: light-dark(var(--mantine-color-red-4), var(--mantine-color-red-7));
+  background-color: light-dark(var(--mantine-color-red-0), var(--mantine-color-dark-4));
+}
+
+.methodCardContent {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-md);
+  flex: 1;
+  min-width: 0;
+}
+
+.methodIconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--mantine-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* WhatsApp styling */
+.methodIconWrapper[data-method="whatsapp"] {
+  color: #25D366;
+}
+
+.methodCard[data-selected] .methodIconWrapper[data-method="whatsapp"] {
+  color: #24968b;
+}
+
+/* SMS styling */
+.methodIconWrapper[data-method="sms"] {
+  color: light-dark(var(--mantine-color-blue-5), var(--mantine-color-blue-4));
+}
+
+.methodCard[data-selected] .methodIconWrapper[data-method="sms"] {
+  color: #24968b;
+}
+
+/* None/disabled styling */
+.methodIconWrapper[data-method="none"] {
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+}
+
+.methodCard[data-selected] .methodIconWrapper[data-method="none"] {
+  color: light-dark(var(--mantine-color-red-5), var(--mantine-color-red-4));
+}
+
+.methodInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.methodName {
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+  font-weight: 600;
+  font-size: var(--mantine-font-size-sm);
+}
+
+.methodDescription {
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  font-size: var(--mantine-font-size-xs);
+  line-height: 1.4;
+}
+
+.checkCircle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  color: transparent;
+}
+
+.checkCircle[data-selected] {
+  border-color: #24968b;
+  background-color: #24968b;
+  color: white;
+}
+
+/* None option check circle - red */
+.methodCard[data-method="none"] .checkCircle[data-selected] {
+  border-color: light-dark(var(--mantine-color-red-5), var(--mantine-color-red-5));
+  background-color: light-dark(var(--mantine-color-red-5), var(--mantine-color-red-5));
+}
+
+/* Action buttons */
+.actionRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--mantine-spacing-sm);
+}
+
+.cancelButton {
+  background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
+}
+
+.cancelButton:hover {
+  background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
 }

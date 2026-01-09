@@ -111,7 +111,7 @@ export function InviteByEmail() {
         label="Who would you like to invite?"
         description="Press Enter or comma to add multiple people"
         radius="lg"
-        size="lg"
+        size="sm"
         mt="lg"
         error={error}
         classNames={{

@@ -1,11 +1,12 @@
+import { useState } from 'react';
 import { LabourReadModel } from '@base/clients/labour_service';
 import { useLabourClient, useUpdateLabourPlan } from '@base/hooks';
 import { validateLabourName } from '@lib';
-import { IconCalendar, IconPencil } from '@tabler/icons-react';
-import { Button, Group, Modal, Radio, Stack, TextInput } from '@mantine/core';
+import { IconBabyCarriage, IconCalendar, IconCheck, IconPencil } from '@tabler/icons-react';
+import { Button, Modal, Stack, Text, TextInput, UnstyledButton } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import baseClasses from '@styles/base.module.css';
+import classes from './EditLabourModal.module.css';
 import modalClasses from '@styles/modal.module.css';
 
 interface EditLabourModalProps {
@@ -17,12 +18,12 @@ interface EditLabourModalProps {
 export function EditLabourModal({ labour, isOpen, onClose }: EditLabourModalProps) {
   const client = useLabourClient();
   const updateLabourMutation = useUpdateLabourPlan(client);
+  const [firstLabour, setFirstLabour] = useState(labour.first_labour);
 
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
       dueDate: new Date(labour.due_date),
-      firstLabour: labour.first_labour ? 'true' : 'false',
       labourName: labour.labour_name || '',
     },
     validate: { labourName: (value) => validateLabourName(value) },
@@ -32,7 +33,7 @@ export function EditLabourModal({ labour, isOpen, onClose }: EditLabourModalProp
     updateLabourMutation.mutate(
       {
         labourId: labour.labour_id,
-        firstLabour: values.firstLabour === 'true',
+        firstLabour,
         dueDate: values.dueDate,
         labourName: values.labourName || undefined,
       },
@@ -48,7 +49,7 @@ export function EditLabourModal({ labour, isOpen, onClose }: EditLabourModalProp
     <Modal
       opened={isOpen}
       onClose={onClose}
-      title="Edit labour details"
+      title="Edit Labour Details"
       size="md"
       centered
       overlayProps={{ backgroundOpacity: 0.4, blur: 3 }}
@@ -60,74 +61,90 @@ export function EditLabourModal({ labour, isOpen, onClose }: EditLabourModalProp
         close: modalClasses.closeButton,
       }}
     >
+      <Text className={classes.description} mb="lg">
+        Update the details for this labour.
+      </Text>
+
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack gap="sm">
-          <DatePickerInput
-            placeholder="Due date"
-            rightSection={<IconCalendar size={16} stroke={1.5} />}
-            valueFormat="DD/MM/YYYY"
-            label="Estimated due date"
-            radius="md"
-            size="sm"
-            required
-            key={form.key('dueDate')}
-            {...form.getInputProps('dueDate')}
-            classNames={{
-              input: baseClasses.input,
-              section: baseClasses.section,
-              levelsGroup: baseClasses.selectDropdown,
-              label: modalClasses.inputLabel,
-            }}
-          />
+        <Stack gap="lg">
+          {/* Due Date Section */}
+          <div className={classes.section}>
+            <div className={classes.sectionLabel}>
+              <IconCalendar size={14} />
+              <span>Due Date</span>
+            </div>
+            <DatePickerInput
+              placeholder="Select due date"
+              valueFormat="DD MMMM YYYY"
+              size="md"
+              key={form.key('dueDate')}
+              {...form.getInputProps('dueDate')}
+              classNames={{
+                input: classes.input,
+                section: classes.inputSection,
+              }}
+            />
+          </div>
 
-          <Radio.Group
-            name="firstLabour"
-            key={form.key('firstLabour')}
-            label="Is this your first labour?"
-            size="sm"
-            {...form.getInputProps('firstLabour')}
-            classNames={{ label: modalClasses.inputLabel }}
-          >
-            <Group mt={4}>
-              <Radio
-                value="true"
-                label="Yes"
-                size="sm"
-                classNames={{ label: modalClasses.inputLabel }}
-              />
-              <Radio
-                value="false"
-                label="No"
-                size="sm"
-                classNames={{ label: modalClasses.inputLabel }}
-              />
-            </Group>
-          </Radio.Group>
+          {/* First Labour Section */}
+          <div className={classes.section}>
+            <div className={classes.sectionLabel}>
+              <IconBabyCarriage size={14} />
+              <span>First Labour</span>
+            </div>
+            <div className={classes.radioGroup}>
+              <UnstyledButton
+                className={classes.radioOption}
+                data-selected={firstLabour || undefined}
+                onClick={() => setFirstLabour(true)}
+              >
+                <div className={classes.radioCheck}>{firstLabour && <IconCheck size={12} />}</div>
+                <span className={classes.radioLabel}>Yes, this is my first</span>
+              </UnstyledButton>
+              <UnstyledButton
+                className={classes.radioOption}
+                data-selected={!firstLabour || undefined}
+                onClick={() => setFirstLabour(false)}
+              >
+                <div className={classes.radioCheck}>{!firstLabour && <IconCheck size={12} />}</div>
+                <span className={classes.radioLabel}>No, I've had one before</span>
+              </UnstyledButton>
+            </div>
+          </div>
 
-          <TextInput
-            rightSection={<IconPencil size={16} stroke={1.5} />}
-            key={form.key('labourName')}
-            label="Labour name (optional)"
-            placeholder="Baby Fern's birth"
-            size="sm"
-            radius="md"
-            {...form.getInputProps('labourName')}
-            classNames={{
-              input: baseClasses.input,
-              section: baseClasses.section,
-              label: modalClasses.inputLabel,
-            }}
-            styles={{ input: { padding: '25px 15px' } }}
-          />
+          {/* Labour Name Section */}
+          <div className={classes.section}>
+            <div className={classes.sectionLabel}>
+              <IconPencil size={14} />
+              <span>Name (Optional)</span>
+            </div>
+            <TextInput
+              key={form.key('labourName')}
+              placeholder="e.g. Baby Fern's birth"
+              size="md"
+              {...form.getInputProps('labourName')}
+              classNames={{
+                input: classes.input,
+                section: classes.inputSection,
+              }}
+            />
+          </div>
 
-          <Group justify="flex-end" mt="sm">
-            <Button variant="default" size="sm" onClick={onClose} radius="md">
+          {/* Action Buttons */}
+          <div className={classes.actionRow}>
+            <Button
+              size="sm"
+              radius="lg"
+              variant="default"
+              className={classes.cancelButton}
+              onClick={onClose}
+            >
               Cancel
             </Button>
-            <Button type="submit" size="sm" radius="md" loading={updateLabourMutation.isPending}>
-              Save changes
+            <Button type="submit" size="sm" radius="lg" loading={updateLabourMutation.isPending}>
+              Save Changes
             </Button>
-          </Group>
+          </div>
         </Stack>
       </form>
     </Modal>

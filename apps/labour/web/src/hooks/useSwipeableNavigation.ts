@@ -96,7 +96,7 @@ export function getFloatingControlsPadding({
 
   if (activeTab === 'updates') {
     if (isUpdateControlsExpanded) {
-      return withSafeArea(isOnline ? 190 : 120);
+      return withSafeArea(isOnline ? 210 : 120);
     }
     return withSafeArea(55);
   }

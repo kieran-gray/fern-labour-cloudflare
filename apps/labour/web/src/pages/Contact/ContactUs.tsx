@@ -84,9 +84,7 @@ export function ContactUs() {
         <header className={classes.header}>
           <div className={classes.headerDecoration} />
           <p className={classes.greeting}>Get in touch</p>
-          <h1 className={classes.title}>
-            We'd love to <span className={classes.titleAccent}>hear from you</span>
-          </h1>
+          <h1 className={classes.title}>We'd love to hear from you</h1>
           <p className={classes.subtitle}>
             If you have feedback, an idea, or simply want to get in touch, we’re listening.
           </p>

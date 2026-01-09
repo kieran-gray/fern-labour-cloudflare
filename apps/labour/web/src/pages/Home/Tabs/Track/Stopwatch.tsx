@@ -1,45 +1,24 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { useEffect, useState } from 'react';
 import classes from './Stopwatch.module.css';
 
-export interface StopwatchHandle {
-  start: () => void;
-  stop: () => void;
-  reset: () => void;
-  set: (seconds: number) => void;
-  seconds: number;
-  isRunning: boolean;
+interface StopwatchProps {
+  startTimestamp: number;
+  offset?: number;
 }
 
-const Stopwatch = forwardRef<StopwatchHandle>((_, ref) => {
-  const [seconds, setSeconds] = useState(0);
-  const [isRunning, setIsRunning] = useState(true);
-  const [startTime, setStartTime] = useState<number | null>(null);
+export default function Stopwatch({ startTimestamp, offset = 0 }: StopwatchProps) {
+  const [, setTick] = useState(0);
 
   useEffect(() => {
-    let intervalId: NodeJS.Timeout;
+    const intervalId = setInterval(() => {
+      setTick((t) => t + 1);
+    }, 100);
 
-    if (isRunning) {
-      if (!startTime) {
-        setStartTime(Date.now() - seconds * 1000);
-      }
+    return () => clearInterval(intervalId);
+  }, []);
 
-      intervalId = setInterval(() => {
-        const now = Date.now();
-        const expectedSeconds = Math.floor((now - (startTime || now)) / 1000);
-        if (Math.abs(expectedSeconds - seconds) >= 1) {
-          setSeconds(expectedSeconds);
-        } else {
-          setSeconds((prev) => prev + 1);
-        }
-      }, 1000);
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [isRunning, startTime, seconds]);
+  const elapsedMs = Math.max(0, Date.now() + offset - startTimestamp);
+  const seconds = Math.floor(elapsedMs / 1000);
 
   const formatTime = (totalSeconds: number): string => {
     const minutes = Math.floor(totalSeconds / 60);
@@ -47,35 +26,9 @@ const Stopwatch = forwardRef<StopwatchHandle>((_, ref) => {
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  useImperativeHandle(ref, () => ({
-    start: () => {
-      setStartTime(Date.now() - seconds * 1000);
-      setIsRunning(true);
-    },
-    stop: () => {
-      setIsRunning(false);
-      setStartTime(null);
-    },
-    reset: () => {
-      setIsRunning(false);
-      setSeconds(0);
-      setStartTime(null);
-    },
-    set: (newSeconds) => {
-      setSeconds(newSeconds);
-      if (isRunning) {
-        setStartTime(Date.now() - newSeconds * 1000);
-      }
-    },
-    seconds,
-    isRunning,
-  }));
-
   return (
-    <div>
+    <div className={classes.wrapper}>
       <div className={classes.counter}>{formatTime(seconds)}</div>
     </div>
   );
-});
-
-export default Stopwatch;
+}
