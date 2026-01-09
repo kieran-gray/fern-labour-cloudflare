@@ -3,10 +3,10 @@ import { useSubmitContactForm } from '@base/hooks/useContactData';
 import { useUser } from '@clerk/clerk-react';
 import type { CreateContactMessageRequest } from '@clients/contact_service';
 import { validateMessage } from '@lib';
-import { IconAt, IconBrandInstagram, IconBulb, IconCheck, IconSend } from '@tabler/icons-react';
+import { IconAt, IconBrandInstagram, IconBulb, IconSend } from '@tabler/icons-react';
 import { useSearchParams } from 'react-router-dom';
 import Turnstile from 'react-turnstile';
-import { Alert, Checkbox, Rating, Select, Textarea } from '@mantine/core';
+import { Checkbox, Rating, Select, Textarea } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import classes from './ContactUs.module.css';
 import baseClasses from '@styles/base.module.css';
@@ -22,7 +22,6 @@ export function ContactUs() {
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useUser();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const [status, setStatus] = useState({ type: '', message: '' });
   const [rating, setRating] = useState(5);
   const [checked, setChecked] = useState(false);
 
@@ -55,14 +54,7 @@ export function ContactUs() {
       data,
     };
     contactUsMutation.mutateAsync(requestBody);
-    setTimeout(() => {
-      form.reset();
-      setIsLoading(false);
-      setStatus({
-        type: 'Success',
-        message: "Message sent successfully! We'll get back to you soon.",
-      });
-    }, 250);
+    form.reset();
   };
 
   function getTextAreaPlaceholder(values: typeof form.values): string {
@@ -94,21 +86,6 @@ export function ContactUs() {
           className={classes.form}
           onSubmit={form.onSubmit((values) => handleContactUsSubmission(values))}
         >
-          {status.type && (
-            <Alert
-              variant="light"
-              color="green"
-              radius="md"
-              title={status.type}
-              icon={<IconCheck size={18} />}
-              className={classes.successAlert}
-              withCloseButton
-              onClose={() => setStatus({ type: '', message: '' })}
-            >
-              {status.message}
-            </Alert>
-          )}
-
           <div className={classes.fieldGroup}>
             <div className={classes.categorySelector}>
               <span className={classes.categoryLabel}>This is</span>
@@ -174,6 +151,7 @@ export function ContactUs() {
             <Turnstile
               sitekey={import.meta.env.VITE_CLOUDFLARE_SITEKEY || '1x00000000000000000000AA'}
               onVerify={(token) => setTurnstileToken(token)}
+              appearance="interaction-only"
             />
           </div>
 
@@ -194,11 +172,7 @@ export function ContactUs() {
                   @fernlabour
                 </a>
               </div>
-              <button
-                type="submit"
-                className={classes.submitButton}
-                disabled={isLoading || status.type !== ''}
-              >
+              <button type="submit" className={classes.submitButton} disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <span className={classes.loadingSpinner} />
