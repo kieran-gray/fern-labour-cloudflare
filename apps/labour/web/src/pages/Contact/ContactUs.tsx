@@ -19,7 +19,6 @@ const categories = [
 ];
 
 export function ContactUs() {
-  const [isLoading, setIsLoading] = useState(false);
   const { user } = useUser();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [rating, setRating] = useState(5);
@@ -39,7 +38,6 @@ export function ContactUs() {
 
   const contactUsMutation = useSubmitContactForm();
   const handleContactUsSubmission = async (values: typeof form.values) => {
-    setIsLoading(true);
     let data = {};
     if (values.category === 'TESTIMONIAL') {
       data = { rating, consent: checked };
@@ -172,8 +170,12 @@ export function ContactUs() {
                   @fernlabour
                 </a>
               </div>
-              <button type="submit" className={classes.submitButton} disabled={isLoading}>
-                {isLoading ? (
+              <button
+                type="submit"
+                className={classes.submitButton}
+                disabled={contactUsMutation.isPending}
+              >
+                {contactUsMutation.isPending ? (
                   <>
                     <span className={classes.loadingSpinner} />
                     Sending...
