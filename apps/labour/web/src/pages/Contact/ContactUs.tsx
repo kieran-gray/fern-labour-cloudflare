@@ -12,10 +12,10 @@ import classes from './ContactUs.module.css';
 import baseClasses from '@styles/base.module.css';
 
 const categories = [
-  { label: 'An Error Report', value: 'error_report' },
-  { label: 'An Idea', value: 'idea' },
-  { label: 'A Testimonial', value: 'testimonial' },
-  { label: 'Other', value: 'other' },
+  { label: 'An Error Report', value: 'ERROR' },
+  { label: 'An Idea', value: 'IDEA' },
+  { label: 'A Testimonial', value: 'TESTIMONIAL' },
+  { label: 'Other', value: 'OTHER' },
 ];
 
 export function ContactUs() {
@@ -28,7 +28,7 @@ export function ContactUs() {
 
   const [searchParams] = useSearchParams();
   const promptParam = searchParams.get('show');
-  const defaultCategory = promptParam ? promptParam : 'error_report';
+  const defaultCategory = promptParam ? promptParam : 'ERROR';
 
   const form = useForm({
     initialValues: {
@@ -42,7 +42,7 @@ export function ContactUs() {
   const handleContactUsSubmission = async (values: typeof form.values) => {
     setIsLoading(true);
     let data = {};
-    if (values.category === 'testimonial') {
+    if (values.category === 'TESTIMONIAL') {
       data = { rating, consent: checked };
     }
 
@@ -66,17 +66,17 @@ export function ContactUs() {
   };
 
   function getTextAreaPlaceholder(values: typeof form.values): string {
-    if (values.category === 'idea') {
+    if (values.category === 'IDEA') {
       return 'What feature would you like to see?';
-    } else if (values.category === 'testimonial') {
+    } else if (values.category === 'TESTIMONIAL') {
       return 'Share your thoughts!';
-    } else if (values.category === 'error_report') {
+    } else if (values.category === 'ERROR') {
       return 'Please describe the issue with as much detail as you can';
     }
     return 'Share your thoughts or describe the issue...';
   }
 
-  const isTestimonial = form.values.category === 'testimonial';
+  const isTestimonial = form.values.category === 'TESTIMONIAL';
 
   return (
     <div className={baseClasses.card}>
