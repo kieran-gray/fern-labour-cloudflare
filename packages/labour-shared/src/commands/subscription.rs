@@ -33,8 +33,8 @@ pub enum SubscriptionCommand {
     },
 
     InvalidateSubscriptionToken {
-        labour_id: Uuid
-    }
+        labour_id: Uuid,
+    },
 }
 
 impl SubscriptionCommand {

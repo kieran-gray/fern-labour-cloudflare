@@ -25,7 +25,10 @@ impl RenderedContent {
     }
 
     pub fn has_subject(&self) -> bool {
-        matches!(self, RenderedContent::Email { .. } | RenderedContent::WhatsApp { .. })
+        matches!(
+            self,
+            RenderedContent::Email { .. } | RenderedContent::WhatsApp { .. }
+        )
     }
 
     pub fn body(&self) -> &str {

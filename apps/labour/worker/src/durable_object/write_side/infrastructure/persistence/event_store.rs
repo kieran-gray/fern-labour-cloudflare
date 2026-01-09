@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::{Context, Result, anyhow};
 use async_trait::async_trait;
 use chrono::NaiveDateTime;
 use serde::Deserialize;
@@ -107,13 +107,16 @@ impl EventStoreTrait for SqlEventStore {
             max_seq: Option<i64>,
         }
 
-        let result = self
+        let results = self
             .sql
             .exec("SELECT MAX(sequence) as max_seq FROM events", None)
             .context("Failed to query max sequence")?
-            .one::<MaxSequenceResult>()
+            .to_array::<MaxSequenceResult>()
             .context("Failed to parse max sequence result")?;
 
-        Ok(result.max_seq)
+        match results.as_slice() {
+            [sequence_result] => Ok(sequence_result.max_seq),
+            _ => Err(anyhow!("No max sequence results found")),
+        }
     }
 }

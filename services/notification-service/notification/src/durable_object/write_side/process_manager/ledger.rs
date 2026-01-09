@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::{Context, Result, anyhow};
 use serde::Deserialize;
 use uuid::Uuid;
 use worker::SqlStorage;
@@ -184,7 +184,7 @@ impl EffectLedger {
             count: i64,
         }
 
-        let result: CountResult = self
+        let results = self
             .sql
             .exec(
                 "SELECT COUNT(*) as count FROM pending_effects
@@ -193,9 +193,12 @@ impl EffectLedger {
                 Some(vec![max_attempts.into()]),
             )
             .context("Failed to check for pending effects")?
-            .one()
+            .to_array::<CountResult>()
             .context("Failed to get count result")?;
 
-        Ok(result.count > 0)
+        match results.as_slice() {
+            [count_result] => Ok(count_result.count > 0),
+            _ => Err(anyhow!("No max sequence results found")),
+        }
     }
 }

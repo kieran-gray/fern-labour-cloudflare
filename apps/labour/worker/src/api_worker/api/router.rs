@@ -43,6 +43,7 @@ pub fn create_router(app_state: AppState) -> Router<'static, AppState> {
         .post_async("/api/v1/query", |req, ctx| {
             authenticated(handle_query, req, ctx)
         })
+        .options("/api/v1/query", create_options_handler)
         .get_async("/api/v1/timestamp/:labour_id", |req, ctx| {
             authenticated(get_server_timestamp, req, ctx)
         })
@@ -50,5 +51,4 @@ pub fn create_router(app_state: AppState) -> Router<'static, AppState> {
         .on_async("/api/v1/connect/:labour_id", |req, ctx| {
             websocket_authenticated(handle_websocket_connect, req, ctx)
         })
-        .options("/api/v1/query", create_options_handler)
 }
