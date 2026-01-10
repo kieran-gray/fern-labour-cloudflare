@@ -23,6 +23,7 @@ export function ContactUs() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [rating, setRating] = useState(5);
   const [checked, setChecked] = useState(false);
+  const [sent, setSent] = useState(false);
 
   const [searchParams] = useSearchParams();
   const promptParam = searchParams.get('show');
@@ -40,7 +41,7 @@ export function ContactUs() {
   const handleContactUsSubmission = async (values: typeof form.values) => {
     let data = {};
     if (values.category === 'TESTIMONIAL') {
-      data = { rating, consent: checked };
+      data = { rating: rating.toString(), consent: checked ? 'true' : 'false' };
     }
 
     const requestBody: CreateContactMessageRequest = {
@@ -52,6 +53,7 @@ export function ContactUs() {
       data,
     };
     contactUsMutation.mutateAsync(requestBody);
+    setSent(true);
     form.reset();
   };
 
@@ -173,7 +175,7 @@ export function ContactUs() {
               <button
                 type="submit"
                 className={classes.submitButton}
-                disabled={contactUsMutation.isPending}
+                disabled={contactUsMutation.isPending || turnstileToken === null || sent}
               >
                 {contactUsMutation.isPending ? (
                   <>
