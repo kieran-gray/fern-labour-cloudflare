@@ -1,6 +1,6 @@
 pub mod api;
-pub mod setup;
 pub mod infrastructure;
+pub mod setup;
 
 pub use setup::config::Config;
 pub use setup::observability::setup_observability;
