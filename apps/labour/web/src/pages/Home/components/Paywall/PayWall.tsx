@@ -7,7 +7,7 @@ import image from './ShareMore.svg';
 import baseClasses from '@styles/base.module.css';
 
 export const PayWall = () => {
-  const { subscription } = useLabourSession();
+  const { subscription, labourId } = useLabourSession();
   const subscriptionId = subscription?.subscription_id;
   const client = useLabourClient();
   const createCheckout = useCreateCheckoutSession(client);
@@ -23,6 +23,7 @@ export const PayWall = () => {
     cancelUrl.searchParams.set('cancelled', 'true');
 
     createCheckout.mutate({
+      labourId: labourId!,
       subscriptionId: subscriptionId!,
       successUrl: successUrl.toString(),
       cancelUrl: cancelUrl.toString(),
@@ -50,10 +51,10 @@ export const PayWall = () => {
         radius="xl"
         size="lg"
         mt={10}
-        disabled={createCheckout.isPending || true}
+        disabled={createCheckout.isPending}
         onClick={handleUpgrade}
       >
-        Temporarily Disabled
+        Upgrade now
       </Button>
       <Text mt={15} size="xs" className={baseClasses.description}>
         *SMS messages are only supported for UK (+44) phone numbers{' '}

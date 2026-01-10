@@ -1,27 +1,32 @@
 import type { LabourServiceClient } from '@base/clients/labour_service';
 import { Error as ErrorNotification } from '@components/Notifications';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
-import { queryKeys } from './queryKeys';
+import { CreateCheckoutSessionCommand } from '@base/clients/labour_service/types';
 
 export function useCreateCheckoutSession(client: LabourServiceClient) {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async ({
+      labourId,
       subscriptionId,
       successUrl,
       cancelUrl,
     }: {
+      labourId: string;
       subscriptionId: string;
       successUrl: string;
       cancelUrl: string;
     }) => {
-      const response = await client.createCheckoutSession({
-        subscription_id: subscriptionId,
-        success_url: successUrl,
-        cancel_url: cancelUrl,
-      });
+      const command: CreateCheckoutSessionCommand = {
+        type: 'CreateCheckoutSession',
+        payload: {
+          labour_id: labourId,
+          subscription_id: subscriptionId,
+          success_url: successUrl,
+          cancel_url: cancelUrl,
+        },
+      };
+      const response = await client.createCheckoutSession(command);
 
       if (!response.success || !response.data) {
         throw new Error(response.error || 'Failed to create checkout session');
@@ -30,10 +35,6 @@ export function useCreateCheckoutSession(client: LabourServiceClient) {
       return response.data;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.subscriptions.all,
-      });
-
       window.location.href = data.url;
     },
     onError: (error: Error) => {

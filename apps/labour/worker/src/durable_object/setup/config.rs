@@ -7,6 +7,7 @@ pub struct Config {
     pub app_base_url: String,
     pub default_batch_size: i64,
     pub notification_auth_token: String,
+    pub stripe_secret_key: String,
 }
 
 impl ConfigTrait<Config> for Config {
@@ -16,12 +17,14 @@ impl ConfigTrait<Config> for Config {
             .unwrap_or_else(|_| "https://track.fernlabour.com".to_string());
         let default_batch_size = Config::parse(env, "DEFAULT_BATCH_SIZE").unwrap_or(10000);
         let notification_auth_token = Config::parse(env, "NOTIFICATION_SERVICE_AUTH_TOKEN")?;
+        let stripe_secret_key = Config::parse(env, "STRIPE_SECRET_KEY")?;
 
         Ok(Self {
             subscription_token_salt,
             app_base_url,
             default_batch_size,
             notification_auth_token,
+            stripe_secret_key,
         })
     }
 }

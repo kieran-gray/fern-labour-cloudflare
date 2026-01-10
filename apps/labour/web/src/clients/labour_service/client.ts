@@ -12,7 +12,7 @@ import type {
   ContractionCommand,
   ContractionQuery,
   ContractionReadModel,
-  CreateCheckoutSessionRequest,
+  CreateCheckoutSessionCommand,
   CreateCheckoutSessionResponse,
   Cursor,
   LabourCommand,
@@ -804,7 +804,7 @@ export class LabourServiceClient {
   }
 
   async createCheckoutSession(
-    request: CreateCheckoutSessionRequest
+    request: CreateCheckoutSessionCommand
   ): Promise<ApiResponse<CreateCheckoutSessionResponse>> {
     const headers = await this.getHeaders();
     const url = `${this.config.baseUrl}/api/v1/payments/checkout`;
