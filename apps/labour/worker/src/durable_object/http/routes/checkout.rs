@@ -4,7 +4,7 @@ use fern_labour_workers_shared::User;
 use tracing::{error, info};
 use worker::{Request, Response};
 
-use crate::durable_object::{http::ApiResult, http::router::RequestContext};
+use crate::durable_object::http::router::RequestContext;
 
 pub async fn handle_create_checkout_session(
     mut req: Request,
@@ -22,11 +22,14 @@ pub async fn handle_create_checkout_session(
         .create_checkout_session(envelope.command, user)
         .await;
 
-    if let Err(ref err) = result {
-        error!("Create checkout session failed: {}", err);
-    } else {
-        info!("Checkout session created successfully");
+    match result {
+        Ok(data) => {
+            info!("Checkout session created successfully");
+            Response::from_json(&data)
+        }
+        Err(err) => {
+            error!("Create checkout session failed: {}", err);
+            Response::error(err.to_string(), 400)
+        }
     }
-
-    Ok(ApiResult::from_json_result(result).into_response())
 }

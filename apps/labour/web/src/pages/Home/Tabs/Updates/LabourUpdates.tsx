@@ -175,10 +175,10 @@ export const LabourUpdates = memo(
       const filteredUpdates = isOwnerView
         ? labourUpdates
         : labourUpdates.filter(
-          (update) =>
-            update.labour_update_type === 'ANNOUNCEMENT' ||
-            update.labour_update_type === 'STATUS_UPDATE'
-        );
+            (update) =>
+              update.labour_update_type === 'ANNOUNCEMENT' ||
+              update.labour_update_type === 'STATUS_UPDATE'
+          );
 
       return filteredUpdates.map((data) => {
         return (

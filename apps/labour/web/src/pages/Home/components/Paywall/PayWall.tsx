@@ -15,6 +15,7 @@ export const PayWall = () => {
   const handleUpgrade = () => {
     const baseUrl = window.location.href.split('?')[0];
     const returnURL = new URL(baseUrl);
+    returnURL.searchParams.set('tab', 'details');
 
     const successUrl = new URL(returnURL);
     successUrl.searchParams.set('prompt', 'contactMethods');

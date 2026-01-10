@@ -1,8 +1,8 @@
 import type { LabourServiceClient } from '@base/clients/labour_service';
+import { CreateCheckoutSessionCommand } from '@base/clients/labour_service/types';
 import { Error as ErrorNotification } from '@components/Notifications';
 import { useMutation } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
-import { CreateCheckoutSessionCommand } from '@base/clients/labour_service/types';
 
 export function useCreateCheckoutSession(client: LabourServiceClient) {
   return useMutation({

@@ -103,7 +103,7 @@ impl WorkerStripeClient {
         })?;
 
         let status = response.status_code();
-        if status < 200 || status >= 300 {
+        if !(200..300).contains(&status) {
             let error_text = response.text().await.unwrap_or_default();
             error!(status = status, error = ?error_text, "Stripe price lookup error");
             return Err(StripeError::RequestFailed(format!(
@@ -173,7 +173,7 @@ impl StripeClient for WorkerStripeClient {
         })?;
 
         let status = response.status_code();
-        if status < 200 || status >= 300 {
+        if !(200..300).contains(&status) {
             let error_text = response.text().await.unwrap_or_default();
             error!(status = status, error = ?error_text, "Stripe API error response");
             return Err(StripeError::RequestFailed(format!(

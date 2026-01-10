@@ -290,12 +290,12 @@ export type InvalidateSubscriptionTokenCommand = {
 export type CreateCheckoutSessionCommand = {
   type: 'CreateCheckoutSession';
   payload: {
-    labour_id: string,
-    subscription_id: string,
-    success_url: string,
-    cancel_url: string,
-  }
-}
+    labour_id: string;
+    subscription_id: string;
+    success_url: string;
+    cancel_url: string;
+  };
+};
 
 export type SubscriptionCommand =
   | ApproveSubscriberCommand
