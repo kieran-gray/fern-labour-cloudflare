@@ -109,6 +109,5 @@ export type {
   UnblockSubscriberPayload,
   UpdateSubscriberRolePayload,
   RebuildReadModelsPayload,
-  CreateCheckoutSessionRequest,
   CreateCheckoutSessionResponse,
 } from './types';

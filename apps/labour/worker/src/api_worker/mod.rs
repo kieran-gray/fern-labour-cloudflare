@@ -1,4 +1,5 @@
 pub mod api;
+pub mod infrastructure;
 pub mod setup;
 
 pub use setup::config::Config;

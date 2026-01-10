@@ -287,6 +287,16 @@ export type InvalidateSubscriptionTokenCommand = {
   payload: { labour_id: string };
 };
 
+export type CreateCheckoutSessionCommand = {
+  type: 'CreateCheckoutSession';
+  payload: {
+    labour_id: string;
+    subscription_id: string;
+    success_url: string;
+    cancel_url: string;
+  };
+};
+
 export type SubscriptionCommand =
   | ApproveSubscriberCommand
   | RemoveSubscriberCommand
@@ -564,12 +574,6 @@ export type UnblockSubscriberPayload = UnblockSubscriberCommand['payload'];
 export type UpdateSubscriberRolePayload = UpdateSubscriberRoleCommand['payload'];
 
 export type RebuildReadModelsPayload = RebuildReadModelsCommand['payload'];
-
-export interface CreateCheckoutSessionRequest {
-  subscription_id: string;
-  success_url: string;
-  cancel_url: string;
-}
 
 export interface CreateCheckoutSessionResponse {
   url: string;

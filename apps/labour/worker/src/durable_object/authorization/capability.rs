@@ -1,7 +1,8 @@
 use std::collections::HashSet;
 
-use fern_labour_labour_shared::value_objects::{
-    SubscriberRole, subscriber::status::SubscriberStatus,
+use fern_labour_labour_shared::{
+    commands::checkout::CheckoutCommand,
+    value_objects::{SubscriberRole, subscriber::status::SubscriberStatus},
 };
 
 use crate::durable_object::{
@@ -105,6 +106,10 @@ pub fn required_capability(action: &Action) -> Capability {
             | LabourCommand::BlockSubscriber(..)
             | LabourCommand::UnblockSubscriber(..)
             | LabourCommand::UpdateSubscriberRole(..) => Capability::ManageLabourSubscriptions,
+        },
+
+        Action::CheckoutCommand(cmd) => match cmd {
+            CheckoutCommand::CreateCheckoutSession { .. } => Capability::ManageOwnSubscription,
         },
 
         Action::Query(q) => match q {

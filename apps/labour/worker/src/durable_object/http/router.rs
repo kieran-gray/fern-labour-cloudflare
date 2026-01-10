@@ -5,6 +5,7 @@ use crate::durable_object::{
         middleware::with_auth_context,
         routes::{
             admin::handle_admin_command,
+            checkout::handle_create_checkout_session,
             command::handle_command,
             events::handle_events_query,
             labour::handle_labour_domain_command,
@@ -32,6 +33,9 @@ pub async fn route_request(req: Request, services: &LabourRoomServices) -> Resul
     match (method, path.as_str()) {
         (Method::Post, "/api/command") => with_auth_context(handle_command, req, ctx).await,
         (Method::Post, "/api/query") => with_auth_context(handle_query, req, ctx).await,
+        (Method::Post, "/api/checkout") => {
+            with_auth_context(handle_create_checkout_session, req, ctx).await
+        }
         (Method::Post, "/admin/command") => with_auth_context(handle_admin_command, req, ctx).await,
         (Method::Get, "/labour/events") => with_auth_context(handle_events_query, req, ctx).await,
         (Method::Post, "/labour/domain") => {

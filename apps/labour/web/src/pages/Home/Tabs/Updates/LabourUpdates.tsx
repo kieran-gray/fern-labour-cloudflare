@@ -336,9 +336,14 @@ export const LabourUpdates = memo(
                       <Space h="md" />
                     </>
                   ) : (
-                    <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.emptyState}>
-                      {emptyStateMessage}
-                    </Text>
+                    <>
+                      <div className={classes.imageFlexRow}>
+                        <Image src={image} className={classes.image} />
+                      </div>
+                      <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.emptyState}>
+                        {emptyStateMessage}
+                      </Text>
+                    </>
                   )}
                 </div>
               </div>

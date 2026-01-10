@@ -24,3 +24,4 @@ num-bigint-dig = "0.8"
 http-body-util = "0.1"
 chrono = { version = "0.4", default-features = false, features = ["std"] }
 uuid = { version = "1.11", features = ["v7", "serde"] }
+urlencoding = "2.1"

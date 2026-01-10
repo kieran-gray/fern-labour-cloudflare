@@ -2,7 +2,10 @@ use std::rc::Rc;
 
 use anyhow::{Context, Result};
 
-use fern_labour_workers_shared::{ConfigTrait, clients::FetcherNotificationClient};
+use fern_labour_workers_shared::{
+    ConfigTrait,
+    clients::{FetcherNotificationClient, WorkerStripeClient},
+};
 use worker::{Env, State};
 
 use fern_labour_event_sourcing_rs::{
@@ -42,7 +45,7 @@ use crate::durable_object::{
     setup::config::Config,
     websocket::event_broadcaster::WebSocketEventBroadcaster,
     write_side::{
-        application::{AdminCommandProcessor, LabourCommandProcessor},
+        application::{AdminCommandProcessor, CheckoutService, LabourCommandProcessor},
         domain::{Labour, LabourEvent},
         infrastructure::{RandomTokenGenerator, SqlCache, SqlEventStore, UserStore},
         process_manager::{EffectLedger, LabourEffectExecutor, ProcessManager},
@@ -52,6 +55,7 @@ use crate::durable_object::{
 pub struct WriteModel {
     pub labour_command_processor: LabourCommandProcessor,
     pub admin_command_processor: AdminCommandProcessor,
+    pub checkout_service: CheckoutService,
     pub user_store: UserStore,
 }
 
@@ -86,25 +90,30 @@ pub struct LabourRoomServices {
 impl LabourRoomServices {
     fn build_write_model(
         state: &State,
+        config: &Config,
         aggregate_repository: Rc<dyn AggregateRepositoryTrait<Labour>>,
     ) -> Result<WriteModel> {
         let sql = state.storage().sql();
-        let labour_command_processor = LabourCommandProcessor::new(aggregate_repository);
+        let labour_command_processor = LabourCommandProcessor::new(aggregate_repository.clone());
+
+        let stripe_client = Box::new(WorkerStripeClient::new(config.stripe_secret_key.clone()));
+        let checkout_service = CheckoutService::new(aggregate_repository, stripe_client);
 
         let checkpoint_repository = Box::new(SqlCheckpointRepository::create(sql.clone()));
         checkpoint_repository.init_schema()?;
 
         let admin_command_processor = AdminCommandProcessor::create(checkpoint_repository);
 
-        let user_storage = UserStore::create(sql);
-        user_storage
+        let user_store = UserStore::create(sql);
+        user_store
             .init_schema()
             .context("Failed to init user storage")?;
 
         Ok(WriteModel {
             labour_command_processor,
             admin_command_processor,
-            user_store: user_storage,
+            checkout_service,
+            user_store,
         })
     }
 
@@ -327,7 +336,7 @@ impl LabourRoomServices {
             Self::AGGREGATE_CACHE_KEY.to_string(),
         ));
 
-        let write_model = Self::build_write_model(state, aggregate_repository.clone())?;
+        let write_model = Self::build_write_model(state, &config, aggregate_repository.clone())?;
 
         let command_processor = Rc::new(write_model.labour_command_processor.clone());
 
