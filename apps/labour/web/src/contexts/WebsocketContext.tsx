@@ -34,6 +34,11 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
   >(new Map());
 
   useEffect(() => {
+    if (import.meta.env.VITE_DEMO_MODE === 'true') {
+      console.log('[WebSocket] Demo mode enabled, skipping connection');
+      return;
+    }
+
     if (!labourId) {
       shouldReconnectRef.current = false;
       clearTimeout(reconnectTimeoutRef.current);

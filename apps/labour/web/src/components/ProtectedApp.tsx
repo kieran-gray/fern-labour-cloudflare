@@ -10,6 +10,10 @@ interface ProtectedAppProps {
 export const ProtectedApp: React.FC<ProtectedAppProps> = (props) => {
   const { children } = props;
 
+  if (import.meta.env.VITE_DEMO_MODE === 'true') {
+    return <>{children}</>;
+  }
+
   const { isOnline } = useNetworkState();
   const { isLoaded: isAuthLoaded, isSignedIn, getToken } = useAuth();
   const { user, isLoaded: isUserLoaded } = useUser();
@@ -29,7 +33,7 @@ export const ProtectedApp: React.FC<ProtectedAppProps> = (props) => {
     }
 
     if (user || isSignedIn) {
-      getToken({ skipCache: true }).catch(() => {});
+      getToken({ skipCache: true }).catch(() => { });
     }
   }, [isOnline, user, isSignedIn, getToken]);
 

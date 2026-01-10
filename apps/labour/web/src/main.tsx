@@ -19,7 +19,7 @@ import { initializeQueryPersistence } from './offline/persistence/queryPersisten
 import { theme } from './theme';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-if (!PUBLISHABLE_KEY) {
+if (!PUBLISHABLE_KEY && import.meta.env.VITE_DEMO_MODE !== 'true') {
   throw new Error('Missing Clerk Publishable Key');
 }
 
@@ -39,7 +39,7 @@ reactDom.createRoot(document.getElementById('root')!).render(
     <MantineProvider theme={theme}>
       <Notifications position="top-center" mt={60} zIndex={199} />
       <BrowserRouter basename="/">
-        <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+        <ClerkProvider publishableKey={PUBLISHABLE_KEY || 'pk_test_demo_mode_key'} afterSignOutUrl="/">
           <QueryClientProvider client={queryClient}>
             <ProtectedApp>
               <PWAUpdateHandler />
