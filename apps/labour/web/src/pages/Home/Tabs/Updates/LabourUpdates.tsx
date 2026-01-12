@@ -31,7 +31,7 @@ const MESSAGES = {
   OWNER_TITLE_ACTIVE: 'Share an update',
   OWNER_TITLE_COMPLETED: 'Your labour updates',
   OWNER_DESCRIPTION_ACTIVE:
-    'Share updates here to let your subscribers know how you are getting on. Click the book icon above for more info.',
+    'Share updates here to let your subscribers know how you are getting on.',
   OWNER_DESCRIPTION_COMPLETED:
     'Here you can see the updates you made during your labour experience.',
   OWNER_EMPTY_STATE: "You haven't posted any updates yet.",
@@ -40,7 +40,7 @@ const MESSAGES = {
   BIRTH_PARTNER_TITLE_ACTIVE: (firstName: string) => `Share an update about ${firstName}`,
   BIRTH_PARTNER_TITLE_COMPLETED: (firstName: string) => `${firstName}'s labour updates`,
   BIRTH_PARTNER_DESCRIPTION_ACTIVE: (firstName: string) =>
-    `Share updates here to let subscribers know how ${firstName} is getting on. Click the book icon above for more info.`,
+    `Share updates here to let subscribers know how ${firstName} is getting on.`,
   BIRTH_PARTNER_DESCRIPTION_COMPLETED: (firstName: string) =>
     `Here you can see the updates you made during ${firstName}'s labour experience.`,
   BIRTH_PARTNER_EMPTY_STATE: (firstName: string) =>

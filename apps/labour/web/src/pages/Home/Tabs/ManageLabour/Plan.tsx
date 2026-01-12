@@ -94,19 +94,17 @@ export default function Plan() {
       {[1, 2, 3].map((step, index) => (
         <div key={step} className={classes.progressStep}>
           <div
-            className={`${classes.progressDot} ${
-              step === currentStep
+            className={`${classes.progressDot} ${step === currentStep
                 ? classes.progressDotActive
                 : step < currentStep
                   ? classes.progressDotComplete
                   : ''
-            }`}
+              }`}
           />
           {index < 2 && (
             <div
-              className={`${classes.progressLine} ${
-                step < currentStep ? classes.progressLineActive : ''
-              }`}
+              className={`${classes.progressLine} ${step < currentStep ? classes.progressLineActive : ''
+                }`}
             />
           )}
         </div>
@@ -168,9 +166,8 @@ export default function Plan() {
         </p>
         <div className={classes.radioGroup}>
           <label
-            className={`${classes.radioCard} ${
-              formData.firstLabour === 'true' ? classes.radioCardSelected : ''
-            }`}
+            className={`${classes.radioCard} ${formData.firstLabour === 'true' ? classes.radioCardSelected : ''
+              }`}
           >
             <input
               type="radio"
@@ -189,9 +186,8 @@ export default function Plan() {
           </label>
 
           <label
-            className={`${classes.radioCard} ${
-              formData.firstLabour === 'false' ? classes.radioCardSelected : ''
-            }`}
+            className={`${classes.radioCard} ${formData.firstLabour === 'false' ? classes.radioCardSelected : ''
+              }`}
           >
             <input
               type="radio"
@@ -227,11 +223,10 @@ export default function Plan() {
   const renderStep3 = () => (
     <div className={classes.stepContainer} key="step3">
       <div className={classes.celebration}>
-        <span className={classes.celebrationIcon}>&#x1F33F;</span>
         <h3 className={classes.celebrationTitle}>Almost there!</h3>
         <p className={classes.celebrationText}>
-          Would you like to give your labour a name? This is totally optional, but we'll use it when
-          sending updates to your subscribers.
+          Would you like to give your labour a name? This is completely optional, 
+          but it can be a nice personal touch for you and your loved ones.
         </p>
       </div>
 
