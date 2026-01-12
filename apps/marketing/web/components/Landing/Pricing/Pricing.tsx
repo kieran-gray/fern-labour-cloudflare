@@ -3,15 +3,14 @@
 import { ReactNode } from 'react';
 import NextLink from 'next/link';
 import {
-  IconAdjustments,
   IconBellRinging,
   IconDeviceMobileMessage,
   IconMessage,
   IconMoodSmileBeam,
-  IconSignLeft,
   IconUser,
   IconUsers,
 } from '@tabler/icons-react';
+import { motion } from 'motion/react';
 import {
   Box,
   Button,
@@ -26,6 +25,7 @@ import {
   Text,
 } from '@mantine/core';
 import { JumboTitle } from '../JumboTitle/JumboTitle';
+import { SectionSeparator } from '../SectionSeparator/SectionSeparator';
 import classes from './Pricing.module.css';
 
 const Icon = ({ children }: { children: ReactNode }) => (
@@ -35,7 +35,6 @@ const Icon = ({ children }: { children: ReactNode }) => (
 );
 
 const PricingCard = ({
-  badge,
   cta,
   description,
   icon,
@@ -44,10 +43,7 @@ const PricingCard = ({
   pricingPeriod,
   title,
   shadow,
-  strikethroughPrice,
-  showStrikethroughPrice = true,
 }: {
-  badge?: ReactNode;
   cta: ReactNode;
   description: string;
   icon: ReactNode;
@@ -59,44 +55,29 @@ const PricingCard = ({
   price: string;
   pricingPeriod: string;
   shadow?: CardProps['shadow'];
-  strikethroughPrice?: string;
-  showStrikethroughPrice?: boolean;
   title: string;
 }) => (
-  <Card
-    radius="xl"
-    shadow={shadow}
-    miw={{ base: '100%', sm: 350 }}
-    maw={380}
-    withBorder
-    className={classes.root}
-  >
+  <Card radius="xl" shadow={shadow} w="100%" withBorder className={classes.root}>
     <Group justify="space-between" align="start" mb="md">
       <Box>{icon}</Box>
-      <Box>{badge}</Box>
     </Group>
     <Text fz="xl" fw="bold">
       {title}
     </Text>
-    <Text mb="md" c="dimmed">
-      {description}
-    </Text>
-    <Text
-      c="dimmed"
-      fz="lg"
-      td="line-through"
-      span
-      style={{ visibility: showStrikethroughPrice ? 'visible' : 'hidden' }}
-    >
-      {strikethroughPrice}
-    </Text>
-    <Flex align="end" gap="xs">
+    {description && (
+      <Text mb="md" c="dimmed" fz="sm">
+        {description}
+      </Text>
+    )}
+    <Flex align="end" gap="xs" mt={description ? 0 : 'md'}>
       <JumboTitle my={0} order={2} fz="md" mb="sm" c="var(--mantine-color-pink-4)">
         {price}
       </JumboTitle>
-      <Text c="dimmed" span>
-        {pricingPeriod}
-      </Text>
+      {pricingPeriod && (
+        <Text c="dimmed" span>
+          {pricingPeriod}
+        </Text>
+      )}
     </Flex>
     <Card.Section my="lg">
       <Divider />
@@ -127,160 +108,211 @@ type Pricing01Props = {
   callToActionUrl?: string;
 };
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.15,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 24, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: [0.25, 0.1, 0.25, 1] as const,
+    },
+  },
+};
+
 export const Pricing01 = ({ title, description, callToActionUrl = '#' }: Pricing01Props) => {
   return (
-    <Container py={120} px="15px" fluid>
-      <Container size="md" id="#pricing" style={{ position: 'relative' }}>
-        <Stack align="center" gap="xs">
-          <JumboTitle order={2} fz="xs" ta="center" style={{ textWrap: 'balance' }}>
-            {title}
-          </JumboTitle>
-          <Text c="var(--mantine-color-gray-7)" ta="center" fz="xl" style={{ textWrap: 'balance' }}>
-            {description}
-          </Text>
-        </Stack>
+    <div style={{ position: 'relative', backgroundColor: 'var(--mantine-color-pink-0)' }}>
+      <SectionSeparator position="top" color="#fff9f7" style={{ zIndex: 1 }} />
+      <Container py={120} px="15px" fluid>
+        <Container size="md" style={{ position: 'relative' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+            viewport={{ once: true, margin: '-10%' }}
+          >
+            <Stack align="center" gap="xs">
+              <JumboTitle order={2} fz="xs" ta="center" style={{ textWrap: 'balance' }}>
+                {title}
+              </JumboTitle>
+              <Text
+                c="var(--mantine-color-gray-7)"
+                ta="center"
+                fz="lg"
+                style={{ textWrap: 'balance' }}
+              >
+                {description}
+              </Text>
+            </Stack>
+          </motion.div>
+        </Container>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-10%' }}
+        >
+          <Group
+            mt="calc(var(--mantine-spacing-lg) * 2)"
+            justify="center"
+            gap="lg"
+            wrap="wrap"
+            px="md"
+          >
+            <motion.div variants={cardVariants} className={classes.pricingCardWrapper}>
+              <PricingCard
+                shadow="sm"
+                title="For Mum"
+                description="Track for free, forever"
+                cta={
+                  <Button
+                    component={NextLink}
+                    href={callToActionUrl}
+                    size="lg"
+                    radius="xl"
+                    variant="light"
+                    fullWidth
+                  >
+                    Start tracking
+                  </Button>
+                }
+                icon={
+                  <Icon>
+                    <IconUser size={21} />
+                  </Icon>
+                }
+                price="Free"
+                pricingPeriod=""
+                items={[
+                  {
+                    title: 'Unlimited tracking',
+                    description: 'Track all your contractions',
+                    icon: (
+                      <Icon>
+                        <IconMoodSmileBeam size={21} />
+                      </Icon>
+                    ),
+                  },
+                  {
+                    title: 'Share with your circle',
+                    description: 'Invite family and friends',
+                    icon: (
+                      <Icon>
+                        <IconUsers size={21} />
+                      </Icon>
+                    ),
+                  },
+                ]}
+              />
+            </motion.div>
+            <motion.div variants={cardVariants} className={classes.pricingCardWrapper}>
+              <PricingCard
+                shadow="sm"
+                title="For Family"
+                description="Follow along"
+                cta={
+                  <Button
+                    component={NextLink}
+                    radius="xl"
+                    href={callToActionUrl}
+                    variant="light"
+                    size="lg"
+                    fullWidth
+                  >
+                    Join someone's circle
+                  </Button>
+                }
+                icon={
+                  <Icon>
+                    <IconUsers size={21} />
+                  </Icon>
+                }
+                price="Free"
+                pricingPeriod=""
+                items={[
+                  {
+                    title: 'View updates',
+                    description: 'See updates as they happen',
+                    icon: (
+                      <Icon>
+                        <IconMessage size={21} />
+                      </Icon>
+                    ),
+                  },
+                  {
+                    title: 'Stay connected',
+                    description: 'Follow from anywhere',
+                    icon: (
+                      <Icon>
+                        <IconUsers size={21} />
+                      </Icon>
+                    ),
+                  },
+                ]}
+              />
+            </motion.div>
+            <motion.div variants={cardVariants} className={classes.pricingCardWrapper}>
+              <PricingCard
+                shadow="sm"
+                title="Stay Closer"
+                description="Real-time notifications"
+                cta={
+                  <Button
+                    component={NextLink}
+                    href={callToActionUrl}
+                    radius="xl"
+                    size="lg"
+                    variant="light"
+                    fullWidth
+                  >
+                    Add notifications
+                  </Button>
+                }
+                icon={
+                  <Icon>
+                    <IconDeviceMobileMessage size={21} />
+                  </Icon>
+                }
+                price="£2.50"
+                pricingPeriod="one-time"
+                items={[
+                  {
+                    title: 'Everything above',
+                    description: 'All free features included',
+                    icon: (
+                      <Icon>
+                        <IconUsers size={21} />
+                      </Icon>
+                    ),
+                  },
+                  {
+                    title: 'Instant notifications',
+                    description: 'Updates by SMS or WhatsApp',
+                    icon: (
+                      <Icon>
+                        <IconBellRinging size={21} />
+                      </Icon>
+                    ),
+                  },
+                ]}
+              />
+            </motion.div>
+          </Group>
+        </motion.div>
       </Container>
-      <Group
-        mt={{
-          base: 'calc(var(--mantine-spacing-lg) * 2)',
-          lg: 'calc(var(--mantine-spacing-lg) * 3)',
-        }}
-        justify="center"
-        gap="xl"
-      >
-        <PricingCard
-          shadow="sm"
-          title="For Mum"
-          description=""
-          cta={
-            <Button
-              component={NextLink}
-              href={callToActionUrl}
-              size="lg"
-              radius="xl"
-              variant="light"
-              fullWidth
-            >
-              Get started
-            </Button>
-          }
-          icon={
-            <Icon>
-              <IconUser size={21} />
-            </Icon>
-          }
-          price="Free"
-          pricingPeriod=""
-          items={[
-            {
-              title: 'Peace of mind',
-              description: 'No more constant messages or check-ins',
-              icon: (
-                <Icon>
-                  <IconMoodSmileBeam size={21} />
-                </Icon>
-              ),
-            },
-            {
-              title: 'You’re in control',
-              description: 'Share updates only when you’re ready',
-              icon: (
-                <Icon>
-                  <IconAdjustments size={21} />
-                </Icon>
-              ),
-            },
-          ]}
-        />
-        <PricingCard
-          shadow="sm"
-          title="For loved ones"
-          description=""
-          cta={
-            <Button
-              component={NextLink}
-              radius="xl"
-              href={callToActionUrl}
-              variant="light"
-              size="lg"
-              fullWidth
-            >
-              Get started
-            </Button>
-          }
-          icon={
-            <Icon>
-              <IconUsers size={21} />
-            </Icon>
-          }
-          price="Free"
-          pricingPeriod=""
-          items={[
-            {
-              title: 'Subscribe',
-              description: 'Subscribe to a labour',
-              icon: (
-                <Icon>
-                  <IconUsers size={21} />
-                </Icon>
-              ),
-            },
-            {
-              title: 'See updates in app',
-              description: 'View labour updates in app',
-              icon: (
-                <Icon>
-                  <IconMessage size={21} />
-                </Icon>
-              ),
-            },
-          ]}
-        />
-        <PricingCard
-          shadow="sm"
-          title="For loved ones"
-          description=""
-          cta={
-            <Button
-              component={NextLink}
-              href={callToActionUrl}
-              radius="xl"
-              size="lg"
-              variant="light"
-              fullWidth
-            >
-              Get started
-            </Button>
-          }
-          icon={
-            <Icon>
-              <IconDeviceMobileMessage size={21} />
-            </Icon>
-          }
-          price="£2.50"
-          pricingPeriod=""
-          items={[
-            {
-              title: 'All of the previous',
-              description: 'Plus the following...',
-              icon: (
-                <Icon>
-                  <IconSignLeft size={21} />
-                </Icon>
-              ),
-            },
-            {
-              title: 'Live notifications',
-              description: 'Real-time updates via WhatsApp/SMS',
-              icon: (
-                <Icon>
-                  <IconBellRinging size={21} />
-                </Icon>
-              ),
-            },
-          ]}
-        />
-      </Group>
-    </Container>
+    </div>
   );
 };

@@ -4,7 +4,7 @@ import { IconArrowUp } from '@tabler/icons-react';
 import { Affix, Button, Transition } from '@mantine/core';
 import { useWindowScroll } from '@mantine/hooks';
 import { FooterSimple } from '@/components/Footer/Footer';
-import { Header01 } from '@/components/PillHeader/PillHeader';
+import { Header01 } from '@/components/Header/Header';
 import { PrivacyPolicy } from '@/components/Privacy/PrivacyPolicy';
 
 export const metadata: Metadata = {

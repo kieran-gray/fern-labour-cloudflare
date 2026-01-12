@@ -1,0 +1,93 @@
+.root {
+    padding: calc(var(--mantine-spacing-xl) * 2) var(--mantine-spacing-lg);
+    background-color: transparent;
+
+    @media (max-width: 48em) {
+        padding: calc(var(--mantine-spacing-xl) * 2) var(--mantine-spacing-xs);
+    }
+}
+
+.inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: calc(var(--mantine-spacing-xl) * 2);
+
+    @media (max-width: 62em) {
+        flex-direction: column;
+        text-align: center;
+        gap: calc(var(--mantine-spacing-xl) * 1.5);
+    }
+}
+
+.content {
+    flex: 1;
+    max-width: 420px;
+    padding: 0 var(--mantine-spacing-md);
+
+    @media (max-width: 62em) {
+        max-width: 100%;
+        padding: 0 var(--mantine-spacing-lg);
+    }
+}
+
+.title {
+    font-family: var(--mantine-font-family-headings);
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1.2;
+    margin-bottom: var(--mantine-spacing-md);
+    color: var(--mantine-color-dark-7);
+
+    @media (max-width: 48em) {
+        font-size: 26px;
+        margin-bottom: var(--mantine-spacing-sm);
+    }
+}
+
+.description {
+    color: var(--mantine-color-gray-6);
+    font-size: 17px;
+    line-height: 1.6;
+
+    @media (max-width: 48em) {
+        font-size: 16px;
+        line-height: 1.65;
+    }
+}
+
+.visual {
+    flex: 1;
+    width: 100%;
+    max-width: 420px;
+    padding: 0 var(--mantine-spacing-md);
+
+    @media (max-width: 62em) {
+        padding: 0 var(--mantine-spacing-lg);
+        max-width: 100%;
+    }
+}
+
+.updateCard {
+    background: white;
+    border-radius: var(--mantine-radius-lg);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.updateCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .updateCard {
+        transition: none;
+    }
+
+    .updateCard:hover {
+        transform: none;
+    }
+}

@@ -17,7 +17,7 @@ import {
   Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import classes from './PillHeader.module.css';
+import classes from './Header.module.css';
 
 export type HeaderLink = {
   label: string;

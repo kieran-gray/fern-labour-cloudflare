@@ -1,0 +1,96 @@
+.root {
+    padding-top: calc(var(--mantine-spacing-xl) * 2.5);
+    padding-bottom: calc(var(--mantine-spacing-xl) * 2);
+    background-color: transparent;
+    text-align: center;
+
+    @media (max-width: 48em) {
+        padding-top: calc(var(--mantine-spacing-xl) * 2);
+        padding-bottom: calc(var(--mantine-spacing-xl) * 1.5);
+    }
+}
+
+.title {
+    font-family: var(--mantine-font-family-headings);
+    font-weight: 700;
+    font-size: 32px;
+    margin-bottom: var(--mantine-spacing-xs);
+    color: var(--mantine-color-dark-7);
+    padding: 0 var(--mantine-spacing-md);
+
+    @media (max-width: 48em) {
+        font-size: 26px;
+        padding: 0 var(--mantine-spacing-lg);
+    }
+}
+
+.subtitle {
+    color: var(--mantine-color-gray-7);
+    font-size: 17px;
+    margin-bottom: calc(var(--mantine-spacing-xl) * 1.5);
+    padding: 0 var(--mantine-spacing-md);
+
+    @media (max-width: 48em) {
+        font-size: 16px;
+        margin-bottom: calc(var(--mantine-spacing-xl) * 1.25);
+        padding: 0 var(--mantine-spacing-lg);
+    }
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--mantine-spacing-lg);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 var(--mantine-spacing-md);
+
+    @media (max-width: 48em) {
+        grid-template-columns: 1fr;
+        gap: var(--mantine-spacing-md);
+        padding: 0 var(--mantine-spacing-lg);
+    }
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--mantine-spacing-md);
+    padding: var(--mantine-spacing-xl) var(--mantine-spacing-lg);
+    border-radius: var(--mantine-radius-lg);
+    background-color: white;
+    border: 1px solid var(--mantine-color-gray-2);
+    box-shadow: 0 2px 12px -4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    @media (max-width: 48em) {
+        padding: var(--mantine-spacing-xl);
+    }
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card {
+        transition: none;
+    }
+
+    .card:hover {
+        transform: none;
+    }
+}
+
+.roleDescription {
+    color: var(--mantine-color-gray-7);
+    font-size: 15px;
+    line-height: 1.55;
+
+    @media (max-width: 48em) {
+        font-size: 15px;
+        line-height: 1.6;
+    }
+}

@@ -1,12 +1,19 @@
 import Link from 'next/link';
-import { Button, Container, Image, Text, Title } from '@mantine/core';
+import { Button, Image, Text, Title } from '@mantine/core';
 import { FooterSimple } from '@/components/Footer/Footer';
+import { Header01 } from '@/components/Header/Header';
 import classes from '@/components/NotFoundImage.module.css';
-import { Header01 } from '@/components/PillHeader/PillHeader';
 
-export default function Contact() {
+export default function NotFound() {
   return (
-    <div style={{ height: '100svh', display: 'flex', flexDirection: 'column' }}>
+    <div
+      style={{
+        minHeight: '100svh',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#fdfaf8',
+      }}
+    >
       <Header01
         breakpoint="sm"
         callToActionTitle="Go to app"
@@ -15,32 +22,37 @@ export default function Contact() {
         radius="50px"
         landingPage={false}
       />
-      <div style={{ padding: '20px' }}>
-        <Container className={classes.root} mt={20}>
-          <div style={{ justifyContent: 'space-between' }}>
-            <Title order={2} visibleFrom="sm">
-              We're not sure how you got here...
-            </Title>
-            <Title order={3} hiddenFrom="sm">
-              We're not sure how you got here...
-            </Title>
-            <div className={classes.imageFlexRow}>
-              <Image src="/images/notFound.svg" className={classes.mobileImage} />
+
+      <div className={classes.flexPageColumn}>
+        <div className={classes.card}>
+          <div className={classes.row}>
+            <div className={classes.content}>
+              <Title className={classes.title}>We're not sure how you got here...</Title>
+
+              <div className={classes.mobileImageContainer}>
+                <Image src="/images/notFound.svg" w={250} h={250} />
+              </div>
+
+              <Text className={classes.description}>
+                The page you are trying to open does not exist. You may have mistyped the address,
+                or the page has been moved to another URL. If you think this is an error contact
+                support.
+              </Text>
+
+              <Link href="/" style={{ width: 'fit-content' }}>
+                <Button variant="outline" size="md" radius="xl" color="pink">
+                  Lets take you home
+                </Button>
+              </Link>
             </div>
-            <Text c="var(--mantine-color-gray-8)" size="lg" mt="30">
-              The page you are trying to open does not exist. You may have mistyped the address, or
-              the page has been moved to another URL. If you think this is an error contact support.
-            </Text>
-            <Link href="/">
-              <Button variant="outline" size="md" mt="xl" radius="xl" className={classes.control}>
-                Lets take you home
-              </Button>
-            </Link>
+
+            <div className={classes.image}>
+              <Image src="/images/notFound.svg" w={350} />
+            </div>
           </div>
-          <Image src="/images/notFound.svg" className={classes.desktopImage} />
-        </Container>
+        </div>
       </div>
-      <div style={{ flexGrow: 1 }} />
+
       <FooterSimple />
     </div>
   );

@@ -29,10 +29,10 @@ const Turnstile = dynamic(() => import('react-turnstile').then((m) => m.default)
 });
 
 const categories = [
-  { label: 'An Error Report', value: 'error_report' },
-  { label: 'An Idea', value: 'idea' },
-  { label: 'A Testimonial', value: 'testimonial' },
-  { label: 'Other', value: 'other' },
+  { label: 'An Error Report', value: 'ERROR' },
+  { label: 'An Idea', value: 'IDEA' },
+  { label: 'A Testimonial', value: 'TESTIMONIAL' },
+  { label: 'Other', value: 'OTHER' },
 ];
 
 export function ContactMessageFloating() {
@@ -45,7 +45,7 @@ export function ContactMessageFloating() {
   const [checked, setChecked] = useState(false);
   const form = useForm({
     initialValues: {
-      category: 'error_report',
+      category: 'ERROR',
       email: '',
       name: '',
       message: '',
@@ -63,7 +63,7 @@ export function ContactMessageFloating() {
   const handleSubmit = async (values: typeof form.values) => {
     setIsLoading(true);
     let data = {};
-    if (values.category === 'testimonial') {
+    if (values.category === 'TESTIMONIAL') {
       data = { rating, consent: checked };
     }
 
@@ -89,7 +89,7 @@ export function ContactMessageFloating() {
         email: values.email,
         name: values.name,
         message: values.message,
-        token: turnstileToken,
+        token: turnstileToken!,
         category: values.category,
         data,
       }),
@@ -104,18 +104,18 @@ export function ContactMessageFloating() {
   };
 
   function getTextAreaPlaceholder(values: typeof form.values): string {
-    if (values.category === 'idea') {
+    if (values.category === 'IDEA') {
       return 'What feature would you like to see?';
-    } else if (values.category === 'testimonial') {
+    } else if (values.category === 'TESTIMONIAL') {
       return 'Share your thoughts!';
-    } else if (values.category === 'error_report') {
+    } else if (values.category === 'ERROR') {
       return 'Please describe the issue with as much detail as you can';
     }
     return 'Share your thoughts or describe the issue...';
   }
 
   function hideTestimonialInputs(values: typeof form.values): boolean {
-    return values.category !== 'testimonial';
+    return values.category !== 'TESTIMONIAL';
   }
 
   return (
@@ -144,7 +144,7 @@ export function ContactMessageFloating() {
               <Select
                 data={categories}
                 key={form.key('category')}
-                defaultValue="error_report"
+                defaultValue="ERROR"
                 {...form.getInputProps('category')}
                 classNames={{ input: classes.input, label: classes.inputLabel }}
                 allowDeselect={false}
@@ -216,6 +216,7 @@ export function ContactMessageFloating() {
               <Turnstile
                 sitekey={process.env.NEXT_PUBLIC_CLOUDFLARE_SITEKEY || '1x00000000000000000000AA'}
                 onVerify={(token) => setTurnstileToken(token)}
+                appearance="interaction-only"
               />
             </Group>
 
@@ -223,7 +224,12 @@ export function ContactMessageFloating() {
               <Button variant="transparent" radius="lg" onClick={close} disabled={isLoading}>
                 Cancel
               </Button>
-              <Button type="submit" className={classes.control} radius="lg" disabled={isLoading}>
+              <Button
+                type="submit"
+                className={classes.control}
+                radius="lg"
+                disabled={isLoading || !turnstileToken}
+              >
                 {isLoading ? 'Sending...' : 'Submit'}
               </Button>
             </Group>

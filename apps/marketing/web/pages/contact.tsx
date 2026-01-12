@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { ContactUs } from '@/components/Contact/ContactUs';
 import { FooterSimple } from '@/components/Footer/Footer';
-import { Header01 } from '@/components/PillHeader/PillHeader';
+import { Header01 } from '@/components/Header/Header';
 
 export default function Contact() {
   return (
