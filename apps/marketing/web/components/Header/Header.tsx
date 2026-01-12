@@ -19,7 +19,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import classes from './Header.module.css';
 
-export type HeaderLink = {
+type HeaderLink = {
   label: string;
   href: string;
 };
