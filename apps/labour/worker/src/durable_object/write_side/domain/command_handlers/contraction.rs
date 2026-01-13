@@ -1,5 +1,7 @@
+use chrono::Utc;
 use fern_labour_event_sourcing_rs::Aggregate;
-use fern_labour_labour_shared::value_objects::LabourPhase;
+use fern_labour_labour_shared::value_objects::{LabourPhase, LabourUpdateType};
+use uuid::Uuid;
 
 use crate::durable_object::write_side::domain::{
     Labour, LabourError, LabourEvent,
@@ -8,7 +10,7 @@ use crate::durable_object::write_side::domain::{
     },
     events::{
         ContractionDeleted, ContractionEnded, ContractionStarted, ContractionUpdated, LabourBegun,
-        LabourPhaseChanged,
+        LabourPhaseChanged, LabourUpdatePosted,
     },
     services::LabourPhaseProgression,
 };
@@ -51,6 +53,14 @@ pub fn handle_start_contraction(
         events.push(LabourEvent::LabourPhaseChanged(LabourPhaseChanged {
             labour_id: cmd.labour_id,
             labour_phase: LabourPhase::EARLY,
+        }));
+        events.push(LabourEvent::LabourUpdatePosted(LabourUpdatePosted {
+            labour_id: cmd.labour_id,
+            labour_update_id: Uuid::now_v7(),
+            labour_update_type: LabourUpdateType::PRIVATE_NOTE,
+            message: "labour_begun".to_string(),
+            application_generated: true,
+            sent_time: Utc::now(),
         }));
     }
 

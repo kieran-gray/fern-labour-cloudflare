@@ -1,51 +1,83 @@
 import Head from 'next/head';
-import { Space } from '@mantine/core';
-import { ContactMessageFloating } from '@/components/ContactMessageFloating/ContactMessageFloating';
+import { ContactMessageFloating } from '@/components/ContactUsFloating/ContactUsFloating';
 import { FooterSimple } from '@/components/Footer/Footer';
-import { FaqWithImage } from '@/components/Landing/FAQ/FaqWithImage';
-import { Feature02 } from '@/components/Landing/FeaturesMotion/FeaturesMotion';
+import { Header01 } from '@/components/Header/Header';
+import { AlertsFeature } from '@/components/Landing/AlertsFeature/AlertsFeature';
+import { FAQ } from '@/components/Landing/FAQ/FAQ';
 import { FinalCTA } from '@/components/Landing/FinalCTA/FinalCTA';
-import { Hero03 } from '@/components/Landing/HeroMotion/HeroMotion';
-import {
-  CallToActionText,
-  HeroText,
-  PricingText,
-  ProblemSolutionText,
-  SocialProofTrustText,
-} from '@/components/Landing/LandingPageCopy';
+import { Hero } from '@/components/Landing/Hero/Hero';
+import { InviteFlow } from '@/components/Landing/InviteFlow/InviteFlow';
+import { LabourCirclePreview } from '@/components/Landing/LabourCirclePreview/LabourCirclePreview';
+import { MotherBenefits } from '@/components/Landing/MotherBenefits/MotherBenefits';
+import { PerspectiveShift } from '@/components/Landing/PerspectiveShift/PerspectiveShift';
 import { Pricing01 } from '@/components/Landing/Pricing/Pricing';
-import { ProblemSolution } from '@/components/Landing/ProblemSolution/ProblemSolution';
-import { SocialProofTrust } from '@/components/Landing/SocialProofTrust/SocialProofTrust';
-import { Header01 } from '@/components/PillHeader/PillHeader';
+import { RolesExplained } from '@/components/Landing/RolesExplained/RolesExplained';
+import { SimpleUpdates } from '@/components/Landing/SimpleUpdates/SimpleUpdates';
+import { SubscriberBenefits } from '@/components/Landing/SubscriberBenefits/SubscriberBenefits';
+import { SubscriberExperience } from '@/components/Landing/SubscriberExperience/SubscriberExperience';
+import { TrackTogether } from '@/components/Landing/TrackTogether/TrackTogether';
 
 export default function HomePage() {
   return (
     <>
       <Head>
-        <meta property="og:title" content="Track Labour Progress & Share Updates Effortlessly" />
+        <meta property="og:title" content="Be present for your birth — Fern Labour" />
         <meta
           property="og:description"
-          content="Track labour and share updates privately with Fern Labour!"
+          content="Track contractions and keep your family close, without the distraction. Free for mums."
         />
         <meta property="og:url" content="https://fernlabour.com" />
       </Head>
       <Header01
         breakpoint="sm"
         callToActionTitle="Go to app"
-        callToActionUrl={process.env.NEXT_PUBLIC_FRONTEND_URL}
-        h="80"
-        radius="50px"
+        callToActionUrl={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL}
       />
-      <Hero03 {...HeroText} />
-      <ProblemSolution {...ProblemSolutionText} />
-      <Space h={40} />
-      <Feature02 title="How Fern Labour Works" />
-      <SocialProofTrust {...SocialProofTrustText} />
-      <Pricing01 callToActionUrl={process.env.NEXT_PUBLIC_FRONTEND_URL || '#'} {...PricingText} />
-      <FaqWithImage />
-      <FinalCTA {...CallToActionText} />
+      <div id="#home" />
+      <Hero />
+
+      <div style={{ backgroundColor: '#fdfaf8', padding: 'var(--mantine-spacing-xl) 0' }}>
+        <div id="#features" />
+        <MotherBenefits />
+        <LabourCirclePreview />
+        <TrackTogether />
+        <AlertsFeature />
+        <SimpleUpdates />
+      </div>
+
+      <div style={{ backgroundColor: '#fff5f5', padding: 'var(--mantine-spacing-xl) 0' }}>
+        <InviteFlow />
+        <RolesExplained />
+      </div>
+
+      <div style={{ backgroundColor: '#fff9f7', padding: 'var(--mantine-spacing-xl) 0' }}>
+        <PerspectiveShift />
+        <SubscriberBenefits />
+        <SubscriberExperience />
+      </div>
+
+      <div style={{ backgroundColor: '#fdfaf8' }}>
+        <div id="#pricing" />
+        <Pricing01
+          title="Pricing"
+          description="Free for mums. Family follows for free, or adds notifications."
+          callToActionUrl={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || '#'}
+        />
+        <div id="#faqs" />
+        <FAQ />
+        <FinalCTA
+          title="Create your circle"
+          description="Preparing to give birth, or waiting for news? We'll help you stay close."
+          cta="Begin today"
+          subtitle="Free for mums, always"
+        />
+      </div>
+
       <ContactMessageFloating />
-      <FooterSimple />
+
+      <div style={{ backgroundColor: '#fff5f5' }}>
+        <FooterSimple />
+      </div>
     </>
   );
 }

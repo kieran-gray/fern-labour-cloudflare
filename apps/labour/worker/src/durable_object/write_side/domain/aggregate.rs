@@ -674,10 +674,11 @@ mod tests {
 
             // Then - should emit LabourBegun before ContractionStarted
             let events = result.expect("should succeed");
-            assert_eq!(events.len(), 3);
+            assert_eq!(events.len(), 4);
             assert!(matches!(events[0], LabourEvent::LabourBegun(_)));
             assert!(matches!(events[1], LabourEvent::LabourPhaseChanged(_)));
-            assert!(matches!(events[2], LabourEvent::ContractionStarted(_)));
+            assert!(matches!(events[2], LabourEvent::LabourUpdatePosted(_)));
+            assert!(matches!(events[3], LabourEvent::ContractionStarted(_)));
         }
 
         #[test]

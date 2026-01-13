@@ -1,0 +1,119 @@
+.root {
+    padding: calc(var(--mantine-spacing-xl) * 2.5) var(--mantine-spacing-lg);
+    background-color: #fdfaf8;
+
+    @media (max-width: 48em) {
+        padding: calc(var(--mantine-spacing-xl) * 2.5) var(--mantine-spacing-xs);
+    }
+}
+
+.inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: calc(var(--mantine-spacing-xl) * 2);
+
+    @media (max-width: 62em) {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--mantine-spacing-xl);
+    }
+}
+
+.content {
+    flex: 1;
+    max-width: 450px;
+}
+
+.visual {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 500px;
+}
+
+.title {
+    font-family: var(--mantine-font-family-headings);
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1.2;
+    margin-bottom: var(--mantine-spacing-md);
+    color: var(--mantine-color-dark-7);
+
+    @media (max-width: 48em) {
+        font-size: 26px;
+    }
+}
+
+.description {
+    color: var(--mantine-color-gray-6);
+    font-size: 17px;
+    line-height: 1.6;
+    margin-bottom: var(--mantine-spacing-lg);
+
+    @media (max-width: 48em) {
+        font-size: 16px;
+    }
+}
+
+.diagramContainer {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    padding: var(--mantine-spacing-xl);
+    border-radius: var(--mantine-radius-xl);
+    box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: var(--mantine-spacing-md);
+    align-items: center;
+}
+
+.diagramRow {
+    display: flex;
+    gap: var(--mantine-spacing-md);
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+}
+
+.connector {
+    height: 30px;
+    width: 2px;
+    background-color: var(--mantine-color-gray-2);
+}
+
+.roleCard {
+    display: flex;
+    align-items: center;
+    gap: var(--mantine-spacing-sm);
+    padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+    border: 1px solid var(--mantine-color-gray-2);
+    border-radius: var(--mantine-radius-lg);
+    background: white;
+    width: 100%;
+    max-width: 280px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.roleCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .roleCard {
+        transition: none;
+    }
+
+    .roleCard:hover {
+        transform: none;
+    }
+}
+
+.roleText {
+    display: flex;
+    flex-direction: column;
+}

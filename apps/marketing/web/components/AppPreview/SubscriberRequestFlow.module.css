@@ -1,0 +1,53 @@
+.pendingSection {
+    background-color: #fffbf5;
+    border: 2px solid #e9a84a;
+    border-radius: var(--mantine-radius-lg);
+    padding: var(--mantine-spacing-md);
+    width: 100%;
+}
+
+.pendingLabel {
+    color: #b8860b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--mantine-spacing-sm);
+    display: block;
+}
+
+.subscriberCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--mantine-spacing-md);
+    background-color: white;
+    border: 1px solid var(--mantine-color-gray-2);
+    border-radius: var(--mantine-radius-lg);
+    padding: var(--mantine-spacing-md);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    width: 100%;
+}
+
+.pendingCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--mantine-spacing-md);
+    background-color: white;
+    border: 1px solid var(--mantine-color-gray-2);
+    border-radius: var(--mantine-radius-md);
+    padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+    width: 100%;
+    transition: border-color 0.2s ease;
+}
+
+.cropText {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    color: var(--mantine-color-dark-9);
+}
+
+.subtleText {
+    color: var(--mantine-color-gray-6);
+}

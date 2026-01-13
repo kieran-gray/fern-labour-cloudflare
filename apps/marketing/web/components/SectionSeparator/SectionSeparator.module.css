@@ -1,0 +1,32 @@
+.root {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    transform: rotate(180deg);
+}
+
+.rootTop {
+    bottom: auto;
+    top: 0;
+    transform: none;
+}
+
+.svg {
+    position: relative;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 60px;
+}
+
+@media (min-width: 48em) {
+    .svg {
+        height: 100px;
+    }
+}
+
+.shape {
+    fill: currentColor;
+}

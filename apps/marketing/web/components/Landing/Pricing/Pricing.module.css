@@ -1,5 +1,28 @@
+.cta {
+  background-color: var(--mantine-color-pink-6);
+  color: var(--mantine-color-white);
+}
 
-  .cta {
-    background-color: var(--mantine-color-pink-6);
-    color: var(--mantine-color-white);
+.pricingCardWrapper {
+  transition: transform 0.25s ease;
+  width: 100%;
+  max-width: 340px;
+
+  @media (max-width: 48em) {
+    max-width: 100%;
   }
+}
+
+.pricingCardWrapper:hover {
+  transform: translateY(-6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pricingCardWrapper {
+    transition: none;
+  }
+
+  .pricingCardWrapper:hover {
+    transform: none;
+  }
+}

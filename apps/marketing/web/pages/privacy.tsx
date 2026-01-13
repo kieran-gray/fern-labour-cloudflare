@@ -4,7 +4,7 @@ import { IconArrowUp } from '@tabler/icons-react';
 import { Affix, Button, Transition } from '@mantine/core';
 import { useWindowScroll } from '@mantine/hooks';
 import { FooterSimple } from '@/components/Footer/Footer';
-import { Header01 } from '@/components/PillHeader/PillHeader';
+import { Header01 } from '@/components/Header/Header';
 import { PrivacyPolicy } from '@/components/Privacy/PrivacyPolicy';
 
 export const metadata: Metadata = {
@@ -32,9 +32,7 @@ export default function PrivacyPage() {
       <Header01
         breakpoint="sm"
         callToActionTitle="Go to app"
-        callToActionUrl={process.env.NEXT_PUBLIC_FRONTEND_URL}
-        h="80"
-        radius="50px"
+        callToActionUrl={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL}
         landingPage={false}
       />
       <div style={{ padding: '15px' }}>

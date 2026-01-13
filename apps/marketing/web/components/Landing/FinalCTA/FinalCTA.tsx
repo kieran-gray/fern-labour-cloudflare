@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { IconArrowRight } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { Box, Button, Container, Stack, Text, Title } from '@mantine/core';
-import CSSParticles from './CSSParticles';
+import CSSParticles from '../../CSSParticles/CSSParticles';
 
 type FinalCTAProps = {
   title: string;
@@ -13,13 +13,17 @@ type FinalCTAProps = {
 
 export const FinalCTA = ({ title, description, cta, subtitle }: FinalCTAProps) => {
   return (
-    <Box bg="var(--mantine-color-pink-3)" py={80} pos="relative" style={{ overflow: 'hidden' }}>
-      {/* Particles cover entire section */}
+    <Box
+      bg="var(--mantine-color-pink-3)"
+      py={80}
+      pt={120}
+      pos="relative"
+      style={{ overflow: 'hidden' }}
+    >
       <Box pos="absolute" top={0} left={0} w="100%" h="100%" style={{ zIndex: 0 }}>
         <CSSParticles id="cta-particles" color="#ffffff" opacity={0.1} />
       </Box>
 
-      {/* Content overlay */}
       <Container size="xl" pos="relative" style={{ zIndex: 10 }}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -56,7 +60,10 @@ export const FinalCTA = ({ title, description, cta, subtitle }: FinalCTAProps) =
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
             >
-              <Link href="https://track.fernlabour.com" target="_blank">
+              <Link
+                href={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || 'https://app.fernlabour.com'}
+                target="_blank"
+              >
                 <Button
                   size="xl"
                   radius="xl"
