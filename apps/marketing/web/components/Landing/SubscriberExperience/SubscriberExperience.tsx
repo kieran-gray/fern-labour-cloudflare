@@ -41,8 +41,8 @@ export function SubscriberExperience() {
             Be there, without being <i>in there</i>.
           </Title>
           <Text className={classes.description}>
-            Asking "any news?" pulls her away. Let her focus. She posts once, everyone gets the same
-            update through SMS or WhatsApp.
+            The constant check-ins can add pressure. Let her focus. She shares the news once and it
+            reaches everyone instantly through SMS or WhatsApp.
           </Text>
         </motion.div>
 

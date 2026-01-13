@@ -1,10 +1,11 @@
+import Link from 'next/link';
 import { motion } from 'motion/react';
 import { Button, Container, Group, Text, Title } from '@mantine/core';
-import CSSParticles from '../FinalCTA/CSSParticles';
-import { SectionSeparator } from '../SectionSeparator/SectionSeparator';
-import classes from './HeroRedesign.module.css';
+import CSSParticles from '../../CSSParticles/CSSParticles';
+import { SectionSeparator } from '../../SectionSeparator/SectionSeparator';
+import classes from './Hero.module.css';
 
-export function HeroRedesign() {
+export function Hero() {
   return (
     <div className={classes.heroRoot}>
       <div className={classes.particlesWrapper}>
@@ -42,9 +43,14 @@ export function HeroRedesign() {
             transition={{ duration: 0.4, delay: 0.4, ease: 'easeOut' }}
           >
             <Group justify="center" gap="md">
-              <Button size="lg" radius="xl" color="pink">
-                Create your labour circle
-              </Button>
+              <Link
+                href={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || 'https://app.fernlabour.com'}
+                target="_blank"
+              >
+                <Button size="lg" radius="xl" color="pink">
+                  Create your labour circle
+                </Button>
+              </Link>
             </Group>
           </motion.div>
         </div>

@@ -5,6 +5,19 @@
     top: 10px;
     z-index: 100;
     flex-shrink: 0;
+    border-radius: 50px;
+    box-shadow:
+      0 4px 12px rgba(254, 82, 54, 0.15),
+      0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 60px;
+
+    @media (min-width: $mantine-breakpoint-xs) {
+      height: 70px;
+    }
+
+    @media (min-width: $mantine-breakpoint-sm) {
+      height: 80px;
+    }
   }
   
   .link-container {
@@ -23,11 +36,11 @@
     display: inline-block;
     white-space: nowrap;
     text-decoration: none;
-    font-weight: 700;
-    color: var(--mantine-color-white);
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
     border-radius: 100px;
     padding: 8px var(--mantine-spacing-sm);
-    transition: background-color 200ms ease, color 200ms ease;
+    transition: all 0.2s ease;
 
     &:hover {
       background-color: var(--mantine-color-pink-2);
@@ -44,6 +57,13 @@
   .cta {
     background-color: var(--mantine-color-pink-6);
     color: var(--mantine-color-white);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
   }
 
   .icon {
@@ -52,9 +72,9 @@
     margin-right: 10px;
 
     @media (max-width: $mantine-breakpoint-sm) {
-        margin-left: 10px;
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
+        margin-right: 8px;
     }
   }
 
@@ -91,14 +111,32 @@
 }
 
 .title {
-  font-size: 24px;
+  color: var(--mantine-color-white);
+  font-family: Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  white-space: nowrap;
 
   @media (max-width: $mantine-breakpoint-sm) {
-    font-size: 18px;
+    font-size: 1rem;
   }
 
   @media (max-width: $mantine-breakpoint-xs) {
-    font-size: 14px;
+    font-size: 0.9rem;
   }
+}
 
+/* Responsive adjustments */
+@media (max-width: $mantine-breakpoint-sm) {
+  .container {
+    margin: 10px 8px;
+    border-radius: 40px;
+  }
+}
+
+@media (max-width: $mantine-breakpoint-xs) {
+  .container {
+    margin: 8px 6px;
+    border-radius: 35px;
+  }
 }

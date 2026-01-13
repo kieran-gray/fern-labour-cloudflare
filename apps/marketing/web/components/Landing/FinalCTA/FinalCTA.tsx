@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { IconArrowRight } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { Box, Button, Container, Stack, Text, Title } from '@mantine/core';
-import CSSParticles from './CSSParticles';
+import CSSParticles from '../../CSSParticles/CSSParticles';
 
 type FinalCTAProps = {
   title: string;
@@ -60,7 +60,10 @@ export const FinalCTA = ({ title, description, cta, subtitle }: FinalCTAProps) =
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
             >
-              <Link href="https://track.fernlabour.com" target="_blank">
+              <Link
+                href={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || 'https://app.fernlabour.com'}
+                target="_blank"
+              >
                 <Button
                   size="xl"
                   radius="xl"

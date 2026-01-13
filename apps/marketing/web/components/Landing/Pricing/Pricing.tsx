@@ -24,8 +24,8 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { JumboTitle } from '../JumboTitle/JumboTitle';
-import { SectionSeparator } from '../SectionSeparator/SectionSeparator';
+import { JumboTitle } from '../../JumboTitle/JumboTitle';
+import { SectionSeparator } from '../../SectionSeparator/SectionSeparator';
 import classes from './Pricing.module.css';
 
 const Icon = ({ children }: { children: ReactNode }) => (

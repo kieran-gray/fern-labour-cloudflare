@@ -1,11 +1,11 @@
 import Head from 'next/head';
-import { ContactMessageFloating } from '@/components/ContactMessageFloating/ContactMessageFloating';
+import { ContactMessageFloating } from '@/components/ContactUsFloating/ContactUsFloating';
 import { FooterSimple } from '@/components/Footer/Footer';
 import { Header01 } from '@/components/Header/Header';
 import { AlertsFeature } from '@/components/Landing/AlertsFeature/AlertsFeature';
 import { FAQ } from '@/components/Landing/FAQ/FAQ';
 import { FinalCTA } from '@/components/Landing/FinalCTA/FinalCTA';
-import { HeroRedesign } from '@/components/Landing/HeroRedesign/HeroRedesign';
+import { Hero } from '@/components/Landing/Hero/Hero';
 import { InviteFlow } from '@/components/Landing/InviteFlow/InviteFlow';
 import { LabourCirclePreview } from '@/components/Landing/LabourCirclePreview/LabourCirclePreview';
 import { MotherBenefits } from '@/components/Landing/MotherBenefits/MotherBenefits';
@@ -31,12 +31,10 @@ export default function HomePage() {
       <Header01
         breakpoint="sm"
         callToActionTitle="Go to app"
-        callToActionUrl={process.env.NEXT_PUBLIC_FRONTEND_URL}
-        h="80"
-        radius="50px"
+        callToActionUrl={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL}
       />
       <div id="#home" />
-      <HeroRedesign />
+      <Hero />
 
       <div style={{ backgroundColor: '#fdfaf8', padding: 'var(--mantine-spacing-xl) 0' }}>
         <div id="#features" />
@@ -63,14 +61,14 @@ export default function HomePage() {
         <Pricing01
           title="Pricing"
           description="Free for mums. Family follows for free, or adds notifications."
-          callToActionUrl={process.env.NEXT_PUBLIC_FRONTEND_URL || '#'}
+          callToActionUrl={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || '#'}
         />
         <div id="#faqs" />
         <FAQ />
         <FinalCTA
-          title="Start your circle"
+          title="Create your circle"
           description="Preparing to give birth, or waiting for news? We'll help you stay close."
-          cta="Start Tracking"
+          cta="Begin today"
           subtitle="Free for mums, always"
         />
       </div>

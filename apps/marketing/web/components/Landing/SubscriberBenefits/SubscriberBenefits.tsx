@@ -21,7 +21,7 @@ const benefits = [
   {
     icon: IconHeart,
     title: 'Respectful Connection',
-    description: 'Feel involved without intruding.',
+    description: 'Feel close, even from far away.',
     bgColor: 'var(--mantine-color-pink-0)',
     color: 'var(--mantine-color-pink-5)',
   },
@@ -45,7 +45,7 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: [0.25, 0.1, 0.25, 1] as const,
+      ease: 'circIn' as const,
     },
   },
 };

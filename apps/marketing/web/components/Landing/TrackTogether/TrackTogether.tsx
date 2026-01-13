@@ -56,7 +56,7 @@ export function TrackTogether() {
           <Title className={classes.title}>Track together, from anywhere</Title>
           <Text className={classes.description}>
             Your birth partner can track from their own phone. Everything stays in sync. One less
-            thing to manage.
+            thing to think about.
           </Text>
         </motion.div>
 

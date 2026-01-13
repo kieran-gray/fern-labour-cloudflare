@@ -22,7 +22,7 @@ import {
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { validateEmail, validateMessage, validateName } from '@/utils/FormValidation';
-import classes from './ContactMessageFloating.module.css';
+import classes from './ContactUsFloating.module.css';
 
 const Turnstile = dynamic(() => import('react-turnstile').then((m) => m.default), {
   ssr: false,

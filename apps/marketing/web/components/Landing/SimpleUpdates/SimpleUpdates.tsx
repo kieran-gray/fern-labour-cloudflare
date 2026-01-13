@@ -60,8 +60,8 @@ export function SimpleUpdates() {
         >
           <Title className={classes.title}>Share when it feels right</Title>
           <Text className={classes.description}>
-            Your family wants to know you're okay. With one tap, everyone in your circle gets the
-            same update — so you can get back to what matters.
+            Send news when you're ready. With one tap everyone in your circle gets the same update,
+            so you can get back to what matters.
           </Text>
         </motion.div>
 

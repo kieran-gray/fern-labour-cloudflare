@@ -6,17 +6,15 @@ import classes from './RolesExplained.module.css';
 const roles = [
   {
     role: SubscriberRole.BIRTH_PARTNER,
-    description:
-      'Can track contractions and send updates on your behalf — your partner in the room.',
+    description: 'For the person by your side. They can track and update on your behalf.',
   },
   {
     role: SubscriberRole.SUPPORT_PERSON,
-    description:
-      'Sees detailed updates and contraction stats — for those who want to follow closely.',
+    description: 'For those following closely. They see your updates and contraction patterns.',
   },
   {
     role: SubscriberRole.LOVED_ONE,
-    description: 'Sees your updates and announcements — just the news, not the numbers.',
+    description: 'Just the news, not the numbers. They see your updates and announcements only.',
   },
 ];
 
@@ -54,7 +52,7 @@ export function RolesExplained() {
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           viewport={{ once: true, margin: '-10%' }}
         >
-          <Title className={classes.title}>Different roles, different access</Title>
+          <Title className={classes.title}>Share without oversharing</Title>
           <Text className={classes.subtitle}>You decide what each person can see and do.</Text>
         </motion.div>
 

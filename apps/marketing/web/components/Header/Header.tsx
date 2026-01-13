@@ -80,8 +80,8 @@ export const Header01 = ({
   links = HEADER_LINKS,
   onMenuToggle,
   isMenuOpen,
-  h = 60,
-  radius = 30,
+  h,
+  radius = 50,
   landingPage = true,
   ...containerProps
 }: Header01Props) => {
@@ -160,8 +160,9 @@ export const Header01 = ({
       component="header"
       style={{ borderRadius: radius, ...style }}
       mt="10px"
-      mx={{ base: '15px', [breakpoint]: 'auto' }}
-      w={{ base: 'auto', [breakpoint]: 'fit-content' }}
+      mx={{ base: '15px', sm: 'auto' }}
+      w={{ base: 'auto', sm: '95%' }}
+      maw={{ sm: 1050 }}
       h={h}
       {...containerProps}
     >

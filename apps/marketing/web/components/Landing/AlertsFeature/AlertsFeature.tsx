@@ -86,8 +86,8 @@ export function AlertsFeature() {
         >
           <Title className={classes.title}>Guidance when you need it</Title>
           <Text className={classes.description}>
-            We watch your pattern quietly. When the time comes, we'll let you know: prepare, leave
-            for the hospital, or call your midwife.
+            We watch your pattern quietly. We'll suggest when it might be time to prepare, head in,
+            or reach out.
           </Text>
         </motion.div>
       </Container>

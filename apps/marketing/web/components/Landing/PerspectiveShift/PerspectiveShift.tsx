@@ -18,8 +18,7 @@ export function PerspectiveShift() {
             <Title className={classes.title}>Someone who loves you is waiting to hear</Title>
             <Text className={classes.description}>
               Your mum. Your sister. Your best friend. They can't be there with you, but they want
-              to feel close. Fern Labour gives them a way to follow along — without ever
-              interrupting your moment.
+              to feel close. Now they can follow along without ever interrupting your moment.
             </Text>
           </motion.div>
         </Container>

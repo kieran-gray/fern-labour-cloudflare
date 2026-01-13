@@ -32,9 +32,7 @@ export default function PrivacyPage() {
       <Header01
         breakpoint="sm"
         callToActionTitle="Go to app"
-        callToActionUrl={process.env.NEXT_PUBLIC_FRONTEND_URL}
-        h="80"
-        radius="50px"
+        callToActionUrl={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL}
         landingPage={false}
       />
       <div style={{ padding: '15px' }}>

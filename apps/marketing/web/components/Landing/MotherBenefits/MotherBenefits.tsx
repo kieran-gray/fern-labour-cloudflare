@@ -6,7 +6,7 @@ import classes from './MotherBenefits.module.css';
 const benefits = [
   {
     icon: IconClick,
-    title: 'Effortless Tracking',
+    title: 'Simple Tracking',
     description:
       'One giant button. Tap to start, tap to stop. No distractions when you need focus.',
   },
@@ -14,7 +14,7 @@ const benefits = [
     icon: IconChartBar,
     title: 'Clear Insights',
     description:
-      "We do the math. You see what matters: how you're progressing and when it's time to move.",
+      "We handle the numbers. You see what matters: how you're progressing and when it's time to move.",
   },
   {
     icon: IconUsersGroup,
@@ -42,7 +42,7 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: [0.25, 0.1, 0.25, 1] as const,
+      ease: 'circIn' as const,
     },
   },
 };

@@ -98,7 +98,7 @@ export function InviteFlow() {
         >
           <Title className={classes.title}>This moment is yours to share</Title>
           <Text className={classes.description}>
-            Choose who joins your circle. When someone requests access, you decide.
+            Choose who is part of your circle. When someone asks to join, you decide.
           </Text>
         </motion.div>
       </Container>
