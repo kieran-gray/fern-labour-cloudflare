@@ -88,21 +88,21 @@
 .privateNotePanel {
   composes: updatePanel;
   --panel-accent-color: var(--mantine-color-orange-5);
-  background-color: light-dark(hsla(34, 100%, 95%, 0.5), hsl(40deg 20% 18% / 0.6));
+  background-color: light-dark(hsla(34deg, 100%, 95%, 0.5), hsl(40deg 20% 18% / 0.6));
 }
 
 /* Status updates - subtle teal tint */
 .statusUpdatePanel {
   composes: updatePanel;
   --panel-accent-color: var(--mantine-color-teal-6);
-  background-color: light-dark(hsla(161, 79%, 95%, 0.5), hsl(175deg 20% 18% / 0.5));
+  background-color: light-dark(hsla(161deg, 79%, 95%, 0.5), hsl(175deg 20% 18% / 0.5));
 }
 
 /* Announcements - subtle pink tint */
 .announcementPanel {
   composes: updatePanel;
   --panel-accent-color: var(--mantine-color-pink-5);
-  background-color: light-dark(hsla(10, 100%, 95%, 0.5), hsl(340deg 20% 18% / 0.5));
+  background-color: light-dark(hsla(10deg, 100%, 95%, 0.5), hsl(340deg 20% 18% / 0.5));
 }
 
 .messageFooter {

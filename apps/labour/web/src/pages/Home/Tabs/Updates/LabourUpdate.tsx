@@ -19,7 +19,13 @@ export function LabourUpdate({ data }: { data: LabourUpdateProps }) {
     <div className={data.class}>
       <LoadingOverlay visible={data.id === 'placeholder'} />
       <Group justify="space-between">
-        <Badge variant="light" size="sm" radius="sm" color={data.badgeColor} style={{textTransform: 'lowercase'}}>
+        <Badge
+          variant="light"
+          size="sm"
+          radius="sm"
+          color={data.badgeColor}
+          style={{ textTransform: 'lowercase' }}
+        >
           {data.badgeText}
         </Badge>
         <Text size="xs" c="light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-5))">
