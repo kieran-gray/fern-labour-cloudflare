@@ -28,6 +28,6 @@ mod tests {
     #[test]
     fn test_labour_announcement_body_contains_html() {
         let template = LabourAnnouncementBodyTemplate::template_string();
-        assert!(template.contains("<!DOCTYPE html>"));
+        assert!(template.contains("<!doctype html>"));
     }
 }
