@@ -49,8 +49,8 @@
   "durable_objects": {
     "bindings": [
       {
-        "name": "LABOUR_ROOM",
-        "class_name": "LabourRoom"
+        "name": "LABOUR_CIRCLE",
+        "class_name": "LabourCircle"
       }
     ]
   },
@@ -60,13 +60,21 @@
       "new_sqlite_classes": [
         "LabourRoom"
       ]
+    },
+    {
+      "tag": "v2",
+      "renamed_classes": [
+        {
+          "from": "LabourRoom",
+          "to": "LabourCircle"
+        }
+      ]
     }
   ],
   "vars": {
     "ENVIRONMENT": "production",
     "ALLOWED_ORIGINS": "https://app.fernlabour.com,https://admin.fernlabour.com",
     "PUBLIC_URL": "https://app.fernlabour.com",
-    "STRIPE_PRICE_ID": ""
   },
   "env": {
     "dev": {
@@ -90,8 +98,8 @@
       "durable_objects": {
         "bindings": [
           {
-            "name": "LABOUR_ROOM",
-            "class_name": "LabourRoom"
+            "name": "LABOUR_CIRCLE",
+            "class_name": "LabourCircle"
           }
         ]
       },
@@ -101,6 +109,15 @@
           "new_sqlite_classes": [
             "LabourRoom"
           ]
+        },
+        {
+          "tag": "v2",
+          "renamed_classes": [
+            {
+              "from": "LabourRoom",
+              "to": "LabourCircle"
+            }
+          ]
         }
       ],
       "vars": {
@@ -108,7 +125,6 @@
         "ALLOWED_ORIGINS": "",
         "PUBLIC_URL": "https://app.fernlabour.com",
         "SUBSCRIPTION_TOKEN_SALT": "changeme",
-        "STRIPE_PRICE_ID": ""
       }
     }
   }

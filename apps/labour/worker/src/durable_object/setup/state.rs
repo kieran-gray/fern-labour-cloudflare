@@ -80,14 +80,14 @@ pub struct ProcessManagement {
     pub process_manager: ProcessManager<LabourEffectExecutor>,
 }
 
-pub struct LabourRoomServices {
+pub struct LabourCircleServices {
     write_model: WriteModel,
     read_model: ReadModel,
     async_processors: AsyncProcessors,
     process_management: ProcessManagement,
 }
 
-impl LabourRoomServices {
+impl LabourCircleServices {
     fn build_write_model(
         state: &State,
         config: &Config,

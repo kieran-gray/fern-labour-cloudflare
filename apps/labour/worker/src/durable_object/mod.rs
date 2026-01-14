@@ -18,7 +18,7 @@ use worker::{
 use crate::durable_object::{
     http::router::route_request,
     read_side::query_handler::QueryHandler,
-    setup::state::LabourRoomServices,
+    setup::state::LabourCircleServices,
     websocket::{
         middleware::extract_auth_context_from_websocket,
         routes::upgrade_connection,
@@ -30,16 +30,16 @@ use crate::durable_object::{
 };
 
 #[durable_object]
-pub struct LabourRoom {
+pub struct LabourCircle {
     state: State,
     _env: Env,
-    pub(crate) services: LabourRoomServices,
+    pub(crate) services: LabourCircleServices,
     alarm_manager: AlarmManager,
 }
 
-impl DurableObject for LabourRoom {
+impl DurableObject for LabourCircle {
     fn new(state: State, env: Env) -> Self {
-        let services = match LabourRoomServices::from_worker_state(&state, &env) {
+        let services = match LabourCircleServices::from_worker_state(&state, &env) {
             Ok(s) => s,
             Err(err) => panic!("{}", err),
         };
