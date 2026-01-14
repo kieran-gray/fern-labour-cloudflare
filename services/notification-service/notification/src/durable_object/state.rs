@@ -1,17 +1,11 @@
 use std::{cell::RefCell, rc::Rc};
 
 use anyhow::{Context, Result};
-use fern_labour_notifications_shared::{
-    QueueMessage, QueueProducerTrait,
-    service_clients::{DispatchClient, GenerationClient},
-};
-use fern_labour_workers_shared::{
-    NotificationQueueProducer,
-    clients::{FetcherDispatchClient, FetcherGenerationClient},
-};
+use fern_labour_notifications_shared::service_clients::{DispatchClient, GenerationClient};
+use fern_labour_workers_shared::clients::{FetcherDispatchClient, FetcherGenerationClient};
 use worker::{Env, State};
 
-use fern_labour_event_sourcing_rs::{AggregateRepository, AsyncProjector, CommandEnvelope};
+use fern_labour_event_sourcing_rs::{AggregateRepository, AsyncProjector};
 
 use crate::{
     durable_object::{
@@ -60,17 +54,8 @@ pub struct AggregateServices {
 }
 
 impl AggregateServices {
-    fn create_command_bus(
-        env: &Env,
-    ) -> Result<Box<dyn QueueProducerTrait<Envelope = CommandEnvelope<QueueMessage>>>> {
-        let queue = env
-            .queue("NOTIFICATION_COMMAND_BUS")
-            .context("Failed to load command bus")?;
-        Ok(NotificationQueueProducer::create(queue))
-    }
-
     fn create_notification_status_projector(env: &Env) -> Result<Box<NotificationStatusProjector>> {
-        let binding = "NOTIFICATION_STATUS_DB";
+        let binding = "NOTIFICATION_READ_DB";
         let db = env
             .d1(binding)
             .context(format!("Failed to load {}", binding))?;
@@ -79,7 +64,7 @@ impl AggregateServices {
     }
 
     fn create_notification_detail_projector(env: &Env) -> Result<Box<NotificationDetailProjector>> {
-        let binding = "NOTIFICATION_DETAIL_DB";
+        let binding = "NOTIFICATION_READ_DB";
         let db = env
             .d1(binding)
             .context(format!("Failed to load {}", binding))?;
@@ -137,20 +122,18 @@ impl AggregateServices {
         let sql = state.storage().sql();
         let event_store = SqlEventStore::create(sql.clone());
 
-        let command_bus = Self::create_command_bus(env)?;
-
         let notification_status_projector = Self::create_notification_status_projector(env)?;
         let notification_detail_projector = Self::create_notification_detail_projector(env)?;
         let projectors: Vec<Box<dyn AsyncProjector<NotificationEvent>>> =
             vec![notification_detail_projector, notification_status_projector];
         let projection_processor = ProjectionProcessor::create(event_store.clone(), projectors);
 
-        let internal_auth_token = env.var("INTERNAL_AUTH_TOKEN")?.to_string();
+        let internal_service_token = env.var("INTERNAL_SERVICE_TOKEN")?.to_string();
 
-        let generation_client = Self::create_generation_client(env, &internal_auth_token)?;
-        let dispatch_client = Self::create_dispatch_client(env, &internal_auth_token)?;
+        let generation_client = Self::create_generation_client(env, &internal_service_token)?;
+        let dispatch_client = Self::create_dispatch_client(env, &internal_service_token)?;
         let service_command_processor =
-            ServiceCommandProcessor::create(command_bus, generation_client, dispatch_client);
+            ServiceCommandProcessor::create(generation_client, dispatch_client);
 
         let aggregate_repository = Rc::new(AggregateRepository::new(event_store.clone()));
         let notification_command_processor = NotificationCommandProcessor::new(Box::new(

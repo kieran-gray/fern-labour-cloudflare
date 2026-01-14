@@ -1,0 +1,63 @@
+<mjml>
+  <mj-head>
+    <mj-font name="Poppins" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" />
+    <mj-font name="Quicksand" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" />
+    <mj-attributes>
+      <mj-all font-family="Quicksand, Helvetica, sans-serif" />
+      <mj-text padding="0 24px" line-height="1.6" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#fffaf9">
+    <mj-include path="./components/header.mjml" />
+
+    <!-- Main Content -->
+    <mj-section background-color="#fdfaf8" padding="40px 20px" border-radius="16px">
+      <mj-column width="100%">
+        <mj-text align="center" font-size="22px" font-weight="700" font-family="Poppins, Helvetica, sans-serif" color="#333333" padding="0 24px 16px">
+          Something special to share with you
+        </mj-text>
+        <mj-text align="center" font-size="16px" font-weight="500" color="#555555" padding="0 24px 12px">
+          Hey!
+        </mj-text>
+        <mj-text align="center" font-size="16px" font-weight="400" color="#666666" padding="0 24px 8px">
+          I just heard about this amazing service that I think you'll love as you prepare for your little one's arrival!
+        </mj-text>
+        <mj-text align="center" font-size="15px" font-weight="400" color="#666666" padding="0 24px 8px">
+          It's a simple way to keep everyone updated during your labour and delivery without the stress of sending individual texts or calls.
+        </mj-text>
+        <mj-text align="center" font-size="15px" font-weight="400" color="#666666" padding="0 24px 24px">
+          It automatically sends updates to all your loved ones at once, and they can choose to receive notifications by email or text.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA Section -->
+    <mj-section background-color="#fff5f5" padding="24px 20px" border-radius="12px">
+      <mj-column width="100%">
+        <mj-text align="center" font-size="15px" font-weight="500" color="#555555" padding="0 24px 16px">
+          All you need to do is create an account by clicking below, choose who you want to invite, and then you can send updates when you're ready:
+        </mj-text>
+        <mj-button align="center" font-size="16px" font-weight="600" font-family="Quicksand, Helvetica, sans-serif" background-color="#ff7964" border-radius="15px" color="#ffffff" inner-padding="14px 32px" href="{link}">
+          Join Fern Labour
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <!-- Closing Section -->
+    <mj-section background-color="#fdfaf8" padding="24px 20px" border-radius="16px">
+      <mj-column width="100%">
+        <mj-text align="center" font-size="15px" font-weight="400" color="#666666" padding="0 24px 8px">
+          It's been a lifesaver for other parents I know who wanted to share their journey but didn't want the pressure of updating everyone during such an intense time.
+        </mj-text>
+        <mj-text align="center" font-size="15px" font-weight="400" color="#666666" padding="0 24px 16px">
+          I'd be honoured to be included in your updates when the big day comes.
+        </mj-text>
+        <mj-text align="center" font-size="16px" font-weight="500" color="#555555" padding="0 24px 0">
+          Sending you lots of love and support, {subscriber_name} ❤️
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-include path="./components/footer.mjml" />
+  </mj-body>
+</mjml>

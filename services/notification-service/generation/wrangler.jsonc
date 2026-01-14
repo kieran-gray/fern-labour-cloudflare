@@ -24,14 +24,6 @@
       "enabled": true
     }
   },
-  "queues": {
-    "producers": [
-      {
-        "binding": "NOTIFICATION_COMMAND_BUS",
-        "queue": "fern-labour-notification-command-bus"
-      }
-    ]
-  },
   "vars": {
     "ENVIRONMENT": "production",
     "ALLOWED_ORIGINS": ""
@@ -41,14 +33,6 @@
       "build": {
         "command": "pwd && cargo install -q worker-build && worker-build --release",
         "cwd": "../generation"
-      },
-      "queues": {
-        "producers": [
-          {
-            "binding": "NOTIFICATION_COMMAND_BUS",
-            "queue": "fern-labour-notification-command-bus"
-          }
-        ]
       },
       "vars": {
         "ENVIRONMENT": "dev",

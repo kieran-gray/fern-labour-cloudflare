@@ -1,0 +1,11 @@
+<mj-section background-color="#fffaf9" padding="30px 20px">
+  <mj-column width="100%">
+    <mj-divider border-color="#ffeae6" border-width="1px" padding="0 0 20px" />
+    <mj-text align="center" color="#999999" font-size="12px" font-family="Quicksand, Helvetica, sans-serif" padding="0">
+      Sent with love from Fern Labour
+    </mj-text>
+    <mj-text align="center" color="#bbbbbb" font-size="11px" font-family="Quicksand, Helvetica, sans-serif" padding="8px 0 0">
+      <a href="https://fernlabour.com" style="color: #bbbbbb; text-decoration: none;">fernlabour.com</a>
+    </mj-text>
+  </mj-column>
+</mj-section>

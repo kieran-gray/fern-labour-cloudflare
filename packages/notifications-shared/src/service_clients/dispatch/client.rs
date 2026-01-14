@@ -1,5 +1,4 @@
 use async_trait::async_trait;
-use worker::Response;
 
 use crate::service_clients::dispatch::{
     exceptions::DispatchClientError, requests::DispatchRequest,
@@ -11,8 +10,4 @@ pub trait DispatchClient {
         &self,
         request: DispatchRequest,
     ) -> Result<Option<String>, DispatchClientError>;
-    async fn dispatch_async(
-        &self,
-        request: DispatchRequest,
-    ) -> Result<Response, DispatchClientError>;
 }

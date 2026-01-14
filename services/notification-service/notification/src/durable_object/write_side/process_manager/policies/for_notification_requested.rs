@@ -1,5 +1,5 @@
 use fern_labour_event_sourcing_rs::{HasPolicies, PolicyContext, PolicyFn};
-use fern_labour_notifications_shared::{ServiceCommand, value_objects::NotificationPriority};
+use fern_labour_notifications_shared::ServiceCommand;
 
 use crate::durable_object::write_side::{
     domain::{Notification, events::notification::NotificationRequested},
@@ -23,6 +23,5 @@ fn render_content_on_request(
             template_data: event.template_data.clone(),
         },
         idempotency_key: IdempotencyKey::for_command(event.notification_id, ctx.sequence, "render"),
-        priority: ctx.state.priority() == &NotificationPriority::High,
     }]
 }

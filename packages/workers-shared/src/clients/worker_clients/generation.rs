@@ -54,21 +54,6 @@ impl FetcherGenerationClient {
 
 #[async_trait(?Send)]
 impl GenerationClient for FetcherGenerationClient {
-    async fn render_async(
-        &self,
-        notification_id: Uuid,
-        channel: NotificationChannel,
-        template_data: NotificationTemplateData,
-    ) -> Result<Response, GenerationClientError> {
-        self.do_render(
-            notification_id,
-            channel,
-            template_data,
-            "https://fernlabour.com/api/v1/render-async",
-        )
-        .await
-    }
-
     async fn render(
         &self,
         notification_id: Uuid,
