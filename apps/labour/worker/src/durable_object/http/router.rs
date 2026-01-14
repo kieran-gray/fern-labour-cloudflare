@@ -12,20 +12,20 @@ use crate::durable_object::{
             query::{get_server_timestamp, handle_query},
         },
     },
-    setup::state::LabourRoomServices,
+    setup::state::LabourCircleServices,
 };
 
 pub struct RequestContext<'a> {
-    pub data: &'a LabourRoomServices,
+    pub data: &'a LabourCircleServices,
 }
 
 impl<'a> RequestContext<'a> {
-    pub fn new(data: &'a LabourRoomServices) -> Self {
+    pub fn new(data: &'a LabourCircleServices) -> Self {
         Self { data }
     }
 }
 
-pub async fn route_request(req: Request, services: &LabourRoomServices) -> Result<Response> {
+pub async fn route_request(req: Request, services: &LabourCircleServices) -> Result<Response> {
     let method = req.method();
     let path = req.path();
     let ctx = RequestContext::new(services);

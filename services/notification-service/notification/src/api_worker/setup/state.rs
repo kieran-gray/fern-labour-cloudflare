@@ -44,12 +44,11 @@ impl AppState {
     fn create_notification_status_query(
         env: &Env,
     ) -> Result<Box<dyn NotificationStatusQueryHandler>> {
-        let notification_status_db: worker::D1Database = env
-            .d1("NOTIFICATION_STATUS_DB")
-            .context("Missing binding NOTIFICATION_STATUS_DB")?;
-        let notification_status_repository = Box::new(D1NotificationStatusRepository::create(
-            notification_status_db,
-        ));
+        let notification_db: worker::D1Database = env
+            .d1("NOTIFICATION_READ_DB")
+            .context("Missing binding NOTIFICATION_READ_DB")?;
+        let notification_status_repository =
+            Box::new(D1NotificationStatusRepository::create(notification_db));
         Ok(Box::new(NotificationStatusQuery::create(
             notification_status_repository,
         )))
@@ -58,12 +57,11 @@ impl AppState {
     fn create_notification_detail_query(
         env: &Env,
     ) -> Result<Box<dyn NotificationDetailQueryHandler>> {
-        let notification_detail_db: worker::D1Database = env
-            .d1("NOTIFICATION_DETAIL_DB")
-            .context("Missing binding NOTIFICATION_DETAIL_DB")?;
-        let notification_detail_repository = Box::new(D1NotificationDetailRepository::create(
-            notification_detail_db,
-        ));
+        let notification_db: worker::D1Database = env
+            .d1("NOTIFICATION_READ_DB")
+            .context("Missing binding NOTIFICATION_READ_DB")?;
+        let notification_detail_repository =
+            Box::new(D1NotificationDetailRepository::create(notification_db));
         Ok(Box::new(NotificationDetailQuery::create(
             notification_detail_repository,
         )))
@@ -72,12 +70,11 @@ impl AppState {
     fn create_notification_activity_query(
         env: &Env,
     ) -> Result<Box<dyn NotificationActivityQueryHandler>> {
-        let notification_activity_db: worker::D1Database = env
-            .d1("NOTIFICATION_ANALYTICS_DB")
-            .context("Missing binding NOTIFICATION_ANALYTICS_DB")?;
-        let notification_activity_repository = Box::new(D1NotificationActivityRepository::create(
-            notification_activity_db,
-        ));
+        let notification_db: worker::D1Database = env
+            .d1("NOTIFICATION_READ_DB")
+            .context("Missing binding NOTIFICATION_READ_DB")?;
+        let notification_activity_repository =
+            Box::new(D1NotificationActivityRepository::create(notification_db));
         Ok(Box::new(NotificationActivityQuery::create(
             notification_activity_repository,
         )))
@@ -131,16 +128,15 @@ impl AppState {
         let notification_activity_query = Self::create_notification_activity_query(env)?;
 
         // TODO analytics service
-        let notification_activity_db: worker::D1Database = env
-            .d1("NOTIFICATION_ANALYTICS_DB")
-            .context("Missing binding NOTIFICATION_ANALYTICS_DB")?;
-        let notification_activity_repository = Box::new(D1NotificationActivityRepository::create(
-            notification_activity_db,
-        ));
+        let notification_db: worker::D1Database = env
+            .d1("NOTIFICATION_READ_DB")
+            .context("Missing binding NOTIFICATION_READ_DB")?;
+        let notification_activity_repository =
+            Box::new(D1NotificationActivityRepository::create(notification_db));
 
         let do_client = Self::create_do_client(env)?;
-        let generation_client = Self::create_generation(env, &config.internal_auth_token)?;
-        let dispatch_client = Self::create_dispatch(env, &config.internal_auth_token)?;
+        let generation_client = Self::create_generation(env, &config.internal_service_token)?;
+        let dispatch_client = Self::create_dispatch(env, &config.internal_service_token)?;
 
         Ok(Self {
             config,

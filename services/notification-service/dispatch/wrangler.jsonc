@@ -46,7 +46,6 @@
     "EMAILS_FROM_EMAIL": "hello@fernlabour.com",
     "EMAILS_FROM_NAME": "Fern Labour",
     "TWILIO_WEBHOOK_URL": "https://dispatch.fernlabour.com/api/v1/webhook/twilio",
-    "AWS_REGION": "eu-west-2"
   },
   "env": {
     "dev": {
@@ -71,7 +70,6 @@
         "EMAILS_FROM_EMAIL": "hello@fernlabour.com",
         "EMAILS_FROM_NAME": "Fern Labour",
         "TWILIO_WEBHOOK_URL": "https://dispatch.fernlabour.com/api/v1/webhook/twilio",
-        "AWS_REGION": "eu-west-2"
       },
     }
   }

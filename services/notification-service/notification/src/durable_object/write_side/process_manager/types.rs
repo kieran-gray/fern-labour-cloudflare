@@ -19,7 +19,6 @@ pub enum Effect {
     ServiceCommand {
         command: ServiceCommand,
         idempotency_key: IdempotencyKey,
-        priority: bool,
     },
 }
 

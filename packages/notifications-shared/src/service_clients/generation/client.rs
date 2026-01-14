@@ -1,6 +1,5 @@
 use async_trait::async_trait;
 use uuid::Uuid;
-use worker::Response;
 
 use crate::{
     service_clients::generation::exceptions::GenerationClientError,
@@ -15,11 +14,4 @@ pub trait GenerationClient {
         channel: NotificationChannel,
         template_data: NotificationTemplateData,
     ) -> Result<RenderedContent, GenerationClientError>;
-
-    async fn render_async(
-        &self,
-        notification_id: Uuid,
-        channel: NotificationChannel,
-        template_data: NotificationTemplateData,
-    ) -> Result<Response, GenerationClientError>;
 }

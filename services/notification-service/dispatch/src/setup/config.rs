@@ -5,28 +5,22 @@ use worker::Env;
 pub struct Config {
     pub allowed_origins: Vec<String>,
     pub internal_service_token: String,
-    pub sendgrid: Option<SendgridConfig>,
-    pub resend: Option<ResendConfig>,
-    pub twilio: Option<TwilioConfig>,
-    pub ses: Option<SesConfig>,
+    pub resend: ResendConfig,
+    pub twilio: TwilioConfig,
 }
 
 impl ConfigTrait<Config> for Config {
     fn from_env(env: &Env) -> Result<Self, SetupError> {
         let allowed_origins = Config::parse_csv(env, "ALLOWED_ORIGINS")?;
         let internal_service_token = Config::parse(env, "INTERNAL_SERVICE_TOKEN")?;
-        let sendgrid = SendgridConfig::from_env(env).ok();
-        let resend = ResendConfig::from_env(env).ok();
-        let twilio = TwilioConfig::from_env(env).ok();
-        let ses = SesConfig::from_env(env).ok();
+        let resend = ResendConfig::from_env(env)?;
+        let twilio = TwilioConfig::from_env(env)?;
 
         Ok(Self {
             allowed_origins,
             internal_service_token,
-            sendgrid,
             resend,
             twilio,
-            ses,
         })
     }
 }
@@ -37,22 +31,6 @@ pub struct SendgridConfig {
     pub from_email: String,
     pub from_name: String,
     pub webhook_verification_key: String,
-}
-
-impl ConfigTrait<SendgridConfig> for SendgridConfig {
-    fn from_env(env: &Env) -> Result<SendgridConfig, SetupError> {
-        let api_key = Config::parse(env, "SENDGRID_API_KEY")?;
-        let from_email = Config::parse(env, "EMAILS_FROM_EMAIL")?;
-        let from_name = Config::parse(env, "EMAILS_FROM_NAME")?;
-        let webhook_verification_key = Config::parse(env, "SENDGRID_WEBHOOK_VERIFICATION_KEY")?;
-
-        Ok(Self {
-            api_key,
-            from_email,
-            from_name,
-            webhook_verification_key,
-        })
-    }
 }
 
 #[derive(Clone)]
@@ -99,33 +77,6 @@ impl ConfigTrait<TwilioConfig> for TwilioConfig {
             auth_token,
             messaging_service_sid,
             webhook_url,
-        })
-    }
-}
-
-#[derive(Clone)]
-pub struct SesConfig {
-    pub access_key_id: String,
-    pub secret_access_key: String,
-    pub region: String,
-    pub from_email: String,
-    pub from_name: String,
-}
-
-impl ConfigTrait<SesConfig> for SesConfig {
-    fn from_env(env: &Env) -> Result<SesConfig, SetupError> {
-        let access_key_id = Config::parse(env, "AWS_ACCESS_KEY_ID")?;
-        let secret_access_key = Config::parse(env, "AWS_SECRET_ACCESS_KEY")?;
-        let region = Config::parse(env, "AWS_REGION")?;
-        let from_email = Config::parse(env, "EMAILS_FROM_EMAIL")?;
-        let from_name = Config::parse(env, "EMAILS_FROM_NAME")?;
-
-        Ok(Self {
-            access_key_id,
-            secret_access_key,
-            region,
-            from_email,
-            from_name,
         })
     }
 }

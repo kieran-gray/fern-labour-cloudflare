@@ -1,33 +1,29 @@
-pub mod email_templates;
-pub mod sms_templates;
+pub mod email;
+pub mod sms;
 pub mod template;
-pub mod whatsapp_templates;
+pub mod whatsapp;
 
-pub use email_templates::contact_us::{ContactUsBodyTemplate, ContactUsSubjectTemplate};
-pub use email_templates::labour_announcement::{
+pub use email::contact_us::{ContactUsBodyTemplate, ContactUsSubjectTemplate};
+pub use email::labour_announcement::{
     LabourAnnouncementBodyTemplate, LabourAnnouncementSubjectTemplate,
 };
-pub use email_templates::labour_begun::{LabourBegunBodyTemplate, LabourBegunSubjectTemplate};
-pub use email_templates::labour_completed::{
-    LabourCompletedBodyTemplate, LabourCompletedSubjectTemplate,
-};
-pub use email_templates::labour_completed_with_note::{
+pub use email::labour_begun::{LabourBegunBodyTemplate, LabourBegunSubjectTemplate};
+pub use email::labour_completed::{LabourCompletedBodyTemplate, LabourCompletedSubjectTemplate};
+pub use email::labour_completed_with_note::{
     LabourCompletedWithNoteBodyTemplate, LabourCompletedWithNoteSubjectTemplate,
 };
-pub use email_templates::labour_invite::{LabourInviteBodyTemplate, LabourInviteSubjectTemplate};
-pub use email_templates::labour_update::{LabourUpdateBodyTemplate, LabourUpdateSubjectTemplate};
-pub use email_templates::subscriber_approved::{
+pub use email::labour_invite::{LabourInviteBodyTemplate, LabourInviteSubjectTemplate};
+pub use email::labour_update::{LabourUpdateBodyTemplate, LabourUpdateSubjectTemplate};
+pub use email::subscriber_approved::{
     SubscriberApprovedBodyTemplate, SubscriberApprovedSubjectTemplate,
 };
-pub use email_templates::subscriber_invite::{
-    SubscriberInviteBodyTemplate, SubscriberInviteSubjectTemplate,
-};
-pub use email_templates::subscriber_requested::{
+pub use email::subscriber_invite::{SubscriberInviteBodyTemplate, SubscriberInviteSubjectTemplate};
+pub use email::subscriber_requested::{
     SubscriberRequestedBodyTemplate, SubscriberRequestedSubjectTemplate,
 };
 
-pub use sms_templates::labour_announcement::LabourAnnouncementTemplate;
-pub use sms_templates::labour_begun::LabourBegunTemplate;
-pub use sms_templates::labour_completed::LabourCompletedTemplate;
-pub use sms_templates::labour_completed_with_note::LabourCompletedWithNoteTemplate;
-pub use sms_templates::labour_update::LabourUpdateTemplate;
+pub use sms::labour_announcement::LabourAnnouncementTemplate;
+pub use sms::labour_begun::LabourBegunTemplate;
+pub use sms::labour_completed::LabourCompletedTemplate;
+pub use sms::labour_completed_with_note::LabourCompletedWithNoteTemplate;
+pub use sms::labour_update::LabourUpdateTemplate;

@@ -41,22 +41,9 @@
   ],
   "d1_databases": [
     {
-      "binding": "NOTIFICATION_STATUS_DB",
-      "database_name": "fern-labour-notification-status-read",
-      "database_id": "a5c26e95-0f25-4738-a1ab-83ee6dd19d7c",
-      "migrations_dir": "./migrations/notification_status"
-    },
-    {
-      "binding": "NOTIFICATION_DETAIL_DB",
-      "database_name": "fern-labour-notification-detail-read",
-      "database_id": "106b8236-ec5b-4648-9bc3-f8905de7e182",
-      "migrations_dir": "./migrations/notification_detail"
-    },
-    {
-      "binding": "NOTIFICATION_ANALYTICS_DB",
-      "database_name": "fern-labour-notification-analytics",
-      "database_id": "9c96bcf6-6c06-433f-abe1-e3497e3862c4",
-      "migrations_dir": "./migrations/notification_analytics"
+      "binding": "NOTIFICATION_READ_DB",
+      "database_name": "fern-labour-notifications",
+      "database_id": "82e6162a-e375-43b0-ba92-96328ab55180"
     }
   ],
   "queues": {
@@ -111,22 +98,9 @@
       ],
       "d1_databases": [
         {
-          "binding": "NOTIFICATION_STATUS_DB",
-          "database_name": "fern-labour-notification-status-read",
-          "database_id": "a5c26e95-0f25-4738-a1ab-83ee6dd19d7c",
-          "migrations_dir": "./migrations/notification_status"
-        },
-        {
-          "binding": "NOTIFICATION_DETAIL_DB",
-          "database_name": "fern-labour-notification-detail-read",
-          "database_id": "106b8236-ec5b-4648-9bc3-f8905de7e182",
-          "migrations_dir": "./migrations/notification_detail"
-        },
-        {
-          "binding": "NOTIFICATION_ANALYTICS_DB",
-          "database_name": "fern-labour-notification-analytics",
-          "database_id": "9c96bcf6-6c06-433f-abe1-e3497e3862c4",
-          "migrations_dir": "./migrations/notification_analytics"
+          "binding": "NOTIFICATION_READ_DB",
+          "database_name": "fern-labour-notifications",
+          "database_id": "82e6162a-e375-43b0-ba92-96328ab55180"
         }
       ],
       "queues": {

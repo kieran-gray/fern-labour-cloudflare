@@ -70,7 +70,7 @@ where
         return Ok(response);
     }
 
-    let user = match internal_auth(&req, &ctx.data.config.internal_auth_token) {
+    let user = match internal_auth(&req, &ctx.data.config.internal_service_token) {
         Some(user) => user,
         None => match provider_auth(&req, &ctx.data.auth_service).await {
             Ok(user) => user,

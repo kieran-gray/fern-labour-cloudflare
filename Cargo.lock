@@ -365,7 +365,6 @@ dependencies = [
  "serde_json",
  "strum",
  "uuid",
- "worker",
 ]
 
 [[package]]
@@ -480,6 +479,7 @@ dependencies = [
  "fern-labour-notifications-shared",
  "fern-labour-workers-shared",
  "getrandom 0.2.16",
+ "regex",
  "serde",
  "serde_json",
  "strum",

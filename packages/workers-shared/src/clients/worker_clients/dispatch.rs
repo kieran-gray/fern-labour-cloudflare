@@ -42,14 +42,6 @@ impl FetcherDispatchClient {
 
 #[async_trait(?Send)]
 impl DispatchClient for FetcherDispatchClient {
-    async fn dispatch_async(
-        &self,
-        request: DispatchRequest,
-    ) -> Result<Response, DispatchClientError> {
-        self.do_dispatch(request, "https://fernlabour.com/api/v1/dispatch-async")
-            .await
-    }
-
     async fn dispatch(
         &self,
         request: DispatchRequest,

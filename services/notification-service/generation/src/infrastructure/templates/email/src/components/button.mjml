@@ -1,0 +1,3 @@
+<mj-button align="center" font-size="16px" font-weight="600" font-family="Quicksand, Helvetica, sans-serif" background-color="#ff7964" border-radius="15px" color="#ffffff" inner-padding="14px 32px" href="{link}">
+  {button_text}
+</mj-button>

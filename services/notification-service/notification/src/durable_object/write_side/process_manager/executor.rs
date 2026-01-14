@@ -28,23 +28,16 @@ impl NotificationEffectExecutor {
         }
     }
 
-    async fn handle_service_command(&self, command: ServiceCommand, priority: bool) -> Result<()> {
-        if priority {
-            let notification_command = self
-                .service_command_processor
-                .handle_priority(command)
-                .await
-                .context("Failed to execute service command")?;
+    async fn handle_service_command(&self, command: ServiceCommand) -> Result<()> {
+        let notification_command = self
+            .service_command_processor
+            .handle(command)
+            .await
+            .context("Failed to execute service command")?;
 
-            self.notification_command_processor
-                .handle_command(notification_command, "process-manager".to_string())
-                .context("Failed to handle resulting notification command")?;
-        } else {
-            self.service_command_processor
-                .handle(command)
-                .await
-                .context("Failed to queue service command")?;
-        }
+        self.notification_command_processor
+            .handle_command(notification_command, "process-manager".to_string())
+            .context("Failed to handle resulting notification command")?;
 
         Ok(())
     }
@@ -54,11 +47,8 @@ impl NotificationEffectExecutor {
 impl EffectExecutor for NotificationEffectExecutor {
     async fn execute(&self, effect: &Effect) -> Result<()> {
         match effect {
-            Effect::ServiceCommand {
-                command, priority, ..
-            } => {
-                self.handle_service_command(command.clone(), *priority)
-                    .await
+            Effect::ServiceCommand { command, .. } => {
+                self.handle_service_command(command.clone()).await
             }
         }
     }

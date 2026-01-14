@@ -1,0 +1,66 @@
+<mjml>
+  <mj-head>
+    <mj-font name="Poppins" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" />
+    <mj-font name="Quicksand" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" />
+    <mj-attributes>
+      <mj-all font-family="Quicksand, Helvetica, sans-serif" />
+      <mj-text padding="0 24px" line-height="1.6" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#fffaf9">
+    <mj-include path="./components/header.mjml" />
+
+    <!-- Main Content -->
+    <mj-section background-color="#fdfaf8" padding="40px 20px" border-radius="16px">
+      <mj-column width="100%">
+        <mj-text align="center" font-size="22px" font-weight="700" font-family="Poppins, Helvetica, sans-serif" color="#333333" padding="0 24px 16px">
+          You're invited! 🎉
+        </mj-text>
+        <mj-text align="center" font-size="16px" font-weight="500" color="#555555" padding="0 24px 12px">
+          Hey!
+        </mj-text>
+        <mj-text align="center" font-size="16px" font-weight="500" color="#555555" padding="0 24px 8px">
+          Exciting news – our little one is on their way soon!
+        </mj-text>
+        <mj-text align="center" font-size="16px" font-weight="400" color="#666666" padding="0 24px 8px">
+          Want to be among the first to hear the baby news?
+        </mj-text>
+        <mj-text align="center" font-size="15px" font-weight="400" color="#666666" padding="0 24px 24px">
+          You can sign up for email or text updates to follow our journey and get the exciting announcement when our little one arrives.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- CTA Section -->
+    <mj-section background-color="#fff5f5" padding="24px 20px" border-radius="12px">
+      <mj-column width="100%">
+        <mj-text align="center" font-size="15px" font-weight="500" color="#555555" padding="0 24px 16px">
+          Click below to create an account and subscribe for labour updates:
+        </mj-text>
+        <mj-button align="center" font-size="16px" font-weight="600" font-family="Quicksand, Helvetica, sans-serif" background-color="#ff7964" border-radius="15px" color="#ffffff" inner-padding="14px 32px" href="{link}">
+          Follow {birthing_person_name}
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <!-- Info Section -->
+    <mj-section background-color="#fdfaf8" padding="24px 20px" border-radius="16px">
+      <mj-column width="100%">
+        <mj-text align="center" font-size="15px" font-weight="500" color="#666666" padding="0 24px 8px">
+          What should you expect from these updates?
+        </mj-text>
+        <mj-text align="center" font-size="15px" font-weight="400" color="#666666" padding="0 24px 8px">
+          We'll keep you posted with automatic notifications throughout the journey, from the start of labour to baby's arrival.
+        </mj-text>
+        <mj-text align="center" font-size="15px" font-weight="400" color="#666666" padding="0 24px 16px">
+          Plus, {birthing_person_first_name} will share personal messages along the way.
+        </mj-text>
+        <mj-text align="center" font-size="16px" font-weight="500" color="#555555" padding="0 24px 0">
+          Loads of love, {birthing_person_name} ❤️
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-include path="./components/footer.mjml" />
+  </mj-body>
+</mjml>

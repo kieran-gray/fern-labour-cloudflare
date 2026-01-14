@@ -9,10 +9,7 @@ use worker::{Request, Response, RouteContext};
 
 use crate::{
     application::webhook::WebhookInterpretation,
-    infrastructure::{
-        resend::webhook_event::ResendWebhookEvent, sendgrid::webhook_event::SendgridWebhookEvent,
-    },
-    setup::app_state::AppState,
+    infrastructure::resend::webhook_event::ResendWebhookEvent, setup::app_state::AppState,
 };
 
 fn process_webhook_interpretation(
@@ -38,67 +35,6 @@ fn process_webhook_interpretation(
         "dispatch".to_string(),
         Utc::now(),
     ))
-}
-
-pub async fn handle_sendgrid_webhook(
-    mut req: Request,
-    ctx: RouteContext<AppState>,
-) -> worker::Result<Response> {
-    let body_bytes = req
-        .bytes()
-        .await
-        .map_err(|e| worker::Error::RustError(format!("Failed to read body: {}", e)))?;
-
-    let headers = req.headers();
-    if let Err(e) = ctx
-        .data
-        .webhook_verification
-        .verify("sendgrid", headers, &body_bytes)
-    {
-        error!("Sendgrid webhook verification failed: {}", e);
-        return Response::error("Unauthorized", 401);
-    }
-
-    let events: Vec<SendgridWebhookEvent> = serde_json::from_slice(&body_bytes)
-        .map_err(|e| worker::Error::RustError(format!("Failed to parse JSON: {}", e)))?;
-    let mut commands: Vec<CommandEnvelope<QueueMessage>> = Vec::with_capacity(events.len());
-
-    for event in events {
-        let external_id = match event.external_id() {
-            Some(id) => id,
-            None => {
-                info!("Sendgrid event missing sg_message_id, skipping");
-                continue;
-            }
-        };
-
-        let event_type = event.event_type();
-
-        match ctx
-            .data
-            .webhook_interpreter
-            .interpret(&external_id, event_type)
-            .await
-        {
-            Ok(interpretation) => {
-                info!(
-                    "Interpreted webhook: notification_id={}, status={:?}",
-                    interpretation.notification_id, interpretation.status
-                );
-                if let Some(command_envelope) = process_webhook_interpretation(interpretation) {
-                    commands.push(command_envelope);
-                }
-            }
-            Err(e) => {
-                error!("Failed to interpret webhook: {}", e);
-            }
-        }
-    }
-    match ctx.data.command_producer.publish_batch(commands).await {
-        Ok(_) => info!("Published commands to command bus"),
-        Err(e) => error!("Failed to publish commands to command bus: {e}"),
-    }
-    Response::empty()
 }
 
 pub async fn handle_resend_webhook(

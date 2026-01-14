@@ -17,9 +17,7 @@ use crate::{
 };
 
 use fern_labour_event_sourcing_rs::CommandEnvelope;
-use fern_labour_notifications_shared::{
-    QueueMessage, ServiceCommand, service_clients::DispatchRequest,
-};
+use fern_labour_notifications_shared::QueueMessage;
 
 #[event(start)]
 fn start() {
@@ -84,23 +82,6 @@ pub async fn main(message_batch: MessageBatch<String>, env: Env, _ctx: Context) 
                     info!(aggregate_id = %envelope.metadata.aggregate_id, "Processing command from queue");
                     let user = User::internal(&envelope.metadata.user_id);
                     let response = match envelope.command {
-                        QueueMessage::Service(cmd) => {
-                            match cmd {
-                                ServiceCommand::RenderNotification { notification_id, channel, template_data } => {
-                                    app_state.generation_client.render_async(notification_id, channel, template_data).await.map_err(|e| anyhow!("Generation client error: {e}"))
-                                },
-                                ServiceCommand::DispatchNotification { notification_id, channel, destination, rendered_content } => {
-                            let request = DispatchRequest {
-                                notification_id,
-                                channel: channel.clone(),
-                                destination: destination.clone(),
-                                rendered_content: rendered_content.clone(),
-                                idempotency_key: envelope.metadata.idempotency_key.to_string(),
-                            };
-                            app_state.dispatch_client.dispatch_async(request).await.map_err(|e| anyhow!("Dispatch client error: {e}"))
-                                }
-                            }
-                        }
                         QueueMessage::Internal(cmd) => {
                             let internal_envelope = CommandEnvelope {
                                 command: cmd,
@@ -157,7 +138,8 @@ pub async fn main(message_batch: MessageBatch<String>, env: Env, _ctx: Context) 
                                 )
                                 .await
                                 .map_err(|e| anyhow!("Notification DO Error: {e}"))
-                        }
+                        },
+                        _ => Ok(Response::empty().unwrap().with_status(204))
                     };
                     match response
                     {
