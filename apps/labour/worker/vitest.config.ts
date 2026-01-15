@@ -13,6 +13,10 @@ export default defineWorkersConfig(async () => {
               ENVIRONMENT: "test",
               ALLOWED_ORIGINS: "http://localhost:5173,http://localhost:5174,http://localhost:5175",
               TEST_MIGRATIONS: migrations,
+              SUBSCRIPTION_TOKEN_SALT: "changeme",
+              NOTIFICATION_SERVICE_AUTH_TOKEN: "changeme",
+              STRIPE_SECRET_KEY: "changeme",
+              STRIPE_WEBHOOK_SECRET: "changeme"
             },
             d1Databases: {
               READ_MODEL_DB: "test-db"
