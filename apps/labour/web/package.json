@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev --env dev --port 5174",
+    "dev": "vite dev --port 5174",
     "build": "tsc && vite build && cp deploy/_headers dist/_headers",
     "preview": "vite preview --port 5174",
     "generate-client": "tsx generate-clients.ts",

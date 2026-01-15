@@ -39,7 +39,6 @@ jobs:
       worker-path: services/notification-service/generation
       workspace-path: services/notification-service
       has-integration-tests: false
-      has-migrations: false
 
   deploy:
     needs: ci

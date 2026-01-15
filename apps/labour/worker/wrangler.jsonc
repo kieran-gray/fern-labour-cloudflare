@@ -74,7 +74,7 @@
   "vars": {
     "ENVIRONMENT": "production",
     "ALLOWED_ORIGINS": "https://app.fernlabour.com,https://admin.fernlabour.com",
-    "PUBLIC_URL": "https://app.fernlabour.com",
+    "PUBLIC_URL": "https://app.fernlabour.com"
   },
   "env": {
     "dev": {
@@ -124,7 +124,7 @@
         "ENVIRONMENT": "dev",
         "ALLOWED_ORIGINS": "",
         "PUBLIC_URL": "https://app.fernlabour.com",
-        "SUBSCRIPTION_TOKEN_SALT": "changeme",
+        "SUBSCRIPTION_TOKEN_SALT": "changeme"
       }
     }
   }

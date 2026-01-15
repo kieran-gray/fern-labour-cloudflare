@@ -21,22 +21,15 @@ on:
         required: false
         type: boolean
         default: true
-      has-migrations:
-        description: 'Whether the worker has database migrations'
-        required: false
-        type: boolean
-        default: false
 
 jobs:
-  ci:
+  format:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
     defaults:
       run:
         working-directory: ${{ inputs.worker-path }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,30 +37,87 @@ jobs:
       - name: Install Rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          components: rustfmt, clippy
+          components: rustfmt
+
+      - name: Check code formatting
+        run: cargo fmt --check
+
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: ${{ inputs.worker-path }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy
           target: wasm32-unknown-unknown
 
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: ${{ inputs.workspace-path }}
-          shared-key: ${{ inputs.worker-name }}
+          shared-key: ${{ inputs.worker-name }}-wasm
           key: ${{ hashFiles(format('{0}/Cargo.lock', inputs.workspace-path)) }}
-
-      - name: Build dependencies
-        run: cargo check --target wasm32-unknown-unknown
-
-      - name: Check code formatting
-        run: cargo fmt --check
 
       - name: Run linting
         run: cargo clippy --target wasm32-unknown-unknown -- -D warnings
 
+  unit-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: ${{ inputs.worker-path }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ inputs.workspace-path }}
+          shared-key: ${{ inputs.worker-name }}-native
+          key: ${{ hashFiles(format('{0}/Cargo.lock', inputs.workspace-path)) }}
+
       - name: Run unit tests
         run: cargo test
 
+  integration-tests:
+    if: ${{ inputs.has-integration-tests }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: ${{ inputs.worker-path }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          target: wasm32-unknown-unknown
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ inputs.workspace-path }}
+          shared-key: ${{ inputs.worker-name }}-wasm
+          key: ${{ hashFiles(format('{0}/Cargo.lock', inputs.workspace-path)) }}
+
       - name: Setup Node.js
-        if: ${{ inputs.has-integration-tests }}
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -75,14 +125,11 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        if: ${{ inputs.has-integration-tests }}
         working-directory: .
         run: npm ci
 
       - name: Build worker
-        if: ${{ inputs.has-integration-tests }}
         run: npm run build:dev
 
       - name: Run integration tests
-        if: ${{ inputs.has-integration-tests }}
         run: npm test -- --run

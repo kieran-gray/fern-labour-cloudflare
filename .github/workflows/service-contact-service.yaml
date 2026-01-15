@@ -36,7 +36,6 @@ jobs:
       worker-name: fern-labour-contact-us
       worker-path: services/contact-service
       has-integration-tests: true
-      has-migrations: true
 
   deploy:
     needs: ci

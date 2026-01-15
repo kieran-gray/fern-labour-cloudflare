@@ -11,9 +11,7 @@ function getWranglerVars(mode: string): Record<string, string> {
   const wrangler = JSON5.parse(wranglerContent);
 
   const vars =
-    mode === 'development' && wrangler.env?.dev?.vars
-      ? { ...wrangler.vars, ...wrangler.env.dev.vars }
-      : wrangler.vars;
+    mode === 'development' && wrangler.env?.dev?.vars ? wrangler.env.dev.vars : wrangler.vars;
 
   const define: Record<string, string> = {};
   for (const [key, value] of Object.entries(vars)) {
