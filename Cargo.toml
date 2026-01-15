@@ -30,7 +30,7 @@ strum = { version = "0.27.1", features = ['derive'] }
 base64 = { version = "0.22.1" }
 jwt-compact = { version = "0.8", features = ["rsa"] }
 num-bigint-dig = "0.8"
-wasm-bindgen = "0.2.106"
+wasm-bindgen = "0.2.108"
 futures = "0.3.31"
 async-trait = "0.1.89"
 chrono = { version = "0.4", features = ["wasmbind", "serde"] }

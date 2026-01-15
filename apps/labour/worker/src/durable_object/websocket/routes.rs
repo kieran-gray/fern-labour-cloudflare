@@ -16,5 +16,9 @@ pub async fn upgrade_connection(req: Request, state: &State) -> Result<Response>
         worker::Error::RustError("Failure adding attachment to websocket connection".to_string())
     })?;
 
-    Response::from_websocket(client)
+    let mut response = Response::from_websocket(client)?;
+    response
+        .headers_mut()
+        .set("Sec-WebSocket-Protocol", "fernlabour.com")?;
+    Ok(response)
 }

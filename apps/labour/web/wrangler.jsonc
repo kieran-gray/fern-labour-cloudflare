@@ -1,0 +1,48 @@
+{
+    "$schema": "../../../node_modules/wrangler/config-schema.json",
+    "name": "fern-labour-app",
+    "compatibility_date": "2025-12-31",
+    "assets": {
+        "directory": "./dist",
+        "not_found_handling": "single-page-application"
+    },
+    "build": {
+        "command": "vite build && cp deploy/_headers dist/_headers"
+    },
+    "dev": {
+        "ip": "0.0.0.0",
+        "port": 5174
+    },
+    "workers_dev": false,
+    "route": {
+        "pattern": "app.fernlabour.com",
+        "custom_domain": true
+    },
+    "placement": {
+        "mode": "smart"
+    },
+    "vars": {
+        "ENVIRONMENT": "production",
+        "VITE_LABOUR_SERVICE_URL": "https://labour-api.fernlabour.com",
+        "VITE_LABOUR_SERVICE_WEBSOCKET": "wss://labour-api.fernlabour.com/api/v1/connect/",
+        "VITE_CONTACT_SERVICE_URL": "https://contact-us.fernlabour.com",
+        "VITE_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsuZmVybmxhYm91ci5jb20k",
+        "VITE_CLOUDFLARE_SITEKEY": "0x4AAAAAAA-eKMn9GfnERlf2"
+    },
+    "env": {
+        "dev": {
+            "build": {
+                "watch_dir": "./src",
+                "command": ""
+            },
+            "vars": {
+                "ENVIRONMENT": "dev",
+                "VITE_LABOUR_SERVICE_URL": "http://localhost:8000",
+                "VITE_LABOUR_SERVICE_WEBSOCKET": "ws://localhost:8000/api/v1/connect/",
+                "VITE_CONTACT_SERVICE_URL": "https://locahost:8002",
+                "VITE_CLERK_PUBLISHABLE_KEY": "pk_test_aHVtYW5lLXRyZWVmcm9nLTE3LmNsZXJrLmFjY291bnRzLmRldiQ",
+                "VITE_CLOUDFLARE_SITEKEY": "0x4AAAAAAA-eKMn9GfnERlf2"
+            }
+        }
+    }
+}

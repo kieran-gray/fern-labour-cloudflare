@@ -36,7 +36,6 @@ jobs:
       worker-name: fern-labour-auth-service-worker
       worker-path: services/auth-service
       has-integration-tests: true
-      has-migrations: false
 
   deploy:
     needs: ci

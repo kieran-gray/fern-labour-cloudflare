@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host --port 5174",
-    "build": "tsc && vite build",
+    "dev": "vite dev --port 5174",
+    "build": "tsc && vite build && cp deploy/_headers dist/_headers",
     "preview": "vite preview --port 5174",
     "generate-client": "tsx generate-clients.ts",
     "typecheck": "tsc --noEmit",
