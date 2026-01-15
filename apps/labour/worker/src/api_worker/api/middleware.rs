@@ -72,7 +72,7 @@ where
     };
 
     let Some(authorization) = protocols
-        .split(",")
+        .split(", ")
         .find(|proto| proto.starts_with(PROTOCOL_HEADER))
         .and_then(|proto| proto.strip_prefix(PROTOCOL_HEADER))
     else {

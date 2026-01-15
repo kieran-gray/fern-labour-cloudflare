@@ -1,12 +1,32 @@
+import { readFileSync } from 'node:fs';
 import react from '@vitejs/plugin-react';
+import JSON5 from 'json5';
 import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
 import { VitePWA } from 'vite-plugin-pwa';
 import { ViteWebfontDownload } from 'vite-plugin-webfont-dl';
 
+function getWranglerVars(mode: string): Record<string, string> {
+  const wranglerContent = readFileSync('./wrangler.jsonc', 'utf-8');
+  const wrangler = JSON5.parse(wranglerContent);
+
+  const vars =
+    mode === 'development' && wrangler.env?.dev?.vars
+      ? { ...wrangler.vars, ...wrangler.env.dev.vars }
+      : wrangler.vars;
+
+  const define: Record<string, string> = {};
+  for (const [key, value] of Object.entries(vars)) {
+    if (key.startsWith('VITE_')) {
+      define[`import.meta.env.${key}`] = JSON.stringify(value);
+    }
+  }
+  return define;
+}
+
 // https://vitejs.dev/config/
 // biome-ignore lint/style/noDefaultExport: Expected
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     eslint(),
@@ -101,4 +121,5 @@ export default defineConfig({
     minify: 'esbuild',
     sourcemap: true,
   },
-});
+  define: getWranglerVars(mode),
+}));

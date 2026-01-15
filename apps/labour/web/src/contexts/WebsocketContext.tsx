@@ -56,10 +56,10 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
         const token = await getToken();
         const wsUrl = import.meta.env.VITE_LABOUR_SERVICE_WEBSOCKET || '';
 
-        const ws = new WebSocket(
-          `${wsUrl}${labourId}`,
-          `base64url.bearer.authorization.fernlabour.com.${token}`
-        );
+        const ws = new WebSocket(`${wsUrl}${labourId}`, [
+          'fernlabour.com',
+          `base64url.bearer.authorization.fernlabour.com.${token}`,
+        ]);
 
         ws.onopen = () => {
           console.log('[WebSocket] Connected');
