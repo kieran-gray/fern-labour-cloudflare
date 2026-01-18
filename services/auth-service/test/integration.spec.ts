@@ -91,8 +91,8 @@ describe("Authentication Worker", () => {
       });
 
       expect(response.status).toBe(401);
-      const data = await response.json() as any;
-      expect(data.message).toBeDefined();
+      const data = await response.text() as any;
+      expect(data).toBe("Invalid token: Invalid JWT format");
     });
 
     it("rejects token with invalid signature", async () => {
@@ -110,8 +110,8 @@ describe("Authentication Worker", () => {
       });
 
       expect(response.status).toBe(401);
-      const data = await response.json() as any;
-      expect(data.message).toBeDefined();
+      const data = await response.text() as any;
+      expect(data).toBe("Verification failed: Token failed RS256 validation");
     });
 
     it("successfully verifies valid token and returns user_id", async () => {
