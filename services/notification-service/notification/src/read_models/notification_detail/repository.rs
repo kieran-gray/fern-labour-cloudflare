@@ -12,6 +12,16 @@ pub struct D1NotificationDetailRepository {
     db: D1Database,
 }
 
+#[async_trait(?Send)]
+pub trait NotificationExternalIdTrait {
+    async fn get_by_external_id(&self, external_id: String) -> Result<NotificationDetail>;
+}
+
+pub trait NotificationDetailRepositoryTrait:
+    NotificationExternalIdTrait + AsyncRepositoryTrait<NotificationDetail>
+{
+}
+
 impl D1NotificationDetailRepository {
     pub fn create(db: D1Database) -> Self {
         Self { db }
@@ -174,6 +184,27 @@ impl AsyncRepositoryTrait<NotificationDetail> for D1NotificationDetailRepository
         Ok(())
     }
 }
+
+#[async_trait(?Send)]
+impl NotificationExternalIdTrait for D1NotificationDetailRepository {
+    async fn get_by_external_id(&self, external_id: String) -> Result<NotificationDetail> {
+        let result: Option<NotificationDetailRow> = self
+            .db
+            .prepare("SELECT * FROM notification_details WHERE external_id = ?1")
+            .bind(&[external_id.into()])
+            .context("Failed to prepare notification detail query")?
+            .first(None)
+            .await
+            .context("Failed to fetch notification detail")?;
+
+        match result {
+            Some(row) => row.into_read_model(),
+            None => Err(anyhow!("Notification not found")),
+        }
+    }
+}
+
+impl NotificationDetailRepositoryTrait for D1NotificationDetailRepository {}
 
 fn option_string_to_jsvalue(opt: Option<String>) -> JsValue {
     match opt {

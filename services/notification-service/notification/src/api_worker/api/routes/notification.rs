@@ -51,7 +51,7 @@ pub async fn handle_create_notification(
     let res = ctx
         .data
         .do_client
-        .command(
+        .send_command(
             notification_id,
             domain_command,
             &user,

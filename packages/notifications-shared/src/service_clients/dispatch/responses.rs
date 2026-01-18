@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::value_objects::NotificationStatus;
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct DispatchResponse {
     pub external_id: Option<String>,
@@ -7,6 +9,6 @@ pub struct DispatchResponse {
 
 #[derive(Debug, Deserialize)]
 pub struct WebhookInterpretationResponse {
-    pub notification_id: String,
-    pub status: String,
+    pub external_id: String,
+    pub status: NotificationStatus,
 }

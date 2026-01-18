@@ -1,4 +1,4 @@
-use crate::domain::exceptions::DomainError;
+use crate::domain::AuthError;
 
 #[derive(Debug, Clone)]
 pub struct TokenClaims {
@@ -23,12 +23,12 @@ impl TokenClaims {
         not_before: Option<i64>,
         jwt_id: Option<String>,
         custom_claims: serde_json::Value,
-    ) -> Result<Self, DomainError> {
+    ) -> Result<Self, AuthError> {
         if subject.is_empty() {
-            return Err(DomainError::InvalidClaim("Empty subject".into()));
+            return Err(AuthError::InvalidClaims("Empty subject".into()));
         }
         if issuer.is_empty() {
-            return Err(DomainError::InvalidClaim("Empty issuer".into()));
+            return Err(AuthError::InvalidClaims("Empty issuer".into()));
         }
         Ok(Self {
             subject,
@@ -56,25 +56,23 @@ impl TokenClaims {
             .is_some_and(|aud| aud.iter().any(|a| a == expected))
     }
 
-    pub fn validate_time_constraints(&self, current_time: i64) -> Result<(), DomainError> {
+    pub fn validate_time_constraints(&self, current_time: i64) -> Result<(), AuthError> {
         if self.is_expired(current_time) {
-            return Err(DomainError::InvalidClaims(vec!["Token expired".into()]));
+            return Err(AuthError::InvalidClaims("Token expired".into()));
         };
         if self.is_not_yet_valid(current_time) {
-            return Err(DomainError::InvalidClaims(vec![
-                "Token not yet valid".into(),
-            ]));
+            return Err(AuthError::InvalidClaims("Token not yet valid".into()));
         };
         Ok(())
     }
 
-    pub fn validate_audience(&self, expected: &str) -> Result<(), DomainError> {
+    pub fn validate_audience(&self, expected: &str) -> Result<(), AuthError> {
         match &self.audience {
             Some(_aud) if self.has_audience(expected) => Ok(()),
-            Some(aud) => Err(DomainError::InvalidAudience {
-                expected: expected.to_string(),
-                actual: aud.clone(),
-            }),
+            Some(aud) => Err(AuthError::InvalidClaims(format!(
+                "Invalid audience: expected '{}', got {:?}",
+                expected, aud
+            ))),
             None => Ok(()),
         }
     }
@@ -141,8 +139,8 @@ mod tests {
 
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidClaim(msg) => assert_eq!(msg, "Empty subject"),
-            _ => panic!("Expected InvalidClaim error"),
+            AuthError::InvalidClaims(msg) => assert!(msg.contains("Empty subject")),
+            _ => panic!("Expected InvalidClaims error"),
         }
     }
 
@@ -161,8 +159,8 @@ mod tests {
 
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidClaim(msg) => assert_eq!(msg, "Empty issuer"),
-            _ => panic!("Expected InvalidClaim error"),
+            AuthError::InvalidClaims(msg) => assert!(msg.contains("Empty issuer")),
+            _ => panic!("Expected InvalidClaims error"),
         }
     }
 
@@ -260,10 +258,7 @@ mod tests {
         let result = claims.validate_time_constraints(1000000001);
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidClaims(errors) => {
-                assert_eq!(errors.len(), 1);
-                assert_eq!(errors[0], "Token expired");
-            }
+            AuthError::InvalidClaims(msg) => assert!(msg.contains("expired")),
             _ => panic!("Expected InvalidClaims error"),
         }
     }
@@ -276,10 +271,7 @@ mod tests {
         let result = claims.validate_time_constraints(1000000000);
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidClaims(errors) => {
-                assert_eq!(errors.len(), 1);
-                assert_eq!(errors[0], "Token not yet valid");
-            }
+            AuthError::InvalidClaims(msg) => assert!(msg.contains("not yet valid")),
             _ => panic!("Expected InvalidClaims error"),
         }
     }
@@ -308,11 +300,11 @@ mod tests {
         let result = claims.validate_audience("https://different-api.example.com");
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidAudience { expected, actual } => {
-                assert_eq!(expected, "https://different-api.example.com");
-                assert_eq!(actual, vec!["https://api.example.com"]);
+            AuthError::InvalidClaims(msg) => {
+                assert!(msg.contains("Invalid audience"));
+                assert!(msg.contains("different-api.example.com"));
             }
-            _ => panic!("Expected InvalidAudience error"),
+            _ => panic!("Expected InvalidClaims error"),
         }
     }
 

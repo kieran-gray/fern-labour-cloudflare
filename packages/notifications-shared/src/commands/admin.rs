@@ -26,9 +26,7 @@ impl AdminApiCommand {
             AdminApiCommand::Admin(cmd) => match cmd {
                 AdminCommand::RebuildReadModels { aggregate_id } => *aggregate_id,
             },
-            AdminApiCommand::Internal(cmd) => cmd
-                .notification_id()
-                .expect("Internal command must have notification_id when executed via admin API"),
+            AdminApiCommand::Internal(cmd) => cmd.notification_id(),
         }
     }
 

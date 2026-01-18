@@ -11,7 +11,7 @@ use fern_labour_event_sourcing_rs::Aggregate;
 
 use crate::durable_object::write_side::domain::{
     NotificationCommand, NotificationError, NotificationEvent,
-    events::notification::{
+    events::{
         NotificationDelivered, NotificationDeliveryFailed, NotificationDispatched,
         NotificationRequested, RenderedContentStored,
     },

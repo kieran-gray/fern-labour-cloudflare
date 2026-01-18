@@ -18,7 +18,7 @@ edition = "2024"
 authors = ["Kieran Gray <gray.kieran@protonmail.com>"]
 
 [workspace.dependencies]
-worker = { version = "0.7", features = ['d1', 'queue'] }
+worker = { version = "0.7", features = ['d1'] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.140"
 uuid = { version = "1.18", features = ["v7", "js", "serde"] }
@@ -27,20 +27,21 @@ tracing-web = "0.1"
 tracing-subscriber = { version = "0.3", features = ['time', 'json', 'env-filter'] }
 time = { version = "0.3", features = ['wasm-bindgen', 'serde', 'parsing', 'formatting'] }
 strum = { version = "0.27.1", features = ['derive'] }
-base64 = { version = "0.22.1" }
-jwt-compact = { version = "0.8", features = ["rsa"] }
-num-bigint-dig = "0.8"
 wasm-bindgen = "0.2.108"
 futures = "0.3.31"
 async-trait = "0.1.89"
 chrono = { version = "0.4", features = ["wasmbind", "serde"] }
-regex = "1.11.3"
 anyhow = "1.0"
+getrandom = "0.3"
+rand = "0.9"
 
 fern-labour-event-sourcing-rs = { path = "packages/event-sourcing-rs" }
 fern-labour-workers-shared = { path = "packages/workers-shared" }
 fern-labour-notifications-shared = { path = "packages/notifications-shared" }
 fern-labour-labour-shared = { path = "packages/labour-shared" }
+
+[workspace.metadata.cargo-machete]
+ignored = ["wasm-bindgen"]
 
 [profile.release]
 opt-level = "z"

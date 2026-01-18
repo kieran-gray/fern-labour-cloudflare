@@ -1,7 +1,8 @@
 use async_trait::async_trait;
+use worker::Request;
 
 use crate::service_clients::dispatch::{
-    exceptions::DispatchClientError, requests::DispatchRequest,
+    WebhookInterpretationResponse, exceptions::DispatchClientError, requests::DispatchRequest,
 };
 
 #[async_trait(?Send)]
@@ -10,4 +11,9 @@ pub trait DispatchClient {
         &self,
         request: DispatchRequest,
     ) -> Result<Option<String>, DispatchClientError>;
+
+    async fn handle_webhook(
+        &self,
+        request: Request,
+    ) -> Result<WebhookInterpretationResponse, DispatchClientError>;
 }

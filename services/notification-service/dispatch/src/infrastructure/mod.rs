@@ -1,4 +1,3 @@
-pub mod persistence;
 pub mod resend;
 pub mod twilio;
 

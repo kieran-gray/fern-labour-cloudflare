@@ -1,9 +1,11 @@
 use anyhow::Result;
 use async_trait::async_trait;
-use fern_labour_event_sourcing_rs::{AsyncRepositoryTrait, DecodedCursor};
+use fern_labour_event_sourcing_rs::DecodedCursor;
 use uuid::Uuid;
 
-use crate::read_models::notification_detail::read_model::NotificationDetail;
+use crate::read_models::notification_detail::{
+    read_model::NotificationDetail, repository::NotificationDetailRepositoryTrait,
+};
 
 #[async_trait(?Send)]
 pub trait NotificationDetailQueryHandler {
@@ -14,14 +16,15 @@ pub trait NotificationDetailQueryHandler {
     ) -> Result<Vec<NotificationDetail>>;
 
     async fn get_notification(&self, notification_id: &Uuid) -> Result<NotificationDetail>;
+    async fn get_by_external_id(&self, external_id: String) -> Result<NotificationDetail>;
 }
 
 pub struct NotificationDetailQuery {
-    repository: Box<dyn AsyncRepositoryTrait<NotificationDetail>>,
+    repository: Box<dyn NotificationDetailRepositoryTrait>,
 }
 
 impl NotificationDetailQuery {
-    pub fn create(repository: Box<dyn AsyncRepositoryTrait<NotificationDetail>>) -> Self {
+    pub fn create(repository: Box<dyn NotificationDetailRepositoryTrait>) -> Self {
         Self { repository }
     }
 }
@@ -40,6 +43,12 @@ impl NotificationDetailQueryHandler for NotificationDetailQuery {
 
     async fn get_notification(&self, notification_id: &Uuid) -> Result<NotificationDetail> {
         let notification = self.repository.get_by_id(*notification_id).await?;
+
+        Ok(notification)
+    }
+
+    async fn get_by_external_id(&self, external_id: String) -> Result<NotificationDetail> {
+        let notification = self.repository.get_by_external_id(external_id).await?;
 
         Ok(notification)
     }

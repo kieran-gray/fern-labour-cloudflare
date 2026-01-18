@@ -29,7 +29,7 @@ pub async fn handle_query(
     let mut do_response = ctx
         .data
         .do_client
-        .query_with_body(labour_id, query_payload, &user, "/api/query")
+        .send_query_with_body(labour_id, query_payload, &user, "/api/query")
         .await
         .map_err(|e| format!("Failed to send query to labour_aggregate: {e}"))?;
 
@@ -64,7 +64,7 @@ pub async fn get_server_timestamp(
     let mut do_response = ctx
         .data
         .do_client
-        .query(labour_id, "/api/timestamp", &user)
+        .send_query(labour_id, "/api/timestamp", &user)
         .await
         .map_err(|e| format!("Failed to send query to labour_aggregate: {e}"))?;
 

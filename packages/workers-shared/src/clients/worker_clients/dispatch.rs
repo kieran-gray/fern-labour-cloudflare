@@ -1,9 +1,10 @@
 use async_trait::async_trait;
 use fern_labour_notifications_shared::service_clients::{
     DispatchClient, DispatchClientError, DispatchRequest, DispatchResponse,
+    dispatch::WebhookInterpretationResponse,
 };
 use tracing::{debug, error};
-use worker::Response;
+use worker::{Request, Response};
 
 use crate::clients::request_utils::{
     StatusCodeCategory, build_json_post_request, internal_auth_headers,
@@ -58,6 +59,36 @@ impl DispatchClient for FetcherDispatchClient {
                     DispatchClientError::InternalError(format!("Failed to parse response: {e}"))
                 })?;
                 Ok(dispatch_response.external_id)
+            }
+            StatusCodeCategory::ClientError => Err(DispatchClientError::RequestFailed(format!(
+                "Client error: {status}"
+            ))),
+            StatusCodeCategory::ServerError => Err(DispatchClientError::InternalError(format!(
+                "Server error: {status}"
+            ))),
+            StatusCodeCategory::Unknown => Err(DispatchClientError::RequestFailed(format!(
+                "Unexpected status: {status}"
+            ))),
+        }
+    }
+
+    async fn handle_webhook(
+        &self,
+        request: Request,
+    ) -> Result<WebhookInterpretationResponse, DispatchClientError> {
+        let mut response = self
+            .fetcher
+            .fetch_request(request)
+            .await
+            .map_err(|e| DispatchClientError::RequestFailed(format!("Request failed: {e}")))?;
+        let status = response.status_code();
+        match StatusCodeCategory::from_code(status) {
+            StatusCodeCategory::Success => {
+                let webhook_interpretation: WebhookInterpretationResponse =
+                    response.json().await.map_err(|e| {
+                        DispatchClientError::InternalError(format!("Failed to parse response: {e}"))
+                    })?;
+                Ok(webhook_interpretation)
             }
             StatusCodeCategory::ClientError => Err(DispatchClientError::RequestFailed(format!(
                 "Client error: {status}"

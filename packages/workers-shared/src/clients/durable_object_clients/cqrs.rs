@@ -1,5 +1,3 @@
-use chrono::Utc;
-use fern_labour_event_sourcing_rs::{CommandEnvelope, CommandMetadata};
 use serde::Serialize;
 use tracing::error;
 use uuid::Uuid;
@@ -41,23 +39,7 @@ impl DurableObjectCQRSClient {
         Self { namespace }
     }
 
-    pub async fn command<C: Serialize>(
-        &self,
-        aggregate_id: Uuid,
-        command: C,
-        user: &User,
-        url: &str,
-    ) -> Result<Response> {
-        let envelope = self.create_command_envelope(aggregate_id, command, user);
-        let body = self.serialize(&envelope)?;
-
-        let headers = self.create_headers_with_user(user)?;
-
-        self.send_request(aggregate_id, url, Method::Post, headers, Some(body))
-            .await
-    }
-
-    pub async fn send_raw_command<C: Serialize>(
+    pub async fn send_command<C: Serialize>(
         &self,
         aggregate_id: Uuid,
         command: C,
@@ -87,28 +69,14 @@ impl DurableObjectCQRSClient {
             .await
     }
 
-    pub async fn send_envelope<C: Serialize>(
-        &self,
-        aggregate_id: Uuid,
-        url: &str,
-        envelope: CommandEnvelope<C>,
-        user: &User,
-    ) -> Result<Response> {
-        let body = self.serialize(&envelope)?;
-        let headers = self.create_headers_with_user(user)?;
-
-        self.send_request(aggregate_id, url, Method::Post, headers, Some(body))
-            .await
-    }
-
-    pub async fn query(&self, aggregate_id: Uuid, url: &str, user: &User) -> Result<Response> {
+    pub async fn send_query(&self, aggregate_id: Uuid, url: &str, user: &User) -> Result<Response> {
         let headers = self.create_headers_with_user(user)?;
 
         self.send_request(aggregate_id, url, Method::Get, headers, None)
             .await
     }
 
-    pub async fn query_with_body<Q: Serialize>(
+    pub async fn send_query_with_body<Q: Serialize>(
         &self,
         aggregate_id: Uuid,
         query: Q,
@@ -120,23 +88,6 @@ impl DurableObjectCQRSClient {
 
         self.send_request(aggregate_id, url, Method::Post, headers, Some(body))
             .await
-    }
-
-    fn create_command_envelope<C>(
-        &self,
-        aggregate_id: Uuid,
-        command: C,
-        user: &User,
-    ) -> CommandEnvelope<C> {
-        let correlation_id = Uuid::now_v7();
-        let metadata = CommandMetadata::new(
-            aggregate_id,
-            correlation_id,
-            correlation_id,
-            user.user_id.clone(),
-            Utc::now(),
-        );
-        CommandEnvelope::new(metadata, command)
     }
 
     fn serialize<T: Serialize>(&self, value: &T) -> Result<String> {

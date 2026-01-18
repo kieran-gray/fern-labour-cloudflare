@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
 use chrono::{DateTime, Utc};
-use regex::Regex;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -46,19 +45,28 @@ impl ContactMessage {
     }
 
     fn validate_email(email: &str) -> Result<(), ValidationError> {
-        if email.is_empty() || email.len() > 254 {
+        if email.is_empty() || email.len() > 254 || email.chars().any(|c| c.is_whitespace()) {
             return Err(ValidationError::InvalidEmail(
                 "Email must be between 1 and 254 characters".into(),
             ));
         }
 
-        let email_regex = Regex::new(r"^[^\s@]+@[^\s@]+\.[^\s@]+$").unwrap();
+        let mut parts = email.split('@');
+        let local = parts.next().unwrap_or("");
+        let domain = parts.next().unwrap_or("");
 
-        if !email_regex.is_match(email) {
-            return Err(ValidationError::InvalidEmail("Invalid email format".into()));
+        if parts.next().is_some() || local.is_empty() || domain.is_empty() {
+            return Err(ValidationError::InvalidEmail(
+                "Invalid email format".to_string(),
+            ));
         }
 
-        Ok(())
+        match domain.find('.') {
+            Some(i) if i > 0 && i < domain.len() - 1 => Ok(()),
+            _ => Err(ValidationError::InvalidEmail(
+                "Invalid email format".to_string(),
+            )),
+        }
     }
 
     fn validate_name(name: &str) -> Result<(), ValidationError> {

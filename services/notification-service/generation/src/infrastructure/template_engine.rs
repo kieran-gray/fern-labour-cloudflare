@@ -1,12 +1,10 @@
-use fern_labour_notifications_shared::value_objects::{
-    NotificationChannel, NotificationTemplateData, RenderedContent,
+use fern_labour_notifications_shared::{
+    AppError,
+    value_objects::{NotificationChannel, NotificationTemplateData, RenderedContent},
 };
 use tinytemplate::TinyTemplate;
 
-use crate::{
-    application::{exceptions::AppError, template_engine::TemplateEngineTrait},
-    infrastructure::templates::{self, template::TemplateTrait},
-};
+use crate::infrastructure::templates::{self, template::TemplateTrait};
 
 #[derive(Default)]
 pub struct TinyTemplateEngine {}
@@ -53,10 +51,8 @@ impl TinyTemplateEngine {
 
         Ok(rendered)
     }
-}
 
-impl TemplateEngineTrait for TinyTemplateEngine {
-    fn render_content(
+    pub fn render_content(
         &self,
         channel: NotificationChannel,
         data: NotificationTemplateData,

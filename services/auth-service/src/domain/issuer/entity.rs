@@ -1,4 +1,4 @@
-use crate::domain::{DomainError, TokenClaims};
+use crate::domain::{AuthError, TokenClaims};
 
 #[derive(Debug, Clone)]
 pub struct Issuer {
@@ -14,12 +14,12 @@ impl Issuer {
         url: String,
         jwks_path: String,
         expected_audience: Option<String>,
-    ) -> Result<Self, DomainError> {
+    ) -> Result<Self, AuthError> {
         if name.is_empty() {
-            return Err(DomainError::InvalidIssuer("Empty name".into()));
+            return Err(AuthError::InvalidIssuer("Empty name".into()));
         }
         if !url.starts_with("https://") && !url.starts_with("http://") {
-            return Err(DomainError::InvalidIssuer(format!("Invalid URL: {}", url)));
+            return Err(AuthError::InvalidIssuer(format!("Invalid URL: {}", url)));
         }
 
         let normalized_url = if url.ends_with('/') {
@@ -49,7 +49,7 @@ impl Issuer {
         self.url == normalized
     }
 
-    pub fn validate_audience(&self, claims: &TokenClaims) -> Result<(), DomainError> {
+    pub fn validate_audience(&self, claims: &TokenClaims) -> Result<(), AuthError> {
         match &self.expected_audience {
             Some(expected) => claims.validate_audience(expected),
             None => Ok(()),
@@ -97,7 +97,7 @@ mod tests {
 
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidIssuer(msg) => {
+            AuthError::InvalidIssuer(msg) => {
                 assert!(msg.contains("Invalid URL"));
                 assert!(msg.contains("ftp://example.com"));
             }
@@ -116,7 +116,7 @@ mod tests {
 
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidIssuer(msg) => {
+            AuthError::InvalidIssuer(msg) => {
                 assert_eq!(msg, "Empty name");
             }
             _ => panic!("Expected InvalidIssuer error"),

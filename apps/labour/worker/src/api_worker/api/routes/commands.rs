@@ -32,7 +32,7 @@ pub async fn handle_command(
     let mut do_response = ctx
         .data
         .do_client
-        .send_raw_command(labour_id, command_payload, &user, url)
+        .send_command(labour_id, command_payload, &user, url)
         .await
         .map_err(|e| format!("Failed to send command to labour_aggregate: {e}"))?;
 

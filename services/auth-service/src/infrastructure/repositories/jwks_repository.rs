@@ -5,7 +5,7 @@ use worker::{Fetch, Method, Request, RequestInit};
 
 use fern_labour_workers_shared::cache::CacheTrait;
 
-use crate::domain::{JWKS, Jwk, JwksRepositoryTrait, RepositoryError};
+use crate::domain::{AuthError, JWKS, Jwk, JwksRepositoryTrait};
 
 pub struct JwksRepository<C: CacheTrait + Send + Sync> {
     cache: Arc<C>,
@@ -18,12 +18,12 @@ impl<C: CacheTrait + Send + Sync> JwksRepository<C> {
         }
     }
 
-    pub async fn fetch_jwks(&self, issuer_url: &str) -> Result<JWKS, RepositoryError> {
+    pub async fn fetch_jwks(&self, issuer_url: &str) -> Result<JWKS, AuthError> {
         let mut init = RequestInit::new();
         init.with_method(Method::Get);
 
         let request = Request::new_with_init(issuer_url, &init).map_err(|e| {
-            RepositoryError::FetchFailed(format!("Failed to create JWKS request: {e}"))
+            AuthError::JwksFetchFailed(format!("Failed to create JWKS request: {e}"))
         })?;
 
         let mut response = Fetch::Request(request).send().await.map_err(|e| {
@@ -32,12 +32,12 @@ impl<C: CacheTrait + Send + Sync> JwksRepository<C> {
                 issuer_url = ?issuer_url,
                 "JWKS request failed"
             );
-            RepositoryError::FetchFailed(format!("JWKS request failed: {e}"))
+            AuthError::JwksFetchFailed(format!("JWKS request failed: {e}"))
         })?;
 
         let jwks_response: JWKS = response.json().await.map_err(|e| {
             error!(error = ?e, "Failed to parse JWKS response");
-            RepositoryError::DecodeError(format!("Failed to parse JWKS response: {e}"))
+            AuthError::JwksFetchFailed(format!("Failed to parse JWKS response: {e}"))
         })?;
 
         let _ = self
@@ -51,11 +51,7 @@ impl<C: CacheTrait + Send + Sync> JwksRepository<C> {
 
 #[async_trait(?Send)]
 impl<C: CacheTrait + Send + Sync> JwksRepositoryTrait for JwksRepository<C> {
-    async fn get_jwk_by_key_id(
-        &self,
-        key_id: &str,
-        issuer_url: &str,
-    ) -> Result<Jwk, RepositoryError> {
+    async fn get_jwk_by_key_id(&self, key_id: &str, issuer_url: &str) -> Result<Jwk, AuthError> {
         let jwks = match self.cache.get::<JWKS>(issuer_url.into()).await {
             Ok(Some(jwks)) => {
                 info!(cache_status = "hit", "Retrieved JWKS from cache");
@@ -73,9 +69,10 @@ impl<C: CacheTrait + Send + Sync> JwksRepositoryTrait for JwksRepository<C> {
                 self.fetch_jwks(issuer_url).await?
             }
         };
-        let jwk = jwks
-            .get(key_id)
-            .ok_or(RepositoryError::NotFound(key_id.to_string()))?;
+        let jwk = jwks.get(key_id).ok_or(AuthError::JwksFetchFailed(format!(
+            "Key not found: {}",
+            key_id
+        )))?;
 
         Ok(jwk.clone())
     }

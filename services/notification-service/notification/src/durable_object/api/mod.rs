@@ -1,5 +1,7 @@
-pub mod request;
+pub mod middleware;
+pub mod response;
 pub mod router;
+pub mod routes;
 
-pub use request::RequestDto;
-pub use router::{CommandResult, route_and_handle};
+pub use response::ApiResult;
+pub use router::route_request;

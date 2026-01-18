@@ -1,5 +1,4 @@
-use fern_labour_event_sourcing_rs::CommandEnvelope;
-use fern_labour_labour_shared::AdminCommand;
+use fern_labour_labour_shared::ApiCommand;
 use fern_labour_workers_shared::User;
 use tracing::{error, info};
 use worker::{Request, Response};
@@ -11,16 +10,23 @@ pub async fn handle_admin_command(
     ctx: RequestContext<'_>,
     user: User,
 ) -> worker::Result<Response> {
-    let Ok(envelope) = req.json::<CommandEnvelope<AdminCommand>>().await else {
-        return Response::error("Failed to parse request body", 400);
+    let api_command: ApiCommand = match req.json().await {
+        Ok(cmd) => cmd,
+        Err(e) => {
+            error!(error = ?e, "Failed to parse ApiCommand");
+            return Response::error("Failed to parse request body", 400);
+        }
+    };
+
+    let admin_command = match api_command {
+        ApiCommand::Admin(cmd) => cmd,
+        _ => return Response::error("Invalid command type for admin endpoint", 400),
     };
 
     info!(
-        aggregate_id = %envelope.metadata.aggregate_id,
-        correlation_id = %envelope.metadata.correlation_id,
-        user_id = %envelope.metadata.user_id,
+        aggregate_id = %admin_command.labour_id(),
+        user_id = %user.user_id,
         auth_user_id = %user.user_id,
-        idempotency_key = %envelope.metadata.idempotency_key,
         "Processing admin command"
     );
 
@@ -28,7 +34,7 @@ pub async fn handle_admin_command(
         .data
         .write_model()
         .admin_command_processor
-        .handle(envelope, user);
+        .handle(admin_command);
 
     if let Err(ref err) = result {
         error!("Command execution failed: {}", err);

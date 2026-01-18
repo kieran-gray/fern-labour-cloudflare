@@ -14,7 +14,7 @@
     "dispatch"
   ],
   "scripts": {
-    "dev": "npm run dev:all --workspace=notification",
+    "dev": "concurrently -n notification,generation,dispatch \"npm run dev --prefix=notification\" \"sleep 1 && npm run dev --prefix=generation\" \"sleep 2 && npm run dev --prefix=dispatch\"",
     "build": "npm run build --workspaces --if-present",
     "build:dev": "npm run build:dev --workspaces --if-present",
     "migrate": "npm run migrate --workspaces --if-present",

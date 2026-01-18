@@ -124,7 +124,7 @@ pub async fn get_notification_events(
     match ctx
         .data
         .do_client
-        .query(notification_id, "/notification/events", &user)
+        .send_query(notification_id, "/notification/events", &user)
         .await
     {
         Ok(response) => Ok(cors_context.add_to_response(response)),

@@ -1,4 +1,4 @@
-use crate::domain::{JwtAlgorithm, exceptions::DomainError};
+use crate::domain::{AuthError, JwtAlgorithm};
 
 #[derive(Debug, Clone)]
 pub struct JwtHeader {
@@ -7,12 +7,15 @@ pub struct JwtHeader {
 }
 
 impl JwtHeader {
-    pub fn new(algorithm: String, key_id: String) -> Result<Self, DomainError> {
+    pub fn new(algorithm: String, key_id: String) -> Result<Self, AuthError> {
         if algorithm.is_empty() {
-            return Err(DomainError::InvalidJwt("Empty algorithm".into()));
+            return Err(AuthError::InvalidToken("Empty algorithm".into()));
         }
         let Ok(algorithm) = algorithm.parse() else {
-            return Err(DomainError::UnsupportedAlgorithm(algorithm));
+            return Err(AuthError::InvalidToken(format!(
+                "Unsupported algorithm: {}",
+                algorithm
+            )));
         };
 
         Ok(Self { algorithm, key_id })
@@ -55,10 +58,11 @@ mod tests {
 
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::UnsupportedAlgorithm(alg) => {
-                assert_eq!(alg, "HS256");
+            AuthError::InvalidToken(msg) => {
+                assert!(msg.contains("Unsupported algorithm"));
+                assert!(msg.contains("HS256"));
             }
-            _ => panic!("Expected UnsupportedAlgorithm error"),
+            _ => panic!("Expected InvalidToken error"),
         }
     }
 
@@ -68,10 +72,10 @@ mod tests {
 
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidJwt(msg) => {
-                assert_eq!(msg, "Empty algorithm");
+            AuthError::InvalidToken(msg) => {
+                assert!(msg.contains("Empty algorithm"));
             }
-            _ => panic!("Expected InvalidJwt error"),
+            _ => panic!("Expected InvalidToken error"),
         }
     }
 

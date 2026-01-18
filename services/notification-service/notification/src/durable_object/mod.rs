@@ -8,7 +8,7 @@ use tracing::{error, info};
 use worker::{DurableObject, Env, Request, Response, Result, State, durable_object};
 
 use crate::durable_object::{
-    api::RequestDto, state::AggregateServices,
+    api::route_request, state::AggregateServices,
     write_side::infrastructure::alarm_manager::AlarmManager,
 };
 
@@ -58,26 +58,20 @@ impl DurableObject for NotificationAggregate {
       already been handled.
      */
     async fn fetch(&self, req: Request) -> Result<Response> {
-        let request_dto = match RequestDto::from_request(req).await {
-            Ok(dto) => dto,
-            Err(err) => return Response::error(format!("Bad request: {}", err), 400),
-        };
+        let result = route_request(req, &self.services).await?;
 
-        let result = api::route_and_handle(self, request_dto);
-
-        if result.is_success() {
+        if result.status_code() == 204 {
             // As soon as we exit the durable object this alarm will be triggered and will process the
             // outbox in the background.
             // The latency between the end of the request and the alarm starting up is around 10ms with a
             // 0 delay alarm.
-
             self.alarm_manager
                 .set_alarm(0)
                 .await
                 .map_err(|e| worker::Error::RustError(e.to_string()))?;
         }
 
-        Ok(result.into_response())
+        Ok(result)
     }
 
     /*
@@ -104,9 +98,8 @@ impl DurableObject for NotificationAggregate {
 
         let services = self.services.get_async_processors();
 
-        // These futures could be processed concurrently. However, if the notification is high priority
-        // we want to wait until all event processing is completed before projecting.
-        // This ensures that the read models show the most up-to-date changes after processing is over.
+        // These futures cannot be processed concurrently. We want to wait until all event processing
+        // is completed before projecting.
         let process_manager_result = services.process_manager.on_alarm().await;
         if let Err(ref e) = process_manager_result {
             error!(error = %e, "Error in process manager alarm handling");

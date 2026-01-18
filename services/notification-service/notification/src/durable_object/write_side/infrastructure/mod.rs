@@ -1,4 +1,4 @@
 pub mod alarm_manager;
-pub mod persistence;
+pub mod event_store;
 
-pub use persistence::event_store::SqlEventStore;
+pub use event_store::SqlEventStore;

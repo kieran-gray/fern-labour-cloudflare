@@ -1,16 +1,13 @@
 use std::collections::HashMap;
 
-use crate::{
-    application::exceptions::AppError,
-    domain::{AuthenticatedPrincipal, TokenClaims},
-};
+use crate::domain::{AuthError, AuthenticatedPrincipal, TokenClaims};
 
 pub trait IdentityExtractionServiceTrait: Send + Sync {
     fn extract_principal(
         &self,
         claims: &TokenClaims,
         issuer_name: &str,
-    ) -> Result<AuthenticatedPrincipal, AppError>;
+    ) -> Result<AuthenticatedPrincipal, AuthError>;
 }
 
 pub struct IdentityExtractionService {
@@ -34,10 +31,10 @@ impl IdentityExtractionServiceTrait for IdentityExtractionService {
         &self,
         claims: &TokenClaims,
         issuer_name: &str,
-    ) -> Result<AuthenticatedPrincipal, AppError> {
+    ) -> Result<AuthenticatedPrincipal, AuthError> {
         let extractor = self
             .get_extractor(issuer_name)
-            .ok_or(AppError::InternalError(format!(
+            .ok_or(AuthError::ExtractionFailed(format!(
                 "No extractor for {}",
                 issuer_name
             )))?;
@@ -54,7 +51,6 @@ impl IdentityExtractionServiceTrait for IdentityExtractionService {
             extractor.extract_name(&claims.custom_claims),
             claims.custom_claims.clone(),
         )
-        .map_err(|e| AppError::InternalError(e.to_string()))
     }
 }
 

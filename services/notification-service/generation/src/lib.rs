@@ -1,36 +1,32 @@
-pub mod api;
-pub mod application;
 pub mod infrastructure;
 pub mod setup;
 
-use serde_json::json;
+use fern_labour_notifications_shared::service_clients::{RenderRequest, RenderResponse};
 use tracing::{Instrument, error, info, info_span};
-use tracing_subscriber::{
-    EnvFilter,
-    fmt::{format::Pretty, time::UtcTime},
-    prelude::*,
-};
-use tracing_web::{MakeConsoleWriter, performance_layer};
 
 use uuid::Uuid;
 use worker::*;
 
-use crate::setup::app_state::AppState;
+use crate::{
+    infrastructure::template_engine::TinyTemplateEngine, setup::observability::setup_observability,
+};
+
+#[derive(Default)]
+pub struct AppState {
+    pub template_engine: TinyTemplateEngine,
+}
+
+impl AppState {
+    pub fn new() -> Self {
+        Self {
+            template_engine: TinyTemplateEngine::new(),
+        }
+    }
+}
 
 #[event(start)]
 fn start() {
-    let fmt_layer = tracing_subscriber::fmt::layer()
-        .compact()
-        .with_ansi(false)
-        .with_timer(UtcTime::rfc_3339())
-        .with_writer(MakeConsoleWriter);
-
-    let perf_layer = performance_layer().with_details_from_fields(Pretty::default());
-
-    tracing_subscriber::registry()
-        .with(fmt_layer.with_filter(EnvFilter::new("info")))
-        .with(perf_layer)
-        .init();
+    setup_observability();
 }
 
 #[event(fetch)]
@@ -39,16 +35,9 @@ async fn fetch(req: Request, env: Env, _ctx: Context) -> Result<Response> {
 
     async move {
         info!(method = %req.method(), path = %req.path(), "START");
-        let app_state = match AppState::from_env(&env) {
-            Ok(app_state) => app_state,
-            Err(err) => {
-                error!(error = ?err, "Failed to create app state");
-                let json = json!({"message": format!("Failed to create app state: {err}")});
-                return Ok(Response::from_json(&json)?.with_status(500));
-            }
-        };
+        let app_state = AppState::new();
+        let router = Router::with_data(app_state).post_async("/api/v1/render", render);
 
-        let router = api::router::create_router(app_state);
         let result = router.run(req, env).await;
 
         match &result {
@@ -60,4 +49,31 @@ async fn fetch(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     }
     .instrument(info_span!("request", request_id = %request_id))
     .await
+}
+
+pub async fn render(mut req: Request, ctx: RouteContext<AppState>) -> worker::Result<Response> {
+    let request: RenderRequest = match req.json().await {
+        Ok(r) => r,
+        Err(e) => {
+            error!(error = ?e, "Failed to parse render request");
+            return Response::error("Failed to parse render request", 400);
+        }
+    };
+
+    info!(channel = %request.channel, "Rendering notification template");
+
+    match ctx
+        .data
+        .template_engine
+        .render_content(request.channel, request.template_data)
+    {
+        Ok(rendered_content) => {
+            info!("Template rendered successfully");
+            Response::from_json(&RenderResponse { rendered_content })
+        }
+        Err(e) => {
+            error!(error = ?e, "Failed to render template");
+            Response::error(format!("Failed to render template: {e}"), 500)
+        }
+    }
 }

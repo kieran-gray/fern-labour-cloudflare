@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use crate::value_objects::RenderedContent;
 
-/// I'm keeping this command type and the domain NotificationCommand type seperate on purpose.
+// I'm keeping this command type and the domain NotificationCommand type seperate on purpose.
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", content = "payload")]
@@ -31,18 +31,18 @@ pub enum InternalCommand {
 }
 
 impl InternalCommand {
-    pub fn notification_id(&self) -> Option<Uuid> {
+    pub fn notification_id(&self) -> Uuid {
         match self {
             InternalCommand::StoreRenderedContent {
                 notification_id, ..
-            } => Some(*notification_id),
+            } => *notification_id,
             InternalCommand::MarkAsDispatched {
                 notification_id, ..
-            } => Some(*notification_id),
-            InternalCommand::MarkAsDelivered { notification_id } => Some(*notification_id),
+            } => *notification_id,
+            InternalCommand::MarkAsDelivered { notification_id } => *notification_id,
             InternalCommand::MarkAsFailed {
                 notification_id, ..
-            } => Some(*notification_id),
+            } => *notification_id,
         }
     }
 }
