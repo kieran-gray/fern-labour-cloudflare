@@ -6,7 +6,6 @@ use crate::{
         requests::VerifyTokenRequest,
         responses::{AuthenticateResponse, VerifyTokenResponse},
     },
-    application::exceptions::AppError,
     setup::app_state::AppState,
 };
 
@@ -29,9 +28,8 @@ pub async fn verify_token_handler(
             Response::from_json(&response)
         }
         Err(e) => {
-            error!(error = ?e, "Token verification failed");
-            let response = Response::from(AppError::Unauthorised(format!("{e}")));
-            Ok(response)
+            error!(error = %e, "Token verification failed");
+            Ok(e.into())
         }
     }
 }
@@ -60,9 +58,8 @@ pub async fn authenticate_handler(
             Response::from_json(&response)
         }
         Err(e) => {
-            error!(error = ?e, "Authentication failed");
-            let response = Response::from(AppError::Unauthorised(format!("{e}")));
-            Ok(response)
+            error!(error = %e, "Authentication failed");
+            Ok(e.into())
         }
     }
 }

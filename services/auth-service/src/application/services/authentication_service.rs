@@ -3,13 +3,15 @@ use tracing::error;
 
 use async_trait::async_trait;
 
-use crate::application::{
-    dtos::user::UserDto,
-    exceptions::AuthError,
-    services::{
-        identity_extraction_service::IdentityExtractionServiceTrait,
-        token_validation_service::TokenValidationServiceTrait,
+use crate::{
+    application::{
+        dtos::user::UserDto,
+        services::{
+            identity_extraction_service::IdentityExtractionServiceTrait,
+            token_validation_service::TokenValidationServiceTrait,
+        },
     },
+    domain::AuthError,
 };
 
 #[async_trait(?Send)]
@@ -38,29 +40,27 @@ impl AuthenticationService {
 #[async_trait(?Send)]
 impl AuthenticationServiceTrait for AuthenticationService {
     async fn authenticate(&self, token: &str) -> Result<UserDto, AuthError> {
-        let (claims, issuer) = self
-            .validator
-            .validate_token(token)
-            .await
-            .map_err(|_| AuthError::ValidationFailed)?;
+        let (claims, issuer) = self.validator.validate_token(token).await.map_err(|e| {
+            error!(error = %e, "Token validation failed");
+            e
+        })?;
 
         let principal = self
             .extractor
             .extract_principal(&claims, &issuer.name)
-            .map_err(|err| {
-                error!("{err}");
-                AuthError::ExtractionFailed
+            .map_err(|e| {
+                error!(error = %e, "Principal extraction failed");
+                e
             })?;
 
         Ok(UserDto::from(principal))
     }
 
     async fn get_user_id(&self, token: &str) -> Result<String, AuthError> {
-        let (claims, _issuer) = self
-            .validator
-            .validate_token(token)
-            .await
-            .map_err(|_| AuthError::ValidationFailed)?;
+        let (claims, _issuer) = self.validator.validate_token(token).await.map_err(|e| {
+            error!(error = %e, "Token validation failed");
+            e
+        })?;
 
         Ok(claims.subject)
     }

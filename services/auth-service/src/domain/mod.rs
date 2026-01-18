@@ -7,7 +7,7 @@ pub mod repositories;
 pub mod services;
 pub mod token;
 
-pub use exceptions::{DomainError, RepositoryError};
+pub use exceptions::AuthError;
 pub use identity::AuthenticatedPrincipal;
 pub use issuer::{Issuer, IssuerRegistry};
 pub use jwks::{JWKS, Jwk};

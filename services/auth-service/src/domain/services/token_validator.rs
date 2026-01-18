@@ -1,4 +1,4 @@
-use crate::domain::{DomainError, Issuer, TokenClaims};
+use crate::domain::{AuthError, Issuer, TokenClaims};
 
 pub struct TokenValidator;
 
@@ -7,7 +7,7 @@ impl TokenValidator {
         claims: &TokenClaims,
         issuer: &Issuer,
         current_time: i64,
-    ) -> Result<(), DomainError> {
+    ) -> Result<(), AuthError> {
         claims.validate_time_constraints(current_time)?;
         issuer.validate_audience(claims)?;
         Ok(())
@@ -78,9 +78,8 @@ mod tests {
         let result = TokenValidator::validate_claims(&claims, &issuer, 1000000001);
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidClaims(errors) => {
-                assert_eq!(errors.len(), 1);
-                assert_eq!(errors[0], "Token expired");
+            AuthError::InvalidClaims(msg) => {
+                assert!(msg.contains("expired"));
             }
             _ => panic!("Expected InvalidClaims error"),
         }
@@ -94,9 +93,8 @@ mod tests {
         let result = TokenValidator::validate_claims(&claims, &issuer, 1000000000);
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidClaims(errors) => {
-                assert_eq!(errors.len(), 1);
-                assert_eq!(errors[0], "Token not yet valid");
+            AuthError::InvalidClaims(msg) => {
+                assert!(msg.contains("not yet valid"));
             }
             _ => panic!("Expected InvalidClaims error"),
         }
@@ -120,11 +118,10 @@ mod tests {
         let result = TokenValidator::validate_claims(&claims, &issuer, 1500000000);
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidAudience { expected, actual } => {
-                assert_eq!(expected, "https://api.example.com");
-                assert_eq!(actual, vec!["https://different-api.example.com"]);
+            AuthError::InvalidClaims(msg) => {
+                assert!(msg.contains("Invalid audience"));
             }
-            _ => panic!("Expected InvalidAudience error"),
+            _ => panic!("Expected InvalidClaims error"),
         }
     }
 

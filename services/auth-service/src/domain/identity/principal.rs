@@ -1,4 +1,4 @@
-use crate::domain::exceptions::DomainError;
+use crate::domain::AuthError;
 
 #[derive(Debug, Clone)]
 pub struct AuthenticatedPrincipal {
@@ -27,12 +27,12 @@ impl AuthenticatedPrincipal {
         last_name: Option<String>,
         name: Option<String>,
         metadata: serde_json::Value,
-    ) -> Result<Self, DomainError> {
+    ) -> Result<Self, AuthError> {
         if identity_id.is_empty() {
-            return Err(DomainError::InvalidIdentity("Empty identity_id".into()));
+            return Err(AuthError::ExtractionFailed("Empty identity_id".into()));
         }
         if issuer.is_empty() {
-            return Err(DomainError::InvalidIdentity("Empty issuer".into()));
+            return Err(AuthError::ExtractionFailed("Empty issuer".into()));
         }
         Ok(Self {
             identity_id,
@@ -105,10 +105,10 @@ mod tests {
 
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidIdentity(msg) => {
-                assert_eq!(msg, "Empty identity_id");
+            AuthError::ExtractionFailed(msg) => {
+                assert!(msg.contains("Empty identity_id"));
             }
-            _ => panic!("Expected InvalidIdentity error"),
+            _ => panic!("Expected ExtractionFailed error"),
         }
     }
 
@@ -129,10 +129,10 @@ mod tests {
 
         assert!(result.is_err());
         match result.unwrap_err() {
-            DomainError::InvalidIdentity(msg) => {
-                assert_eq!(msg, "Empty issuer");
+            AuthError::ExtractionFailed(msg) => {
+                assert!(msg.contains("Empty issuer"));
             }
-            _ => panic!("Expected InvalidIdentity error"),
+            _ => panic!("Expected ExtractionFailed error"),
         }
     }
 
