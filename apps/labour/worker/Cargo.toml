@@ -23,7 +23,7 @@ base64 = "0.22"
 hmac = "0.12"
 sha2 = "0.10"
 hex = "0.4"
-rand = "0.8"
+rand.workspace = true
 
 fern-labour-event-sourcing-rs.workspace = true
 fern-labour-workers-shared.workspace = true
@@ -31,10 +31,10 @@ fern-labour-labour-shared.workspace = true
 fern-labour-notifications-shared.workspace = true
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-getrandom = { version = "0.2", features = ["js"] }
+getrandom = { workspace = true, features = ["wasm_js"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-getrandom = { version = "0.2" }
+getrandom.workspace = true
 
 [dev-dependencies]
 tokio = "1.47.1"

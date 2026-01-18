@@ -20,10 +20,10 @@ tinytemplate = "1.1"
 fern-labour-notifications-shared.workspace = true
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-getrandom = { version = "0.2", features = ["js"] }
+getrandom = { workspace = true, features = ["wasm_js"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-getrandom = { version = "0.2" }
+getrandom.workspace = true
 
 [dev-dependencies]
 regex = "1.11.3"

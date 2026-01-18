@@ -32,6 +32,8 @@ futures = "0.3.31"
 async-trait = "0.1.89"
 chrono = { version = "0.4", features = ["wasmbind", "serde"] }
 anyhow = "1.0"
+getrandom = "0.3"
+rand = "0.9"
 
 fern-labour-event-sourcing-rs = { path = "packages/event-sourcing-rs" }
 fern-labour-workers-shared = { path = "packages/workers-shared" }
