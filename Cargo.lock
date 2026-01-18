@@ -229,12 +229,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "data-encoding"
-version = "2.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a2330da5de22e8a3cb63252ce2abb30116bf5265e89c0e01bc17015ce30a476"
-
-[[package]]
 name = "deadpool"
 version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -401,7 +395,6 @@ dependencies = [
  "getrandom 0.2.16",
  "jwt-compact",
  "num-bigint-dig",
- "regex",
  "serde",
  "serde_json",
  "strum",
@@ -445,20 +438,16 @@ dependencies = [
  "async-trait",
  "base64",
  "chrono",
- "fern-labour-event-sourcing-rs",
  "fern-labour-notifications-shared",
  "fern-labour-workers-shared",
  "form_urlencoded",
  "getrandom 0.2.16",
- "hex",
  "hmac",
  "resend-rs",
- "sendgrid",
  "serde",
  "serde_json",
  "sha1",
  "sha2",
- "strum",
  "time",
  "tokio",
  "tracing",
@@ -474,17 +463,10 @@ dependencies = [
 name = "fern_labour_notification_generation"
 version = "0.1.0"
 dependencies = [
- "anyhow",
- "async-trait",
- "chrono",
- "fern-labour-event-sourcing-rs",
  "fern-labour-notifications-shared",
- "fern-labour-workers-shared",
  "getrandom 0.2.16",
  "regex",
- "serde",
  "serde_json",
- "strum",
  "time",
  "tinytemplate",
  "tokio",
@@ -510,7 +492,6 @@ dependencies = [
  "fern-labour-workers-shared",
  "futures",
  "getrandom 0.2.16",
- "http-body-util",
  "serde",
  "serde_json",
  "serde_qs",
@@ -538,17 +519,13 @@ dependencies = [
  "fern-labour-labour-shared",
  "fern-labour-notifications-shared",
  "fern-labour-workers-shared",
- "futures",
  "getrandom 0.2.16",
  "hex",
  "hmac",
- "http-body-util",
  "rand 0.8.5",
  "serde",
  "serde_json",
- "serde_qs",
  "sha2",
- "strum",
  "time",
  "tokio",
  "tracing",
@@ -1770,20 +1747,6 @@ checksum = "cc1f0cbffaac4852523ce30d8bd3c5cdc873501d96ff467ca09b6767bb8cd5c0"
 dependencies = [
  "core-foundation-sys",
  "libc",
-]
-
-[[package]]
-name = "sendgrid"
-version = "0.24.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "338e7f7246766f6c931c6eed46e49cf6ef8f7c9b00f272b07822151b762281e9"
-dependencies = [
- "data-encoding",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror",
- "url",
 ]
 
 [[package]]

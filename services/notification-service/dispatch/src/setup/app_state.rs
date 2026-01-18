@@ -27,7 +27,7 @@ pub struct AppState {
 
 impl AppState {
     pub fn from_env(env: &Env) -> Result<Self> {
-        let config = Config::from_env(env).unwrap();
+        let config = Config::from_env(env)?;
 
         let gateways: Vec<Box<dyn NotificationGatewayTrait>> = vec![
             Box::new(TwilioSmsNotificationGateway::create(&config.twilio)),

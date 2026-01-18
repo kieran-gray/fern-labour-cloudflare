@@ -5,32 +5,15 @@ pub mod setup;
 
 use serde_json::json;
 use tracing::{Instrument, error, info, info_span};
-use tracing_subscriber::{
-    EnvFilter,
-    fmt::{format::Pretty, time::UtcTime},
-    prelude::*,
-};
-use tracing_web::{MakeConsoleWriter, performance_layer};
 
 use uuid::Uuid;
 use worker::*;
 
-use crate::setup::app_state::AppState;
+use crate::setup::{app_state::AppState, observability::setup_observability};
 
 #[event(start)]
 fn start() {
-    let fmt_layer = tracing_subscriber::fmt::layer()
-        .compact()
-        .with_ansi(false)
-        .with_timer(UtcTime::rfc_3339())
-        .with_writer(MakeConsoleWriter);
-
-    let perf_layer = performance_layer().with_details_from_fields(Pretty::default());
-
-    tracing_subscriber::registry()
-        .with(fmt_layer.with_filter(EnvFilter::new("info")))
-        .with(perf_layer)
-        .init();
+    setup_observability();
 }
 
 #[event(fetch)]
