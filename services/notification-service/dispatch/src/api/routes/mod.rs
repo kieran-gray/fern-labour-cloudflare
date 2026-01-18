@@ -1,2 +1,2 @@
-pub mod dispatch_route;
+pub mod dispatch;
 pub mod webhooks;

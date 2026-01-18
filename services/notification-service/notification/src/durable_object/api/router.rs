@@ -1,120 +1,42 @@
-use tracing::{error, info};
-use worker::Response;
+use worker::{Method, Request, Response, Result};
 
 use crate::durable_object::{
-    NotificationAggregate, api::RequestDto, exceptions::IntoWorkerResponse,
-    write_side::domain::NotificationCommand,
+    api::{
+        middleware::with_auth_context,
+        routes::{
+            admin::handle_admin_command, events::handle_events_query,
+            internal::handle_internal_command, notification::handle_domain_command,
+        },
+    },
+    state::AggregateServices,
 };
 
-pub enum CommandResult {
-    Success(Response),
-    Failed(Response),
+pub struct RequestContext<'a> {
+    pub data: &'a AggregateServices,
 }
 
-impl CommandResult {
-    pub fn into_response(self) -> Response {
-        match self {
-            CommandResult::Success(r) | CommandResult::Failed(r) => r,
-        }
-    }
-
-    pub fn is_success(&self) -> bool {
-        matches!(self, CommandResult::Success(_))
-    }
-
-    pub fn from_unit_result(result: anyhow::Result<()>) -> Self {
-        match result {
-            Ok(()) => Self::Success(Response::empty().unwrap()),
-            Err(err) => Self::Failed(err.into_response()),
-        }
-    }
-
-    pub fn from_json_result<T: serde::Serialize>(result: anyhow::Result<T>) -> Self {
-        match result {
-            Ok(data) => Self::Success(Response::from_json(&data).unwrap()),
-            Err(err) => Self::Failed(err.into_response()),
-        }
+impl<'a> RequestContext<'a> {
+    pub fn new(data: &'a AggregateServices) -> Self {
+        Self { data }
     }
 }
 
-pub fn route_and_handle(aggregate: &NotificationAggregate, request: RequestDto) -> CommandResult {
-    match request {
-        RequestDto::DomainCommand { envelope } => {
-            info!(
-                aggregate_id = %envelope.metadata.aggregate_id,
-                correlation_id = %envelope.metadata.correlation_id,
-                user_id = %envelope.metadata.user_id,
-                idempotency_key = %envelope.metadata.idempotency_key,
-                "Processing domain command"
-            );
+pub async fn route_request(req: Request, services: &AggregateServices) -> Result<Response> {
+    let method = req.method();
+    let path = req.path();
+    let ctx = RequestContext::new(services);
 
-            let result = aggregate
-                .services
-                .write_model()
-                .notification_command_processor
-                .handle_command(envelope.command, envelope.metadata.user_id.clone());
-
-            if let Err(ref err) = result {
-                error!("Command execution failed: {}", err);
-            } else {
-                info!("Command executed successfully");
-            }
-
-            CommandResult::from_unit_result(result)
+    match (method, path.as_str()) {
+        (Method::Post, "/notification/domain") => {
+            with_auth_context(handle_domain_command, req, ctx).await
         }
-        RequestDto::InternalCommand { envelope } => {
-            info!(
-                aggregate_id = %envelope.metadata.aggregate_id,
-                correlation_id = %envelope.metadata.correlation_id,
-                user_id = %envelope.metadata.user_id,
-                idempotency_key = %envelope.metadata.idempotency_key,
-                "Processing internal command"
-            );
-
-            let domain_command = NotificationCommand::from(envelope.command.clone());
-
-            let result = aggregate
-                .services
-                .write_model()
-                .notification_command_processor
-                .handle_command(domain_command, envelope.metadata.user_id.clone());
-
-            if let Err(ref err) = result {
-                error!("Command execution failed: {}", err);
-            } else {
-                info!("Command executed successfully");
-            }
-
-            CommandResult::from_unit_result(result)
+        (Method::Post, "/notification/command") => {
+            with_auth_context(handle_internal_command, req, ctx).await
         }
-        RequestDto::AdminCommand { envelope } => {
-            info!(
-                aggregate_id = %envelope.metadata.aggregate_id,
-                correlation_id = %envelope.metadata.correlation_id,
-                user_id = %envelope.metadata.user_id,
-                "Processing admin command"
-            );
-
-            let result = aggregate
-                .services
-                .write_model()
-                .admin_command_processor
-                .handle(envelope);
-
-            if let Err(ref err) = result {
-                error!("Admin command handling failed: {}", err);
-            } else {
-                info!("Admin command handled successfully");
-            }
-
-            CommandResult::from_unit_result(result)
+        (Method::Post, "/admin/command") => with_auth_context(handle_admin_command, req, ctx).await,
+        (Method::Get, "/notification/events") => {
+            with_auth_context(handle_events_query, req, ctx).await
         }
-        RequestDto::EventsQuery => CommandResult::from_json_result(
-            aggregate
-                .services
-                .read_model()
-                .query_service
-                .get_event_stream(),
-        ),
+        _ => Response::error("Not Found", 404),
     }
 }

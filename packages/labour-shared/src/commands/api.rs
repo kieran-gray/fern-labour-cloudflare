@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use crate::{
     AdminCommand, ContractionCommand, LabourCommand, LabourUpdateCommand, SubscriberCommand,
-    SubscriptionCommand,
+    SubscriptionCommand, commands::checkout::CheckoutCommand,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -15,6 +15,7 @@ pub enum ApiCommand {
     LabourUpdate(LabourUpdateCommand),
     Subscriber(SubscriberCommand),
     Subscription(SubscriptionCommand),
+    Checkout(CheckoutCommand),
 }
 
 impl ApiCommand {
@@ -26,6 +27,7 @@ impl ApiCommand {
             Self::LabourUpdate(cmd) => cmd.labour_id(),
             Self::Subscriber(cmd) => cmd.labour_id(),
             Self::Subscription(cmd) => cmd.labour_id(),
+            Self::Checkout(cmd) => cmd.labour_id(),
         }
     }
 }

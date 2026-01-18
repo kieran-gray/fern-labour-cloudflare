@@ -1,10 +1,9 @@
 use anyhow::{Context, Result};
-use fern_labour_notifications_shared::service_clients::{DispatchClient, GenerationClient};
+use fern_labour_notifications_shared::service_clients::DispatchClient;
 use fern_labour_workers_shared::{
     ConfigTrait,
     clients::{
-        AuthServiceClient, DurableObjectCQRSClient, FetcherAuthServiceClient,
-        FetcherDispatchClient, FetcherGenerationClient,
+        AuthServiceClient, DurableObjectCQRSClient, FetcherAuthServiceClient, FetcherDispatchClient,
     },
 };
 use worker::Env;
@@ -36,7 +35,6 @@ pub struct AppState {
     pub notification_activity_query: Box<dyn NotificationActivityQueryHandler>,
     pub notification_activity_repository: Box<dyn NotificationActivityRepository>,
     pub do_client: DurableObjectCQRSClient,
-    pub generation_client: Box<dyn GenerationClient>,
     pub dispatch_client: Box<dyn DispatchClient>,
 }
 
@@ -109,17 +107,6 @@ impl AppState {
         )))
     }
 
-    fn create_generation(env: &Env, auth_token: &str) -> Result<Box<dyn GenerationClient>> {
-        let generation_fetcher = env
-            .service("GENERATION_SERVICE_API")
-            .context("Missing binding GENERATION_SERVICE_API")?;
-
-        Ok(Box::new(FetcherGenerationClient::create(
-            generation_fetcher,
-            auth_token.to_string(),
-        )))
-    }
-
     pub fn from_env(env: &Env) -> Result<Self> {
         let config = Config::from_env(env)?;
         let auth_service = Self::create_auth_service(env)?;
@@ -135,7 +122,6 @@ impl AppState {
             Box::new(D1NotificationActivityRepository::create(notification_db));
 
         let do_client = Self::create_do_client(env)?;
-        let generation_client = Self::create_generation(env, &config.internal_service_token)?;
         let dispatch_client = Self::create_dispatch(env, &config.internal_service_token)?;
 
         Ok(Self {
@@ -146,7 +132,6 @@ impl AppState {
             notification_activity_query,
             notification_activity_repository,
             do_client,
-            generation_client,
             dispatch_client,
         })
     }

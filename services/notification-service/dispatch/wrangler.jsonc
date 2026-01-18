@@ -10,9 +10,9 @@
     "command": "cargo install -q worker-build && worker-build --release",
   },
   "workers_dev": false,
-  "route": {
-    "pattern": "dispatch.fernlabour.com",
-    "custom_domain": true
+  "dev": {
+    "ip": "0.0.0.0",
+    "port": 8005
   },
   "placement": {
     "mode": "smart"
@@ -25,21 +25,6 @@
       "enabled": true
     }
   },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "fern-labour-notification-dispatch",
-      "database_id": "3cc4a0a1-b787-42bf-ad56-140814056c47"
-    }
-  ],
-  "queues": {
-    "producers": [
-      {
-        "binding": "NOTIFICATION_COMMAND_BUS",
-        "queue": "fern-labour-notification-command-bus"
-      }
-    ]
-  },
   "vars": {
     "ENVIRONMENT": "production",
     "ALLOWED_ORIGINS": "",
@@ -49,21 +34,6 @@
   },
   "env": {
     "dev": {
-      "d1_databases": [
-        {
-          "binding": "DB",
-          "database_name": "fern-labour-notification-dispatch",
-          "database_id": "3cc4a0a1-b787-42bf-ad56-140814056c47"
-        }
-      ],
-      "queues": {
-        "producers": [
-          {
-            "binding": "NOTIFICATION_COMMAND_BUS",
-            "queue": "fern-labour-notification-command-bus"
-          }
-        ]
-      },
       "vars": {
         "ENVIRONMENT": "dev",
         "ALLOWED_ORIGINS": "",

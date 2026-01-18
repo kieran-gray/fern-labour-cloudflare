@@ -10,6 +10,7 @@ impl CommandTranslator {
     pub fn translate(command: ApiCommand, user: &User) -> Result<LabourCommand> {
         match command {
             ApiCommand::Admin(_) => Err(anyhow!("Admin commands must use the admin endpoint")),
+            ApiCommand::Checkout(_) => Err(anyhow!("Checkout commands not supported")),
             ApiCommand::Labour(cmd) => Ok(LabourCommand::from(cmd)),
             ApiCommand::LabourUpdate(cmd) => Ok(LabourCommand::from(cmd)),
             ApiCommand::Contraction(cmd) => Ok(LabourCommand::from(cmd)),

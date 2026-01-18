@@ -18,9 +18,8 @@ use crate::{
             },
         },
         write_side::{
-            application::{
-                AdminCommandProcessor,
-                command_processors::{NotificationCommandProcessor, ServiceCommandProcessor},
+            application::command_processors::{
+                NotificationCommandProcessor, ServiceCommandProcessor,
             },
             domain::NotificationEvent,
             infrastructure::SqlEventStore,
@@ -35,7 +34,6 @@ use crate::{
 
 pub struct WriteModel {
     pub notification_command_processor: NotificationCommandProcessor,
-    pub admin_command_processor: AdminCommandProcessor,
 }
 
 pub struct ReadModel {
@@ -104,11 +102,8 @@ impl AggregateServices {
         let repository = Box::new(AggregateRepository::new(event_store.clone()));
         let notification_command_processor = NotificationCommandProcessor::new(repository);
 
-        let admin_command_processor = AdminCommandProcessor::create();
-
         Ok(WriteModel {
             notification_command_processor,
-            admin_command_processor,
         })
     }
 

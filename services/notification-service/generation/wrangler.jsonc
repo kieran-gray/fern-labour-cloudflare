@@ -10,6 +10,7 @@
     "command": "cargo install -q worker-build && worker-build --release"
   },
   "dev": {
+    "ip": "0.0.0.0",
     "port": 8007
   },
   "workers_dev": false,

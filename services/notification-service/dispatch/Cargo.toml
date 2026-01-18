@@ -19,6 +19,7 @@ uuid.workspace = true
 async-trait.workspace = true
 chrono.workspace = true
 anyhow.workspace = true
+wasm-bindgen.workspace = true
 
 fern-labour-notifications-shared.workspace = true
 fern-labour-event-sourcing-rs.workspace = true

@@ -36,7 +36,7 @@ pub async fn handle_create_checkout_session(
     let mut do_response = ctx
         .data
         .do_client
-        .command(labour_id, command, &user, "/api/checkout")
+        .send_command(labour_id, command, &user, "/api/checkout")
         .await
         .map_err(|e| format!("Failed to create checkout session: {e}"))?;
 
@@ -118,7 +118,7 @@ async fn handle_checkout_completed(
     let result = ctx
         .data
         .do_client
-        .send_raw_command(checkout.labour_id, command, &internal_user, "/api/command")
+        .send_command(checkout.labour_id, command, &internal_user, "/api/command")
         .await;
 
     match result {

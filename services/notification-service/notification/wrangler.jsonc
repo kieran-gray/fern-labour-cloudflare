@@ -46,20 +46,6 @@
       "database_id": "82e6162a-e375-43b0-ba92-96328ab55180"
     }
   ],
-  "queues": {
-    "producers": [
-      {
-        "binding": "NOTIFICATION_COMMAND_BUS",
-        "queue": "fern-labour-notification-command-bus"
-      }
-    ],
-    "consumers": [
-      {
-        "queue": "fern-labour-notification-command-bus",
-        "dead_letter_queue": "fern-labour-notification-command-bus-dlq"
-      }
-    ]
-  },
   "durable_objects": {
     "bindings": [
       {
@@ -103,20 +89,6 @@
           "database_id": "82e6162a-e375-43b0-ba92-96328ab55180"
         }
       ],
-      "queues": {
-        "producers": [
-          {
-            "binding": "NOTIFICATION_COMMAND_BUS",
-            "queue": "fern-labour-notification-command-bus"
-          }
-        ],
-        "consumers": [
-          {
-            "queue": "fern-labour-notification-command-bus",
-            "dead_letter_queue": "fern-labour-notification-command-bus-dlq"
-          }
-        ]
-      },
       "durable_objects": {
         "bindings": [
           {

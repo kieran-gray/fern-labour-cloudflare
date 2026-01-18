@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum AppError {
     ValidationError(String),
     ConsumerError(String),
@@ -16,16 +16,6 @@ impl std::fmt::Display for AppError {
 }
 
 impl std::error::Error for AppError {}
-
-impl Clone for AppError {
-    fn clone(&self) -> Self {
-        match self {
-            AppError::ValidationError(msg) => AppError::ValidationError(msg.clone()),
-            AppError::ConsumerError(msg) => AppError::ConsumerError(msg.clone()),
-            AppError::InternalError(msg) => AppError::InternalError(msg.clone()),
-        }
-    }
-}
 
 impl From<AppError> for worker::Response {
     fn from(error: AppError) -> Self {

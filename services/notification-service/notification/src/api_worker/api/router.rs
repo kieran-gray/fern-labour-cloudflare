@@ -9,6 +9,7 @@ use crate::api_worker::api::routes::queries::get_notification_activity;
 use crate::api_worker::api::routes::queries::{
     get_notification_detail, get_notification_events, get_notifications, get_notifications_detailed,
 };
+use crate::api_worker::api::routes::webhook::process_delivery_webhook;
 
 pub fn create_router(app_state: AppState) -> Router<'static, AppState> {
     Router::with_data(app_state)
@@ -40,4 +41,5 @@ pub fn create_router(app_state: AppState) -> Router<'static, AppState> {
             authenticated(rebuild_notification_activity, req, ctx)
         })
         .options("/api/v1/admin/rebuild-activity", create_options_handler)
+        .post_async("/api/v1/webhook/*provider", process_delivery_webhook)
 }

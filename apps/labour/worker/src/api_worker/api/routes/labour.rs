@@ -47,7 +47,7 @@ pub async fn handle_plan_labour(
 
     ctx.data
         .do_client
-        .send_raw_command(labour_id, command, &user, "/api/command")
+        .send_command(labour_id, command, &user, "/api/command")
         .await
         .map_err(|e| format!("Failed to send command to labour aggregate: {e}"))?;
 

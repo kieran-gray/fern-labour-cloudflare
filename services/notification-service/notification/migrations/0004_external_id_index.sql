@@ -1,0 +1,1 @@
+CREATE INDEX idx_notification_details_external_id ON notification_details(external_id);
