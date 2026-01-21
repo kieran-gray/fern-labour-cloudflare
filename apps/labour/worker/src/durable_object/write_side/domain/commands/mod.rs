@@ -218,14 +218,16 @@ impl From<LabourUpdateCommand> for LabourCommand {
 impl From<(SubscriberCommand, String)> for LabourCommand {
     fn from((cmd, subscriber_id): (SubscriberCommand, String)) -> Self {
         match cmd {
-            SubscriberCommand::RequestAccess { labour_id, token, subscriber_name } => {
-                LabourCommand::RequestAccess(RequestAccess {
-                    labour_id,
-                    subscriber_name,
-                    subscriber_id,
-                    token,
-                })
-            }
+            SubscriberCommand::RequestAccess {
+                labour_id,
+                token,
+                subscriber_name,
+            } => LabourCommand::RequestAccess(RequestAccess {
+                labour_id,
+                subscriber_name,
+                subscriber_id,
+                token,
+            }),
             SubscriberCommand::Unsubscribe {
                 labour_id,
                 subscription_id,

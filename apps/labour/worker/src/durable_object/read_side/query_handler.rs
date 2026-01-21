@@ -2,7 +2,7 @@ use anyhow::{Result, anyhow};
 use fern_labour_event_sourcing_rs::PaginatedResponse;
 use fern_labour_labour_shared::{
     ApiQuery, ContractionQuery, LabourQuery, LabourUpdateQuery,
-    queries::{subscription::SubscriptionQuery},
+    queries::subscription::SubscriptionQuery,
 };
 use fern_labour_workers_shared::User;
 use serde_json::Value;

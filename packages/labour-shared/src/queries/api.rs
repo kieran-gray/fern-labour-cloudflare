@@ -2,8 +2,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::{
-    ContractionQuery, LabourQuery, LabourUpdateQuery,
-    queries::{subscription::SubscriptionQuery},
+    ContractionQuery, LabourQuery, LabourUpdateQuery, queries::subscription::SubscriptionQuery,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

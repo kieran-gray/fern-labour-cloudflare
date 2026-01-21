@@ -1,5 +1,6 @@
-
-use fern_labour_workers_shared::clients::worker_clients::user::{GetUserResponse, GetUsersRequest, GetUsersResponse};
+use fern_labour_workers_shared::clients::worker_clients::user::{
+    GetUserResponse, GetUsersRequest, GetUsersResponse,
+};
 use tracing::{error, info};
 use worker::{Request, Response, RouteContext};
 
@@ -14,9 +15,7 @@ pub async fn get_user(_req: Request, ctx: RouteContext<AppState>) -> worker::Res
     info!(user_id = ?user_id, "Processing get_user request");
 
     match ctx.data.clerk_client.get_user(user_id).await {
-        Ok(user) => {
-            Ok(Response::from_json(&GetUserResponse { user })?.with_status(200))
-        }
+        Ok(user) => Ok(Response::from_json(&GetUserResponse { user })?.with_status(200)),
         Err(e) => {
             error!(error = ?e, "Failed to fetch user");
             Response::error(format!("Failed to fetch user: {e}"), 500)

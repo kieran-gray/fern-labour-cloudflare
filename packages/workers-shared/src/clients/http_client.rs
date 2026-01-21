@@ -65,5 +65,4 @@ impl HttpClientTrait for WorkerHttpClient {
 
         Ok(json_response)
     }
-
 }

@@ -133,7 +133,8 @@ impl ClerkApiClient {
     }
 
     pub async fn get_users(&self, user_ids: Vec<String>) -> Result<Vec<User>> {
-        let params: Vec<(&str, &str)> = user_ids.iter().map(|id| ("user_id", id.as_str())).collect();
+        let params: Vec<(&str, &str)> =
+            user_ids.iter().map(|id| ("user_id", id.as_str())).collect();
         let url = Url::parse_with_params(&self.clerk_base_url, &params)
             .map_err(|e| anyhow!("Failed to parse url: {e}"))?;
 

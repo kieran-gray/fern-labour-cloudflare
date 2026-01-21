@@ -54,9 +54,7 @@ pub struct FetcherUserServiceClient {
 
 impl FetcherUserServiceClient {
     pub fn create(fetcher: Fetcher) -> Self {
-        Self {
-            fetcher,
-        }
+        Self { fetcher }
     }
 
     async fn post<T: Serialize>(
@@ -91,7 +89,10 @@ impl UserServiceClient for FetcherUserServiceClient {
         let status = response.status_code();
         match StatusCodeCategory::from_code(status) {
             StatusCodeCategory::Success => {
-                let user_response: GetUserResponse = response.json().await.map_err(|e| UserClientError::ParseError(e.to_string()))?;
+                let user_response: GetUserResponse = response
+                    .json()
+                    .await
+                    .map_err(|e| UserClientError::ParseError(e.to_string()))?;
                 Ok(user_response.user)
             }
             StatusCodeCategory::ClientError => Err(UserClientError::RequestFailed(format!(
@@ -108,7 +109,7 @@ impl UserServiceClient for FetcherUserServiceClient {
 
     async fn get_users(&self, user_ids: Vec<&str>) -> Result<Vec<User>, UserClientError> {
         let request = GetUsersRequest {
-            user_ids: user_ids.iter().map(|u| u.to_string()).collect()
+            user_ids: user_ids.iter().map(|u| u.to_string()).collect(),
         };
 
         let mut response = self
@@ -118,7 +119,10 @@ impl UserServiceClient for FetcherUserServiceClient {
         let status = response.status_code();
         match StatusCodeCategory::from_code(status) {
             StatusCodeCategory::Success => {
-                let user_response: GetUsersResponse = response.json().await.map_err(|e| UserClientError::ParseError(e.to_string()))?;
+                let user_response: GetUsersResponse = response
+                    .json()
+                    .await
+                    .map_err(|e| UserClientError::ParseError(e.to_string()))?;
                 Ok(user_response.users)
             }
             StatusCodeCategory::ClientError => Err(UserClientError::RequestFailed(format!(
