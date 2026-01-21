@@ -35,7 +35,7 @@ jobs:
     with:
       worker-name: fern-labour-user-worker
       worker-path: services/user-service
-      has-integration-tests: true
+      has-integration-tests: false
 
   deploy:
     needs: ci

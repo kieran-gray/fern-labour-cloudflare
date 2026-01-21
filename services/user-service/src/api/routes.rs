@@ -28,7 +28,7 @@ pub async fn get_users(mut req: Request, ctx: RouteContext<AppState>) -> worker:
         Ok(dto) => dto,
         Err(e) => {
             error!(error = ?e, "Failed to parse request body");
-            return Response::error(&format!("Failed to parse request body: {e}"), 400);
+            return Response::error(format!("Failed to parse request body: {e}"), 400);
         }
     };
 

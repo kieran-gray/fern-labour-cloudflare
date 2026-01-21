@@ -42,36 +42,36 @@ struct ClerkUser {
     phone_numbers: Vec<ClerkPhoneNumber>,
 }
 
-impl Into<User> for ClerkUser {
-    fn into(self) -> User {
-        let email = match self.primary_email_address_id {
-            Some(id) => self
+impl From<ClerkUser> for User {
+    fn from(value: ClerkUser) -> User {
+        let email = match value.primary_email_address_id {
+            Some(id) => value
                 .email_addresses
                 .iter()
                 .find(|email| email.id == id)
-                .and_then(|val| Some(val.email())),
+                .map(|val| val.email()),
             None => None,
         };
-        let phone_number = match self.primary_phone_number_id {
-            Some(id) => self
+        let phone_number = match value.primary_phone_number_id {
+            Some(id) => value
                 .phone_numbers
                 .iter()
                 .find(|num| num.id == id)
-                .and_then(|val| Some(val.number())),
+                .map(|val| val.number()),
             None => None,
         };
-        let name = match (&self.first_name, &self.last_name) {
+        let name = match (&value.first_name, &value.last_name) {
             (Some(first), Some(last)) => Some(format!("{} {}", first, last)),
             (Some(name), None) | (None, Some(name)) => Some(name.clone()),
             _ => None,
         };
 
         User {
-            user_id: self.id,
+            user_id: value.id,
             email,
             phone_number,
-            first_name: self.first_name,
-            last_name: self.last_name,
+            first_name: value.first_name,
+            last_name: value.last_name,
             name,
         }
     }
