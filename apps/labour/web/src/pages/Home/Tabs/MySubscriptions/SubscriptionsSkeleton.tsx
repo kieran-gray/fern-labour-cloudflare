@@ -1,5 +1,5 @@
 import { Group, Skeleton, Stack } from '@mantine/core';
-import classes from './SubscriptionsTable.module.css';
+import classes from './SubscriptionsList.module.css';
 
 function SubscriptionCardSkeleton() {
   return (

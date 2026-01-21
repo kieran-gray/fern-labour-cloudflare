@@ -38,7 +38,6 @@ struct VerifyTokenResponse {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct User {
     pub user_id: String,
-    pub issuer: String,
     pub email: Option<String>,
     pub phone_number: Option<String>,
     pub first_name: Option<String>,
@@ -50,7 +49,6 @@ impl User {
     pub fn internal(user_id: &str) -> Self {
         Self {
             user_id: format!("fern-labour-internal-{user_id}"),
-            issuer: "internal".to_string(),
             email: None,
             phone_number: None,
             first_name: None,
@@ -160,11 +158,7 @@ impl AuthServiceClient for FetcherAuthServiceClient {
                     ))
                 })?;
 
-                debug!(
-                    user_id = %auth_response.user.user_id,
-                    issuer = %auth_response.user.issuer,
-                    "Token authenticated via auth service"
-                );
+                debug!(user_id = %auth_response.user.user_id, "Token authenticated via auth service");
                 Ok(auth_response.user)
             }
             status => {

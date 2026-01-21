@@ -5,7 +5,7 @@ use worker::{Fetch, Headers, Method, Request, RequestInit};
 
 #[async_trait(?Send)]
 pub trait HttpClientTrait: Send + Sync {
-    async fn post_json(
+    async fn post(
         &self,
         url: &str,
         body: Value,
@@ -29,7 +29,7 @@ impl Default for WorkerHttpClient {
 
 #[async_trait(?Send)]
 impl HttpClientTrait for WorkerHttpClient {
-    async fn post_json(
+    async fn post(
         &self,
         url: &str,
         body: Value,

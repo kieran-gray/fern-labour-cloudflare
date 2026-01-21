@@ -4,7 +4,10 @@ use anyhow::{Context, Result};
 
 use fern_labour_workers_shared::{
     ConfigTrait,
-    clients::{FetcherNotificationClient, WorkerStripeClient},
+    clients::{
+        FetcherNotificationClient, WorkerStripeClient,
+        worker_clients::user::FetcherUserServiceClient,
+    },
 };
 use worker::{Env, State};
 
@@ -39,7 +42,6 @@ use crate::durable_object::{
             subscriptions::{
                 SqlSubscriptionRepository, SubscriptionQuery, SubscriptionReadModelProjector,
             },
-            users::query::UserQuery,
         },
     },
     setup::config::Config,
@@ -47,7 +49,7 @@ use crate::durable_object::{
     write_side::{
         application::{AdminCommandProcessor, CheckoutService, LabourCommandProcessor},
         domain::{Labour, LabourEvent},
-        infrastructure::{RandomTokenGenerator, SqlCache, SqlEventStore, UserStore},
+        infrastructure::{RandomTokenGenerator, SqlCache, SqlEventStore},
         process_manager::{EffectLedger, LabourEffectExecutor, ProcessManager},
     },
 };
@@ -56,13 +58,11 @@ pub struct WriteModel {
     pub labour_command_processor: LabourCommandProcessor,
     pub admin_command_processor: AdminCommandProcessor,
     pub checkout_service: CheckoutService,
-    pub user_store: UserStore,
 }
 
 pub struct ReadModel {
     pub aggregate_repository: Rc<dyn AggregateRepositoryTrait<Labour>>,
     pub event_query: EventQuery,
-    pub user_query: UserQuery,
     pub labour_query: LabourReadModelQuery,
     pub contraction_query: ContractionReadModelQuery,
     pub labour_update_query: LabourUpdateReadModelQuery,
@@ -104,16 +104,10 @@ impl LabourCircleServices {
 
         let admin_command_processor = AdminCommandProcessor::create(checkpoint_repository);
 
-        let user_store = UserStore::create(sql);
-        user_store
-            .init_schema()
-            .context("Failed to init user storage")?;
-
         Ok(WriteModel {
             labour_command_processor,
             admin_command_processor,
             checkout_service,
-            user_store,
         })
     }
 
@@ -139,13 +133,9 @@ impl LabourCircleServices {
         let sub_token_repo = Box::new(SqlSubscriptionTokenRepository::create(sql.clone()));
         let subscription_token_query = SubscriptionTokenQuery::create(sub_token_repo);
 
-        let user_storage = UserStore::create(sql);
-        let user_query = UserQuery::new(user_storage);
-
         Ok(ReadModel {
             aggregate_repository,
             event_query,
-            user_query,
             labour_query,
             contraction_query,
             labour_update_query,
@@ -286,6 +276,12 @@ impl LabourCircleServices {
             .service("NOTIFICATION_SERVICE_API")
             .context("Missing binding NOTIFICATION_SERVICE_API")?;
 
+        let user_fetcher = env
+            .service("USER_SERVICE_API")
+            .context("Missing binding USER_SERVICE_API")?;
+
+        let user_client = Box::new(FetcherUserServiceClient::create(user_fetcher));
+
         let notification_client = Box::new(FetcherNotificationClient::create(
             notification_fetcher,
             config.notification_auth_token.clone(),
@@ -293,10 +289,8 @@ impl LabourCircleServices {
 
         let subscription_token_generator = Box::new(RandomTokenGenerator);
 
-        let user_storage = UserStore::create(sql);
-
         let executor = LabourEffectExecutor::new(
-            user_storage,
+            user_client,
             notification_client,
             command_processor,
             subscription_token_generator,

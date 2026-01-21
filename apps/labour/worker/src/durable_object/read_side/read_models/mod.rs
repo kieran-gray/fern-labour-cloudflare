@@ -6,4 +6,3 @@ pub mod labour_updates;
 pub mod subscription_status;
 pub mod subscription_token;
 pub mod subscriptions;
-pub mod users;

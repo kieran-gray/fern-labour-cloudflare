@@ -1,0 +1,5 @@
+/* History Modal - follows modal design system */
+.content {
+  max-height: 60vh;
+  overflow-y: auto;
+}

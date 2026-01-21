@@ -17,6 +17,4 @@ pub enum QueryAction {
     GetSubscriptionToken,
     GetLabourSubscriptions,
     GetUserSubscription,
-    GetUser,
-    GetUsers,
 }

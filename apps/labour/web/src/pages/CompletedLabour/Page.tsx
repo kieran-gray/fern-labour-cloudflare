@@ -25,7 +25,7 @@ export const CompletedLabourCard: React.FC = () => {
           <h3 className={classes.celebrationTitle}>You did it!</h3>
           <p className={classes.celebrationText}>
             Bringing new life into the world is an incredible journey, and we are so proud of you.
-            Take a deep breath, soak in this beautiful moment, and know that you are amazing.
+            Take a deep breath and soak in this beautiful moment.
           </p>
         </div>
 

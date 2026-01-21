@@ -261,32 +261,6 @@ export function useUserSubscriptions(client: LabourServiceClient) {
   });
 }
 
-/**
- * Hook for fetching users
- */
-export function useUsers(client: LabourServiceClient, labourId: string | null) {
-  const { userId } = useAuth();
-
-  return useQuery({
-    queryKey: labourId ? queryKeys.users.listByLabour(labourId) : [],
-    queryFn: async () => {
-      if (!labourId) {
-        throw new Error('Labour ID is required');
-      }
-
-      const response = await client.getUsers(labourId);
-
-      if (!response.success || !response.data) {
-        throw new Error(response.error || 'Failed to load users');
-      }
-
-      return response.data;
-    },
-    enabled: !!labourId && !!userId,
-    retry: 0,
-  });
-}
-
 export function useServerOffset(client: LabourServiceClient, labourId: string | null) {
   const { userId } = useAuth();
 
@@ -571,8 +545,10 @@ export function useDeleteLabour(client: LabourServiceClient) {
 export const useRequestAccess = createMutation<{
   labourId: string;
   token: string;
+  subscriberName: string;
 }>({
-  mutationFn: (client, { labourId, token }) => client.requestAccess(labourId, token),
+  mutationFn: (client, { labourId, token, subscriberName }) =>
+    client.requestAccess(labourId, token, subscriberName),
   getInvalidationKey: ({ labourId }) => queryKeys.subscriptions.listByLabour(labourId),
   invalidateOnError: false,
   successMessage: 'Access requested successfully',

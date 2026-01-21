@@ -5,6 +5,7 @@ use uuid::Uuid;
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RequestAccess {
     pub labour_id: Uuid,
+    pub subscriber_name: String,
     pub subscriber_id: String,
     pub token: String,
 }

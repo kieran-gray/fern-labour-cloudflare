@@ -103,7 +103,6 @@ mod tests {
     fn create_test_user(user_id: &str) -> User {
         User {
             user_id: user_id.to_string(),
-            issuer: "test".to_string(),
             email: None,
             phone_number: None,
             first_name: None,
@@ -154,6 +153,7 @@ mod tests {
         let request_cmd = LabourCommand::RequestAccess(RequestAccess {
             labour_id: Uuid::parse_str(&aggregate.aggregate_id()).unwrap(),
             subscriber_id: subscriber_id.to_string(),
+            subscriber_name: "John Pork".to_string(),
             token,
         });
         let events = Labour::handle_command(Some(&aggregate), request_cmd).unwrap();
@@ -570,6 +570,7 @@ mod tests {
         let action = Action::Command(LabourCommand::RequestAccess(RequestAccess {
             labour_id: Uuid::from_str(&aggregate.aggregate_id()).unwrap(),
             subscriber_id: "subscriber-1".to_string(),
+            subscriber_name: "User Test".to_string(),
             token: "test-token".to_string(),
         }));
 
@@ -619,6 +620,7 @@ mod tests {
         let action = Action::Command(LabourCommand::RequestAccess(RequestAccess {
             labour_id: Uuid::parse_str(&aggregate.aggregate_id()).unwrap(),
             subscriber_id: "stranger".to_string(),
+            subscriber_name: "User Test".to_string(),
             token: "test-token".to_string(),
         }));
 

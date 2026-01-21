@@ -37,6 +37,10 @@
     {
       "binding": "AUTH_SERVICE_API",
       "service": "fern-labour-auth-service-worker"
+    },
+    {
+      "binding": "USER_SERVICE_API",
+      "service": "fern-labour-user-worker"
     }
   ],
   "d1_databases": [
@@ -86,6 +90,10 @@
         {
           "binding": "AUTH_SERVICE_API",
           "service": "fern-labour-auth-service-worker-dev"
+        },
+        {
+          "binding": "USER_SERVICE_API",
+          "service": "fern-labour-user-worker-dev"
         }
       ],
       "d1_databases": [

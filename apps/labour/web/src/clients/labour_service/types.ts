@@ -204,6 +204,7 @@ export type RequestAccessCommand = {
   payload: {
     labour_id: string;
     token: string;
+    subscriber_name: string;
   };
 };
 
@@ -412,25 +413,13 @@ export type SubscriptionQuery =
   | GetUserSubscriptionsQuery
   | GetUserSubscriptionQuery;
 
-// User Queries
-
-export type GetUsersQuery = {
-  type: 'GetUsers';
-  payload: {
-    labour_id: string;
-  };
-};
-
-export type UserQuery = GetUsersQuery;
-
 // Top-level API Query (matches Rust ApiQuery enum)
 
 export type ApiQuery =
   | { type: 'Labour'; payload: LabourQuery }
   | { type: 'Contraction'; payload: ContractionQuery }
   | { type: 'LabourUpdate'; payload: LabourUpdateQuery }
-  | { type: 'Subscription'; payload: SubscriptionQuery }
-  | { type: 'User'; payload: UserQuery };
+  | { type: 'Subscription'; payload: SubscriptionQuery };
 
 // Read Model Types
 
@@ -497,6 +486,7 @@ export type LabourUpdateReadModel = {
 export type SubscriptionReadModel = {
   subscription_id: string;
   labour_id: string;
+  subscriber_name: string;
   subscriber_id: string;
   role: SubscriberRole;
   status: SubscriberStatus;
@@ -513,16 +503,6 @@ export type SubscriptionStatusReadModel = {
   status: SubscriberStatus;
   created_at: string;
   updated_at: string;
-};
-
-export type User = {
-  user_id: string;
-  issuer: string;
-  email?: string;
-  phone_number?: string;
-  first_name?: string;
-  last_name?: string;
-  name?: string;
 };
 
 export type ServerTimestamp = {

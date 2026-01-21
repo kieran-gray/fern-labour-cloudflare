@@ -14,20 +14,14 @@ import { useDisclosure } from '@mantine/hooks';
 import ContactMethodsModal from './ContactMethodsModal';
 import classes from './ContactMethods.module.css';
 
-export function warnNoNumberSet(
-  contactMethods: string[],
-  phoneNumber: string | null
-): string | null {
+function warnNoNumberSet(contactMethods: string[], phoneNumber: string | null): string | null {
   if ((contactMethods.includes('WHATSAPP') || contactMethods.includes('SMS')) && !phoneNumber) {
     return "You've enabled notifications but don't have a phone number set. Add one in your profile settings.";
   }
   return null;
 }
 
-export function warnNonUKNumber(
-  contactMethods: string[],
-  phoneNumber: string | null
-): string | null {
+function warnNonUKNumber(contactMethods: string[], phoneNumber: string | null): string | null {
   if (contactMethods.includes('SMS') && phoneNumber && !phoneNumber.startsWith('+44')) {
     return 'SMS is only available for UK numbers (+44). Please switch to WhatsApp for international messaging.';
   }

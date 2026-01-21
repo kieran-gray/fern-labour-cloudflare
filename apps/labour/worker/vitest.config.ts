@@ -73,6 +73,23 @@ export default defineWorkersConfig(async () => {
                 ],
                 compatibilityDate: "2025-10-01",
               },
+              {
+                name: "fern-labour-user-worker",
+                modules: [
+                  {
+                    path: "index.js",
+                    type: "ESModule",
+                    contents: `
+                      export default {
+                        async fetch(request) {
+                          return Response.json({ success: true });
+                        }
+                      }
+                    `,
+                  },
+                ],
+                compatibilityDate: "2025-10-01",
+              },
             ],
           },
         },

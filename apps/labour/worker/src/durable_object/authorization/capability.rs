@@ -119,10 +119,9 @@ pub fn required_capability(action: &Action) -> Capability {
 
             QueryAction::GetUserSubscription => Capability::ReadOwnSubscription,
 
-            QueryAction::GetSubscriptionToken
-            | QueryAction::GetLabourSubscriptions
-            | QueryAction::GetUser
-            | QueryAction::GetUsers => Capability::ReadSubscriptions,
+            QueryAction::GetSubscriptionToken | QueryAction::GetLabourSubscriptions => {
+                Capability::ReadSubscriptions
+            }
         },
     }
 }

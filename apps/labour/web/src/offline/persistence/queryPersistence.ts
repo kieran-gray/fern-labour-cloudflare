@@ -127,27 +127,3 @@ export async function initializeQueryPersistence(queryClient: QueryClient): Prom
     // Continue without persistence rather than break the app
   }
 }
-
-export async function clearQueryPersistence(): Promise<void> {
-  const persister = new IndexedDBPersister();
-
-  try {
-    await persister.clear();
-  } catch (error) {
-    // Do nothing
-  }
-}
-
-export async function getQueryCacheStats() {
-  try {
-    const estimate = await navigator.storage?.estimate?.();
-
-    return {
-      usage: estimate?.usage || 0,
-      quota: estimate?.quota || 0,
-      usagePercent: estimate?.quota ? Math.round((estimate.usage! / estimate.quota) * 100) : 0,
-    };
-  } catch (error) {
-    return { usage: 0, quota: 0, usagePercent: 0 };
-  }
-}

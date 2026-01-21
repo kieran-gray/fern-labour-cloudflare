@@ -35,9 +35,6 @@ function openDB(): Promise<IDBDatabase> {
   return dbPromise;
 }
 
-/**
- * Add a command to the queue
- */
 export async function enqueueCommand(labourId: string, command: unknown): Promise<QueuedCommand> {
   const db = await openDB();
   const id = crypto.randomUUID();
@@ -58,9 +55,6 @@ export async function enqueueCommand(labourId: string, command: unknown): Promis
   });
 }
 
-/**
- * Get all pending commands in order
- */
 export async function getPendingCommands(): Promise<QueuedCommand[]> {
   const db = await openDB();
 
@@ -75,9 +69,6 @@ export async function getPendingCommands(): Promise<QueuedCommand[]> {
   });
 }
 
-/**
- * Remove a command from the queue (after successful sync)
- */
 export async function removeCommand(id: string): Promise<void> {
   const db = await openDB();
 
@@ -91,9 +82,6 @@ export async function removeCommand(id: string): Promise<void> {
   });
 }
 
-/**
- * Get count of pending commands
- */
 export async function getPendingCount(): Promise<number> {
   const db = await openDB();
 
@@ -103,22 +91,6 @@ export async function getPendingCount(): Promise<number> {
     const request = store.count();
 
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
-
-/**
- * Clear all commands (for testing/reset)
- */
-export async function clearAllCommands(): Promise<void> {
-  const db = await openDB();
-
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const request = store.clear();
-
-    request.onsuccess = () => resolve();
     request.onerror = () => reject(request.error);
   });
 }

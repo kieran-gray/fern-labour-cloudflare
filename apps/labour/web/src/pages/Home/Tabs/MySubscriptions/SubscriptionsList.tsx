@@ -8,10 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Card, Group, Stack, Text } from '@mantine/core';
 import { ManageSubscriptionMenu } from './SubscriptionMenu';
 import { SubscriptionsSkeleton } from './SubscriptionsSkeleton';
-import classes from './SubscriptionsTable.module.css';
+import classes from './SubscriptionsList.module.css';
 import baseClasses from '@styles/base.module.css';
 
-export function SubscriptionsTable() {
+export function SubscriptionsList() {
   const { subscription, selectSubscription, clearSubscription } = useLabourSession();
   const selectedSubscriptionId = subscription?.subscription_id;
   const [loadingId, setLoadingId] = useState<string | null>(null);

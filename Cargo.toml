@@ -9,6 +9,7 @@ members = [
     "services/notification-service/notification",
     "services/notification-service/generation",
     "services/notification-service/dispatch",
+    "services/user-service",
 ]
 resolver = "2"
 

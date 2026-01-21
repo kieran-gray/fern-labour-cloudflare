@@ -1,35 +1,3 @@
-/* Desktop controls - only visible on larger screens */
-.desktopControls {
-  display: none;
-}
-
-@media (min-width: $mantine-breakpoint-sm) {
-  .desktopControls {
-    display: block;
-    margin-top: var(--mantine-spacing-xl);
-  }
-}
-
-.controls {
-  display: flex;
-}
-
-.content {
-  width: 100%;
-  margin-right: calc(var(--mantine-spacing-xl));
-  padding: 0 var(--mantine-spacing-xl);
-
-  @media (max-width: $mantine-breakpoint-md) {
-    max-width: 100%;
-    margin-right: 0;
-    padding: 0 var(--mantine-spacing-md);
-  }
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    padding: 0 var(--mantine-spacing-xs);
-  }
-}
-
 .title {
   padding: calc(var(--mantine-spacing-xl));
 
@@ -46,118 +14,46 @@
   }
 }
 
-.emptyState {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--mantine-spacing-md);
+.content {
+  max-width: 470px;
+  flex-grow: 1;
+  margin-top: 0;
+
+  @media (max-width: $mantine-breakpoint-md) {
+    max-width: 100%;
+  }
 }
 
-.controlsBackground {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-end;
-  padding: var(--mantine-spacing-md);
-  border-radius: var(--mantine-radius-xl);
-  background-color: var(--mantine-color-primary-1);
+/* Stats section */
+.statsSection {
+  margin-bottom: var(--mantine-spacing-lg);
 }
 
-.slider {
-  margin-bottom: var(--mantine-spacing-sm);
-}
-
-.markLabel {
-  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
-  font-weight: 500;
-  font-size: var(--mantine-font-size-sm);
-}
-
-.track {
-  background-color: var(--mantine-color-primary-1);
-}
-
-.timelineLabel {
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2));
-  font-size: var(--mantine-font-size-sm);
-  font-weight: 400;
-}
-
-.bulletText {
-  color: light-dark(var(--mantine-color-primary-1), var(--mantine-color-white));
-  font-weight: 700;
-  font-size: var(--mantine-font-size-lg);
-}
-
-.stopwatchWrapper {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.sliderGroup {
-  width: 100%;
-}
-
-.sliderLabel {
-  text-align: center;
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2));
-  font-weight: 400;
-  margin-bottom: var(--mantine-spacing-xs);
-  font-size: var(--mantine-font-size-md);
-}
-
-.controlsCenter {
-  display: flex;
-  justify-content: center;
-}
-
-.controlsWrapper {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.controlsContainer {
-  width: 100%;
-  max-width: 600px;
-}
-
-.flexRow {
-  display: flex;
-  width: 100%;
-  align-items: center;
+/* Alert section */
+.alertSection {
+  margin-bottom: var(--mantine-spacing-lg);
 }
 
 .image {
-  width: 320px;
-  height: 280px;
+  width: 376px;
+  height: 356px;
 
   @media (max-width: $mantine-breakpoint-md) {
-    width: 270px;
-    height: 230px;
+    display: none;
+  }
+}
+
+.smallImage {
+  display: none;
+
+  @media (max-width: $mantine-breakpoint-md) {
+    display: block;
+    width: 350px;
+    height: 250px;
   }
 
   @media (max-width: $mantine-breakpoint-xs) {
-    width: 220px;
+    width: 260px;
     height: 180px;
   }
-}
-
-.imageFlexRow {
-  display: flex;
-  justify-content: center;
-}
-
-.timeInputLabel {
-  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-3));
-}
-
-.timeInput {
-  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-1));
-}
-
-.timeInputSection {
-  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-5));
 }

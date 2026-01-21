@@ -1,0 +1,92 @@
+
+.statCardsContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--mantine-spacing-sm);
+  width: 100%;
+
+  @media (max-width: $mantine-breakpoint-xs) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.statCard {
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-2));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--mantine-spacing-xs);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
+    background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-3));
+  }
+
+  @media (max-width: $mantine-breakpoint-xs) {
+    &:last-child:nth-child(odd) {
+      grid-column: span 2;
+    }
+  }
+}
+
+/* Teal uppercase label with icon */
+.statCardLabel {
+  font-size: var(--mantine-font-size-xs);
+  color: #24968b;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Large value */
+.statCardValue {
+  font-size: var(--mantine-font-size-xl);
+  font-weight: 600;
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+  font-variant-numeric: tabular-nums;
+
+  @media (max-width: $mantine-breakpoint-xs) {
+    font-size: var(--mantine-font-size-lg);
+  }
+}
+
+/* Subtext below value */
+.statCardSubtext {
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 500;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-5));
+}
+
+/* Trend badge */
+.trendBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--mantine-radius-sm);
+  font-weight: 600;
+  font-size: var(--mantine-font-size-sm);
+}
+
+.trendCloser {
+  background-color: light-dark(hsl(145deg 40% 92%), hsl(145deg 25% 18%));
+  color: light-dark(hsl(145deg 50% 30%), hsl(145deg 45% 60%));
+}
+
+.trendSpreading {
+  background-color: light-dark(hsl(35deg 50% 92%), hsl(35deg 30% 18%));
+  color: light-dark(hsl(30deg 55% 35%), hsl(35deg 45% 60%));
+}
+
+.trendSteady {
+  background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-3));
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
+}

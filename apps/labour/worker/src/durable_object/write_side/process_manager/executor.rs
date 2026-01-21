@@ -8,13 +8,13 @@ use fern_labour_notifications_shared::{
         notification_template_data::NotificationTemplateData,
     },
 };
-use fern_labour_workers_shared::User;
-use std::rc::Rc;
+use fern_labour_workers_shared::{User, clients::worker_clients::user::UserServiceClient};
+use std::{collections::HashMap, rc::Rc};
 
 use crate::durable_object::write_side::{
     application::command_processors::LabourCommandProcessor,
     domain::{LabourCommand, commands::subscription::SetSubscriptionToken},
-    infrastructure::{SubscriptionTokenGenerator, UserStore},
+    infrastructure::SubscriptionTokenGenerator,
     process_manager::types::*,
 };
 
@@ -24,7 +24,7 @@ pub trait EffectExecutor {
 }
 
 pub struct LabourEffectExecutor {
-    user_storage: UserStore,
+    user_client: Box<dyn UserServiceClient>,
     notification_client: Box<dyn NotificationClient>,
     command_processor: Rc<LabourCommandProcessor>,
     token_generator: Box<dyn SubscriptionTokenGenerator>,
@@ -33,27 +33,19 @@ pub struct LabourEffectExecutor {
 
 impl LabourEffectExecutor {
     pub fn new(
-        user_storage: UserStore,
+        user_client: Box<dyn UserServiceClient>,
         notification_client: Box<dyn NotificationClient>,
         command_processor: Rc<LabourCommandProcessor>,
         token_generator: Box<dyn SubscriptionTokenGenerator>,
         web_app_url: String,
     ) -> Self {
         Self {
-            user_storage,
+            user_client,
             notification_client,
             command_processor,
             token_generator,
             web_app_url,
         }
-    }
-
-    fn get_user(&self, user_id: &str) -> Result<User> {
-        self.user_storage
-            .get_user(user_id)?
-            .into_iter()
-            .next()
-            .ok_or_else(|| anyhow!("user not found: {user_id}"))
     }
 
     fn extract_first_name(full_name: &str) -> String {
@@ -128,8 +120,21 @@ impl LabourEffectExecutor {
         sender_id: &str,
         notification: &SubscriberNotification,
     ) -> Result<()> {
-        let recipient = self.get_user(recipient_user_id)?;
-        let sender = self.get_user(sender_id)?;
+        let mut users: HashMap<String, User> = self
+            .user_client
+            .get_users(vec![recipient_user_id, sender_id])
+            .await?
+            .into_iter()
+            .map(|user| (user.user_id.clone(), user))
+            .collect();
+
+        let recipient = users
+            .remove(recipient_user_id)
+            .ok_or_else(|| anyhow!("User with id: {recipient_user_id} not found"))?;
+
+        let sender = users
+            .remove(sender_id)
+            .ok_or_else(|| anyhow!("User with id: {sender_id} not found"))?;
 
         let destination = Self::get_user_destination(&recipient, channel)?;
 
@@ -138,7 +143,7 @@ impl LabourEffectExecutor {
             .or(recipient.name)
             .unwrap_or_else(|| "there".to_string());
 
-        let sender_name = sender.name.clone().unwrap_or_else(|| "Unknown".to_string());
+        let sender_name = sender.name.unwrap_or_else(|| "Unknown".to_string());
         let sender_first_name = sender
             .first_name
             .unwrap_or_else(|| Self::extract_first_name(&sender_name));
@@ -206,7 +211,7 @@ impl LabourEffectExecutor {
         channel: &SubscriberContactMethod,
         notification: &MotherNotification,
     ) -> Result<()> {
-        let recipient = self.get_user(recipient_user_id)?;
+        let recipient = self.user_client.get_user(recipient_user_id).await?;
         let destination = Self::get_user_destination(&recipient, channel)?;
 
         let recipient_first_name = recipient
@@ -218,7 +223,7 @@ impl LabourEffectExecutor {
             MotherNotification::SubscriberRequested {
                 requester_user_id, ..
             } => {
-                let requester = self.get_user(requester_user_id)?;
+                let requester = self.user_client.get_user(requester_user_id).await?;
                 let requester_name = requester.name.unwrap_or_else(|| "Someone".to_string());
 
                 NotificationTemplateData::SubscriberRequestedData {
@@ -247,8 +252,8 @@ impl LabourEffectExecutor {
         sender_id: &str,
         notification: &EmailNotification,
     ) -> Result<()> {
-        let sender = self.get_user(sender_id)?;
-        let sender_name = sender.name.clone().unwrap_or_else(|| "Unknown".to_string());
+        let sender = self.user_client.get_user(sender_id).await?;
+        let sender_name = sender.name.unwrap_or_else(|| "Unknown".to_string());
         let sender_first_name = sender
             .first_name
             .unwrap_or_else(|| Self::extract_first_name(&sender_name));

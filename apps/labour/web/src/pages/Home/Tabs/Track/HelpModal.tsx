@@ -1,9 +1,11 @@
 import { ContractionReadModel } from '@base/clients/labour_service';
-import { IconHourglassHigh, IconHourglassLow } from '@tabler/icons-react';
+import { IconClock, IconFlame, IconHourglassHigh, IconHourglassLow } from '@tabler/icons-react';
 import { Anchor, Button, Group, List, Modal, Slider, Space, Stack, Text } from '@mantine/core';
 import { CallMidwifeAlert, GoToHospitalAlert, PrepareForHospitalAlert } from './Alerts';
 import ContractionTimelineCustom from './ContractionTimelineCustom';
-import contractionClasses from './Contractions.module.css';
+import contractionControlClasses from './ActiveContractionControls.module.css';
+import statsClasses from './ContractionStats.module.css';
+import statusCardClasses from './TrackingStatusCard.module.css';
 import modalClasses from '@styles/modal.module.css';
 
 type CloseFunctionType = (...args: any[]) => void;
@@ -67,7 +69,12 @@ export const ContractionsHelpModal = ({
             Track contractions with two taps. You can also set the intensity while timing.
           </Text>
           <Stack align="center" gap="sm" mb="sm">
-            <Button leftSection={<IconHourglassLow size={20} />} radius="xl" size="md">
+            <Button
+              leftSection={<IconHourglassLow size={20} />}
+              radius="xl"
+              size="md"
+              style={{ width: '80%' }}
+            >
               Start Contraction
             </Button>
             <Button
@@ -75,19 +82,25 @@ export const ContractionsHelpModal = ({
               radius="xl"
               size="md"
               variant="outline"
+              style={{ width: '80%' }}
             >
               End Contraction
             </Button>
           </Stack>
           <Stack align="center" gap="xs" w="100%">
-            <Text className={modalClasses.helpText} size="xs">
-              Your contraction intensity
+            <Text
+              className={contractionControlClasses.sectionLabel}
+              style={{ marginBottom: '0px', padding: '0px' }}
+            >
+              Intensity
             </Text>
             <Slider
               classNames={{
-                root: contractionClasses.slider,
-                markLabel: contractionClasses.markLabel,
-                track: contractionClasses.track,
+                root: contractionControlClasses.slider,
+                markLabel: contractionControlClasses.markLabel,
+                track: contractionControlClasses.track,
+                bar: contractionControlClasses.bar,
+                thumb: contractionControlClasses.thumb,
               }}
               size="md"
               radius="lg"
@@ -97,28 +110,98 @@ export const ContractionsHelpModal = ({
               step={1}
               defaultValue={5}
               marks={[
-                { value: 0, label: '0' },
-                { value: 5, label: '5' },
-                { value: 10, label: '10' },
+                { value: 0, label: 'mild' },
+                { value: 5, label: 'moderate' },
+                { value: 10, label: 'strong' },
               ]}
             />
           </Stack>
         </div>
 
-        {/* Reading the timeline */}
+        {/* Stats and chart */}
         <div className={modalClasses.helpSection}>
-          <Text className={modalClasses.helpSectionTitle}>Reading the timeline</Text>
-          <List className={modalClasses.helpList} size="xs" withPadding spacing={4}>
-            <List.Item>Start time of each contraction</List.Item>
-            <List.Item>Frequency (time between starts)</List.Item>
-            <List.Item>Duration and intensity</List.Item>
-          </List>
+          <Text className={modalClasses.helpSectionTitle}>Your stats</Text>
+          <Text className={modalClasses.helpText} mb="sm">
+            Once tracking begins, you'll see live statistics based on your last few contractions:
+          </Text>
+
+          {/* Example stat cards */}
+          <div
+            className={statsClasses.statCardsContainer}
+            style={{ marginBottom: 'var(--mantine-spacing-md)' }}
+          >
+            <div className={statsClasses.statCard}>
+              <Text className={statsClasses.statCardLabel}>
+                <IconClock size={14} />
+                Frequency
+              </Text>
+              <Text className={statsClasses.statCardValue}>~4m 15s</Text>
+              <Text className={statsClasses.statCardSubtext}>apart (last 4)</Text>
+            </div>
+            <div className={statsClasses.statCard}>
+              <Text className={statsClasses.statCardLabel}>
+                <IconFlame size={14} />
+                Duration
+              </Text>
+              <Text className={statsClasses.statCardValue}>~58s</Text>
+              <Text className={statsClasses.statCardSubtext}>average (last 4)</Text>
+            </div>
+          </div>
+
+          <Text className={modalClasses.helpText} size="xs">
+            A bar chart shows your recent contractions. Tap any bar to edit or delete it.
+          </Text>
+        </div>
+
+        {/* During a contraction */}
+        <div className={modalClasses.helpSection}>
+          <Text className={modalClasses.helpSectionTitle}>During a contraction</Text>
+          <Text className={modalClasses.helpText} mb="sm">
+            When you start a contraction, you'll see a live stopwatch counting the duration.
+          </Text>
+
+          {/* Example stopwatch display */}
+          <div
+            style={{
+              textAlign: 'center',
+              padding: 'var(--mantine-spacing-lg)',
+              marginBottom: 'var(--mantine-spacing-md)',
+              background: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-2))',
+              borderRadius: 'var(--mantine-radius-lg)',
+              border:
+                '1px solid light-dark(var(--mantine-color-pink-3), var(--mantine-color-pink-7))',
+            }}
+          >
+            <Text className={statusCardClasses.activeLabel}>Contraction in progress</Text>
+            <Text
+              style={{
+                fontSize: '2.5rem',
+                fontWeight: 600,
+                letterSpacing: '-0.02em',
+                color: 'light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-1))',
+                padding: 'var(--mantine-spacing-md) 0',
+              }}
+            >
+              0:47
+            </Text>
+            <Text className={statusCardClasses.breathingPrompt}>Breathe slowly and steadily</Text>
+          </div>
+
+          <Text className={modalClasses.helpText} size="xs">
+            Between contractions, the app shows your last contraction time and encouraging messages.
+          </Text>
+        </div>
+
+        {/* Viewing history */}
+        <div className={modalClasses.helpSection}>
+          <Text className={modalClasses.helpSectionTitle}>Viewing full history</Text>
+          <Text className={modalClasses.helpText} mb="sm">
+            Tap "View history" to see a complete timeline of all your contractions. You can tap any
+            contraction in the timeline to edit its start time, end time, or intensity.
+          </Text>
           <Group justify="center" mt="sm">
             <ContractionTimelineCustom contractions={mockContractions} completed />
           </Group>
-          <Text className={modalClasses.helpText} size="xs" mt="sm">
-            Tap any contraction to edit or delete it.
-          </Text>
         </div>
 
         {/* Hospital alerts */}

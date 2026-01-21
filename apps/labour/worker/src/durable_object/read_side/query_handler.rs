@@ -2,7 +2,7 @@ use anyhow::{Result, anyhow};
 use fern_labour_event_sourcing_rs::PaginatedResponse;
 use fern_labour_labour_shared::{
     ApiQuery, ContractionQuery, LabourQuery, LabourUpdateQuery,
-    queries::{subscription::SubscriptionQuery, user::UserQuery},
+    queries::subscription::SubscriptionQuery,
 };
 use fern_labour_workers_shared::User;
 use serde_json::Value;
@@ -49,10 +49,6 @@ impl<'a> QueryHandler<'a> {
                     Action::Query(QueryAction::GetUserSubscription)
                 }
             },
-            ApiQuery::User(uq) => match uq {
-                UserQuery::GetUser { .. } => Action::Query(QueryAction::GetUser),
-                UserQuery::GetUsers { .. } => Action::Query(QueryAction::GetUsers),
-            },
         };
 
         let principal = resolve_principal(user, aggregate.as_ref());
@@ -65,7 +61,6 @@ impl<'a> QueryHandler<'a> {
             ApiQuery::Contraction(q) => self.handle_contraction(q),
             ApiQuery::LabourUpdate(q) => self.handle_labour_update(q),
             ApiQuery::Subscription(q) => self.handle_subscription(q, user),
-            ApiQuery::User(q) => self.handle_user(q),
         }
     }
 
@@ -153,19 +148,6 @@ impl<'a> QueryHandler<'a> {
                     .get_user_subscription(user.user_id.clone())?;
 
                 Ok(serde_json::to_value(subscription)?)
-            }
-        }
-    }
-
-    fn handle_user(&self, query: UserQuery) -> Result<Value> {
-        match query {
-            UserQuery::GetUser { user_id, .. } => {
-                let result = self.read_model.user_query.get_user_by_id(user_id)?;
-                Ok(serde_json::to_value(result)?)
-            }
-            UserQuery::GetUsers { .. } => {
-                let result = self.read_model.user_query.get_users()?;
-                Ok(serde_json::to_value(result)?)
             }
         }
     }

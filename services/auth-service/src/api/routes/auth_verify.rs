@@ -48,12 +48,7 @@ pub async fn authenticate_handler(
 
     match ctx.data.auth_service.authenticate(&body.token).await {
         Ok(user) => {
-            info!(
-                user_id = %user.user_id,
-                issuer = %user.issuer,
-                email = ?user.email,
-                "Authentication successful"
-            );
+            info!(user_id = %user.user_id, email = ?user.email, "Authentication successful");
             let response = AuthenticateResponse { user };
             Response::from_json(&response)
         }

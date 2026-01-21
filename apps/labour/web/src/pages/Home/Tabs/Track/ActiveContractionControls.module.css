@@ -1,0 +1,85 @@
+.controlsCard {
+    width: 100%;
+
+    @media (max-width: $mantine-breakpoint-sm) {
+        padding: var(--mantine-spacing-md);
+    }
+}
+
+.sectionLabel {
+    font-size: var(--mantine-font-size-xs);
+    color: #24968b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: center;
+    margin-bottom: var(--mantine-spacing-xs);
+}
+
+/* Stopwatch section */
+.stopwatchSection {
+    text-align: center;
+    width: 100%;
+}
+
+.stopwatchWrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.breatheHint {
+    font-size: var(--mantine-font-size-sm);
+    color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+    font-style: italic;
+    margin-top: var(--mantine-spacing-xs);
+}
+
+/* Intensity section */
+.intensitySection {
+    width: 100%;
+    max-width: 400px;
+
+    @media (max-width: $mantine-breakpoint-sm) {
+        max-width: 100%;
+    }
+}
+
+.slider {
+    margin-top: var(--mantine-spacing-sm);
+    margin-bottom: var(--mantine-spacing-lg);
+}
+
+.markLabel {
+    color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+    font-weight: 500;
+    font-size: var(--mantine-font-size-xs);
+    margin-top: 6px;
+}
+
+.track {
+    background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+}
+
+.bar {
+    background-color: var(--mantine-color-pink-5);
+}
+
+.thumb {
+    border-color: var(--mantine-color-pink-5);
+}
+
+/* Button section */
+.buttonSection {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.endButton {
+    min-width: 240px;
+
+    @media (max-width: $mantine-breakpoint-sm) {
+        min-width: 200px;
+    }
+}
