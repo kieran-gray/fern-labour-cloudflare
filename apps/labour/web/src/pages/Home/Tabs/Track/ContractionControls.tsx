@@ -3,9 +3,9 @@ import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient, useServerOffset } from '@base/hooks';
 import { generateContractionId, useStartContractionOffline } from '@base/offline/hooks';
 import { IconHourglassLow } from '@tabler/icons-react';
-import { Button } from '@mantine/core';
+import { Button, Stack } from '@mantine/core';
 import { ActiveContractionControls } from './ActiveContractionControls';
-import classes from './Contractions.module.css';
+import classes from './ContractionControls.module.css';
 
 function StartContractionButton({ offset }: { offset: number }) {
   const { labourId } = useLabourSession();
@@ -32,6 +32,7 @@ function StartContractionButton({ offset }: { offset: number }) {
       variant="filled"
       loading={mutation.isPending}
       onClick={handleStartContraction}
+      className={classes.startButton}
     >
       Start Contraction
     </Button>
@@ -56,20 +57,26 @@ export function ContractionControls({
     return null;
   }
 
+  // If there's an active contraction, show the active controls
+  if (activeContraction) {
+    return (
+      <div className={classes.controlsWrapper}>
+        <ActiveContractionControls
+          activeContraction={activeContraction}
+          disabled={false}
+          offset={offset}
+        />
+      </div>
+    );
+  }
+
+  // Otherwise show the start button with encouraging message
   return (
     <div className={classes.controlsWrapper}>
-      <div className={classes.controlsContainer}>
-        {activeContraction ? (
-          <ActiveContractionControls
-            activeContraction={activeContraction}
-            disabled={false}
-            offset={offset}
-          />
-        ) : (
-          <div className={classes.controlsCenter}>
-            <StartContractionButton offset={offset} />
-          </div>
-        )}
+      <div className={classes.startCard}>
+        <Stack gap="md" align="center">
+          <StartContractionButton offset={offset} />
+        </Stack>
       </div>
     </div>
   );

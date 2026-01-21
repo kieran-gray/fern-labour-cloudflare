@@ -1,0 +1,41 @@
+.controlsWrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: var(--mantine-spacing-md);
+
+    @media (max-width: $mantine-breakpoint-sm) {
+        margin-top: 0;
+    }
+}
+
+.startCard {
+    width: 100%;
+
+    @media (max-width: $mantine-breakpoint-sm) {
+        padding: var(--mantine-spacing-md);
+    }
+}
+
+.readyLabel {
+    font-size: var(--mantine-font-size-xs);
+    color: #24968b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: center;
+}
+
+.startButton {
+    min-width: 240px;
+
+    @media (max-width: $mantine-breakpoint-sm) {
+        min-width: 200px;
+    }
+}
+
+.hint {
+    font-size: var(--mantine-font-size-sm);
+    color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+    text-align: center;
+}

@@ -2,13 +2,22 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .counter {
-    color: light-dark(var(--mantine-color-dark-9), var(--mantine-color-gray-1));
-    font-weight: 600;
-    font-size: 3.5rem;
+    font-family: var(--mantine-font-family-headings);
+    color: light-dark(var(--mantine-color-dark-8), var(--mantine-color-gray-0));
+    font-weight: 700;
+    font-size: 3rem;
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
     line-height: 1;
+    text-align: center;
+}
+
+@media (max-width: 36em) {
+    .counter {
+        font-size: 2.5rem;
+    }
 }

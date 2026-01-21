@@ -34,8 +34,6 @@ import type {
   SubscriptionQuery,
   SubscriptionReadModel,
   SubscriptionStatusReadModel,
-  User,
-  UserQuery,
 } from './types';
 
 export interface LabourServiceConfig {
@@ -376,12 +374,17 @@ export class LabourServiceClient {
 
   // Subscriber Commands
 
-  async requestAccess(labourId: string, token: string): Promise<CommandResponse> {
+  async requestAccess(
+    labourId: string,
+    token: string,
+    subscriberName: string
+  ): Promise<CommandResponse> {
     const command: SubscriberCommand = {
       type: 'RequestAccess',
       payload: {
         labour_id: labourId,
         token,
+        subscriber_name: subscriberName,
       },
     };
     return this.sendCommand({ type: 'Subscriber', payload: command });
@@ -789,18 +792,6 @@ export class LabourServiceClient {
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
-  }
-
-  // User Queries
-
-  async getUsers(labourId: string): Promise<QueryResponse<User[]>> {
-    const query: UserQuery = {
-      type: 'GetUsers',
-      payload: {
-        labour_id: labourId,
-      },
-    };
-    return this.sendQuery({ type: 'User', payload: query });
   }
 
   async createCheckoutSession(

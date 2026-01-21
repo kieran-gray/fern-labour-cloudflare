@@ -5,5 +5,5 @@ pub mod token_generator;
 
 pub use aggregate_cache::SqlCache;
 pub use alarm_manager::AlarmManager;
-pub use persistence::{event_store::SqlEventStore, user_store::UserStore};
+pub use persistence::event_store::SqlEventStore;
 pub use token_generator::{RandomTokenGenerator, SubscriptionTokenGenerator};

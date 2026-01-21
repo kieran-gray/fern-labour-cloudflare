@@ -1,16 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { AppMode, useLabourSession } from '@base/contexts';
 import { useLabourClient, useRequestAccess } from '@base/hooks';
+import { useUser } from '@clerk/clerk-react';
 import { AppShell } from '@components/AppShell';
 import { IconAlertCircle, IconCheck, IconHome, IconLoader2 } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import classes from './Page.module.css';
 import baseClasses from '@styles/base.module.css';
 
-type Status = 'pending' | 'success' | 'error';
+type Status = 'pending' | 'success' | 'error' | 'missing-name';
 
 export const SubscribePage: React.FC = () => {
   const { id, token } = useParams();
+  const { user, isLoaded } = useUser();
   const navigate = useNavigate();
   const { setMode } = useLabourSession();
   const hasTriggered = useRef(false);
@@ -25,14 +27,20 @@ export const SubscribePage: React.FC = () => {
   const { mutateAsync } = useRequestAccess(client);
 
   useEffect(() => {
-    if (hasTriggered.current) {
+    if (!isLoaded || hasTriggered.current) {
       return;
     }
+
+    if (!user?.fullName) {
+      setStatus('missing-name');
+      return;
+    }
+
     hasTriggered.current = true;
 
     const subscribe = async () => {
       try {
-        await mutateAsync({ labourId, token });
+        await mutateAsync({ labourId, token, subscriberName: user.fullName! });
         setMode(AppMode.Subscriber);
         setStatus('success');
       } catch {
@@ -41,7 +49,7 @@ export const SubscribePage: React.FC = () => {
     };
 
     subscribe();
-  }, [labourId, token, mutateAsync, setMode]);
+  }, [isLoaded, user, labourId, token, mutateAsync, setMode]);
 
   const handleGoHome = () => {
     navigate('/');
@@ -97,6 +105,20 @@ export const SubscribePage: React.FC = () => {
                   </h1>
                 </>
               )}
+
+              {status === 'missing-name' && (
+                <>
+                  <div className={classes.iconContainer}>
+                    <div className={classes.errorIcon}>
+                      <IconAlertCircle size={32} stroke={2} />
+                    </div>
+                  </div>
+                  <p className={classes.greeting}>One more step</p>
+                  <h1 className={classes.title}>
+                    <span className={classes.titleAccent}>Name required</span>
+                  </h1>
+                </>
+              )}
             </header>
 
             {status === 'success' && (
@@ -120,6 +142,17 @@ export const SubscribePage: React.FC = () => {
                 </p>
                 <p className={classes.messageText}>
                   Please ask the person who shared this link with you to send a new one.
+                </p>
+              </div>
+            )}
+
+            {status === 'missing-name' && (
+              <div className={classes.messageCard}>
+                <p className={classes.messageText}>
+                  Please update your profile to include your full name before subscribing.
+                </p>
+                <p className={classes.messageText}>
+                  This helps the person you're supporting know who you are.
                 </p>
               </div>
             )}

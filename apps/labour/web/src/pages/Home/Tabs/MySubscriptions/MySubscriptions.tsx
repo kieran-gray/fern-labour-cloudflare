@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { CardContentBottom } from '@base/components/Cards/CardContentBottom';
 import image from './subscriptions.svg';
-import { SubscriptionsTable } from './SubscriptionsTable';
+import { SubscriptionsList } from './SubscriptionsList';
 
 export const ManageSubscriptions = memo(() => {
   return (
@@ -11,7 +11,7 @@ export const ManageSubscriptions = memo(() => {
       image={image}
       mobileImage={image}
     >
-      <SubscriptionsTable />
+      <SubscriptionsList />
     </CardContentBottom>
   );
 });

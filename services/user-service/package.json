@@ -1,0 +1,25 @@
+{
+  "name": "fern-labour-user-service",
+  "description": "Notification Generation Service for fern-labour.",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "author": {
+    "name": "Kieran Gray",
+    "email": "gray.kieran@protonmail.com",
+    "url": "https://github.com/kieran-gray"
+  },
+  "scripts": {
+    "dev": "wrangler dev --env dev",
+    "test": "vitest",
+    "test:unit": "cargo test",
+    "build": "wrangler build --env dev",
+    "build:dev": "cargo install -q worker-build && worker-build",
+    "build:release": "cargo build --release --target wasm32-unknown-unknown",
+    "lint": "cargo clippy --target wasm32-unknown-unknown -- -D warnings",
+    "lint:fix": "cargo clippy --target wasm32-unknown-unknown --fix --allow-dirty -- -D warnings",
+    "format": "cargo fmt",
+    "format:check": "cargo fmt --check",
+    "clean": "cargo clean"
+  }
+}

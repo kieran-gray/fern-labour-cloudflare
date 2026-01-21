@@ -1,5 +1,4 @@
 export { networkDetector, useNetworkState } from '../sync/networkDetector';
-export { clearQueryPersistence, getQueryCacheStats } from '../persistence/queryPersistence';
 export { syncManager, useSyncState } from '../syncManager';
 export { SyncManagerInitializer } from '../SyncManagerInitializer';
 export {
@@ -7,7 +6,6 @@ export {
   getPendingCommands,
   removeCommand,
   getPendingCount,
-  clearAllCommands,
 } from '../commandQueue';
 export {
   useStartContractionOffline,

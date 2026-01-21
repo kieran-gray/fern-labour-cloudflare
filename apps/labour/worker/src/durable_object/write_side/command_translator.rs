@@ -30,7 +30,6 @@ mod tests {
     fn test_user() -> User {
         User {
             user_id: "test-user".to_string(),
-            issuer: "test".to_string(),
             name: Some("Test User".to_string()),
             email: Some("test@example.com".to_string()),
             phone_number: None,

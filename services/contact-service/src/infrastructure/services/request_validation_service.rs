@@ -47,7 +47,7 @@ impl RequestValidationServiceTrait for CloudflareRequestValidationService {
 
         let response_json = self
             .http_client
-            .post_json(
+            .post(
                 &self.siteverify_url,
                 body,
                 vec![("Content-Type", "application/json")],
@@ -134,7 +134,7 @@ mod tests {
 
     #[async_trait(?Send)]
     impl HttpClientTrait for MockHttpClient {
-        async fn post_json(
+        async fn post(
             &self,
             url: &str,
             body: Value,

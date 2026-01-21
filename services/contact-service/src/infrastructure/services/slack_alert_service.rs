@@ -46,7 +46,7 @@ impl AlertServiceTrait for SlackAlertService {
 
         let response_json = self
             .http_client
-            .post_json(
+            .post(
                 &self.url,
                 body,
                 vec![
@@ -117,7 +117,7 @@ mod tests {
 
     #[async_trait(?Send)]
     impl HttpClientTrait for MockHttpClient {
-        async fn post_json(
+        async fn post(
             &self,
             url: &str,
             body: Value,

@@ -5,8 +5,7 @@ import { useLabourClient } from '@base/hooks';
 import { useEndContractionOffline } from '@base/offline/hooks';
 import { IconHourglassHigh } from '@tabler/icons-react';
 import { Button, Slider, Stack, Text } from '@mantine/core';
-import Stopwatch from './Stopwatch';
-import classes from './Contractions.module.css';
+import classes from './ActiveContractionControls.module.css';
 
 function EndContractionButton({
   intensity,
@@ -36,7 +35,7 @@ function EndContractionButton({
       leftSection={icon}
       radius="xl"
       size="xl"
-      variant="outline"
+      variant="filled"
       loading={mutation.isPending}
       onClick={handleEndContraction}
       disabled={disabled}
@@ -49,49 +48,51 @@ function EndContractionButton({
 export function ActiveContractionControls({
   activeContraction,
   disabled,
-  offset,
 }: {
   activeContraction: ContractionReadModel;
   disabled: boolean;
   offset: number;
 }) {
   const [intensity, setIntensity] = useState(5);
-  const startTimestamp = new Date(activeContraction.duration.start_time).getTime();
 
   return (
-    <Stack gap="lg" align="center">
-      <div className={classes.stopwatchWrapper}>
-        <Stopwatch startTimestamp={startTimestamp} offset={offset} />
-      </div>
-      <div className={classes.sliderGroup}>
-        <Text className={classes.sliderLabel}>Your contraction intensity</Text>
-        <Slider
-          classNames={{
-            root: classes.slider,
-            markLabel: classes.markLabel,
-            track: classes.track,
-          }}
-          size="xl"
-          radius="lg"
-          min={0}
-          max={10}
-          step={1}
-          defaultValue={5}
-          onChange={setIntensity}
-          marks={[
-            { value: 0, label: '0' },
-            { value: 5, label: '5' },
-            { value: 10, label: '10' },
-          ]}
-        />
-      </div>
-      <div className={classes.controlsCenter}>
-        <EndContractionButton
-          intensity={intensity}
-          disabled={disabled}
-          contractionId={activeContraction.contraction_id}
-        />
-      </div>
-    </Stack>
+    <div className={classes.controlsCard}>
+      <Stack gap="lg" align="center">
+        {/* Intensity section */}
+        <div className={classes.intensitySection}>
+          <Text className={classes.sectionLabel}>Intensity</Text>
+          <Slider
+            classNames={{
+              root: classes.slider,
+              markLabel: classes.markLabel,
+              track: classes.track,
+              bar: classes.bar,
+              thumb: classes.thumb,
+            }}
+            size="xl"
+            radius="lg"
+            min={0}
+            max={10}
+            step={1}
+            defaultValue={5}
+            onChange={setIntensity}
+            marks={[
+              { value: 0, label: 'mild' },
+              { value: 5, label: 'moderate' },
+              { value: 10, label: 'strong' },
+            ]}
+          />
+        </div>
+
+        {/* End button */}
+        <div className={classes.buttonSection}>
+          <EndContractionButton
+            intensity={intensity}
+            disabled={disabled}
+            contractionId={activeContraction.contraction_id}
+          />
+        </div>
+      </Stack>
+    </div>
   );
 }

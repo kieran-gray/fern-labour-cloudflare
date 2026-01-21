@@ -12,6 +12,7 @@ use uuid::Uuid;
 pub struct SubscriptionReadModel {
     pub subscription_id: Uuid,
     pub labour_id: Uuid,
+    pub subscriber_name: String,
     pub subscriber_id: String,
     pub role: SubscriberRole,
     pub status: SubscriberStatus,
@@ -26,6 +27,7 @@ impl SubscriptionReadModel {
     pub fn new(
         subscription_id: Uuid,
         labour_id: Uuid,
+        subscriber_name: String,
         subscriber_id: String,
         role: SubscriberRole,
         status: SubscriberStatus,
@@ -36,6 +38,7 @@ impl SubscriptionReadModel {
         Self {
             subscription_id,
             labour_id,
+            subscriber_name,
             subscriber_id,
             role,
             status,
@@ -61,6 +64,7 @@ impl Cursor for SubscriptionReadModel {
 pub struct SubscriptionRow {
     pub subscription_id: String,
     pub labour_id: String,
+    pub subscriber_name: String,
     pub subscriber_id: String,
     pub role: String,
     pub status: String,
@@ -77,6 +81,7 @@ impl SubscriptionRow {
                 .map_err(|e| anyhow!("Invalid subscription_id UUID: {}", e))?,
             labour_id: Uuid::parse_str(&self.labour_id)
                 .map_err(|e| anyhow!("Invalid labour_id UUID: {}", e))?,
+            subscriber_name: self.subscriber_name,
             subscriber_id: self.subscriber_id,
             role: Self::parse_role(&self.role)?,
             status: Self::parse_status(&self.status)?,
@@ -91,6 +96,7 @@ impl SubscriptionRow {
         Ok(Self {
             subscription_id: model.subscription_id.to_string(),
             labour_id: model.labour_id.to_string(),
+            subscriber_name: model.subscriber_name.clone(),
             subscriber_id: model.subscriber_id.clone(),
             role: serde_json::to_string(&model.role)
                 .map_err(|e| anyhow!("Failed to serialize role: {}", e))?,

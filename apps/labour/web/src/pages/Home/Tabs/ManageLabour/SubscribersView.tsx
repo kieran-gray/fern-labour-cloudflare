@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SubscriberRole, SubscriptionReadModel, User } from '@base/clients/labour_service/types';
+import { SubscriberRole, SubscriptionReadModel } from '@base/clients/labour_service/types';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
 import {
@@ -7,7 +7,6 @@ import {
   useLabourSubscriptions,
   useRemoveSubscriber,
   useUnblockSubscriber,
-  useUsers,
 } from '@base/hooks/useLabourData';
 import {
   IconBan,
@@ -35,10 +34,15 @@ import { SubscribersSkeleton } from './SubscribersSkeleton';
 import classes from './SubscribersView.module.css';
 import baseClasses from '@styles/base.module.css';
 
-interface SubscriberInfo {
-  id: string;
-  firstName: string;
-  lastName: string;
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 0) {
+    return '?';
+  }
+  if (parts.length === 1) {
+    return parts[0][0]?.toUpperCase() || '?';
+  }
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
 function getRoleConfig(role: SubscriberRole) {
@@ -53,18 +57,17 @@ function getRoleConfig(role: SubscriberRole) {
 }
 
 function PendingRequestCard({
-  subscriber,
+  name,
   onApprove,
   onReject,
   isLoading,
 }: {
-  subscriber?: SubscriberInfo;
+  name: string;
   onApprove: () => void;
   onReject: () => void;
   isLoading: boolean;
 }) {
-  const name = subscriber ? `${subscriber.firstName} ${subscriber.lastName}` : 'Loading...';
-  const initials = subscriber ? `${subscriber.firstName[0]}${subscriber.lastName[0] || ''}` : '?';
+  const initials = getInitials(name);
 
   return (
     <div className={classes.pendingCard}>
@@ -111,15 +114,9 @@ function PendingRequestCard({
   );
 }
 
-function SubscriberCard({
-  subscription,
-  subscriber,
-}: {
-  subscription: SubscriptionReadModel;
-  subscriber?: SubscriberInfo;
-}) {
-  const name = subscriber ? `${subscriber.firstName} ${subscriber.lastName}` : 'Loading...';
-  const initials = subscriber ? `${subscriber.firstName[0]}${subscriber.lastName[0] || ''}` : '?';
+function SubscriberCard({ subscription }: { subscription: SubscriptionReadModel }) {
+  const name = subscription.subscriber_name;
+  const initials = getInitials(name);
 
   const roleConfig = getRoleConfig(subscription.role);
   const RoleIcon = roleConfig.icon;
@@ -154,16 +151,15 @@ function SubscriberCard({
 }
 
 function BlockedRow({
-  subscriber,
+  name,
   onUnblock,
   isLoading,
 }: {
-  subscriber?: SubscriberInfo;
+  name: string;
   onUnblock: () => void;
   isLoading: boolean;
 }) {
-  const name = subscriber ? `${subscriber.firstName} ${subscriber.lastName}` : 'Loading...';
-  const initials = subscriber ? `${subscriber.firstName[0]}${subscriber.lastName[0] || ''}` : '?';
+  const initials = getInitials(name);
 
   return (
     <div className={classes.blockedRow}>
@@ -195,7 +191,6 @@ export function SubscribersView() {
   const { labourId } = useLabourSession();
   const client = useLabourClient();
   const { isPending, isError, data: subscriptions } = useLabourSubscriptions(client, labourId!);
-  const { isPending: usersPending, data: users = [] } = useUsers(client, labourId!);
 
   const approveSubscriberMutation = useApproveSubscriber(client);
   const removeSubscriberMutation = useRemoveSubscriber(client);
@@ -204,7 +199,7 @@ export function SubscribersView() {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [showBlocked, setShowBlocked] = useState(false);
 
-  if (isPending || usersPending) {
+  if (isPending) {
     return <SubscribersSkeleton />;
   }
 
@@ -218,30 +213,17 @@ export function SubscribersView() {
     );
   }
 
-  const subscriberById = Object.fromEntries(
-    users.map((user: User) => [
-      user.user_id,
-      {
-        firstName: user.first_name || 'Unknown',
-        lastName: user.last_name || '',
-        id: user.user_id,
-      },
-    ])
-  );
-
-  const pending: Array<SubscriptionReadModel & { subscriber?: SubscriberInfo }> = [];
-  const active: Array<SubscriptionReadModel & { subscriber?: SubscriberInfo }> = [];
-  const blocked: Array<SubscriptionReadModel & { subscriber?: SubscriberInfo }> = [];
+  const pending: SubscriptionReadModel[] = [];
+  const active: SubscriptionReadModel[] = [];
+  const blocked: SubscriptionReadModel[] = [];
 
   subscriptions?.forEach((sub) => {
-    const withInfo = { ...sub, subscriber: subscriberById[sub.subscriber_id] };
-
     if (sub.status === 'REQUESTED') {
-      pending.push(withInfo);
+      pending.push(sub);
     } else if (sub.status === 'BLOCKED') {
-      blocked.push(withInfo);
+      blocked.push(sub);
     } else if (sub.status === 'SUBSCRIBED') {
-      active.push(withInfo);
+      active.push(sub);
     }
   });
 
@@ -281,7 +263,7 @@ export function SubscribersView() {
             {pending.map((sub) => (
               <PendingRequestCard
                 key={sub.subscription_id}
-                subscriber={sub.subscriber}
+                name={sub.subscriber_name}
                 isLoading={loadingId === sub.subscription_id}
                 onApprove={() =>
                   handleAction(sub.subscription_id, () =>
@@ -308,11 +290,7 @@ export function SubscribersView() {
       {active.length > 0 && (
         <Stack gap="sm">
           {active.map((sub) => (
-            <SubscriberCard
-              key={sub.subscription_id}
-              subscription={sub}
-              subscriber={sub.subscriber}
-            />
+            <SubscriberCard key={sub.subscription_id} subscription={sub} />
           ))}
         </Stack>
       )}
@@ -344,7 +322,7 @@ export function SubscribersView() {
               {blocked.map((sub) => (
                 <BlockedRow
                   key={sub.subscription_id}
-                  subscriber={sub.subscriber}
+                  name={sub.subscriber_name}
                   isLoading={loadingId === sub.subscription_id}
                   onUnblock={() =>
                     handleAction(sub.subscription_id, () =>

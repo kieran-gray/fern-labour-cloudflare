@@ -1,5 +1,4 @@
 use fern_labour_workers_shared::clients::worker_clients::auth::User;
-use tracing::error;
 use worker::{Request, Response, Result};
 
 use crate::durable_object::http::router::RequestContext;
@@ -14,15 +13,6 @@ where
     Fut: std::future::Future<Output = Result<Response>>,
 {
     let user = extract_auth_context(&req)?;
-
-    if let Err(e) = ctx
-        .data
-        .write_model()
-        .user_store
-        .save_user_if_not_exists(&user)
-    {
-        error!(error = %e, user_id = %user.user_id, "Failed to save user");
-    }
 
     handler(req, ctx, user).await
 }

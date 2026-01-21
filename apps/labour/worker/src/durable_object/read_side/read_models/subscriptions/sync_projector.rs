@@ -40,6 +40,7 @@ impl SubscriptionReadModelProjector {
                         let subscription = SubscriptionReadModel::new(
                             e.subscription_id,
                             e.labour_id,
+                            e.subscriber_name.clone(),
                             e.subscriber_id.clone(),
                             SubscriberRole::LOVED_ONE,
                             SubscriberStatus::REQUESTED,

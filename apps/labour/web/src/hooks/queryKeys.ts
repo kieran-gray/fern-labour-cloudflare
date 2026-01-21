@@ -61,12 +61,6 @@ export const queryKeys = {
       [...queryKeys.subscriptions.all, 'userSubscription', labourId, userId] as const,
   },
 
-  users: {
-    all: ['users'] as const,
-    lists: () => [...queryKeys.users.all, 'list'] as const,
-    listByLabour: (labourId: string) => [...queryKeys.users.lists(), labourId] as const,
-  },
-
   serverTimestamp: {
     all: ['serverTimestamps'] as const,
     byLabour: (labourId: string) =>

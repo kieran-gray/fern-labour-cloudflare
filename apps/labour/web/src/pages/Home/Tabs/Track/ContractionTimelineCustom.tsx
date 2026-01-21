@@ -1,38 +1,23 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { ContractionReadModel } from '@base/clients/labour_service/types';
 import { formatTimeMilliseconds, formatTimeSeconds } from '@lib';
 import { IconActivityHeartbeat } from '@tabler/icons-react';
 import { Button, ScrollArea, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import {
+  ContractionFormData,
+  formatClockTime,
+  getIntensityColor,
+  isContractionComplete,
+  toFormData,
+} from './contractionUtils';
 import { EditContractionModal } from './EditContractionModal';
 import classes from './ContractionTimelineCustom.module.css';
-
-function usePrevious<T>(value: T): T | undefined {
-  const ref = useRef<T>();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
 
 const DOTTED_LINE_FREQUENCY_GAP = 1800000;
 const FREQUENCY_URGENT = 180000;
 const FREQUENCY_ALERT = 300000;
 const FREQUENCY_WARMING = 600000;
-
-const getIntensityColor = (intensity: number | null): string => {
-  const value = intensity ?? 0;
-  if (value <= 3) {
-    return '#ff7964';
-  }
-  if (value <= 6) {
-    return '#fe5236';
-  }
-  if (value <= 8) {
-    return '#ff2a09';
-  }
-  return '#cb1500';
-};
 
 const getFrequencyColorClass = (frequencyMs: number): string => {
   if (frequencyMs < FREQUENCY_URGENT) {
@@ -46,13 +31,6 @@ const getFrequencyColorClass = (frequencyMs: number): string => {
   }
   return 'frequencyNeutral';
 };
-
-export interface ContractionData {
-  contractionId: string;
-  startTime: string;
-  endTime: string;
-  intensity: number | null;
-}
 
 type Section = { key: string; label: string; items: ContractionReadModel[] };
 
@@ -108,43 +86,13 @@ export default function ContractionTimelineCustom({
 }) {
   const viewport = useRef<HTMLDivElement>(null);
   const [opened, { open, close }] = useDisclosure(false);
-  const [modalData, setModalData] = useState<ContractionData | null>(null);
-  const [hasInitiallyScrolled, setHasInitiallyScrolled] = useState(false);
+  const [modalData, setModalData] = useState<ContractionFormData | null>(null);
 
-  const isFinished = (c: ContractionReadModel) => c.duration.start_time !== c.duration.end_time;
   const gaps = useMemo(() => getTimeSinceLastStarted(contractions), [contractions]);
 
-  const newestContractionId =
-    contractions.length > 0 ? contractions[contractions.length - 1].contraction_id : null;
-  const prevNewestId = usePrevious(newestContractionId);
-
-  useEffect(() => {
-    if (!viewport.current || contractions.length === 0) {
-      return;
-    }
-
-    const shouldScroll =
-      !hasInitiallyScrolled || (newestContractionId !== prevNewestId && prevNewestId !== undefined);
-
-    if (shouldScroll) {
-      viewport.current.scrollTo({ top: viewport.current.scrollHeight, behavior: 'auto' });
-      if (!hasInitiallyScrolled) {
-        setHasInitiallyScrolled(true);
-      }
-    }
-  }, [contractions, newestContractionId, prevNewestId, hasInitiallyScrolled]);
-
-  const formatClock = (iso: string) =>
-    new Date(iso).toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' });
-
   const handleClick = (c: ContractionReadModel) => {
-    if (!completed && isFinished(c)) {
-      setModalData({
-        contractionId: c.contraction_id,
-        startTime: c.duration.start_time,
-        endTime: c.duration.end_time,
-        intensity: c.intensity,
-      });
+    if (!completed && isContractionComplete(c)) {
+      setModalData(toFormData(c));
       open();
     }
   };
@@ -174,7 +122,7 @@ export default function ContractionTimelineCustom({
   }, [contractions]);
 
   const renderItem = (c: ContractionReadModel, idx: number, arr: ContractionReadModel[]) => {
-    const finished = isFinished(c);
+    const finished = isContractionComplete(c);
     const nextGap = gaps[c.contraction_id]?.next ?? 0;
     const clickable = finished && !completed;
     const durationSeconds = calculateDurationSeconds(c.duration.start_time, c.duration.end_time);
@@ -197,7 +145,7 @@ export default function ContractionTimelineCustom({
           </div>
           <div className={classes.timeDisplay}>
             <Text size="xs" fw={400} className={classes.timeText}>
-              {formatClock(c.duration.start_time)}
+              {formatClockTime(c.duration.start_time)}
             </Text>
           </div>
         </div>
@@ -215,8 +163,8 @@ export default function ContractionTimelineCustom({
               role={clickable ? 'button' : undefined}
               aria-label={
                 finished
-                  ? `Contraction at ${formatClock(c.duration.start_time)}, intensity ${c.intensity ?? 0}`
-                  : `Ongoing contraction started at ${formatClock(c.duration.start_time)}`
+                  ? `Contraction at ${formatClockTime(c.duration.start_time)}, intensity ${c.intensity ?? 0}`
+                  : `Ongoing contraction started at ${formatClockTime(c.duration.start_time)}`
               }
             >
               {finished ? (c.intensity ?? 0) : <IconActivityHeartbeat size={22} color="white" />}

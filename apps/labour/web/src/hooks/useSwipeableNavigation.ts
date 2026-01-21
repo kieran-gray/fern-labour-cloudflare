@@ -91,7 +91,7 @@ export function getFloatingControlsPadding({
     if (!isContractionControlsExpanded) {
       return withSafeArea(50);
     }
-    return withSafeArea(hasActiveContraction ? 310 : 140);
+    return withSafeArea(hasActiveContraction ? 270 : 180);
   }
 
   if (activeTab === 'updates') {

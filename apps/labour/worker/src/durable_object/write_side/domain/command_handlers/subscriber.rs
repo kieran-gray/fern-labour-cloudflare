@@ -60,12 +60,14 @@ pub fn handle_request_access(
         }
         events.push(LabourEvent::SubscriberRequested(SubscriberRequested {
             labour_id: cmd.labour_id,
+            subscriber_name: cmd.subscriber_name,
             subscriber_id: cmd.subscriber_id,
             subscription_id: subscription.id(),
         }))
     } else {
         events.push(LabourEvent::SubscriberRequested(SubscriberRequested {
             labour_id: cmd.labour_id,
+            subscriber_name: cmd.subscriber_name,
             subscriber_id: cmd.subscriber_id,
             subscription_id: Uuid::now_v7(),
         }))

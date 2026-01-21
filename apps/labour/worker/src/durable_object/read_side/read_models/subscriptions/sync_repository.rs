@@ -26,6 +26,7 @@ impl SqlSubscriptionRepository {
                 "CREATE TABLE IF NOT EXISTS subscriptions (
                     subscription_id TEXT PRIMARY KEY,
                     labour_id TEXT NOT NULL,
+                    subscriber_name TEXT NOT NULL,
                     subscriber_id TEXT NOT NULL,
                     role TEXT NOT NULL,
                     status TEXT NOT NULL,
@@ -152,6 +153,7 @@ impl SyncRepositoryTrait<SubscriptionReadModel> for SqlSubscriptionRepository {
         let bindings = vec![
             row.subscription_id.into(),
             row.labour_id.into(),
+            row.subscriber_name.into(),
             row.subscriber_id.into(),
             row.role.into(),
             row.status.into(),
@@ -164,17 +166,18 @@ impl SyncRepositoryTrait<SubscriptionReadModel> for SqlSubscriptionRepository {
         self.sql
             .exec(
                 "INSERT INTO subscriptions (
-                    subscription_id, labour_id, subscriber_id, role, status, access_level,
+                    subscription_id, labour_id, subscriber_name, subscriber_id, role, status, access_level,
                     contact_methods, created_at, updated_at
                  )
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
                  ON CONFLICT(subscription_id)
                  DO UPDATE SET
-                    role = ?4,
-                    status = ?5,
-                    access_level = ?6,
-                    contact_methods = ?7,
-                    updated_at = ?9",
+                    subscriber_name = ?3,
+                    role = ?5,
+                    status = ?6,
+                    access_level = ?7,
+                    contact_methods = ?8,
+                    updated_at = ?10",
                 Some(bindings),
             )
             .map_err(|err| anyhow!("Failed to upsert subscription: {err}"))?;
@@ -200,6 +203,7 @@ impl SyncRepositoryTrait<SubscriptionReadModel> for SqlSubscriptionRepository {
         let bindings = vec![
             row.subscription_id.into(),
             row.labour_id.into(),
+            row.subscriber_name.into(),
             row.subscriber_id.into(),
             row.role.into(),
             row.status.into(),
@@ -212,10 +216,10 @@ impl SyncRepositoryTrait<SubscriptionReadModel> for SqlSubscriptionRepository {
         self.sql
             .exec(
                 "INSERT OR REPLACE INTO subscriptions (
-                    subscription_id, labour_id, subscriber_id, role, status, access_level,
+                    subscription_id, labour_id, subscriber_name, subscriber_id, role, status, access_level,
                     contact_methods, created_at, updated_at
                  )
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
                 Some(bindings),
             )
             .context("Failed to overwrite subscription")?;

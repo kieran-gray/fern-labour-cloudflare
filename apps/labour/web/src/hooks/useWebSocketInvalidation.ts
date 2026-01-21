@@ -1,14 +1,9 @@
 import { useEffect, useRef } from 'react';
-import type { ContractionReadModel, LabourUpdateReadModel } from '@base/clients/labour_service';
 import { useQueryClient } from '@tanstack/react-query';
 import { useWebSocket } from '../contexts/WebsocketContext';
 import { useSyncState } from '../offline/syncManager';
 import { queryKeys } from './queryKeys';
-import {
-  prependToInfiniteQuery,
-  removeFromInfiniteQuery,
-  updateInfiniteQueryItem,
-} from './useInfiniteQueries';
+import { removeFromInfiniteQuery } from './useInfiniteQueries';
 
 type LabourEventData = {
   labour_id?: string;
@@ -16,8 +11,6 @@ type LabourEventData = {
   labour_update_id?: string;
   subscription_id?: string;
   subscriber_id?: string;
-  contraction?: ContractionReadModel;
-  labour_update?: LabourUpdateReadModel;
 };
 
 type LabourEvent = {
@@ -67,6 +60,14 @@ function processEvent(
       );
       break;
 
+    case 'LabourPhaseChanged':
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.labour.detail(data.labour_id!),
+        pendingInvalidations
+      );
+      break;
+
     case 'LabourBegun':
       invalidateOrCollect(
         queryClient,
@@ -94,61 +95,27 @@ function processEvent(
       break;
 
     case 'ContractionStarted':
-      if (data.contraction) {
-        prependToInfiniteQuery(
-          queryClient,
-          queryKeys.contractions.infinite(data.labour_id!),
-          data.contraction,
-          'contraction_id'
-        );
-      } else {
-        invalidateOrCollect(
-          queryClient,
-          queryKeys.contractions.infinite(data.labour_id!),
-          pendingInvalidations
-        );
-      }
       invalidateOrCollect(
         queryClient,
-        queryKeys.labour.detail(data.labour_id!),
+        queryKeys.contractions.infinite(data.labour_id!),
         pendingInvalidations
       );
       break;
 
     case 'ContractionEnded':
-      if (data.contraction) {
-        updateInfiniteQueryItem(
-          queryClient,
-          queryKeys.contractions.infinite(data.labour_id!),
-          data.contraction_id!,
-          () => data.contraction!,
-          'contraction_id'
-        );
-      } else {
-        invalidateOrCollect(
-          queryClient,
-          queryKeys.contractions.infinite(data.labour_id!),
-          pendingInvalidations
-        );
-      }
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.contractions.infinite(data.labour_id!),
+        pendingInvalidations
+      );
       break;
 
     case 'ContractionUpdated':
-      if (data.contraction) {
-        updateInfiniteQueryItem(
-          queryClient,
-          queryKeys.contractions.infinite(data.labour_id!),
-          data.contraction_id!,
-          () => data.contraction!,
-          'contraction_id'
-        );
-      } else {
-        invalidateOrCollect(
-          queryClient,
-          queryKeys.contractions.infinite(data.labour_id!),
-          pendingInvalidations
-        );
-      }
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.contractions.infinite(data.labour_id!),
+        pendingInvalidations
+      );
       break;
 
     case 'ContractionDeleted':
@@ -161,56 +128,27 @@ function processEvent(
       break;
 
     case 'LabourUpdatePosted':
-      if (data.labour_update) {
-        prependToInfiniteQuery(
-          queryClient,
-          queryKeys.labourUpdates.infinite(data.labour_id!),
-          data.labour_update,
-          'labour_update_id'
-        );
-      } else {
-        invalidateOrCollect(
-          queryClient,
-          queryKeys.labourUpdates.infinite(data.labour_id!),
-          pendingInvalidations
-        );
-      }
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.labourUpdates.infinite(data.labour_id!),
+        pendingInvalidations
+      );
       break;
 
     case 'LabourUpdateMessageUpdated':
-      if (data.labour_update) {
-        updateInfiniteQueryItem(
-          queryClient,
-          queryKeys.labourUpdates.infinite(data.labour_id!),
-          data.labour_update_id!,
-          () => data.labour_update!,
-          'labour_update_id'
-        );
-      } else {
-        invalidateOrCollect(
-          queryClient,
-          queryKeys.labourUpdates.infinite(data.labour_id!),
-          pendingInvalidations
-        );
-      }
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.labourUpdates.infinite(data.labour_id!),
+        pendingInvalidations
+      );
       break;
 
     case 'LabourUpdateTypeUpdated':
-      if (data.labour_update) {
-        updateInfiniteQueryItem(
-          queryClient,
-          queryKeys.labourUpdates.infinite(data.labour_id!),
-          data.labour_update_id!,
-          () => data.labour_update!,
-          'labour_update_id'
-        );
-      } else {
-        invalidateOrCollect(
-          queryClient,
-          queryKeys.labourUpdates.infinite(data.labour_id!),
-          pendingInvalidations
-        );
-      }
+      invalidateOrCollect(
+        queryClient,
+        queryKeys.labourUpdates.infinite(data.labour_id!),
+        pendingInvalidations
+      );
       break;
 
     case 'LabourUpdateDeleted':
@@ -229,11 +167,6 @@ function processEvent(
     case 'SubscriberUnblocked':
     case 'SubscriberRoleUpdated':
       invalidateOrCollect(queryClient, queryKeys.subscriptions.all, pendingInvalidations);
-      invalidateOrCollect(
-        queryClient,
-        queryKeys.users.listByLabour(data.labour_id!),
-        pendingInvalidations
-      );
       break;
 
     case 'SubscriberNotificationMethodsUpdated':
@@ -252,11 +185,6 @@ function processEvent(
     case 'SubscriberApproved':
     case 'SubscriberRemoved':
       invalidateOrCollect(queryClient, queryKeys.subscriptions.all, pendingInvalidations);
-      invalidateOrCollect(
-        queryClient,
-        queryKeys.users.listByLabour(data.labour_id!),
-        pendingInvalidations
-      );
       break;
 
     case 'SubscriptionTokenSet':

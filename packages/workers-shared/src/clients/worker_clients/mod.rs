@@ -3,3 +3,4 @@ pub mod dispatch;
 pub mod generation;
 pub mod notification;
 pub mod stripe;
+pub mod user;

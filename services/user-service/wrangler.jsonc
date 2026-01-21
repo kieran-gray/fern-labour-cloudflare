@@ -1,0 +1,41 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "fern-labour-user-worker",
+  "main": "build/worker/shim.mjs",
+  "compatibility_date": "2025-11-25",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "build": {
+    "command": "cargo install -q worker-build && worker-build --release"
+  },
+  "dev": {
+    "ip": "0.0.0.0",
+    "port": 8008
+  },
+  "workers_dev": false,
+  "placement": {
+    "mode": "smart"
+  },
+  "observability": {
+    "logs": {
+      "enabled": true
+    },
+    "traces": {
+      "enabled": true
+    }
+  },
+  "vars": {
+    "ENVIRONMENT": "production",
+    "ALLOWED_ORIGINS": ""
+  },
+  "env": {
+    "dev": {
+      "vars": {
+        "ENVIRONMENT": "dev",
+        "ALLOWED_ORIGINS": "",
+        "CLERK_SECRET_KEY": "changeme"
+      }
+    }
+  }
+}

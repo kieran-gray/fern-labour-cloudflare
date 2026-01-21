@@ -8,6 +8,7 @@ use crate::value_objects::{SubscriberAccessLevel, SubscriberContactMethod};
 pub enum SubscriberCommand {
     RequestAccess {
         labour_id: Uuid,
+        subscriber_name: String,
         token: String,
     },
 

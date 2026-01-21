@@ -8,6 +8,7 @@ use uuid::Uuid;
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct SubscriberRequested {
     pub labour_id: Uuid,
+    pub subscriber_name: String,
     pub subscriber_id: String,
     pub subscription_id: Uuid,
 }
