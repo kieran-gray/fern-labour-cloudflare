@@ -16,7 +16,13 @@
 .cropText {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  word-break: normal;
   min-width: 0;
   color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+}
+
+.avatar {
+  @media (max-width: 390px) {
+    display: none;
+  }
 }

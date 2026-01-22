@@ -1,29 +1,20 @@
-import { IconAlertTriangle, IconHome } from '@tabler/icons-react';
+import { IconAlertCircle, IconHome } from '@tabler/icons-react';
 import classes from './ErrorContainer.module.css';
-import baseClasses from '@styles/base.module.css';
 
-export function ErrorContainer({ message }: { message: string }) {
+interface ErrorContainerProps {
+  message: string;
+}
+
+export function ErrorContainer({ message }: ErrorContainerProps) {
   return (
-    <div className={classes.wrapper}>
-      <div className={`${baseClasses.card} ${classes.container}`}>
-        <header className={classes.header}>
-          <div className={classes.headerDecoration} />
-          <div className={classes.iconContainer}>
-            <div className={classes.errorIcon}>
-              <IconAlertTriangle size={32} stroke={2} />
-            </div>
-          </div>
-          <p className={classes.greeting}>Oops</p>
-          <h1 className={classes.title}>
-            <span className={classes.titleAccent}>Something went wrong</span>
-          </h1>
-        </header>
-
-        <div className={classes.messageCard}>
-          <p className={classes.messageText}>{message}</p>
+    <div className={classes.container}>
+      <div className={classes.card}>
+        <div className={classes.errorIcon}>
+          <IconAlertCircle size={48} />
         </div>
-
-        <div className={classes.actionContainer}>
+        <h2 className={classes.title}>Something went wrong</h2>
+        <p className={classes.subtitle}>{message}</p>
+        <div className={classes.actions}>
           <a href="/" className={classes.homeButton}>
             <IconHome size={18} />
             Go to Home

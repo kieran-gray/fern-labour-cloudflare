@@ -429,7 +429,7 @@ export enum LabourPhase {
   ACTIVE = 'ACTIVE',
   TRANSITION = 'TRANSITION',
   PUSHING = 'PUSHING',
-  COMPLETED = 'COMPLETED',
+  COMPLETE = 'COMPLETE',
 }
 
 export type LabourReadModel = {

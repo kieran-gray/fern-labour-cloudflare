@@ -39,8 +39,8 @@ import baseClasses from '@styles/base.module.css';
 
 const TABS = [
   { id: 'details', label: 'Manage', icon: IconSettings },
-  { id: 'updates', label: 'Updates', icon: IconMessage, scrollToTop: false },
-  { id: 'track', label: 'Track', icon: IconStopwatch, scrollToTop: false },
+  { id: 'updates', label: 'Updates', icon: IconMessage },
+  { id: 'track', label: 'Track', icon: IconStopwatch },
   { id: 'stats', label: 'Stats', icon: IconChartHistogram },
   { id: 'share', label: 'Share', icon: IconSend },
 ] as const;

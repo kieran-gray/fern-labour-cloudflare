@@ -61,7 +61,11 @@ export const FinalCTA = ({ title, description, cta, subtitle }: FinalCTAProps) =
               transition={{ duration: 0.2 }}
             >
               <Link
-                href={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || 'https://app.fernlabour.com'}
+                href={
+                  process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL
+                    ? `${process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL}/get-started`
+                    : 'https://app.fernlabour.com/get-started'
+                }
                 target="_blank"
               >
                 <Button

@@ -1,0 +1,211 @@
+/* RegistrationPrompt Component */
+
+.container {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Header Section */
+.header {
+  text-align: center;
+  margin-bottom: clamp(24px, 5vw, 32px);
+  position: relative;
+}
+
+.headerDecoration {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background-color: var(--mantine-primary-color-4);
+  border-radius: 2px;
+}
+
+.headerIcon {
+  margin: 0 auto 16px;
+}
+
+.title {
+  font-family: Poppins, sans-serif;
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  font-weight: 700;
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.titleAccent {
+  color: var(--mantine-primary-color-6);
+}
+
+.subtitle {
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  line-height: 1.6;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+/* Summary Card */
+.summaryCard {
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+  border-radius: 16px;
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.summaryTitle {
+  font-family: Poppins, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.summaryList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summaryItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid light-dark(
+    rgba(0, 0, 0, 0.06),
+    rgba(255, 255, 255, 0.06)
+  );
+}
+
+.summaryItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.summaryIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background-color: light-dark(var(--mantine-primary-color-0), var(--mantine-primary-color-9));
+  color: var(--mantine-primary-color-6);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.summaryLabel {
+  font-size: 0.9rem;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  flex: 1;
+}
+
+.summaryValue {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+}
+
+/* Auth Actions */
+.authActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.signUpButton {
+  padding: 16px 28px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  background-color: var(--mantine-primary-color-5);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.signUpButton:hover {
+  background-color: var(--mantine-primary-color-6);
+  transform: translateY(-1px);
+}
+
+.signUpButton:active {
+  background-color: var(--mantine-primary-color-7);
+  transform: translateY(0);
+}
+
+.signInButton {
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: transparent;
+  border: 2px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-gray-7));
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.signInButton:hover {
+  border-color: light-dark(var(--mantine-color-gray-4), var(--mantine-color-gray-6));
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
+  background: light-dark(rgba(0, 0, 0, 0.02), rgba(255, 255, 255, 0.03));
+}
+
+/* Navigation */
+.navigation {
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+  border-top: 1px solid light-dark(
+    rgba(0, 0, 0, 0.06),
+    rgba(255, 255, 255, 0.06)
+  );
+}
+
+.backButton {
+  padding: 12px 20px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: transparent;
+  border: none;
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.backButton:hover {
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
+}
+
+/* Responsive adjustments */
+@media (max-width: $mantine-breakpoint-sm) {
+  .authActions {
+    gap: 10px;
+  }
+}

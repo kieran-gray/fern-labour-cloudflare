@@ -74,7 +74,6 @@ export const Contractions = memo(
       const isInitialLoad = !hasInitialScrolled.current;
 
       if (isInitialLoad) {
-        scrollToBottom(false);
         hasInitialScrolled.current = true;
       } else {
         scrollToBottom(true);

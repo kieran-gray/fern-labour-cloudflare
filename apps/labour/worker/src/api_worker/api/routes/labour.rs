@@ -35,6 +35,22 @@ pub async fn handle_plan_labour(
         }
     };
 
+    let existing_active = ctx
+        .data
+        .labour_status_query
+        .get_active(user.user_id.clone())
+        .await
+        .map_err(|e| format!("Failed to query active labour: {e}"))?;
+
+    if existing_active.is_some() {
+        info!(user_id = %user.user_id, "User already has an active labour");
+        let response = Response::from(ApiError::ValidationError(
+            "You already have an active labour. Please complete it before planning a new one."
+                .into(),
+        ));
+        return Ok(cors_context.add_to_response(response));
+    }
+
     let labour_id = Uuid::now_v7();
     let command = ApiCommand::Labour(LabourCommand::PlanLabour {
         labour_id,

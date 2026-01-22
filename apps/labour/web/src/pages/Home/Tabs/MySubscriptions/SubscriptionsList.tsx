@@ -77,7 +77,11 @@ export function SubscriptionsList() {
           >
             <Group justify="space-between" wrap="nowrap">
               <Group gap="sm" wrap="nowrap" style={{ minWidth: 0 }}>
-                <Avatar radius="xl" color="var(--mantine-primary-color-5)" />
+                <Avatar
+                  radius="xl"
+                  color="var(--mantine-primary-color-5)"
+                  className={classes.avatar}
+                />
                 <Text fw={500} className={classes.cropText} size="sm">
                   {motherName}
                 </Text>

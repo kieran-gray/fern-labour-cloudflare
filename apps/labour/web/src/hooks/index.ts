@@ -6,6 +6,7 @@ export { queryKeys } from './queryKeys';
 export { useSubmitContactForm } from './useContactData';
 export { useCreateCheckoutSession } from './usePaymentData';
 export { useLabourClient } from './useLabourClient';
+export { useGuestPlanStorage } from './useGuestPlanStorage';
 
 export * from './useLabourData';
 export * from './useInfiniteQueries';
