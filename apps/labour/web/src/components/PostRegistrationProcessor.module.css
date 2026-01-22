@@ -1,10 +1,12 @@
+/* PostRegistrationProcessor Component */
+
 .container {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 100vh;
   padding: 20px;
-  width: 100%;
-  min-height: 50vh;
+  background-color: light-dark(#ffeae6, #121212);
 }
 
 .card {
@@ -54,7 +56,7 @@
   width: 100%;
 }
 
-.homeButton {
+.retryButton {
   padding: 14px 28px;
   border-radius: 14px;
   font-weight: 700;
@@ -68,9 +70,26 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  text-decoration: none;
 }
 
-.homeButton:hover {
+.retryButton:hover {
   background-color: var(--mantine-primary-color-6);
+}
+
+.skipButton {
+  padding: 12px 20px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: transparent;
+  border: 2px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-gray-7));
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.skipButton:hover {
+  border-color: light-dark(var(--mantine-color-gray-4), var(--mantine-color-gray-6));
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
+  background: light-dark(rgba(0, 0, 0, 0.02), rgba(255, 255, 255, 0.03));
 }

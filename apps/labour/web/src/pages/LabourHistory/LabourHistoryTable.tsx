@@ -105,6 +105,7 @@ export function LabourHistoryTable() {
           const isSelected = labourId === labour.labour_id;
           const displayName = labour.labour_name || `Labour ${formatDateShort(labour.created_at)}`;
           const isDeleting = deleteMutation.isPending && deleteLabourId === labour.labour_id;
+          const completed = labour.current_phase === 'COMPLETE';
 
           return (
             <Card
@@ -172,19 +173,20 @@ export function LabourHistoryTable() {
                       {isSelected ? <IconX size={18} /> : <IconArrowRight size={18} />}
                     </ActionIcon>
                   </Tooltip>
-
-                  <Tooltip label="Delete">
-                    <ActionIcon
-                      variant="subtle"
-                      color="red"
-                      size="lg"
-                      radius="xl"
-                      loading={isDeleting}
-                      onClick={() => setDeleteLabourId(labour.labour_id)}
-                    >
-                      <IconTrash size={18} />
-                    </ActionIcon>
-                  </Tooltip>
+                  {completed && (
+                    <Tooltip label="Delete">
+                      <ActionIcon
+                        variant="subtle"
+                        color="red"
+                        size="lg"
+                        radius="xl"
+                        loading={isDeleting}
+                        onClick={() => setDeleteLabourId(labour.labour_id)}
+                      >
+                        <IconTrash size={18} />
+                      </ActionIcon>
+                    </Tooltip>
+                  )}
                 </Group>
               </Group>
             </Card>

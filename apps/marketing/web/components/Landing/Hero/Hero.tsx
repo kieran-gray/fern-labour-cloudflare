@@ -44,7 +44,11 @@ export function Hero() {
           >
             <Group justify="center" gap="md">
               <Link
-                href={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || 'https://app.fernlabour.com'}
+                href={
+                  process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL
+                    ? `${process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL}/get-started`
+                    : 'https://app.fernlabour.com/get-started'
+                }
                 target="_blank"
               >
                 <Button size="lg" radius="xl" color="pink">

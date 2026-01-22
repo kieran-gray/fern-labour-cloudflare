@@ -61,7 +61,11 @@ export default function HomePage() {
         <Pricing01
           title="Pricing"
           description="Free for mums. Family follows for free, or adds notifications."
-          callToActionUrl={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || '#'}
+          callToActionUrl={
+            process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL
+              ? `${process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL}/get-started`
+              : 'https://app.fernlabour.com/get-started'
+          }
         />
         <div id="#faqs" />
         <FAQ />

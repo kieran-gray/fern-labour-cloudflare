@@ -1,3 +1,4 @@
+import { PostRegistrationProcessor } from './components/PostRegistrationProcessor';
 import { LabourSessionProvider } from './contexts/LabourSessionContext';
 import { WebSocketProvider } from './contexts/WebsocketContext';
 import { useWebSocketInvalidation } from './hooks/useWebSocketInvalidation';
@@ -18,7 +19,9 @@ export default function App() {
   return (
     <LabourSessionProvider>
       <WebSocketProvider>
-        <AppWithWebSocket />
+        <PostRegistrationProcessor>
+          <AppWithWebSocket />
+        </PostRegistrationProcessor>
       </WebSocketProvider>
     </LabourSessionProvider>
   );

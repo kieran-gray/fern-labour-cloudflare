@@ -5,6 +5,7 @@ export const appRoutes = {
   subscribe: '/s/:id/:token',
   contact: '/contact',
   completed: '/completed',
+  onboarding: '/get-started',
 } as const;
 
 export const EMAIL_REGEX = /^[\w-+.]+@([\w-]+.)+[\w-]{2,4}$/;
