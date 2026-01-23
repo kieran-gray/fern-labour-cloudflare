@@ -192,13 +192,13 @@ impl SyncProjectionProcessor {
                     .get_checkpoint(projector_name)
                     .ok()
                     .flatten()
-                    .and_then(|cp| {
-                        if cp.status == CheckpointStatus::Error
-                            && cp.error_count >= MAX_PROJECTOR_ERROR_COUNT
+                    .and_then(|checkpoint| {
+                        if checkpoint.status == CheckpointStatus::Error
+                            && checkpoint.error_count >= MAX_PROJECTOR_ERROR_COUNT
                         {
                             None
                         } else {
-                            Some(cp.last_processed_sequence)
+                            Some(checkpoint.last_processed_sequence)
                         }
                     })
             })
