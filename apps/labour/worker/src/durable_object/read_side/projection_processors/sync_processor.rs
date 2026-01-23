@@ -42,24 +42,37 @@ impl SyncProjectionProcessor {
     }
 
     pub fn process_projections(&self) -> Result<()> {
-        debug!("Starting checkpoint-based projection processing");
+        let all_checkpoints = self
+            .checkpoint_repository
+            .get_all_checkpoints()
+            .context("Failed to fetch all checkpoints")?;
+
+        let checkpoint_map: HashMap<String, ProjectionCheckpoint> = all_checkpoints
+            .into_iter()
+            .map(|cp| (cp.projector_name.clone(), cp))
+            .collect();
 
         let mut errors: Vec<String> = Vec::new();
 
         for (projector_name, projector) in &self.projectors {
-            if let Ok(Some(checkpoint)) = self.checkpoint_repository.get_checkpoint(projector_name)
-                && checkpoint.status == CheckpointStatus::Error
-                && checkpoint.error_count >= MAX_PROJECTOR_ERROR_COUNT
-            {
-                warn!(
-                    projector = %projector_name,
-                    error_count = checkpoint.error_count,
-                    "Skipping faulted projector - exceeded max error count. Manual reset required."
-                );
-                continue;
+            if let Some(checkpoint) = checkpoint_map.get(projector_name) {
+                if checkpoint.status == CheckpointStatus::Error
+                    && checkpoint.error_count >= MAX_PROJECTOR_ERROR_COUNT
+                {
+                    warn!(
+                        projector = %projector_name,
+                        error_count = checkpoint.error_count,
+                        "Skipping faulted projector - exceeded max error count. Manual reset required."
+                    );
+                    continue;
+                }
             }
 
-            if let Err(e) = self.process_single_projector(projector_name, projector.as_ref()) {
+            if let Err(e) = self.process_single_projector_with_checkpoint(
+                projector_name,
+                projector.as_ref(),
+                checkpoint_map.get(projector_name),
+            ) {
                 error!(projector = %projector_name, error = %e, "Failed to process projector");
                 errors.push(format!("{}: {}", projector_name, e));
             }
@@ -75,14 +88,14 @@ impl SyncProjectionProcessor {
         }
     }
 
-    fn process_single_projector(
+    fn process_single_projector_with_checkpoint(
         &self,
         projector_name: &str,
         projector: &dyn SyncProjector<LabourEvent>,
+        checkpoint: Option<&ProjectionCheckpoint>,
     ) -> Result<()> {
-        let checkpoint = self
-            .checkpoint_repository
-            .get_checkpoint(projector_name)?
+        let checkpoint = checkpoint
+            .cloned()
             .unwrap_or_else(|| self.create_initial_checkpoint(projector_name));
 
         let last_sequence = checkpoint.last_processed_sequence;
@@ -185,22 +198,20 @@ impl SyncProjectionProcessor {
     }
 
     pub fn get_last_processed_sequence(&self) -> i64 {
-        self.projectors
-            .keys()
-            .filter_map(|projector_name| {
-                self.checkpoint_repository
-                    .get_checkpoint(projector_name)
-                    .ok()
-                    .flatten()
-                    .and_then(|checkpoint| {
-                        if checkpoint.status == CheckpointStatus::Error
-                            && checkpoint.error_count >= MAX_PROJECTOR_ERROR_COUNT
-                        {
-                            None
-                        } else {
-                            Some(checkpoint.last_processed_sequence)
-                        }
-                    })
+        let all_checkpoints = match self.checkpoint_repository.get_all_checkpoints() {
+            Ok(checkpoints) => checkpoints,
+            Err(_) => return 0,
+        };
+        all_checkpoints
+            .into_iter()
+            .filter_map(|checkpoint| {
+                if checkpoint.status == CheckpointStatus::Error
+                    && checkpoint.error_count >= MAX_PROJECTOR_ERROR_COUNT
+                {
+                    None
+                } else {
+                    Some(checkpoint.last_processed_sequence)
+                }
             })
             .min()
             .unwrap_or(0)
