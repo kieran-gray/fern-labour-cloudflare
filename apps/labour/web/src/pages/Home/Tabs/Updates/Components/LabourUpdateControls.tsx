@@ -6,7 +6,7 @@ import { LABOUR_UPDATE_MAX_LENGTH } from '@base/lib/constants';
 import { useNetworkState } from '@base/offline/sync/networkDetector';
 import { IconSend, IconSpeakerphone, IconWifiOff } from '@tabler/icons-react';
 import { Button, Group, Switch, Text, Textarea } from '@mantine/core';
-import ConfirmAnnouncementModal from './Modals/ConfirmAnnouncement';
+import ConfirmAnnouncementModal from '../Modals/ConfirmAnnouncement';
 import baseClasses from '@styles/base.module.css';
 
 export function LabourUpdateControls() {

@@ -10,8 +10,8 @@ import {
   getIntensityColor,
   isContractionComplete,
   toFormData,
-} from './contractionUtils';
-import { EditContractionModal } from './EditContractionModal';
+} from '../../contractionUtils';
+import { EditContractionModal } from '../../Modals/EditContractionModal';
 import classes from './ContractionTimelineCustom.module.css';
 
 const DOTTED_LINE_FREQUENCY_GAP = 1800000;

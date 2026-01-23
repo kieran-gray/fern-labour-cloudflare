@@ -1,5 +1,5 @@
 import { Skeleton } from '@mantine/core';
-import classes from './ShareLabour.module.css';
+import classes from '../ShareLabour.module.css';
 import skeletonClasses from './ShareLabourSkeleton.module.css';
 
 function ShareCardSkeleton({ children }: { children: React.ReactNode }) {

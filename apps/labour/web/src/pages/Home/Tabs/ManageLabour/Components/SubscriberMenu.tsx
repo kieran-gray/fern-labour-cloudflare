@@ -10,7 +10,7 @@ import {
 } from '@base/hooks/useLabourData';
 import { IconBan, IconCircleMinus, IconDots, IconSwitchHorizontal } from '@tabler/icons-react';
 import { ActionIcon, Menu } from '@mantine/core';
-import { ChangeRoleModal } from './ChangeRoleModal';
+import { ChangeRoleModal } from '../Modals/ChangeRoleModal';
 import baseClasses from '@styles/base.module.css';
 
 export function ManageSubscriptionMenu({

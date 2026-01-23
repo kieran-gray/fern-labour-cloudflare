@@ -8,8 +8,8 @@ import {
   formatClockTime,
   getIntensityLabel,
   toFormData,
-} from './contractionUtils';
-import { EditContractionModal } from './EditContractionModal';
+} from '../../contractionUtils';
+import { EditContractionModal } from '../../Modals/EditContractionModal';
 import classes from './ContractionMiniChart.module.css';
 
 interface ContractionMiniChartProps {

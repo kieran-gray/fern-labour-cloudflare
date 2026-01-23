@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ContractionReadModel } from '@base/clients/labour_service';
 import { Badge, Group, List, Modal, Stack, Text } from '@mantine/core';
-import { LabourStatisticsChart } from './LabourStatisticsChart';
+import { LabourStatisticsChart } from '../Components/LabourStatisticsChart';
 import modalClasses from '@styles/modal.module.css';
 
 type CloseFunctionType = (...args: unknown[]) => void;

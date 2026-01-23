@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { CardContentBottom } from '@base/components/Cards/CardContentBottom';
 import image from './subscriptions.svg';
-import { SubscriptionsList } from './SubscriptionsList';
+import { SubscriptionsList } from './Components/SubscriptionsList';
 
 export const ManageSubscriptions = memo(() => {
   return (

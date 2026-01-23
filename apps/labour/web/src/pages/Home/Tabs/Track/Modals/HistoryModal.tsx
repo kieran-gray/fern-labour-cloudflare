@@ -1,6 +1,6 @@
 import { ContractionReadModel } from '@base/clients/labour_service/types';
 import { Group, Modal, Stack, Text } from '@mantine/core';
-import ContractionTimelineCustom from './ContractionTimelineCustom';
+import ContractionTimelineCustom from '../Components/Timeline/ContractionTimelineCustom';
 import classes from './HistoryModal.module.css';
 import modalClasses from '@styles/modal.module.css';
 

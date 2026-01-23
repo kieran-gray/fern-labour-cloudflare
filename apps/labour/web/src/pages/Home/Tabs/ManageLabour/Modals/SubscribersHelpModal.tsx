@@ -19,8 +19,8 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
-import { RoleBadge } from './RoleBadge';
-import subscribersClasses from './SubscribersTable.module.css';
+import { RoleBadge } from '../Components/RoleBadge';
+import subscribersClasses from '../Components/SubscribersTable.module.css';
 import baseClasses from '@styles/base.module.css';
 import modalClasses from '@styles/modal.module.css';
 

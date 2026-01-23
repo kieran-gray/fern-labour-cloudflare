@@ -1,6 +1,6 @@
 import { Badge, Group, LoadingOverlay, Text } from '@mantine/core';
 import { ManageLabourUpdateMenu } from './ManageLabourUpdateMenu';
-import classes from './LabourUpdates.module.css';
+import classes from '../LabourUpdates.module.css';
 
 export interface LabourUpdateProps {
   id: string;

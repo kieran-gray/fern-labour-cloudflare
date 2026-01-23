@@ -6,14 +6,14 @@ import { useTransitionStatus } from '@components/TabTransition/TransitionStatusC
 import { IconBook, IconHistory } from '@tabler/icons-react';
 import { ActionIcon, Button, Image, Space, Stack, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { AlertContainer } from './Alerts';
-import { ContractionMiniChart } from './ContractionMiniChart';
-import { ContractionStats } from './ContractionStats';
-import ContractionTimelineCustom from './ContractionTimelineCustom';
-import { ContractionsHelpModal } from './HelpModal';
-import { HistoryModal } from './HistoryModal';
+import { AlertContainer } from './Components/Alerts';
+import { TrackingStatusCard } from './Components/Controls/TrackingStatusCard';
+import { ContractionMiniChart } from './Components/MiniChart/ContractionMiniChart';
+import { ContractionStats } from './Components/Stats/ContractionStats';
+import ContractionTimelineCustom from './Components/Timeline/ContractionTimelineCustom';
+import { ContractionsHelpModal } from './Modals/HelpModal';
+import { HistoryModal } from './Modals/HistoryModal';
 import image from './Track.svg';
-import { TrackingStatusCard } from './TrackingStatusCard';
 import classes from './Contractions.module.css';
 import baseClasses from '@styles/base.module.css';
 
