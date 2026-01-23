@@ -1,4 +1,4 @@
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 use async_trait::async_trait;
 use fern_labour_notifications_shared::value_objects::NotificationChannel;
 use tracing::info;
@@ -33,7 +33,7 @@ impl NotificationGatewayTrait for TwilioWhatsappNotificationGateway {
 
     async fn dispatch(&self, context: &DispatchContext) -> Result<Option<String>> {
         let Some(template_sid) = context.content.subject() else {
-            return Err(anyhow!("No Template SID found"));
+            anyhow::bail!("No Template SID found");
         };
 
         let form_data = form_urlencoded::Serializer::new(String::new())

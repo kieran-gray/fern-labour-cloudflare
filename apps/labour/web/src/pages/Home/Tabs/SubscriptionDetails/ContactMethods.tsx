@@ -11,7 +11,7 @@ import {
 import { useSearchParams } from 'react-router-dom';
 import { ActionIcon, Stack, Text, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import ContactMethodsModal from './ContactMethodsModal';
+import ContactMethodsModal from './Modals/ContactMethodsModal';
 import classes from './ContactMethods.module.css';
 
 function warnNoNumberSet(contactMethods: string[], phoneNumber: string | null): string | null {

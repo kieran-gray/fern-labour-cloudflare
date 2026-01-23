@@ -26,14 +26,14 @@ import { useSearchParams } from 'react-router-dom';
 import { Space } from '@mantine/core';
 import { CompletedLabourCard } from '../CompletedLabour/Page';
 import { LabourDetails } from './Tabs/ManageLabour/Manage';
-import Plan from './Tabs/ManageLabour/Plan';
-import { SubscribersContainer } from './Tabs/ManageLabour/SubscribersContainer';
+import { SubscribersContainer } from './Tabs/ManageLabour/Subscribers';
+import Plan from './Tabs/PlanLabour/Plan';
 import { InviteByEmail } from './Tabs/Share/InviteByEmail';
 import { ShareLabour } from './Tabs/Share/ShareLabour';
 import { LabourStatistics } from './Tabs/Statistics/LabourStatistics';
-import { ContractionControls } from './Tabs/Track/ContractionControls';
+import { ContractionControls } from './Tabs/Track/Components/Controls/ContractionControls';
 import { Contractions } from './Tabs/Track/Contractions';
-import { LabourUpdateControls } from './Tabs/Updates/LabourUpdateControls';
+import { LabourUpdateControls } from './Tabs/Updates/Components/LabourUpdateControls';
 import { LabourUpdates } from './Tabs/Updates/LabourUpdates';
 import baseClasses from '@styles/base.module.css';
 

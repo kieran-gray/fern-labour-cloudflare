@@ -1,10 +1,10 @@
 import { memo } from 'react';
 import { ContractionReadModel, LabourReadModel } from '@base/clients/labour_service';
+import { LabourStatisticsData, StatisticsTimeRange } from '@hooks/useLabourStatistics';
 import { Loader, Space, Tabs, Text } from '@mantine/core';
-import { LabourStatisticsData, StatisticsTimeRange } from '../../../../hooks/useLabourStatistics';
 import { LabourStatisticsChart } from './LabourStatisticsChart';
 import { LabourStatisticsTable } from './LabourStatsticsTable';
-import classes from './LabourStatistics.module.css';
+import classes from '../LabourStatistics.module.css';
 
 export const LabourStatisticsTabs = memo(
   ({

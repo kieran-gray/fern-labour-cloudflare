@@ -1,11 +1,11 @@
 import { ContractionReadModel } from '@base/clients/labour_service';
 import { IconClock, IconFlame, IconHourglassHigh, IconHourglassLow } from '@tabler/icons-react';
 import { Anchor, Button, Group, List, Modal, Slider, Space, Stack, Text } from '@mantine/core';
-import { CallMidwifeAlert, GoToHospitalAlert, PrepareForHospitalAlert } from './Alerts';
-import ContractionTimelineCustom from './ContractionTimelineCustom';
-import contractionControlClasses from './ActiveContractionControls.module.css';
-import statsClasses from './ContractionStats.module.css';
-import statusCardClasses from './TrackingStatusCard.module.css';
+import { CallMidwifeAlert, GoToHospitalAlert, PrepareForHospitalAlert } from '../Components/Alerts';
+import ContractionTimelineCustom from '../Components/Timeline/ContractionTimelineCustom';
+import contractionControlClasses from '../Components/Controls/ActiveContractionControls.module.css';
+import statusCardClasses from '../Components/Controls/TrackingStatusCard.module.css';
+import statsClasses from '../Components/Stats/ContractionStats.module.css';
 import modalClasses from '@styles/modal.module.css';
 
 type CloseFunctionType = (...args: any[]) => void;

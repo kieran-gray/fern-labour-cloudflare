@@ -13,8 +13,8 @@ import { IconDots, IconPencil, IconSpeakerphone, IconTrash } from '@tabler/icons
 import { ActionIcon, Menu } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import ConfirmAnnouncementModal from './Modals/ConfirmAnnouncement';
-import EditLabourUpdateModal from './Modals/EditLabourUpdate';
+import ConfirmAnnouncementModal from '../Modals/ConfirmAnnouncement';
+import EditLabourUpdateModal from '../Modals/EditLabourUpdate';
 import baseClasses from '@styles/base.module.css';
 
 interface ManageLabourUpdateMenuProps {

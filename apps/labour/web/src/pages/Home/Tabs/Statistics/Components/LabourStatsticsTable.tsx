@@ -1,7 +1,7 @@
 import { IconActivity, IconClock, IconFlame, IconRefresh } from '@tabler/icons-react';
 import { Text } from '@mantine/core';
-import { LabourStatisticsData } from '../../../../hooks/useLabourStatistics';
-import classes from './LabourStatistics.module.css';
+import { LabourStatisticsData } from '../../../../../hooks/useLabourStatistics';
+import classes from '../LabourStatistics.module.css';
 
 interface StatCardProps {
   icon: React.ReactNode;

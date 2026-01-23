@@ -1,7 +1,7 @@
 import { Card } from '@base/components/Cards/Card';
 import { AppShell } from '@components/AppShell';
 import { Space } from '@mantine/core';
-import { LabourHistoryTable } from './LabourHistoryTable';
+import { LabourHistoryTable } from './components/LabourHistoryTable';
 import baseClasses from '@styles/base.module.css';
 
 export const LabourHistoryPage = () => {

@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use anyhow::{Context, Result, anyhow};
 use chrono::Utc;
-use tracing::{debug, error, warn};
+use tracing::{error, warn};
 
 use fern_labour_event_sourcing_rs::{
     CheckpointRepository, CheckpointStatus, EventEnvelopeAdapter, EventStoreTrait,
@@ -41,57 +41,57 @@ impl SyncProjectionProcessor {
         }
     }
 
-    pub fn process_projections(&self) -> Result<()> {
-        debug!("Starting checkpoint-based projection processing");
+    pub fn process_projections(&self) -> Result<bool> {
+        let checkpoint_map: HashMap<String, ProjectionCheckpoint> = self
+            .checkpoint_repository
+            .get_all_checkpoints()
+            .map_err(|e| anyhow!("Failed to fetch all checkpoints: {e}"))?
+            .into_iter()
+            .map(|cp| (cp.projector_name.clone(), cp))
+            .collect();
 
         let mut errors: Vec<String> = Vec::new();
+        let mut any_processed = false;
 
         for (projector_name, projector) in &self.projectors {
-            if let Ok(Some(checkpoint)) = self.checkpoint_repository.get_checkpoint(projector_name)
-                && checkpoint.status == CheckpointStatus::Error
-                && checkpoint.error_count >= MAX_PROJECTOR_ERROR_COUNT
+            if checkpoint_map
+                .get(projector_name)
+                .is_some_and(|checkpoint| checkpoint.is_faulted(MAX_PROJECTOR_ERROR_COUNT))
             {
-                warn!(
-                    projector = %projector_name,
-                    error_count = checkpoint.error_count,
-                    "Skipping faulted projector - exceeded max error count. Manual reset required."
-                );
+                warn!("Skipping faulted projector {projector_name} exceeded max error count");
                 continue;
             }
 
-            if let Err(e) = self.process_single_projector(projector_name, projector.as_ref()) {
-                error!(projector = %projector_name, error = %e, "Failed to process projector");
-                errors.push(format!("{}: {}", projector_name, e));
+            match self.process_single_projector_with_checkpoint(
+                projector_name,
+                projector.as_ref(),
+                checkpoint_map.get(projector_name),
+            ) {
+                Ok(processed) => any_processed |= processed,
+                Err(e) => {
+                    error!(projector = %projector_name, error = %e, "Failed to process projector");
+                    errors.push(format!("{}: {}", projector_name, e));
+                }
             }
         }
 
-        if errors.is_empty() {
-            Ok(())
-        } else {
-            Err(anyhow!(
-                "One or more projectors failed: {}",
-                errors.join("; ")
-            ))
+        if !errors.is_empty() {
+            anyhow::bail!("One or more projectors failed: {}", errors.join("; "))
         }
+        Ok(any_processed)
     }
 
-    fn process_single_projector(
+    fn process_single_projector_with_checkpoint(
         &self,
         projector_name: &str,
         projector: &dyn SyncProjector<LabourEvent>,
-    ) -> Result<()> {
-        let checkpoint = self
-            .checkpoint_repository
-            .get_checkpoint(projector_name)?
+        checkpoint: Option<&ProjectionCheckpoint>,
+    ) -> Result<bool> {
+        let checkpoint = checkpoint
+            .cloned()
             .unwrap_or_else(|| self.create_initial_checkpoint(projector_name));
 
         let last_sequence = checkpoint.last_processed_sequence;
-
-        debug!(
-            projector = %projector_name,
-            last_sequence = last_sequence,
-            "Processing projector from checkpoint"
-        );
 
         let stored_events = self
             .event_store
@@ -99,24 +99,13 @@ impl SyncProjectionProcessor {
             .context("Failed to fetch events since checkpoint")?;
 
         if stored_events.is_empty() {
-            debug!(
-                projector = %projector_name,
-                "No new events to process"
-            );
-            return Ok(());
+            return Ok(false);
         }
 
         let envelopes = stored_events
             .iter()
             .map(|stored| stored.to_envelope())
             .collect::<Result<Vec<_>>>()?;
-
-        let event_count = envelopes.len();
-        debug!(
-            projector = %projector_name,
-            event_count = event_count,
-            "Processing events"
-        );
 
         if let Err(err) = projector.project_batch(&envelopes) {
             let new_error_count = checkpoint.error_count + 1;
@@ -141,10 +130,9 @@ impl SyncProjectionProcessor {
                 );
             }
 
-            return Err(anyhow!(
-                "Projector {projector_name} failed to process batch (attempt {}): {err}",
-                new_error_count
-            ));
+            anyhow::bail!(
+                "Projector {projector_name} failed to process batch (attempt {new_error_count}): {err}"
+            );
         }
 
         let last_envelope = envelopes.last().unwrap();
@@ -162,14 +150,7 @@ impl SyncProjectionProcessor {
             .update_checkpoint(&new_checkpoint)
             .context("Failed to update checkpoint")?;
 
-        debug!(
-            projector = %projector_name,
-            events_processed = event_count,
-            new_sequence = new_checkpoint.last_processed_sequence,
-            "Successfully processed and checkpointed events"
-        );
-
-        Ok(())
+        Ok(true)
     }
 
     fn create_initial_checkpoint(&self, projector_name: &str) -> ProjectionCheckpoint {
@@ -185,22 +166,20 @@ impl SyncProjectionProcessor {
     }
 
     pub fn get_last_processed_sequence(&self) -> i64 {
-        self.projectors
-            .keys()
-            .filter_map(|projector_name| {
-                self.checkpoint_repository
-                    .get_checkpoint(projector_name)
-                    .ok()
-                    .flatten()
-                    .and_then(|cp| {
-                        if cp.status == CheckpointStatus::Error
-                            && cp.error_count >= MAX_PROJECTOR_ERROR_COUNT
-                        {
-                            None
-                        } else {
-                            Some(cp.last_processed_sequence)
-                        }
-                    })
+        let all_checkpoints = match self.checkpoint_repository.get_all_checkpoints() {
+            Ok(checkpoints) => checkpoints,
+            Err(_) => return 0,
+        };
+        all_checkpoints
+            .into_iter()
+            .filter_map(|checkpoint| {
+                if checkpoint.status == CheckpointStatus::Error
+                    && checkpoint.error_count >= MAX_PROJECTOR_ERROR_COUNT
+                {
+                    None
+                } else {
+                    Some(checkpoint.last_processed_sequence)
+                }
             })
             .min()
             .unwrap_or(0)

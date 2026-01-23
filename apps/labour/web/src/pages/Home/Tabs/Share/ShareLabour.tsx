@@ -25,7 +25,7 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
-import { ShareLabourSkeleton } from './ShareLabourSkeleton';
+import { ShareLabourSkeleton } from './Components/ShareLabourSkeleton';
 import classes from './ShareLabour.module.css';
 
 interface ShareCardProps {

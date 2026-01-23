@@ -19,6 +19,7 @@ struct CheckpointRow {
 }
 
 impl CheckpointRow {
+    /// Convert the row to a ProjectionCheckpoint, consuming it in the process
     fn take_as_checkpoint(self) -> Result<ProjectionCheckpoint> {
         let last_processed_at =
             NaiveDateTime::parse_from_str(&self.last_processed_at, "%Y-%m-%d %H:%M:%S")

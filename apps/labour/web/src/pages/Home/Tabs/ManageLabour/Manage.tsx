@@ -18,8 +18,8 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Collapse, Text, Textarea, Tooltip, UnstyledButton } from '@mantine/core';
-import { EditLabourModal } from './EditLabourModal';
 import MeditateIllustration from './Meditate.svg';
+import { EditLabourModal } from './Modals/EditLabourModal';
 import classes from './Manage.module.css';
 import baseClasses from '@styles/base.module.css';
 

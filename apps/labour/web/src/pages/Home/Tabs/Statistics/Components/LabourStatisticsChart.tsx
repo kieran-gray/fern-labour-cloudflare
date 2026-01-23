@@ -5,7 +5,7 @@ import { IconArrowsMaximize } from '@tabler/icons-react';
 import { ScatterChart } from '@mantine/charts';
 import { ActionIcon, Group, Modal, Paper, Text } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
-import classes from './LabourStatistics.module.css';
+import classes from '../LabourStatistics.module.css';
 
 interface ChartData {
   color: string;

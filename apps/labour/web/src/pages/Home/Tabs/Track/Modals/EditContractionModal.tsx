@@ -8,7 +8,7 @@ import { IconClock, IconFlame, IconTrash } from '@tabler/icons-react';
 import { ActionIcon, Button, Modal, Slider, Text } from '@mantine/core';
 import { TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { ContractionFormData } from './contractionUtils';
+import { ContractionFormData } from '../contractionUtils';
 import classes from './EditContractionModal.module.css';
 import modalClasses from '@styles/modal.module.css';
 

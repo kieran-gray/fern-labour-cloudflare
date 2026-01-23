@@ -126,9 +126,7 @@ impl<'a> QueryHandler<'a> {
             SubscriptionQuery::GetSubscriptionToken { .. } => {
                 let token = match self.read_model.subscription_token_query.get() {
                     Ok(Some(token)) => token.token,
-                    Ok(_) | Err(_) => {
-                        return Err(anyhow::anyhow!("No subcription token available"));
-                    }
+                    Ok(_) | Err(_) => anyhow::bail!("No subcription token available"),
                 };
                 Ok(serde_json::json!({ "token": token }))
             }
@@ -136,7 +134,7 @@ impl<'a> QueryHandler<'a> {
                 let subscriptions = self
                     .read_model
                     .subscription_query
-                    .get(100, None) // TODO
+                    .get(100, None) // TODO: when someone has 101 subs lol
                     .map(|items| build_paginated_response(items, 100))?;
 
                 Ok(serde_json::to_value(subscriptions)?)

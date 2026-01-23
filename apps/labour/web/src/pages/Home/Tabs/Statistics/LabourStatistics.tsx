@@ -11,8 +11,8 @@ import {
 } from '@tabler/icons-react';
 import { ActionIcon, Image, Loader, Space, Text, Title } from '@mantine/core';
 import { useDisclosure, useInterval } from '@mantine/hooks';
-import { StatisticsHelpModal } from './HelpModal';
-import { LabourStatisticsTabs } from './LabourStatisticsTabs';
+import { LabourStatisticsTabs } from './Components/LabourStatisticsTabs';
+import { StatisticsHelpModal } from './Modals/HelpModal';
 import image from './statistics.svg';
 import classes from './LabourStatistics.module.css';
 import baseClasses from '@styles/base.module.css';

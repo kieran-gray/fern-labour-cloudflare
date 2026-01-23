@@ -18,18 +18,6 @@ export function PWAUpdateHandler() {
   });
 
   useEffect(() => {
-    if (offlineReady) {
-      notifications.show({
-        id: 'pwa-offline-ready',
-        title: 'App is ready for offline use',
-        message: 'The app has been cached and is available offline',
-        color: 'green',
-        autoClose: 5000,
-      });
-    }
-  }, [offlineReady]);
-
-  useEffect(() => {
     if (needRefresh) {
       notifications.show({
         id: 'pwa-update-available',

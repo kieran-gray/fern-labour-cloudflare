@@ -33,9 +33,9 @@ import { ShareFernLabour } from './Tabs/MySubscriptions/ShareFernLabour';
 import { LabourStatistics } from './Tabs/Statistics/LabourStatistics';
 import ContactMethods from './Tabs/SubscriptionDetails/ContactMethods';
 import { SubscriberLabourDetails } from './Tabs/SubscriptionDetails/LabourDetails';
-import { ContractionControls } from './Tabs/Track/ContractionControls';
+import { ContractionControls } from './Tabs/Track/Components/Controls/ContractionControls';
 import { Contractions } from './Tabs/Track/Contractions';
-import { LabourUpdateControls } from './Tabs/Updates/LabourUpdateControls';
+import { LabourUpdateControls } from './Tabs/Updates/Components/LabourUpdateControls';
 import { LabourUpdates } from './Tabs/Updates/LabourUpdates';
 import baseClasses from '@styles/base.module.css';
 

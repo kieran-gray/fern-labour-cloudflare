@@ -2,9 +2,9 @@ import { CardContentBottom } from '@base/components/Cards/CardContentBottom';
 import { IconBook } from '@tabler/icons-react';
 import { ActionIcon } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { SubscribersView } from './Components/SubscribersView';
+import { SubscribersHelpModal } from './Modals/SubscribersHelpModal';
 import image from './protected.svg';
-import { SubscribersHelpModal } from './SubscribersHelpModal';
-import { SubscribersView } from './SubscribersView';
 
 export function SubscribersContainer() {
   const [opened, { open, close }] = useDisclosure(false);
