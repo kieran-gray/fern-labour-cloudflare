@@ -15,6 +15,12 @@ pub struct ProjectionCheckpoint {
     pub error_count: i64,
 }
 
+impl ProjectionCheckpoint {
+    pub fn is_faulted(&self, max_errors: i64) -> bool {
+        self.status == CheckpointStatus::Error && self.error_count >= max_errors
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
 pub enum CheckpointStatus {

@@ -71,11 +71,7 @@ impl TwilioClient {
                 error = %error_text,
                 "Twilio API error"
             );
-            return Err(anyhow!(
-                "Twilio API error (status {}): {}",
-                status,
-                error_text
-            ));
+            anyhow::bail!("Twilio API error (status {}): {}", status, error_text);
         }
 
         let response_json: serde_json::Value = response

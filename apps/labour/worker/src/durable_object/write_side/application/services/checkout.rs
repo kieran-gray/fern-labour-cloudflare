@@ -58,7 +58,7 @@ impl CheckoutService {
             .map_err(|e| anyhow!("Authorization failed: {}", e))?;
 
         let Some(labour) = aggregate else {
-            return Err(anyhow!("Invalid command. No aggregate found."));
+            anyhow::bail!("Invalid command. No aggregate found.");
         };
 
         match command {
@@ -69,13 +69,13 @@ impl CheckoutService {
                 cancel_url,
             } => {
                 let Some(subscription) = labour.find_subscription(subscription_id) else {
-                    return Err(anyhow!("No subscription found"));
+                    anyhow::bail!("No subscription found");
                 };
                 if subscription.status() != &SubscriberStatus::SUBSCRIBED {
-                    return Err(anyhow!("Subscriber not subscribed"));
+                    anyhow::bail!("Subscriber not subscribed");
                 };
                 if subscription.access_level() == &SubscriberAccessLevel::SUPPORTER {
-                    return Err(anyhow!("Subscription already upgraded"));
+                    anyhow::bail!("Subscription already upgraded");
                 };
 
                 let request = CheckoutSessionRequest {

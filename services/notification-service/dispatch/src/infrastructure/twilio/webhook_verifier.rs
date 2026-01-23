@@ -56,7 +56,7 @@ impl WebhookVerifier for TwilioWebhookVerifier {
         let expected_signature = STANDARD.encode(result.into_bytes());
 
         if signature != expected_signature {
-            return Err(anyhow!("Twilio webhook signature verification failed"));
+            anyhow::bail!("Twilio webhook signature verification failed");
         }
 
         Ok(())

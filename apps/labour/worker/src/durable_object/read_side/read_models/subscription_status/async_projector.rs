@@ -3,7 +3,7 @@ use std::rc::Rc;
 use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use fern_labour_labour_shared::value_objects::subscriber::status::SubscriberStatus;
-use tracing::{debug, info, warn};
+use tracing::{info, warn};
 
 use fern_labour_event_sourcing_rs::{
     AsyncRepositoryTrait, CacheExt, CacheTrait, CachedReadModelState, EventEnvelope,
@@ -113,7 +113,6 @@ impl IncrementalAsyncProjector<LabourEvent> for SubscriptionStatusReadModelProje
             .unwrap_or_else(CachedReadModelState::empty);
 
         if events.is_empty() {
-            debug!(projector = %self.name, "No new events to process");
             return Ok(());
         }
 
@@ -142,8 +141,6 @@ impl IncrementalAsyncProjector<LabourEvent> for SubscriptionStatusReadModelProje
                 }
                 (None, None) => {}
             }
-        } else {
-            debug!(projector = %self.name, "Model unchanged, skipping D1 write");
         }
 
         let new_state = CachedReadModelState::new(max_sequence, current_model);

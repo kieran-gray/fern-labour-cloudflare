@@ -147,20 +147,17 @@ impl DurableObject for LabourCircle {
             .sync_projection_processor
             .process_projections();
 
-        if let Err(ref e) = sync_result {
-            error!(error = %e, "Error in sync projection processing");
-        } else {
-            let sequence_after = alarm_services
-                .sync_projection_processor
-                .get_last_processed_sequence();
-
-            if sequence_after > sequence_before
-                && let Err(e) = alarm_services
+        match sync_result {
+            Ok(true) => {
+                if let Err(e) = alarm_services
                     .websocket_event_broadcaster
                     .broadcast_new_events(&self.state, sequence_before)
-            {
-                error!(error = %e, "Failed to broadcast events to WebSocket clients");
+                {
+                    error!(error = %e, "Failed to broadcast events to WebSocket clients");
+                }
             }
+            Ok(false) => (), // Projectors ran but did no work
+            Err(ref e) => error!(error = %e, "Error in sync projection processing"),
         }
 
         let async_result = alarm_services

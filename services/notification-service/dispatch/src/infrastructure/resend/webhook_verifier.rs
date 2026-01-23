@@ -44,7 +44,7 @@ impl WebhookVerifier for ResendWebhookVerifier {
 
         let current_time = chrono::Utc::now().timestamp();
         if (current_time - timestamp).abs() > 300 {
-            return Err(anyhow!("Webhook timestamp too old or in future"));
+            anyhow::bail!("Webhook timestamp too old or in future");
         }
 
         let signed_content = format!(
@@ -76,13 +76,13 @@ impl WebhookVerifier for ResendWebhookVerifier {
             .collect();
 
         if signatures.is_empty() {
-            return Err(anyhow!("No valid v1 signatures found"));
+            anyhow::bail!("No valid v1 signatures found");
         }
 
         let signature_matches = signatures.iter().any(|sig| *sig == expected_signature);
 
         if !signature_matches {
-            return Err(anyhow!("Webhook signature verification failed"));
+            anyhow::bail!("Webhook signature verification failed");
         }
 
         Ok(())
