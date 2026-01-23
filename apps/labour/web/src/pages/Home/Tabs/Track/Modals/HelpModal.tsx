@@ -4,8 +4,8 @@ import { Anchor, Button, Group, List, Modal, Slider, Space, Stack, Text } from '
 import { CallMidwifeAlert, GoToHospitalAlert, PrepareForHospitalAlert } from '../Components/Alerts';
 import ContractionTimelineCustom from '../Components/Timeline/ContractionTimelineCustom';
 import contractionControlClasses from '../Components/Controls/ActiveContractionControls.module.css';
-import statsClasses from '../Components/Stats/ContractionStats.module.css';
 import statusCardClasses from '../Components/Controls/TrackingStatusCard.module.css';
+import statsClasses from '../Components/Stats/ContractionStats.module.css';
 import modalClasses from '@styles/modal.module.css';
 
 type CloseFunctionType = (...args: any[]) => void;
