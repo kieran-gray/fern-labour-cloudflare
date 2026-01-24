@@ -8,7 +8,7 @@ use worker::{Request, Response, RouteContext};
 
 use crate::{
     api_worker::{AppState, api::exceptions::ApiError},
-    read_models::notification_activity::read_model::NotificationActivity,
+    durable_object::read_side::read_models::NotificationActivity,
 };
 
 pub async fn handle_admin_command(
@@ -45,13 +45,6 @@ pub async fn handle_admin_command(
             .send_command(notification_id, command, &user, "/admin/command")
             .await
             .map_err(|e| format!("Failed to send admin command to DO: {e}"))?,
-
-        AdminApiCommand::Internal(command) => ctx
-            .data
-            .do_client
-            .send_command(notification_id, command, &user, "/notification/command")
-            .await
-            .map_err(|e| format!("Failed to send internal command to DO: {e}"))?,
     };
 
     info!(
@@ -102,8 +95,8 @@ async fn rebuild_activity_internal(app_state: &AppState) -> anyhow::Result<usize
 
     loop {
         let notifications = app_state
-            .notification_status_query
-            .get_notifications(batch_size + 1, cursor.clone())
+            .notification_status_repository
+            .get(batch_size + 1, cursor.clone())
             .await?;
 
         if notifications.is_empty() {

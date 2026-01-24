@@ -4,8 +4,8 @@ use fern_labour_event_sourcing_rs::{AsyncRepositoryTrait, DecodedCursor};
 use uuid::Uuid;
 use worker::{D1Database, wasm_bindgen::JsValue};
 
-use crate::read_models::notification_detail::read_model::{
-    NotificationDetail, NotificationDetailRow,
+use crate::durable_object::read_side::read_models::{
+    NotificationDetail, notification_detail::read_model::NotificationDetailRow,
 };
 
 pub struct D1NotificationDetailRepository {

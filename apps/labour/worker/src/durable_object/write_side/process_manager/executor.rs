@@ -3,10 +3,7 @@ use async_trait::async_trait;
 use fern_labour_labour_shared::value_objects::SubscriberContactMethod;
 use fern_labour_notifications_shared::{
     service_clients::notification::NotificationClient,
-    value_objects::{
-        NotificationChannel, NotificationPriority,
-        notification_template_data::NotificationTemplateData,
-    },
+    value_objects::{NotificationChannel, notification_template_data::NotificationTemplateData},
 };
 use fern_labour_workers_shared::{User, clients::worker_clients::user::UserServiceClient};
 use std::{collections::HashMap, rc::Rc};
@@ -199,7 +196,6 @@ impl LabourEffectExecutor {
                 destination,
                 template_data,
                 None,
-                NotificationPriority::default(),
             )
             .await
             .map_err(|e| anyhow!(e.to_string()))
@@ -240,7 +236,6 @@ impl LabourEffectExecutor {
                 destination,
                 template_data,
                 None,
-                NotificationPriority::default(),
             )
             .await
             .map_err(|e| anyhow!(e.to_string()))
@@ -272,7 +267,6 @@ impl LabourEffectExecutor {
                 email.to_string(),
                 template_data,
                 None,
-                NotificationPriority::default(),
             )
             .await
             .map_err(|e| anyhow!(e.to_string()))

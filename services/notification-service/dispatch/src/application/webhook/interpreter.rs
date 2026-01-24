@@ -9,6 +9,7 @@ use crate::application::webhook::ProviderStatusTranslator;
 pub struct WebhookInterpretation {
     pub external_id: String,
     pub status: NotificationStatus,
+    pub provider: String,
 }
 
 pub struct WebhookInterpreterService {
@@ -47,6 +48,7 @@ impl WebhookInterpreterService {
         Ok(WebhookInterpretation {
             external_id: external_id.to_string(),
             status,
+            provider: provider.to_string(),
         })
     }
 }

@@ -29,6 +29,11 @@
       "enabled": true
     }
   },
+  "triggers": {
+    "crons": [
+      "0 18 * * 1"
+    ]
+  },
   "services": [
     {
       "binding": "GENERATION_SERVICE_API",

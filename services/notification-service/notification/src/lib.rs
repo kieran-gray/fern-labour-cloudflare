@@ -1,13 +1,14 @@
 pub mod api_worker;
 pub mod durable_object;
-pub mod read_models;
 
+use fern_labour_notifications_shared::AdminCommand;
+use fern_labour_workers_shared::User;
 use tracing::{Instrument, error, info, info_span};
 use uuid::Uuid;
 
 use serde_json::json;
 
-use worker::{Context, Env, Request, Response, Result, event};
+use worker::{Context, Env, Request, Response, Result, ScheduleContext, ScheduledEvent, event};
 
 use crate::api_worker::{AppState, api::router::create_router, setup_observability};
 
@@ -43,4 +44,55 @@ async fn fetch(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     }
     .instrument(info_span!("request", request_id = %request_id))
     .await
+}
+
+#[event(scheduled)]
+async fn scheduled(controller: ScheduledEvent, env: Env, _ctx: ScheduleContext) {
+    async move {
+        let app_state = match AppState::from_env(&env) {
+            Ok(app_state) => app_state,
+            Err(err) => {
+                error!(error = ?err, "Failed to create app state");
+                return;
+            }
+        };
+        let deleted_notifications =
+            match app_state.notification_status_repository.get_deleted().await {
+                Ok(notifications) => notifications,
+                Err(err) => {
+                    error!(error = ?err, "Failed to create app state");
+                    return;
+                }
+            };
+        let admin_user = User::internal("fern-labour-notifications-admin");
+
+        let notification_count = deleted_notifications.len();
+        for notification in deleted_notifications {
+            let Ok(_) = app_state
+                .do_client
+                .send_command(
+                    notification.notification_id,
+                    AdminCommand::DeleteDurableObject {
+                        aggregate_id: notification.notification_id,
+                    },
+                    &admin_user,
+                    "/admin/command",
+                )
+                .await
+            else {
+                error!(notification_id = %notification.notification_id, "Notification DO Delete command failed");
+                continue;
+            };
+            if let Err(err) = app_state.notification_detail_repository.delete(notification.notification_id).await {
+                error!(notification_id = %notification.notification_id, err = %err, "Failed to delete notification detail row");
+            };
+            if let Err(err) = app_state.notification_status_repository.delete(notification.notification_id).await {
+                error!(notification_id = %notification.notification_id, err = %err, "Failed to delete notification status row");
+            };
+        }
+
+        info!("Deleted all data for {notification_count} notifications");
+    }
+    .instrument(info_span!("cron schedule", schedule = %controller.cron()))
+    .await;
 }

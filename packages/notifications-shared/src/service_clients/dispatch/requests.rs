@@ -11,3 +11,10 @@ pub struct DispatchRequest {
     pub rendered_content: RenderedContent,
     pub idempotency_key: String,
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct RedactRequest {
+    pub notification_id: Uuid,
+    pub external_id: String,
+    pub provider: String,
+}

@@ -2,10 +2,9 @@ use std::{collections::HashMap, str::FromStr};
 
 use anyhow::{Context, Result};
 use fern_labour_notifications_shared::{
-    InternalCommand, PublicCommand,
+    PublicCommand,
     value_objects::{
-        NotificationChannel, NotificationDestination, NotificationPriority,
-        NotificationTemplateData, RenderedContent,
+        NotificationChannel, NotificationDestination, NotificationTemplateData, RenderedContent,
     },
 };
 use serde::{Deserialize, Serialize};
@@ -20,7 +19,6 @@ pub enum NotificationCommand {
         destination: NotificationDestination,
         template_data: NotificationTemplateData,
         metadata: Option<HashMap<String, String>>,
-        priority: NotificationPriority,
     },
     StoreRenderedContent {
         notification_id: Uuid,
@@ -29,13 +27,23 @@ pub enum NotificationCommand {
     MarkAsDispatched {
         notification_id: Uuid,
         external_id: Option<String>,
+        sent_via_provider: String,
     },
     MarkAsDelivered {
         notification_id: Uuid,
+        provider: String,
     },
     MarkAsFailed {
         notification_id: Uuid,
         reason: Option<String>,
+        provider: String,
+    },
+    MarkContentRedacted {
+        notification_id: Uuid,
+        external_id: String,
+    },
+    DeleteNotification {
+        notification_id: Uuid,
     },
 }
 
@@ -48,7 +56,6 @@ impl TryFrom<(PublicCommand, Uuid)> for NotificationCommand {
                 destination,
                 template_data,
                 metadata,
-                priority,
             } => {
                 let channel = NotificationChannel::from_str(&channel).with_context(|| {
                     format!(
@@ -79,40 +86,8 @@ impl TryFrom<(PublicCommand, Uuid)> for NotificationCommand {
                     destination,
                     template_data,
                     metadata,
-                    priority,
                 })
             }
-        }
-    }
-}
-
-impl From<InternalCommand> for NotificationCommand {
-    fn from(cmd: InternalCommand) -> Self {
-        match cmd {
-            InternalCommand::StoreRenderedContent {
-                notification_id,
-                rendered_content,
-            } => NotificationCommand::StoreRenderedContent {
-                notification_id,
-                rendered_content,
-            },
-            InternalCommand::MarkAsDispatched {
-                notification_id,
-                external_id,
-            } => NotificationCommand::MarkAsDispatched {
-                notification_id,
-                external_id,
-            },
-            InternalCommand::MarkAsDelivered { notification_id } => {
-                NotificationCommand::MarkAsDelivered { notification_id }
-            }
-            InternalCommand::MarkAsFailed {
-                notification_id,
-                reason,
-            } => NotificationCommand::MarkAsFailed {
-                notification_id,
-                reason,
-            },
         }
     }
 }

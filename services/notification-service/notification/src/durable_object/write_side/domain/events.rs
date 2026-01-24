@@ -1,6 +1,5 @@
 use fern_labour_notifications_shared::value_objects::{
-    NotificationChannel, NotificationDestination, NotificationPriority, NotificationTemplateData,
-    RenderedContent,
+    NotificationChannel, NotificationDestination, NotificationTemplateData, RenderedContent,
 };
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fmt::Debug};
@@ -15,7 +14,6 @@ pub struct NotificationRequested {
     pub destination: NotificationDestination,
     pub template_data: NotificationTemplateData,
     pub metadata: Option<HashMap<String, String>>,
-    pub priority: NotificationPriority,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -28,19 +26,33 @@ pub struct RenderedContentStored {
 pub struct NotificationDispatched {
     pub notification_id: Uuid,
     pub external_id: Option<String>,
+    pub sent_via_provider: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct NotificationDelivered {
     pub notification_id: Uuid,
     pub external_id: String,
+    pub provider: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct NotificationDeliveryFailed {
     pub notification_id: Uuid,
     pub external_id: String,
+    pub provider: String,
     pub reason: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct NotificationContentRedacted {
+    pub notification_id: Uuid,
+    pub external_id: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct NotificationDeleted {
+    pub notification_id: Uuid,
 }
 
 impl_event!(NotificationRequested, notification_id);
@@ -48,6 +60,8 @@ impl_event!(RenderedContentStored, notification_id);
 impl_event!(NotificationDispatched, notification_id);
 impl_event!(NotificationDelivered, notification_id);
 impl_event!(NotificationDeliveryFailed, notification_id);
+impl_event!(NotificationContentRedacted, notification_id);
+impl_event!(NotificationDeleted, notification_id);
 
 use fern_labour_event_sourcing_rs::StoredEvent;
 
@@ -59,6 +73,8 @@ pub enum NotificationEvent {
     NotificationDispatched(NotificationDispatched),
     NotificationDelivered(NotificationDelivered),
     NotificationDeliveryFailed(NotificationDeliveryFailed),
+    NotificationContentRedacted(NotificationContentRedacted),
+    NotificationDeleted(NotificationDeleted),
 }
 
 impl NotificationEvent {
@@ -99,5 +115,7 @@ delegate_event_impl!(
     RenderedContentStored,
     NotificationDispatched,
     NotificationDelivered,
-    NotificationDeliveryFailed
+    NotificationDeliveryFailed,
+    NotificationContentRedacted,
+    NotificationDeleted,
 );

@@ -10,71 +10,56 @@ use worker::Env;
 
 use crate::{
     api_worker::Config,
-    read_models::{
-        notification_activity::{
-            D1NotificationActivityRepository,
-            query::{NotificationActivityQuery, NotificationActivityQueryHandler},
-            repository::NotificationActivityRepository,
-        },
-        notification_detail::{
-            D1NotificationDetailRepository,
-            query::{NotificationDetailQuery, NotificationDetailQueryHandler},
-        },
-        notification_status::{
-            D1NotificationStatusRepository,
-            query::{NotificationStatusQuery, NotificationStatusQueryHandler},
-        },
+    durable_object::read_side::read_models::{
+        D1NotificationActivityRepository, D1NotificationDetailRepository,
+        D1NotificationStatusRepository,
+        notification_activity::repository::NotificationActivityRepositoryTrait,
+        notification_detail::repository::NotificationDetailRepositoryTrait,
+        notification_status::repository::NotificationStatusRepositoryTrait,
     },
 };
 
 pub struct AppState {
     pub config: Config,
     pub auth_service: Box<dyn AuthServiceClient>,
-    pub notification_detail_query: Box<dyn NotificationDetailQueryHandler>,
-    pub notification_status_query: Box<dyn NotificationStatusQueryHandler>,
-    pub notification_activity_query: Box<dyn NotificationActivityQueryHandler>,
-    pub notification_activity_repository: Box<dyn NotificationActivityRepository>,
+    pub notification_detail_repository: Box<dyn NotificationDetailRepositoryTrait>,
+    pub notification_status_repository: Box<dyn NotificationStatusRepositoryTrait>,
+    pub notification_activity_repository: Box<dyn NotificationActivityRepositoryTrait>,
     pub do_client: DurableObjectCQRSClient,
     pub dispatch_client: Box<dyn DispatchClient>,
 }
 
 impl AppState {
-    fn create_notification_status_query(
+    fn create_notification_status_repository(
         env: &Env,
-    ) -> Result<Box<dyn NotificationStatusQueryHandler>> {
+    ) -> Result<Box<dyn NotificationStatusRepositoryTrait>> {
         let notification_db: worker::D1Database = env
             .d1("NOTIFICATION_READ_DB")
             .context("Missing binding NOTIFICATION_READ_DB")?;
-        let notification_status_repository =
-            Box::new(D1NotificationStatusRepository::create(notification_db));
-        Ok(Box::new(NotificationStatusQuery::create(
-            notification_status_repository,
+        Ok(Box::new(D1NotificationStatusRepository::create(
+            notification_db,
         )))
     }
 
-    fn create_notification_detail_query(
+    fn create_notification_detail_repository(
         env: &Env,
-    ) -> Result<Box<dyn NotificationDetailQueryHandler>> {
+    ) -> Result<Box<dyn NotificationDetailRepositoryTrait>> {
         let notification_db: worker::D1Database = env
             .d1("NOTIFICATION_READ_DB")
             .context("Missing binding NOTIFICATION_READ_DB")?;
-        let notification_detail_repository =
-            Box::new(D1NotificationDetailRepository::create(notification_db));
-        Ok(Box::new(NotificationDetailQuery::create(
-            notification_detail_repository,
+        Ok(Box::new(D1NotificationDetailRepository::create(
+            notification_db,
         )))
     }
 
-    fn create_notification_activity_query(
+    fn create_notification_activity_repository(
         env: &Env,
-    ) -> Result<Box<dyn NotificationActivityQueryHandler>> {
+    ) -> Result<Box<dyn NotificationActivityRepositoryTrait>> {
         let notification_db: worker::D1Database = env
             .d1("NOTIFICATION_READ_DB")
             .context("Missing binding NOTIFICATION_READ_DB")?;
-        let notification_activity_repository =
-            Box::new(D1NotificationActivityRepository::create(notification_db));
-        Ok(Box::new(NotificationActivityQuery::create(
-            notification_activity_repository,
+        Ok(Box::new(D1NotificationActivityRepository::create(
+            notification_db,
         )))
     }
 
@@ -110,16 +95,9 @@ impl AppState {
     pub fn from_env(env: &Env) -> Result<Self> {
         let config = Config::from_env(env)?;
         let auth_service = Self::create_auth_service(env)?;
-        let notification_detail_query = Self::create_notification_detail_query(env)?;
-        let notification_status_query = Self::create_notification_status_query(env)?;
-        let notification_activity_query = Self::create_notification_activity_query(env)?;
-
-        // TODO analytics service
-        let notification_db: worker::D1Database = env
-            .d1("NOTIFICATION_READ_DB")
-            .context("Missing binding NOTIFICATION_READ_DB")?;
-        let notification_activity_repository =
-            Box::new(D1NotificationActivityRepository::create(notification_db));
+        let notification_detail_repository = Self::create_notification_detail_repository(env)?;
+        let notification_status_repository = Self::create_notification_status_repository(env)?;
+        let notification_activity_repository = Self::create_notification_activity_repository(env)?;
 
         let do_client = Self::create_do_client(env)?;
         let dispatch_client = Self::create_dispatch(env, &config.internal_service_token)?;
@@ -127,9 +105,8 @@ impl AppState {
         Ok(Self {
             config,
             auth_service,
-            notification_detail_query,
-            notification_status_query,
-            notification_activity_query,
+            notification_detail_repository,
+            notification_status_repository,
             notification_activity_repository,
             do_client,
             dispatch_client,

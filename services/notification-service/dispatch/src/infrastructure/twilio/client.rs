@@ -2,6 +2,7 @@ use anyhow::{Context, Result, anyhow};
 use base64::{Engine as _, engine::general_purpose};
 use tracing::error;
 use uuid::Uuid;
+use worker::{RequestInit, Response};
 
 use crate::setup::config::TwilioConfig;
 
@@ -14,7 +15,7 @@ pub struct TwilioClient {
 impl TwilioClient {
     pub fn new(twilio_config: &TwilioConfig) -> Self {
         let twilio_url = format!(
-            "https://api.twilio.com/2010-04-01/Accounts/{}/Messages.json",
+            "https://api.twilio.com/2010-04-01/Accounts/{}/",
             twilio_config.account_sid
         );
 
@@ -35,7 +36,7 @@ impl TwilioClient {
         &self.messaging_service_sid
     }
 
-    pub async fn send_message(&self, notification_id: Uuid, form_data: String) -> Result<String> {
+    fn new_request(&self) -> Result<RequestInit> {
         let mut request_init = worker::RequestInit::new();
         request_init.with_method(worker::Method::Post);
 
@@ -48,15 +49,23 @@ impl TwilioClient {
             .context("Failed to set Content-Type header")?;
 
         request_init.with_headers(headers);
+        Ok(request_init)
+    }
+
+    async fn post(&self, request: RequestInit, url: &str) -> Result<Response> {
+        worker::Fetch::Request(worker::Request::new_with_init(url, &request)?)
+            .send()
+            .await
+            .map_err(|e| anyhow!("Twilio API request failed: {e}"))
+    }
+
+    pub async fn send_message(&self, notification_id: Uuid, form_data: String) -> Result<String> {
+        let mut request_init = self.new_request()?;
         request_init.with_body(Some(form_data.into()));
 
-        let mut response = worker::Fetch::Request(worker::Request::new_with_init(
-            &self.twilio_url,
-            &request_init,
-        )?)
-        .send()
-        .await
-        .map_err(|e| anyhow!("Twilio API request failed: {e}"))?;
+        let mut response = self
+            .post(request_init, &format!("{}Messages.json", self.twilio_url))
+            .await?;
 
         let status = response.status_code();
         if !(200..=299).contains(&status) {
@@ -85,5 +94,48 @@ impl TwilioClient {
             .to_string();
 
         Ok(message_sid)
+    }
+
+    pub async fn redact_message_content(
+        &self,
+        message_sid: String,
+        form_data: String,
+    ) -> Result<()> {
+        let mut request_init = self.new_request()?;
+        request_init.with_body(Some(form_data.into()));
+
+        let mut response = self
+            .post(
+                request_init,
+                &format!("{}{}.json", self.twilio_url, message_sid),
+            )
+            .await?;
+
+        let status = response.status_code();
+        if !(200..=299).contains(&status) {
+            let error_text = response
+                .text()
+                .await
+                .context("Failed to read error response")?;
+
+            error!(status = status, error = %error_text, "Twilio API error");
+            anyhow::bail!("Twilio API error (status {}): {}", status, error_text);
+        }
+
+        let response_json: serde_json::Value = response
+            .json()
+            .await
+            .map_err(|e| anyhow!("Failed to parse Twilio response: {e}"))?;
+
+        let body = response_json["body"]
+            .as_str()
+            .ok_or_else(|| anyhow!("No 'body' field in Twilio response"))?
+            .to_string();
+
+        if body != "" {
+            anyhow::bail!("Failed to redact message content, body still has data: `{body}`")
+        }
+
+        Ok(())
     }
 }

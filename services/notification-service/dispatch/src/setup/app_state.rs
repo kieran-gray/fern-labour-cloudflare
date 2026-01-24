@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use anyhow::Result;
 use fern_labour_workers_shared::ConfigTrait;
 use worker::Env;
@@ -29,10 +31,10 @@ impl AppState {
     pub fn from_env(env: &Env) -> Result<Self> {
         let config = Config::from_env(env)?;
 
-        let gateways: Vec<Box<dyn NotificationGatewayTrait>> = vec![
-            Box::new(TwilioSmsNotificationGateway::create(&config.twilio)),
-            Box::new(TwilioWhatsappNotificationGateway::create(&config.twilio)),
-            Box::new(ResendEmailNotificationGateway::create(&config.resend)),
+        let gateways: Vec<Rc<dyn NotificationGatewayTrait>> = vec![
+            Rc::new(TwilioSmsNotificationGateway::create(&config.twilio)),
+            Rc::new(TwilioWhatsappNotificationGateway::create(&config.twilio)),
+            Rc::new(ResendEmailNotificationGateway::create(&config.resend)),
         ];
         let verifiers: Vec<Box<dyn WebhookVerifier>> = vec![
             Box::new(TwilioWebhookVerifier::create(

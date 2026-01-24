@@ -1,4 +1,4 @@
-pub mod query;
+pub mod projector;
 pub mod read_model;
 pub mod repository;
 

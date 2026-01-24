@@ -7,33 +7,28 @@ use worker::{Env, State};
 
 use fern_labour_event_sourcing_rs::{AggregateRepository, AsyncProjector};
 
-use crate::{
-    durable_object::{
-        read_side::{
-            QueryService,
-            projection_processor::ProjectionProcessor,
-            projectors::{
-                notification_detail::NotificationDetailProjector,
-                notification_status::NotificationStatusProjector,
-            },
-        },
-        write_side::{
-            application::command_processors::{
-                NotificationCommandProcessor, ServiceCommandProcessor,
-            },
-            domain::NotificationEvent,
-            infrastructure::SqlEventStore,
-            process_manager::{EffectLedger, NotificationEffectExecutor, ProcessManager},
+use crate::durable_object::{
+    read_side::{
+        QueryService,
+        projection_processor::ProjectionProcessor,
+        read_models::{
+            D1NotificationDetailRepository, D1NotificationStatusRepository,
+            NotificationDetailProjector, NotificationStatusProjector,
         },
     },
-    read_models::{
-        notification_detail::D1NotificationDetailRepository,
-        notification_status::D1NotificationStatusRepository,
+    write_side::{
+        application::command_processors::{
+            AdminCommandProcessor, NotificationCommandProcessor, ServiceCommandProcessor,
+        },
+        domain::NotificationEvent,
+        infrastructure::SqlEventStore,
+        process_manager::{EffectLedger, NotificationEffectExecutor, ProcessManager},
     },
 };
 
 pub struct WriteModel {
     pub notification_command_processor: NotificationCommandProcessor,
+    pub admin_command_processor: AdminCommandProcessor,
 }
 
 pub struct ReadModel {
@@ -102,8 +97,11 @@ impl AggregateServices {
         let repository = Box::new(AggregateRepository::new(event_store.clone()));
         let notification_command_processor = NotificationCommandProcessor::new(repository);
 
+        let admin_command_processor = AdminCommandProcessor::new(state.storage());
+
         Ok(WriteModel {
             notification_command_processor,
+            admin_command_processor,
         })
     }
 

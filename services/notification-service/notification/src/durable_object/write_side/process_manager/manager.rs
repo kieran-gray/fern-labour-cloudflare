@@ -72,6 +72,7 @@ where
             let effects = match &event {
                 NotificationEvent::NotificationRequested(e) => e.apply_policies(&ctx),
                 NotificationEvent::RenderedContentStored(e) => e.apply_policies(&ctx),
+                NotificationEvent::NotificationDelivered(e) => e.apply_policies(&ctx),
                 _ => vec![],
             };
 

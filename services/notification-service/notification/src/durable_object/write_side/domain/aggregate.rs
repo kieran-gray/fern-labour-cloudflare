@@ -1,8 +1,8 @@
 use std::{collections::HashMap, fmt::Debug};
 
 use fern_labour_notifications_shared::value_objects::{
-    NotificationChannel, NotificationDestination, NotificationPriority, NotificationStatus,
-    NotificationTemplateData, RenderedContent,
+    NotificationChannel, NotificationDestination, NotificationStatus, NotificationTemplateData,
+    RenderedContent,
 };
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -10,7 +10,8 @@ use uuid::Uuid;
 use fern_labour_event_sourcing_rs::Aggregate;
 
 use crate::durable_object::write_side::domain::{
-    NotificationCommand, NotificationError, NotificationEvent,
+    NotificationCommand, NotificationContentRedacted, NotificationDeleted, NotificationError,
+    NotificationEvent,
     events::{
         NotificationDelivered, NotificationDeliveryFailed, NotificationDispatched,
         NotificationRequested, RenderedContentStored,
@@ -25,8 +26,8 @@ pub struct Notification {
     destination: NotificationDestination,
     template_data: NotificationTemplateData,
     metadata: Option<HashMap<String, String>>,
-    priority: NotificationPriority,
     external_id: Option<String>,
+    sent_via_provider: Option<String>,
     rendered_content: Option<RenderedContent>,
     failure_reason: Option<String>,
 }
@@ -67,14 +68,6 @@ impl Notification {
     pub fn failure_reason(&self) -> Option<&String> {
         self.failure_reason.as_ref()
     }
-
-    pub fn priority(&self) -> &NotificationPriority {
-        &self.priority
-    }
-
-    pub fn is_priority(&self) -> bool {
-        self.priority.is_high()
-    }
 }
 
 impl Aggregate for Notification {
@@ -94,7 +87,6 @@ impl Aggregate for Notification {
                 self.destination = e.destination.clone();
                 self.template_data = e.template_data.clone();
                 self.metadata = e.metadata.clone();
-                self.priority = e.priority;
                 self.status = NotificationStatus::REQUESTED;
             }
             NotificationEvent::RenderedContentStored(e) => {
@@ -112,6 +104,12 @@ impl Aggregate for Notification {
                 self.status = NotificationStatus::FAILED;
                 self.failure_reason = e.reason.clone();
             }
+            NotificationEvent::NotificationContentRedacted(_) => {
+                self.status = NotificationStatus::REDACTED;
+            }
+            NotificationEvent::NotificationDeleted(_) => {
+                self.status = NotificationStatus::DELETED;
+            }
         }
     }
 
@@ -126,7 +124,6 @@ impl Aggregate for Notification {
                 destination,
                 template_data,
                 metadata,
-                priority,
             } => {
                 if state.is_some() {
                     return Err(NotificationError::AlreadyExists);
@@ -146,7 +143,6 @@ impl Aggregate for Notification {
                         destination,
                         template_data: template_data.clone(),
                         metadata,
-                        priority,
                     },
                 )]
             }
@@ -179,6 +175,7 @@ impl Aggregate for Notification {
             }
             NotificationCommand::MarkAsDispatched {
                 notification_id,
+                sent_via_provider,
                 external_id,
             } => {
                 let Some(notification) = &state else {
@@ -197,10 +194,14 @@ impl Aggregate for Notification {
                     NotificationDispatched {
                         notification_id,
                         external_id,
+                        sent_via_provider,
                     },
                 )]
             }
-            NotificationCommand::MarkAsDelivered { notification_id } => {
+            NotificationCommand::MarkAsDelivered {
+                notification_id,
+                provider,
+            } => {
                 let Some(notification) = &state else {
                     return Err(NotificationError::NotFound);
                 };
@@ -221,12 +222,14 @@ impl Aggregate for Notification {
                     NotificationDelivered {
                         notification_id,
                         external_id,
+                        provider,
                     },
                 )]
             }
             NotificationCommand::MarkAsFailed {
                 notification_id,
                 reason,
+                provider,
             } => {
                 let Some(notification) = &state else {
                     return Err(NotificationError::NotFound);
@@ -249,7 +252,46 @@ impl Aggregate for Notification {
                         notification_id,
                         external_id,
                         reason,
+                        provider,
                     },
+                )]
+            }
+            NotificationCommand::MarkContentRedacted {
+                notification_id,
+                external_id,
+            } => {
+                let Some(notification) = &state else {
+                    return Err(NotificationError::NotFound);
+                };
+
+                if NotificationStatus::DELIVERED != notification.status {
+                    return Err(NotificationError::InvalidStateTransition(
+                        "Can only redact content from DELIVERED state".to_string(),
+                    ));
+                }
+
+                vec![NotificationEvent::NotificationContentRedacted(
+                    NotificationContentRedacted {
+                        notification_id,
+                        external_id,
+                    },
+                )]
+            }
+            NotificationCommand::DeleteNotification { notification_id } => {
+                let Some(notification) = &state else {
+                    return Err(NotificationError::NotFound);
+                };
+
+                if ![NotificationStatus::DELIVERED, NotificationStatus::REDACTED]
+                    .contains(&notification.status)
+                {
+                    return Err(NotificationError::InvalidStateTransition(
+                        "Cannot delete notification in current state".to_string(),
+                    ));
+                }
+
+                vec![NotificationEvent::NotificationDeleted(
+                    NotificationDeleted { notification_id },
                 )]
             }
         };
@@ -265,8 +307,8 @@ impl Aggregate for Notification {
                 destination: e.destination.clone(),
                 template_data: e.template_data.clone(),
                 metadata: e.metadata.clone(),
-                priority: e.priority,
                 external_id: None,
+                sent_via_provider: None,
                 rendered_content: None,
                 failure_reason: None,
             },
@@ -311,7 +353,6 @@ mod tests {
             destination: create_test_destination(),
             template_data: data.clone(),
             metadata: None,
-            priority: NotificationPriority::default(),
         };
 
         let events = Notification::handle_command(None, command).unwrap();
@@ -334,8 +375,8 @@ mod tests {
             destination: create_test_destination(),
             template_data: data.clone(),
             metadata: None,
-            priority: NotificationPriority::default(),
             external_id: None,
+            sent_via_provider: None,
             rendered_content: None,
             failure_reason: None,
         };
@@ -346,7 +387,6 @@ mod tests {
             destination: create_test_destination(),
             template_data: data,
             metadata: None,
-            priority: NotificationPriority::default(),
         };
 
         let result = Notification::handle_command(Some(&existing), command);
@@ -365,8 +405,8 @@ mod tests {
             destination: create_test_destination(),
             template_data: create_test_data(),
             metadata: None,
-            priority: NotificationPriority::default(),
             external_id: None,
+            sent_via_provider: None,
             rendered_content: None,
             failure_reason: None,
         };
@@ -398,8 +438,8 @@ mod tests {
             destination: create_test_destination(),
             template_data: create_test_data(),
             metadata: None,
-            priority: NotificationPriority::default(),
             external_id: Some("ext-123".to_string()),
+            sent_via_provider: None,
             rendered_content: None,
             failure_reason: None,
         };
@@ -431,8 +471,8 @@ mod tests {
             destination: create_test_destination(),
             template_data: create_test_data(),
             metadata: None,
-            priority: NotificationPriority::default(),
             external_id: None,
+            sent_via_provider: None,
             rendered_content: Some(RenderedContent::Email {
                 subject: "Test Subject".into(),
                 html_body: "<h1>TestBody</h1>".into(),
@@ -442,6 +482,7 @@ mod tests {
 
         let command = NotificationCommand::MarkAsDispatched {
             notification_id,
+            sent_via_provider: "twilio".to_string(),
             external_id: Some("ext-123".to_string()),
         };
 
@@ -468,8 +509,8 @@ mod tests {
             destination: create_test_destination(),
             template_data: create_test_data(),
             metadata: None,
-            priority: NotificationPriority::default(),
             external_id: Some("ext-123".to_string()),
+            sent_via_provider: None,
             rendered_content: Some(RenderedContent::Email {
                 subject: "Test Subject".into(),
                 html_body: "<h1>TestBody</h1>".into(),
@@ -479,6 +520,7 @@ mod tests {
 
         let command = NotificationCommand::MarkAsDispatched {
             notification_id,
+            sent_via_provider: "twilio".to_string(),
             external_id: Some("ext-456".to_string()),
         };
 
@@ -501,8 +543,8 @@ mod tests {
             destination: create_test_destination(),
             template_data: create_test_data(),
             metadata: None,
-            priority: NotificationPriority::default(),
             external_id: Some("ext-123".to_string()),
+            sent_via_provider: None,
             rendered_content: Some(RenderedContent::Email {
                 subject: "Test Subject".into(),
                 html_body: "<h1>TestBody</h1>".into(),
@@ -510,7 +552,10 @@ mod tests {
             failure_reason: None,
         };
 
-        let command = NotificationCommand::MarkAsDelivered { notification_id };
+        let command = NotificationCommand::MarkAsDelivered {
+            notification_id,
+            provider: "Test".to_string(),
+        };
 
         let events = Notification::handle_command(Some(&notification), command).unwrap();
 
@@ -532,13 +577,16 @@ mod tests {
             destination: create_test_destination(),
             template_data: create_test_data(),
             metadata: None,
-            priority: NotificationPriority::default(),
             external_id: None,
+            sent_via_provider: None,
             rendered_content: None,
             failure_reason: None,
         };
 
-        let command = NotificationCommand::MarkAsDelivered { notification_id };
+        let command = NotificationCommand::MarkAsDelivered {
+            notification_id,
+            provider: "Test".to_string(),
+        };
 
         let result = Notification::handle_command(Some(&notification), command);
 
@@ -559,8 +607,8 @@ mod tests {
             destination: create_test_destination(),
             template_data: create_test_data(),
             metadata: None,
-            priority: NotificationPriority::default(),
             external_id: None,
+            sent_via_provider: None,
             rendered_content: Some(RenderedContent::Email {
                 subject: "Test Subject".into(),
                 html_body: "<h1>TestBody</h1>".into(),
@@ -568,7 +616,10 @@ mod tests {
             failure_reason: None,
         };
 
-        let command = NotificationCommand::MarkAsDelivered { notification_id };
+        let command = NotificationCommand::MarkAsDelivered {
+            notification_id,
+            provider: "Test".to_string(),
+        };
 
         let result = Notification::handle_command(Some(&notification), command);
 
@@ -589,8 +640,8 @@ mod tests {
             destination: create_test_destination(),
             template_data: create_test_data(),
             metadata: None,
-            priority: NotificationPriority::default(),
             external_id: Some("ext-123".to_string()),
+            sent_via_provider: None,
             rendered_content: Some(RenderedContent::Email {
                 subject: "Test Subject".into(),
                 html_body: "<h1>TestBody</h1>".into(),
@@ -601,6 +652,7 @@ mod tests {
         let command = NotificationCommand::MarkAsFailed {
             notification_id,
             reason: Some("Something went wrong".to_string()),
+            provider: "Test".to_string(),
         };
 
         let events = Notification::handle_command(Some(&notification), command).unwrap();
@@ -623,8 +675,8 @@ mod tests {
             destination: create_test_destination(),
             template_data: create_test_data(),
             metadata: None,
-            priority: NotificationPriority::default(),
             external_id: None,
+            sent_via_provider: None,
             rendered_content: None,
             failure_reason: None,
         };
@@ -632,6 +684,7 @@ mod tests {
         let command = NotificationCommand::MarkAsFailed {
             notification_id,
             reason: Some("Something went wrong".to_string()),
+            provider: "Test".to_string(),
         };
 
         let result = Notification::handle_command(Some(&notification), command);
@@ -654,7 +707,6 @@ mod tests {
                 destination: create_test_destination(),
                 template_data: data.clone(),
                 metadata: None,
-                priority: NotificationPriority::default(),
             }),
             NotificationEvent::RenderedContentStored(RenderedContentStored {
                 notification_id,
@@ -665,6 +717,7 @@ mod tests {
             }),
             NotificationEvent::NotificationDispatched(NotificationDispatched {
                 notification_id,
+                sent_via_provider: "test".to_string(),
                 external_id: Some("ext-123".to_string()),
             }),
         ];
@@ -697,8 +750,8 @@ mod tests {
             destination: create_test_destination(),
             template_data: data.clone(),
             metadata: None,
-            priority: NotificationPriority::default(),
             external_id: None,
+            sent_via_provider: None,
             rendered_content: None,
             failure_reason: None,
         };
@@ -723,6 +776,7 @@ mod tests {
         notification.apply(&NotificationEvent::NotificationDispatched(
             NotificationDispatched {
                 notification_id,
+                sent_via_provider: "test".to_string(),
                 external_id: Some("ext-123".to_string()),
             },
         ));
@@ -733,8 +787,22 @@ mod tests {
             NotificationDelivered {
                 notification_id,
                 external_id: "ext-123".to_string(),
+                provider: "Test".to_string(),
             },
         ));
         assert_eq!(notification.status(), &NotificationStatus::DELIVERED);
+
+        notification.apply(&NotificationEvent::NotificationContentRedacted(
+            NotificationContentRedacted {
+                notification_id,
+                external_id: "ext-123".to_string(),
+            },
+        ));
+        assert_eq!(notification.status(), &NotificationStatus::REDACTED);
+
+        notification.apply(&NotificationEvent::NotificationDeleted(
+            NotificationDeleted { notification_id },
+        ));
+        assert_eq!(notification.status(), &NotificationStatus::DELETED);
     }
 }

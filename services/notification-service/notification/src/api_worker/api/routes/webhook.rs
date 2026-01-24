@@ -1,9 +1,9 @@
-use fern_labour_notifications_shared::{InternalCommand, value_objects::NotificationStatus};
+use fern_labour_notifications_shared::value_objects::NotificationStatus;
 use fern_labour_workers_shared::User;
 use tracing::{info, warn};
 use worker::{Request, Response, RouteContext};
 
-use crate::api_worker::AppState;
+use crate::{api_worker::AppState, durable_object::write_side::domain::NotificationCommand};
 
 pub async fn process_delivery_webhook(
     req: Request,
@@ -18,7 +18,7 @@ pub async fn process_delivery_webhook(
 
     let notification = ctx
         .data
-        .notification_detail_query
+        .notification_detail_repository
         .get_by_external_id(webhook_interpretation.external_id)
         .await
         .map_err(|e| worker::Error::RustError(format!("Failed to fetch notification: {}", e)))?;
@@ -26,12 +26,14 @@ pub async fn process_delivery_webhook(
     let user = User::internal("fern-labour-internal-notification");
 
     let command = match webhook_interpretation.status {
-        NotificationStatus::DELIVERED => InternalCommand::MarkAsDelivered {
+        NotificationStatus::DELIVERED => NotificationCommand::MarkAsDelivered {
             notification_id: notification.notification_id,
+            provider: webhook_interpretation.provider,
         },
-        NotificationStatus::FAILED => InternalCommand::MarkAsFailed {
+        NotificationStatus::FAILED => NotificationCommand::MarkAsFailed {
             notification_id: notification.notification_id,
             reason: Some("Provider webhook reported failure".to_string()),
+            provider: webhook_interpretation.provider,
         },
         _ => return Response::empty(),
     };
@@ -43,7 +45,7 @@ pub async fn process_delivery_webhook(
             notification.notification_id,
             command,
             &user,
-            "/notification/command",
+            "/notification/domain",
         )
         .await
     {

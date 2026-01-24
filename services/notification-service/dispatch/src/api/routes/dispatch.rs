@@ -27,9 +27,9 @@ pub async fn dispatch(
     );
 
     match ctx.data.notification_router.dispatch(context).await {
-        Ok(external_id) => {
+        Ok(result) => {
             info!("Notification dispatched successfully");
-            let response = DispatchResponse { external_id };
+            let response: DispatchResponse = result.into();
             Response::from_json(&response)
         }
         Err(e) => {
