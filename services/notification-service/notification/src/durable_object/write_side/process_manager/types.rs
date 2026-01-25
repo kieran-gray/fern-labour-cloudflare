@@ -43,7 +43,7 @@ impl Effect {
     pub fn effect_type(&self) -> &'static str {
         match self {
             Effect::ServiceCommand { .. } => "SERVICE_COMMAND",
-            Effect::DomainCommand { .. } => "DOMAIN_COMMAND"
+            Effect::DomainCommand { .. } => "DOMAIN_COMMAND",
         }
     }
 }
