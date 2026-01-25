@@ -56,38 +56,35 @@ async fn scheduled(controller: ScheduledEvent, env: Env, _ctx: ScheduleContext) 
                 return;
             }
         };
-        let deleted_notifications =
-            match app_state.notification_status_repository.get_deleted().await {
-                Ok(notifications) => notifications,
+        let deleted_notification_ids =
+            match app_state.notification_detail_repository.get_deleted_ids().await {
+                Ok(ids) => ids,
                 Err(err) => {
-                    error!(error = ?err, "Failed to create app state");
+                    error!(error = ?err, "Failed to fetch deleted notification IDs");
                     return;
                 }
             };
         let admin_user = User::internal("fern-labour-notifications-admin");
 
-        let notification_count = deleted_notifications.len();
-        for notification in deleted_notifications {
+        let notification_count = deleted_notification_ids.len();
+        for notification_id in deleted_notification_ids {
             let Ok(_) = app_state
                 .do_client
                 .send_command(
-                    notification.notification_id,
+                    notification_id,
                     AdminCommand::DeleteDurableObject {
-                        aggregate_id: notification.notification_id,
+                        aggregate_id: notification_id,
                     },
                     &admin_user,
                     "/admin/command",
                 )
                 .await
             else {
-                error!(notification_id = %notification.notification_id, "Notification DO Delete command failed");
+                error!(notification_id = %notification_id, "Notification DO Delete command failed");
                 continue;
             };
-            if let Err(err) = app_state.notification_detail_repository.delete(notification.notification_id).await {
-                error!(notification_id = %notification.notification_id, err = %err, "Failed to delete notification detail row");
-            };
-            if let Err(err) = app_state.notification_status_repository.delete(notification.notification_id).await {
-                error!(notification_id = %notification.notification_id, err = %err, "Failed to delete notification status row");
+            if let Err(err) = app_state.notification_detail_repository.delete(notification_id).await {
+                error!(notification_id = %notification_id, err = %err, "Failed to delete notification detail row");
             };
         }
 

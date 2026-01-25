@@ -1,12 +1,18 @@
-use anyhow::{Context, Result, anyhow};
+use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use fern_labour_event_sourcing_rs::{AsyncRepositoryTrait, DecodedCursor};
+use serde::Deserialize;
 use uuid::Uuid;
 use worker::{D1Database, wasm_bindgen::JsValue};
 
 use crate::durable_object::read_side::read_models::{
     NotificationDetail, notification_detail::read_model::NotificationDetailRow,
 };
+
+#[async_trait(?Send)]
+pub trait NotificationDetailRepositoryDeletedTrait {
+    async fn get_deleted_ids(&self) -> Result<Vec<Uuid>>;
+}
 
 pub struct D1NotificationDetailRepository {
     db: D1Database,
@@ -18,7 +24,9 @@ pub trait NotificationExternalIdTrait {
 }
 
 pub trait NotificationDetailRepositoryTrait:
-    NotificationExternalIdTrait + AsyncRepositoryTrait<NotificationDetail>
+    NotificationExternalIdTrait
+    + AsyncRepositoryTrait<NotificationDetail>
+    + NotificationDetailRepositoryDeletedTrait
 {
 }
 
@@ -35,10 +43,10 @@ impl AsyncRepositoryTrait<NotificationDetail> for D1NotificationDetailRepository
             .db
             .prepare("SELECT * FROM notification_details WHERE notification_id = ?1")
             .bind(&[notification_id.to_string().into()])
-            .context("Failed to prepare notification detail query")?
+            .map_err(|e| anyhow!("Failed to prepare notification detail query: {e}"))?
             .first(None)
             .await
-            .context("Failed to fetch notification detail")?;
+            .map_err(|e| anyhow!("Failed to fetch notification detail: {e}"))?;
 
         match result {
             Some(row) => row.into_read_model(),
@@ -73,21 +81,21 @@ impl AsyncRepositoryTrait<NotificationDetail> for D1NotificationDetailRepository
             .db
             .prepare(query)
             .bind(&bindings)
-            .context("Failed to bind parameters")?;
+            .map_err(|e| anyhow!("Failed to bind parameters: {e}"))?;
 
         let rows: Vec<NotificationDetailRow> = statement
             .all()
             .await
-            .context("Failed to fetch notification detail")?
+            .map_err(|e| anyhow!("Failed to fetch notification detail: {e}"))?
             .results()
-            .context("Failed to parse notification detail results")?;
+            .map_err(|e| anyhow!("Failed to parse notification detail results: {e}"))?;
 
         rows.into_iter().map(|row| row.into_read_model()).collect()
     }
 
     async fn upsert(&self, notification: &NotificationDetail) -> Result<()> {
         let row = NotificationDetailRow::from_read_model(notification)
-            .context("Failed to convert notification to row")?;
+            .map_err(|e| anyhow!("Failed to convert notification to row: {e}"))?;
 
         self.db
             .prepare(
@@ -122,35 +130,28 @@ impl AsyncRepositoryTrait<NotificationDetail> for D1NotificationDetailRepository
                 option_string_to_jsvalue(row.delivered_at),
                 option_string_to_jsvalue(row.failed_at),
             ])
-            .context("Failed to prepare notification upsert")?
+            .map_err(|e| anyhow!("Failed to prepare notification upsert: {e}"))?
             .run()
             .await
-            .context("Failed to upsert notification")?;
+            .map_err(|e| anyhow!("Failed to upsert notification: {e}"))?;
 
         Ok(())
     }
 
     async fn delete(&self, id: Uuid) -> Result<()> {
-        match self
-            .db
-            .prepare(
-                "DELETE FROM notification_details
-                 WHERE notification_id = ?1;",
-            )
+        self.db
+            .prepare("DELETE FROM notification_details WHERE notification_id = ?1;")
             .bind(&[id.to_string().into()])
-            .context("Failed to prepare notification detail query")?
+            .map_err(|e| anyhow!("Failed to prepare notification detail query: {e}"))?
             .run()
             .await
-            .context("Failed to delete notification detail")
-        {
-            Ok(_) => Ok(()),
-            Err(err) => Err(anyhow!(err.to_string())),
-        }
+            .map_err(|e| anyhow!("Failed to delete notification detail: {e}"))?;
+        Ok(())
     }
 
     async fn overwrite(&self, notification: &NotificationDetail) -> Result<()> {
         let row = NotificationDetailRow::from_read_model(notification)
-            .context("Failed to convert notification to row")?;
+            .map_err(|e| anyhow!("Failed to convert notification to row: {e}"))?;
 
         self.db
             .prepare(
@@ -176,10 +177,10 @@ impl AsyncRepositoryTrait<NotificationDetail> for D1NotificationDetailRepository
                 option_string_to_jsvalue(row.delivered_at),
                 option_string_to_jsvalue(row.failed_at),
             ])
-            .context("Failed to prepare notification overwrite")?
+            .map_err(|e| anyhow!("Failed to prepare notification overwrite: {e}"))?
             .run()
             .await
-            .context("Failed to overwrite notification")?;
+            .map_err(|e| anyhow!("Failed to overwrite notification: {e}"))?;
 
         Ok(())
     }
@@ -192,15 +193,39 @@ impl NotificationExternalIdTrait for D1NotificationDetailRepository {
             .db
             .prepare("SELECT * FROM notification_details WHERE external_id = ?1")
             .bind(&[external_id.into()])
-            .context("Failed to prepare notification detail query")?
+            .map_err(|e| anyhow!("Failed to prepare notification detail query: {e}"))?
             .first(None)
             .await
-            .context("Failed to fetch notification detail")?;
+            .map_err(|e| anyhow!("Failed to fetch notification detail: {e}"))?;
 
         match result {
             Some(row) => row.into_read_model(),
             None => Err(anyhow!("Notification not found")),
         }
+    }
+}
+
+#[async_trait(?Send)]
+impl NotificationDetailRepositoryDeletedTrait for D1NotificationDetailRepository {
+    async fn get_deleted_ids(&self) -> Result<Vec<Uuid>> {
+        #[derive(Deserialize)]
+        struct NotificationIdRow {
+            pub notification_id: String,
+        }
+
+        let rows: Vec<NotificationIdRow> = self
+            .db
+            .prepare("SELECT notification_id FROM notification_details WHERE status='DELETED'")
+            .all()
+            .await
+            .map_err(|e| anyhow!("Failed to fetch deleted ids: {e}"))?
+            .results()
+            .map_err(|e| anyhow!("Failed to parse deleted ids: {e}"))?;
+
+        Ok(rows
+            .into_iter()
+            .map(|row| Uuid::parse_str(&row.notification_id).unwrap())
+            .collect::<Vec<_>>())
     }
 }
 
