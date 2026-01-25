@@ -132,7 +132,7 @@ impl TwilioClient {
             .ok_or_else(|| anyhow!("No 'body' field in Twilio response"))?
             .to_string();
 
-        if body != "" {
+        if !body.is_empty() {
             anyhow::bail!("Failed to redact message content, body still has data: `{body}`")
         }
 

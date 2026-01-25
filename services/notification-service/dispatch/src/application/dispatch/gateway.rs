@@ -16,17 +16,17 @@ pub enum DispatchResult {
     },
 }
 
-impl Into<DispatchResponse> for DispatchResult {
-    fn into(self) -> DispatchResponse {
-        match self {
-            Self::Tracked {
+impl From<DispatchResult> for DispatchResponse {
+    fn from(value: DispatchResult) -> Self {
+        match value {
+            DispatchResult::Tracked {
                 external_id,
                 provider,
-            } => DispatchResponse {
+            } => Self {
                 external_id: Some(external_id),
                 provider,
             },
-            Self::Untracked { provider } => DispatchResponse {
+            DispatchResult::Untracked { provider } => Self {
                 external_id: None,
                 provider,
             },
