@@ -1,7 +1,9 @@
 use anyhow::{Context, Result, anyhow};
 use fern_labour_notifications_shared::{
     ServiceCommand,
-    service_clients::{DispatchClient, DispatchRequest, GenerationClient},
+    service_clients::{
+        DispatchClient, DispatchRequest, GenerationClient, dispatch::requests::RedactRequest,
+    },
 };
 use tracing::info;
 
@@ -30,12 +32,6 @@ impl ServiceCommandProcessor {
                 channel,
                 template_data,
             } => {
-                info!(
-                    notification_id = %notification_id,
-                    channel = %channel,
-                    "Calling generation service directly"
-                );
-
                 let rendered_content = self
                     .generation_client
                     .render(notification_id, channel.clone(), template_data)
@@ -53,13 +49,6 @@ impl ServiceCommandProcessor {
                 destination,
                 rendered_content,
             } => {
-                info!(
-                    notification_id = %notification_id,
-                    channel = %channel,
-                    destination = %destination,
-                    "Calling dispatch service directly"
-                );
-
                 let request = DispatchRequest {
                     notification_id,
                     channel,
@@ -68,13 +57,45 @@ impl ServiceCommandProcessor {
                     idempotency_key: format!("notification-{}", notification_id),
                 };
 
-                let external_id = self
+                let response = self
                     .dispatch_client
                     .dispatch(request)
                     .await
                     .context("Failed to dispatch notification")?;
 
                 Ok(NotificationCommand::MarkAsDispatched {
+                    notification_id,
+                    external_id: response.external_id,
+                    sent_via_provider: response.provider,
+                })
+            }
+            ServiceCommand::RedactNotificationContent {
+                notification_id,
+                external_id,
+                provider,
+            } => {
+                let request = RedactRequest {
+                    notification_id,
+                    external_id: external_id.clone(),
+                    provider,
+                };
+
+                let redacted = self
+                    .dispatch_client
+                    .redact(request)
+                    .await
+                    .context("Failed to redact notification")?;
+
+                match redacted {
+                    true => {
+                        info!(notification_id = %notification_id, "Notification content redacted successfully")
+                    }
+                    false => {
+                        info!(notification_id = %notification_id, "Did not redact notification content")
+                    }
+                }
+
+                Ok(NotificationCommand::MarkContentRedacted {
                     notification_id,
                     external_id,
                 })

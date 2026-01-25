@@ -4,9 +4,8 @@ use tracing::info;
 
 use fern_labour_event_sourcing_rs::{AsyncProjector, AsyncRepositoryTrait, EventEnvelope};
 
-use crate::{
-    durable_object::write_side::domain::NotificationEvent,
-    read_models::notification_detail::read_model::NotificationDetail,
+use crate::durable_object::{
+    read_side::read_models::NotificationDetail, write_side::domain::NotificationEvent,
 };
 
 pub struct NotificationDetailProjector {
@@ -72,6 +71,21 @@ impl NotificationDetailProjector {
                 let mut detail = model?;
                 detail.status = "FAILED".to_string();
                 detail.failed_at = Some(timestamp);
+                detail.updated_at = timestamp;
+                Some(detail)
+            }
+
+            NotificationEvent::NotificationContentRedacted(_) => {
+                let mut detail = model?;
+                detail.status = "REDACTED".to_string();
+                detail.rendered_content = None;
+                detail.updated_at = timestamp;
+                Some(detail)
+            }
+
+            NotificationEvent::NotificationDeleted { .. } => {
+                let mut detail = model?;
+                detail.status = "DELETED".to_string();
                 detail.updated_at = timestamp;
                 Some(detail)
             }

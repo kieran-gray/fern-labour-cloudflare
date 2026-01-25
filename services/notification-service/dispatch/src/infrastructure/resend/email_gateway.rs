@@ -5,7 +5,7 @@ use resend_rs::{Resend, types::CreateEmailBaseOptions};
 use tracing::{error, info};
 
 use crate::{
-    application::dispatch::{DispatchContext, NotificationGatewayTrait},
+    application::dispatch::{DispatchContext, NotificationGatewayTrait, gateway::DispatchResult},
     setup::config::ResendConfig,
 };
 
@@ -31,7 +31,7 @@ impl NotificationGatewayTrait for ResendEmailNotificationGateway {
         "resend"
     }
 
-    async fn dispatch(&self, context: &DispatchContext) -> Result<Option<String>> {
+    async fn dispatch(&self, context: &DispatchContext) -> Result<DispatchResult> {
         let resend = Resend::new(&self.config.api_key);
         let from = format!("{} <{}>", self.config.from_name, self.config.from_email);
 
@@ -50,7 +50,10 @@ impl NotificationGatewayTrait for ResendEmailNotificationGateway {
                     external_id = %response.id,
                     "Email sent successfully via Resend"
                 );
-                Ok(Some(response.id.to_string()))
+                Ok(DispatchResult::Tracked {
+                    external_id: response.id.to_string(),
+                    provider: self.provider().to_string(),
+                })
             }
             Err(err) => {
                 error!(
@@ -61,5 +64,10 @@ impl NotificationGatewayTrait for ResendEmailNotificationGateway {
                 Err(anyhow!(err))
             }
         }
+    }
+
+    async fn redact(&self, _external_id: String) -> Result<bool> {
+        // Resend does not support email message body redaction
+        Ok(false)
     }
 }

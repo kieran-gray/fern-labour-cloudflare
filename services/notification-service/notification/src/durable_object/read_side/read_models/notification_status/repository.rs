@@ -4,9 +4,19 @@ use fern_labour_event_sourcing_rs::{AsyncRepositoryTrait, DecodedCursor};
 use uuid::Uuid;
 use worker::D1Database;
 
-use crate::read_models::notification_status::read_model::{
-    NotificationStatus, NotificationStatusRow,
+use crate::durable_object::read_side::read_models::{
+    NotificationStatus, notification_status::read_model::NotificationStatusRow,
 };
+
+#[async_trait(?Send)]
+pub trait NotificationStatusRepositoryDeletedTrait {
+    async fn get_deleted(&self) -> Result<Vec<NotificationStatus>>;
+}
+
+pub trait NotificationStatusRepositoryTrait:
+    AsyncRepositoryTrait<NotificationStatus> + NotificationStatusRepositoryDeletedTrait
+{
+}
 
 pub struct D1NotificationStatusRepository {
     db: D1Database,
@@ -139,3 +149,21 @@ impl AsyncRepositoryTrait<NotificationStatus> for D1NotificationStatusRepository
         Ok(())
     }
 }
+
+#[async_trait(?Send)]
+impl NotificationStatusRepositoryDeletedTrait for D1NotificationStatusRepository {
+    async fn get_deleted(&self) -> Result<Vec<NotificationStatus>> {
+        let rows: Vec<NotificationStatusRow> = self
+            .db
+            .prepare("SELECT * FROM notification_status WHERE status='DELETED'")
+            .all()
+            .await
+            .map_err(|e| anyhow!("Failed to query deleted notifications: {e}"))?
+            .results()
+            .map_err(|e| anyhow!("Failed to parse notification query results: {e}"))?;
+
+        rows.into_iter().map(|row| row.into_read_model()).collect()
+    }
+}
+
+impl NotificationStatusRepositoryTrait for D1NotificationStatusRepository {}

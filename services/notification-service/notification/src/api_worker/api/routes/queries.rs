@@ -20,8 +20,8 @@ pub async fn get_notifications_detailed(
         .map_err(|_| worker::Error::RustError("Invalid query params".into()))?;
 
     match app_state
-        .notification_detail_query
-        .get_notifications(limit, decoded_cursor)
+        .notification_detail_repository
+        .get(limit, decoded_cursor)
         .await
     {
         Ok(notifications) => {
@@ -57,8 +57,8 @@ pub async fn get_notification_detail(
 
     match ctx
         .data
-        .notification_detail_query
-        .get_notification(&notification_id)
+        .notification_detail_repository
+        .get_by_id(notification_id)
         .await
     {
         Ok(notifications) => {
@@ -86,8 +86,8 @@ pub async fn get_notifications(
         .map_err(|_| worker::Error::RustError("Invalid query params".into()))?;
 
     match app_state
-        .notification_status_query
-        .get_notifications(limit, decoded_cursor)
+        .notification_status_repository
+        .get(limit, decoded_cursor)
         .await
     {
         Ok(notifications) => {
@@ -156,12 +156,7 @@ pub async fn get_notification_activity(
         }
     };
 
-    match ctx
-        .data
-        .notification_activity_query
-        .get_activity_for_days(days)
-        .await
-    {
+    match ctx.data.notification_activity_repository.get(days).await {
         Ok(notification_activity) => {
             let response = Response::from_json(&notification_activity)?;
             Ok(cors_context.add_to_response(response))

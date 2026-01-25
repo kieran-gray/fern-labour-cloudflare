@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::value_objects::{NotificationPriority, NotificationTemplateData};
+use crate::value_objects::NotificationTemplateData;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", content = "payload")]
@@ -13,7 +13,5 @@ pub enum PublicCommand {
         destination: String,
         template_data: NotificationTemplateData,
         metadata: Option<HashMap<String, String>>,
-        #[serde(default)]
-        priority: NotificationPriority,
     },
 }

@@ -13,6 +13,10 @@ pub enum NotificationStatus {
     FAILED,
     #[strum(serialize = "DELIVERED", serialize = "delivered")]
     DELIVERED,
+    #[strum(serialize = "REDACTED", serialize = "redacted")]
+    REDACTED,
+    #[strum(serialize = "DELETED", serialize = "deleted")]
+    DELETED,
 }
 
 impl std::fmt::Display for NotificationStatus {
@@ -23,6 +27,8 @@ impl std::fmt::Display for NotificationStatus {
             NotificationStatus::SENT => write!(f, "SENT"),
             NotificationStatus::FAILED => write!(f, "FAILED"),
             NotificationStatus::DELIVERED => write!(f, "DELIVERED"),
+            NotificationStatus::REDACTED => write!(f, "REDACTED"),
+            NotificationStatus::DELETED => write!(f, "DELETED"),
         }
     }
 }

@@ -4,9 +4,8 @@ use tracing::info;
 
 use fern_labour_event_sourcing_rs::{AsyncProjector, AsyncRepositoryTrait, EventEnvelope};
 
-use crate::{
-    durable_object::write_side::domain::NotificationEvent,
-    read_models::notification_status::read_model::NotificationStatus,
+use crate::durable_object::{
+    read_side::read_models::NotificationStatus, write_side::domain::NotificationEvent,
 };
 
 pub struct NotificationStatusProjector {
@@ -37,31 +36,45 @@ impl NotificationStatusProjector {
             ),
 
             NotificationEvent::RenderedContentStored { .. } => {
-                let mut detail = model?;
-                detail.status = "RENDERED".to_string();
-                detail.updated_at = timestamp;
-                Some(detail)
+                let mut model = model?;
+                model.status = "RENDERED".to_string();
+                model.updated_at = timestamp;
+                Some(model)
             }
 
             NotificationEvent::NotificationDispatched { .. } => {
-                let mut detail = model?;
-                detail.status = "SENT".to_string();
-                detail.updated_at = timestamp;
-                Some(detail)
+                let mut model = model?;
+                model.status = "SENT".to_string();
+                model.updated_at = timestamp;
+                Some(model)
             }
 
             NotificationEvent::NotificationDelivered { .. } => {
-                let mut detail = model?;
-                detail.status = "DELIVERED".to_string();
-                detail.updated_at = timestamp;
-                Some(detail)
+                let mut model = model?;
+                model.status = "DELIVERED".to_string();
+                model.updated_at = timestamp;
+                Some(model)
             }
 
             NotificationEvent::NotificationDeliveryFailed { .. } => {
-                let mut detail = model?;
-                detail.status = "FAILED".to_string();
-                detail.updated_at = timestamp;
-                Some(detail)
+                let mut model = model?;
+                model.status = "FAILED".to_string();
+                model.updated_at = timestamp;
+                Some(model)
+            }
+
+            NotificationEvent::NotificationContentRedacted { .. } => {
+                let mut model = model?;
+                model.status = "REDACTED".to_string();
+                model.updated_at = timestamp;
+                Some(model)
+            }
+
+            NotificationEvent::NotificationDeleted { .. } => {
+                let mut model = model?;
+                model.status = "DELETED".to_string();
+                model.updated_at = timestamp;
+                Some(model)
             }
 
             _ => model,

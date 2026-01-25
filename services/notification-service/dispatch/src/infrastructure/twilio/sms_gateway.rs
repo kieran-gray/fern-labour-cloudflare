@@ -5,7 +5,7 @@ use tracing::info;
 
 use super::client::TwilioClient;
 use crate::{
-    application::dispatch::{DispatchContext, NotificationGatewayTrait},
+    application::dispatch::{DispatchContext, NotificationGatewayTrait, gateway::DispatchResult},
     setup::config::TwilioConfig,
 };
 
@@ -31,7 +31,7 @@ impl NotificationGatewayTrait for TwilioSmsNotificationGateway {
         "twilio"
     }
 
-    async fn dispatch(&self, context: &DispatchContext) -> Result<Option<String>> {
+    async fn dispatch(&self, context: &DispatchContext) -> Result<DispatchResult> {
         let form_data = form_urlencoded::Serializer::new(String::new())
             .append_pair("To", context.destination.as_str())
             .append_pair("Body", context.content.body())
@@ -48,7 +48,21 @@ impl NotificationGatewayTrait for TwilioSmsNotificationGateway {
             message_sid = %message_sid,
             "Successfully sent SMS via Twilio"
         );
+        Ok(DispatchResult::Tracked {
+            external_id: message_sid,
+            provider: self.provider().to_string(),
+        })
+    }
 
-        Ok(Some(message_sid))
+    async fn redact(&self, external_id: String) -> Result<bool> {
+        let form_data = form_urlencoded::Serializer::new(String::new())
+            .append_pair("Body", "")
+            .finish();
+
+        self.client
+            .redact_message_content(external_id, form_data)
+            .await?;
+
+        Ok(true)
     }
 }

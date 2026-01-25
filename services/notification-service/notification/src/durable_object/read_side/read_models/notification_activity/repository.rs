@@ -3,12 +3,12 @@ use async_trait::async_trait;
 use chrono::NaiveDate;
 use worker::D1Database;
 
-use crate::read_models::notification_activity::read_model::{
-    NotificationActivity, NotificationActivityRow,
+use crate::durable_object::read_side::read_models::{
+    NotificationActivity, notification_activity::read_model::NotificationActivityRow,
 };
 
 #[async_trait(?Send)]
-pub trait NotificationActivityRepository {
+pub trait NotificationActivityRepositoryTrait {
     async fn get(&self, limit: usize) -> Result<Vec<NotificationActivity>>;
     async fn increment(&self, date: NaiveDate) -> Result<()>;
     async fn upsert(&self, activity: &NotificationActivity) -> Result<()>;
@@ -25,7 +25,7 @@ impl D1NotificationActivityRepository {
 }
 
 #[async_trait(?Send)]
-impl NotificationActivityRepository for D1NotificationActivityRepository {
+impl NotificationActivityRepositoryTrait for D1NotificationActivityRepository {
     async fn get(&self, limit: usize) -> Result<Vec<NotificationActivity>> {
         let statement = self
             .db

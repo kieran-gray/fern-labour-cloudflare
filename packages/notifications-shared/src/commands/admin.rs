@@ -1,13 +1,13 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::InternalCommand;
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", content = "payload")]
 pub enum AdminCommand {
     #[serde(rename = "RebuildReadModels")]
     RebuildReadModels { aggregate_id: Uuid },
+    #[serde(rename = "DeleteDurableObject")]
+    DeleteDurableObject { aggregate_id: Uuid },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -15,9 +15,6 @@ pub enum AdminCommand {
 pub enum AdminApiCommand {
     #[serde(rename = "Admin")]
     Admin(AdminCommand),
-
-    #[serde(rename = "Internal")]
-    Internal(InternalCommand),
 }
 
 impl AdminApiCommand {
@@ -25,8 +22,8 @@ impl AdminApiCommand {
         match self {
             AdminApiCommand::Admin(cmd) => match cmd {
                 AdminCommand::RebuildReadModels { aggregate_id } => *aggregate_id,
+                AdminCommand::DeleteDurableObject { aggregate_id } => *aggregate_id,
             },
-            AdminApiCommand::Internal(cmd) => cmd.notification_id(),
         }
     }
 
@@ -35,17 +32,8 @@ impl AdminApiCommand {
             AdminApiCommand::Admin(AdminCommand::RebuildReadModels { .. }) => {
                 "AdminCommand::RebuildReadModels"
             }
-            AdminApiCommand::Internal(InternalCommand::StoreRenderedContent { .. }) => {
-                "InternalCommand::StoreRenderedContent"
-            }
-            AdminApiCommand::Internal(InternalCommand::MarkAsDispatched { .. }) => {
-                "InternalCommand::MarkAsDispatched"
-            }
-            AdminApiCommand::Internal(InternalCommand::MarkAsDelivered { .. }) => {
-                "InternalCommand::MarkAsDelivered"
-            }
-            AdminApiCommand::Internal(InternalCommand::MarkAsFailed { .. }) => {
-                "InternalCommand::MarkAsFailed"
+            AdminApiCommand::Admin(AdminCommand::DeleteDurableObject { .. }) => {
+                "AdminCommand::DeleteDurableObject"
             }
         }
     }

@@ -5,7 +5,7 @@ use tracing::info;
 
 use super::client::TwilioClient;
 use crate::{
-    application::dispatch::{DispatchContext, NotificationGatewayTrait},
+    application::dispatch::{DispatchContext, NotificationGatewayTrait, gateway::DispatchResult},
     setup::config::TwilioConfig,
 };
 
@@ -31,7 +31,7 @@ impl NotificationGatewayTrait for TwilioWhatsappNotificationGateway {
         "twilio"
     }
 
-    async fn dispatch(&self, context: &DispatchContext) -> Result<Option<String>> {
+    async fn dispatch(&self, context: &DispatchContext) -> Result<DispatchResult> {
         let Some(template_sid) = context.content.subject() else {
             anyhow::bail!("No Template SID found");
         };
@@ -54,6 +54,21 @@ impl NotificationGatewayTrait for TwilioWhatsappNotificationGateway {
             "Successfully sent WhatsApp via Twilio"
         );
 
-        Ok(Some(message_sid))
+        Ok(DispatchResult::Tracked {
+            external_id: message_sid,
+            provider: self.provider().to_string(),
+        })
+    }
+
+    async fn redact(&self, external_id: String) -> Result<bool> {
+        let form_data = form_urlencoded::Serializer::new(String::new())
+            .append_pair("Body", "")
+            .finish();
+
+        self.client
+            .redact_message_content(external_id, form_data)
+            .await?;
+
+        Ok(true)
     }
 }

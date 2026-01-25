@@ -22,6 +22,13 @@ pub enum ServiceCommand {
         destination: NotificationDestination,
         rendered_content: RenderedContent,
     },
+
+    #[serde(rename = "RedactNotificationContent")]
+    RedactNotificationContent {
+        notification_id: Uuid,
+        provider: String,
+        external_id: String,
+    },
 }
 
 impl ServiceCommand {
@@ -31,6 +38,9 @@ impl ServiceCommand {
                 notification_id, ..
             } => *notification_id,
             ServiceCommand::DispatchNotification {
+                notification_id, ..
+            } => *notification_id,
+            ServiceCommand::RedactNotificationContent {
                 notification_id, ..
             } => *notification_id,
         }

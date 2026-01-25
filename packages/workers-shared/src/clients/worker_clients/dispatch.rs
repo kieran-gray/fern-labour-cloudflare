@@ -1,8 +1,9 @@
 use async_trait::async_trait;
 use fern_labour_notifications_shared::service_clients::{
     DispatchClient, DispatchClientError, DispatchRequest, DispatchResponse,
-    dispatch::WebhookInterpretationResponse,
+    dispatch::{WebhookInterpretationResponse, requests::RedactRequest, responses::RedactResponse},
 };
+use serde::Serialize;
 use tracing::{debug, error};
 use worker::{Request, Response};
 
@@ -23,9 +24,9 @@ impl FetcherDispatchClient {
         }
     }
 
-    async fn do_dispatch(
+    async fn post(
         &self,
-        request: DispatchRequest,
+        request: impl Serialize,
         url: &str,
     ) -> Result<Response, DispatchClientError> {
         let (init, _) = build_json_post_request(
@@ -46,9 +47,9 @@ impl DispatchClient for FetcherDispatchClient {
     async fn dispatch(
         &self,
         request: DispatchRequest,
-    ) -> Result<Option<String>, DispatchClientError> {
+    ) -> Result<DispatchResponse, DispatchClientError> {
         let mut response = self
-            .do_dispatch(request, "https://fernlabour.com/api/v1/dispatch")
+            .post(request, "https://fernlabour.com/api/v1/dispatch")
             .await?;
 
         let status = response.status_code();
@@ -58,7 +59,33 @@ impl DispatchClient for FetcherDispatchClient {
                 let dispatch_response: DispatchResponse = response.json().await.map_err(|e| {
                     DispatchClientError::InternalError(format!("Failed to parse response: {e}"))
                 })?;
-                Ok(dispatch_response.external_id)
+                Ok(dispatch_response)
+            }
+            StatusCodeCategory::ClientError => Err(DispatchClientError::RequestFailed(format!(
+                "Client error: {status}"
+            ))),
+            StatusCodeCategory::ServerError => Err(DispatchClientError::InternalError(format!(
+                "Server error: {status}"
+            ))),
+            StatusCodeCategory::Unknown => Err(DispatchClientError::RequestFailed(format!(
+                "Unexpected status: {status}"
+            ))),
+        }
+    }
+
+    async fn redact(&self, request: RedactRequest) -> Result<bool, DispatchClientError> {
+        let mut response = self
+            .post(request, "https://fernlabour.com/api/v1/redact")
+            .await?;
+
+        let status = response.status_code();
+        match StatusCodeCategory::from_code(status) {
+            StatusCodeCategory::Success => {
+                debug!("Notification redacted successfully");
+                let dispatch_response: RedactResponse = response.json().await.map_err(|e| {
+                    DispatchClientError::InternalError(format!("Failed to parse response: {e}"))
+                })?;
+                Ok(dispatch_response.redacted)
             }
             StatusCodeCategory::ClientError => Err(DispatchClientError::RequestFailed(format!(
                 "Client error: {status}"

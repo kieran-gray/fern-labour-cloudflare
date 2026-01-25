@@ -45,7 +45,6 @@ impl NotificationRequestExt for NotificationRequest {
             destination,
             template_data: self.template_data,
             metadata: self.metadata,
-            priority: self.priority,
         })
     }
 }
@@ -55,9 +54,7 @@ mod tests {
     use std::collections::HashMap;
 
     use fern_labour_notifications_shared::service_clients::notification::NotificationRequest;
-    use fern_labour_notifications_shared::value_objects::{
-        NotificationPriority, NotificationTemplateData,
-    };
+    use fern_labour_notifications_shared::value_objects::NotificationTemplateData;
     use uuid::Uuid;
 
     use super::*;
@@ -71,7 +68,6 @@ mod tests {
                 name: "TEST".to_string(),
             },
             metadata: None,
-            priority: NotificationPriority::Normal,
         };
 
         let notification_id = Uuid::now_v7();
@@ -102,7 +98,6 @@ mod tests {
                 name: "TEST".to_string(),
             },
             metadata: None,
-            priority: NotificationPriority::Normal,
         };
 
         let result = dto.try_into_domain(Uuid::now_v7());
@@ -121,7 +116,6 @@ mod tests {
                 name: "TEST".to_string(),
             },
             metadata: None,
-            priority: NotificationPriority::Normal,
         };
 
         let result = dto.try_into_domain(Uuid::now_v7());
@@ -143,18 +137,12 @@ mod tests {
                 name: "TEST".to_string(),
             },
             metadata: Some(metadata.clone()),
-            priority: NotificationPriority::High,
         };
 
         let result = dto.try_into_domain(Uuid::now_v7()).unwrap();
         match result {
-            NotificationCommand::RequestNotification {
-                metadata: m,
-                priority: p,
-                ..
-            } => {
+            NotificationCommand::RequestNotification { metadata: m, .. } => {
                 assert_eq!(m, Some(metadata));
-                assert_eq!(p, NotificationPriority::High);
             }
             _ => panic!("Expected RequestNotification variant"),
         }

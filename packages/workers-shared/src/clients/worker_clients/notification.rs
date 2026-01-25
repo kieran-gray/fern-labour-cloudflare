@@ -5,7 +5,7 @@ use fern_labour_notifications_shared::service_clients::notification::{
     NotificationClient, NotificationClientError, NotificationRequest,
 };
 use fern_labour_notifications_shared::value_objects::{
-    NotificationChannel, NotificationPriority, NotificationTemplateData,
+    NotificationChannel, NotificationTemplateData,
 };
 use tracing::error;
 
@@ -35,14 +35,12 @@ impl NotificationClient for FetcherNotificationClient {
         destination: String,
         template_data: NotificationTemplateData,
         metadata: Option<HashMap<String, String>>,
-        priority: NotificationPriority,
     ) -> Result<(), NotificationClientError> {
         let request = NotificationRequest {
             channel: channel.to_string(),
             destination,
             template_data,
             metadata,
-            priority,
         };
 
         let (init, _) = build_json_post_request(
