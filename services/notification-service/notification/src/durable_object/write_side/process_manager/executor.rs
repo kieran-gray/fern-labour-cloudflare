@@ -1,9 +1,10 @@
-use anyhow::{Context, Result};
+use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use fern_labour_notifications_shared::ServiceCommand;
 
 use crate::durable_object::write_side::{
     application::command_processors::{NotificationCommandProcessor, ServiceCommandProcessor},
+    domain::NotificationCommand,
     process_manager::types::Effect,
 };
 
@@ -33,11 +34,19 @@ impl NotificationEffectExecutor {
             .service_command_processor
             .handle(command)
             .await
-            .context("Failed to execute service command")?;
+            .map_err(|e| anyhow!("Failed to execute service command: {e}"))?;
 
         self.notification_command_processor
             .handle_command(notification_command, "process-manager".to_string())
-            .context("Failed to handle resulting notification command")?;
+            .map_err(|e| anyhow!("Failed to handle resulting notification command: {e}"))?;
+
+        Ok(())
+    }
+
+    async fn handle_domain_command(&self, command: NotificationCommand) -> Result<()> {
+        self.notification_command_processor
+            .handle_command(command, "process-manager".to_string())
+            .map_err(|e| anyhow!("Failed to handle notification command: {e}"))?;
 
         Ok(())
     }
@@ -49,6 +58,9 @@ impl EffectExecutor for NotificationEffectExecutor {
         match effect {
             Effect::ServiceCommand { command, .. } => {
                 self.handle_service_command(command.clone()).await
+            }
+            Effect::DomainCommand { command, .. } => {
+                self.handle_domain_command(command.clone()).await
             }
         }
     }

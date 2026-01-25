@@ -2,6 +2,8 @@ use fern_labour_notifications_shared::ServiceCommand;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use crate::durable_object::write_side::domain::NotificationCommand;
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct IdempotencyKey(pub String);
 
@@ -20,6 +22,10 @@ pub enum Effect {
         command: ServiceCommand,
         idempotency_key: IdempotencyKey,
     },
+    DomainCommand {
+        command: NotificationCommand,
+        idempotency_key: IdempotencyKey,
+    },
 }
 
 impl Effect {
@@ -28,12 +34,16 @@ impl Effect {
             Effect::ServiceCommand {
                 idempotency_key, ..
             } => idempotency_key,
+            Effect::DomainCommand {
+                idempotency_key, ..
+            } => idempotency_key,
         }
     }
 
     pub fn effect_type(&self) -> &'static str {
         match self {
             Effect::ServiceCommand { .. } => "SERVICE_COMMAND",
+            Effect::DomainCommand { .. } => "DOMAIN_COMMAND"
         }
     }
 }

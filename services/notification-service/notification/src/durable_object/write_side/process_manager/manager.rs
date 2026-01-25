@@ -73,6 +73,7 @@ where
                 NotificationEvent::NotificationRequested(e) => e.apply_policies(&ctx),
                 NotificationEvent::RenderedContentStored(e) => e.apply_policies(&ctx),
                 NotificationEvent::NotificationDelivered(e) => e.apply_policies(&ctx),
+                NotificationEvent::NotificationContentRedacted(e) => e.apply_policies(&ctx),
                 _ => vec![],
             };
 
