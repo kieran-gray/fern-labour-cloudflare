@@ -200,6 +200,42 @@ export const services: Service[] = [
         ],
       },
       {
+        id: "mark_content_redacted",
+        name: "MARK_CONTENT_REDACTED",
+        description: "Mark a notification as having its content successfully redacted",
+        endpoint: "/api/v1/admin/command",
+        method: "POST",
+        category: "INTERNAL_OPS",
+        fields: [
+          {
+            name: "notification_id",
+            label: "NOTIFICATION_ID",
+            type: "text",
+            placeholder: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            required: true,
+            description: "UUID of the notification",
+          },
+        ],
+      },
+      {
+        id: "delete_notification",
+        name: "DELETE_NOTIFICATION",
+        description: "Marks a notification as deleted. It will be cleaned up via a weekly scheduled cron job.",
+        endpoint: "/api/v1/admin/command",
+        method: "POST",
+        category: "INTERNAL_OPS",
+        fields: [
+          {
+            name: "notification_id",
+            label: "NOTIFICATION_ID",
+            type: "text",
+            placeholder: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            required: true,
+            description: "UUID of the notification",
+          },
+        ],
+      },
+      {
         id: "rebuild_read_models",
         name: "REBUILD_READ_MODELS",
         description:

@@ -22,11 +22,12 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
   const [newNotificationsCount, setNewNotificationsCount] = useState(0);
   const [newMessagesCount, setNewMessagesCount] = useState(0);
   const [asciiMaxWidth, setAsciiMaxWidth] = useState(15);
-  const [headerText, setHeaderText] = useState("FERN LABOUR ADMIN");
   const [displayedLetters, setDisplayedLetters] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [loadingNotificationCount, setLoadingNotificationCount] = useState(0);
   const [loadingMessageCount, setLoadingMessageCount] = useState(0);
+
+  const headerText = "FERN LABOUR ADMIN";
 
   useEffect(() => {
     if (displayedLetters < headerText.length) {

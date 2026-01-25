@@ -14,6 +14,8 @@ import {
   FileCode,
   Settings,
   ReceiptText,
+  ShieldOff,
+  Trash2,
 } from "lucide-react";
 import DOMPurify from "dompurify";
 import { Sidebar } from "@/components/ui/Sidebar";
@@ -156,6 +158,20 @@ const NotificationDetailView = ({
           icon: <FileText className="size-5" />,
           color: "text-cp-orange",
           bgColor: "bg-cp-orange",
+        };
+      case "REDACTED":
+        return {
+          label: "REDACTED",
+          icon: <ShieldOff className="size-5" />,
+          color: "text-yellow-600",
+          bgColor: "bg-yellow-600",
+        };
+      case "DELETED":
+        return {
+          label: "DELETED",
+          icon: <Trash2 className="size-5" />,
+          color: "text-red-700",
+          bgColor: "bg-red-700",
         };
       default:
         return {

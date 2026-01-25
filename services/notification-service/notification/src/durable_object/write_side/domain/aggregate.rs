@@ -256,10 +256,7 @@ impl Aggregate for Notification {
                     },
                 )]
             }
-            NotificationCommand::MarkContentRedacted {
-                notification_id,
-                external_id,
-            } => {
+            NotificationCommand::MarkContentRedacted { notification_id } => {
                 let Some(notification) = &state else {
                     return Err(NotificationError::NotFound);
                 };
@@ -271,10 +268,7 @@ impl Aggregate for Notification {
                 }
 
                 vec![NotificationEvent::NotificationContentRedacted(
-                    NotificationContentRedacted {
-                        notification_id,
-                        external_id,
-                    },
+                    NotificationContentRedacted { notification_id },
                 )]
             }
             NotificationCommand::DeleteNotification { notification_id } => {
@@ -793,10 +787,7 @@ mod tests {
         assert_eq!(notification.status(), &NotificationStatus::DELIVERED);
 
         notification.apply(&NotificationEvent::NotificationContentRedacted(
-            NotificationContentRedacted {
-                notification_id,
-                external_id: "ext-123".to_string(),
-            },
+            NotificationContentRedacted { notification_id },
         ));
         assert_eq!(notification.status(), &NotificationStatus::REDACTED);
 

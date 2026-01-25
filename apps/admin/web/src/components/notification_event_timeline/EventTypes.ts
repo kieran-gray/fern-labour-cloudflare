@@ -51,12 +51,23 @@ export interface NotificationFailedData {
   error: string;
 }
 
+export interface NotificationContentRedacted {
+  notification_id: string;
+  external_id: string;
+}
+
+export interface NotificationDeleted {
+  notification_id: string;
+}
+
 export type NotificationEvent =
   | { type: "NotificationRequested"; data: NotificationRequestedData }
   | { type: "RenderedContentStored"; data: RenderedContentStoredData }
   | { type: "NotificationDispatched"; data: NotificationDispatchedData }
   | { type: "NotificationDelivered"; data: NotificationDeliveredData }
-  | { type: "NotificationFailed"; data: NotificationFailedData };
+  | { type: "NotificationFailed"; data: NotificationFailedData }
+  | { type: "NotificationContentRedacted"; data: NotificationContentRedacted }
+  | { type: "NotificationDeleted"; data: NotificationDeleted };
 
 export interface Event {
   metadata: EventMetadata;

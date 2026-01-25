@@ -40,7 +40,6 @@ pub enum NotificationCommand {
     },
     MarkContentRedacted {
         notification_id: Uuid,
-        external_id: String,
     },
     DeleteNotification {
         notification_id: Uuid,

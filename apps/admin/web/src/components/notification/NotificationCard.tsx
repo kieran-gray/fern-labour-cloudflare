@@ -5,6 +5,8 @@ import {
   XCircle,
   FileText,
   FileCode,
+  ShieldOff,
+  Trash2,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import type { NotificationStatus } from "./NotificationTypes";
@@ -55,6 +57,22 @@ function getStatusInfo(status: string) {
         color: "text-cp-orange",
         borderColor: "border-cp-orange",
         bgColor: "bg-cp-orange",
+      };
+    case "REDACTED":
+      return {
+        label: "REDACTED",
+        icon: <ShieldOff className="size-4" />,
+        color: "text-yellow-600",
+        borderColor: "border-yellow-600",
+        bgColor: "bg-yellow-600",
+      };
+    case "DELETED":
+      return {
+        label: "DELETED",
+        icon: <Trash2 className="size-4" />,
+        color: "text-red-700",
+        borderColor: "border-red-700",
+        bgColor: "bg-red-700",
       };
     default:
       return {
@@ -152,14 +170,16 @@ export function NotificationCard({
         </div>
 
         {/* Actions Section */}
-        <div className="flex justify-end mt-4 pt-4 border-t-2 border-dashed border-cp-black">
-          <Button
-            onClick={() => onViewDetail(notification.notification_id)}
-            className="font-mono font-bold uppercase text-xs px-4 py-2 border-2 border-cp-black bg-cp-beige text-cp-charcoal shadow-hard-sm hover:bg-cp-paper transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none active:translate-x-1 active:translate-y-1 active:shadow-none"
-          >
-            [VIEW_DETAILS]
-          </Button>
-        </div>
+        {notification.status !== "DELETED" && (
+          <div className="flex justify-end mt-4 pt-4 border-t-2 border-dashed border-cp-black">
+            <Button
+              onClick={() => onViewDetail(notification.notification_id)}
+              className="font-mono font-bold uppercase text-xs px-4 py-2 border-2 border-cp-black bg-cp-beige text-cp-charcoal shadow-hard-sm hover:bg-cp-paper transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none active:translate-x-1 active:translate-y-1 active:shadow-none"
+            >
+              [VIEW_DETAILS]
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

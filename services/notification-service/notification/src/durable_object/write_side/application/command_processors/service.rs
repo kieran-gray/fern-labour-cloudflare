@@ -95,10 +95,7 @@ impl ServiceCommandProcessor {
                     }
                 }
 
-                Ok(NotificationCommand::MarkContentRedacted {
-                    notification_id,
-                    external_id,
-                })
+                Ok(NotificationCommand::MarkContentRedacted { notification_id })
             }
         }
     }

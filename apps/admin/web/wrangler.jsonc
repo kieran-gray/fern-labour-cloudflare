@@ -6,7 +6,14 @@
   "assets": {
     "not_found_handling": "single-page-application"
   },
-  "workers_dev": true,
+  "build": {
+    "command": "npm run build"
+  },
+  "workers_dev": false,
+  "route": {
+    "pattern": "admin.fernlabour.com",
+    "custom_domain": true
+  },
   "placement": {
     "mode": "smart"
   },
@@ -31,7 +38,7 @@
   "vars": {
     "ENVIRONMENT": "production",
     "CONTACT_US_API_URL": "https://contact-us.fernlabour.com",
-    "NOTIFICATIONS_API_URL": "https://notifications.fernlabour.com"
+    "NOTIFICATIONS_API_URL": "https://notifications-cf.fernlabour.com"
   },
   "env": {
     "dev": {
@@ -48,7 +55,7 @@
       "vars": {
         "ENVIRONMENT": "production",
         "CONTACT_US_API_URL": "https://contact-us.fernlabour.com",
-        "NOTIFICATIONS_API_URL": "https://notifications.fernlabour.com"
+        "NOTIFICATIONS_API_URL": "https://notifications-cf.fernlabour.com"
       },
     }
   }
