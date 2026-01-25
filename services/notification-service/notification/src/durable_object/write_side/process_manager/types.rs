@@ -1,8 +1,6 @@
-use fern_labour_notifications_shared::ServiceCommand;
+use fern_labour_notifications_shared::{NotificationCommand, ServiceCommand};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-
-use crate::durable_object::write_side::domain::NotificationCommand;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct IdempotencyKey(pub String);

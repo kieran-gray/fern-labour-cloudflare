@@ -1,7 +1,8 @@
 use fern_labour_event_sourcing_rs::{HasPolicies, PolicyContext, PolicyFn};
+use fern_labour_notifications_shared::NotificationCommand;
 
 use crate::durable_object::write_side::{
-    domain::{Notification, NotificationCommand, NotificationContentRedacted},
+    domain::{Notification, NotificationContentRedacted},
     process_manager::types::{Effect, IdempotencyKey},
 };
 

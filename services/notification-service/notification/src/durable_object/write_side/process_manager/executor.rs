@@ -1,10 +1,9 @@
 use anyhow::{Result, anyhow};
 use async_trait::async_trait;
-use fern_labour_notifications_shared::ServiceCommand;
+use fern_labour_notifications_shared::{NotificationCommand, ServiceCommand};
 
 use crate::durable_object::write_side::{
     application::command_processors::{NotificationCommandProcessor, ServiceCommandProcessor},
-    domain::NotificationCommand,
     process_manager::types::Effect,
 };
 

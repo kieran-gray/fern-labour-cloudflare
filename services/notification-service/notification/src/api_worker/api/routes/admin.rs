@@ -45,6 +45,12 @@ pub async fn handle_admin_command(
             .send_command(notification_id, command, &user, "/admin/command")
             .await
             .map_err(|e| format!("Failed to send admin command to DO: {e}"))?,
+        AdminApiCommand::Notification(command) => ctx
+            .data
+            .do_client
+            .send_command(notification_id, command, &user, "/notification/command")
+            .await
+            .map_err(|e| format!("Failed to send notification command to DO: {e}"))?,
     };
 
     info!(

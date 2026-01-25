@@ -91,16 +91,6 @@ export const services: Service[] = [
             placeholder: '{"key": "value"}',
             required: false,
           },
-          {
-            name: "priority",
-            label: "PRIORITY",
-            type: "select",
-            required: false,
-            options: [
-              { value: "normal", label: "NORMAL" },
-              { value: "high", label: "HIGH" },
-            ],
-          },
         ],
       },
       {
@@ -153,6 +143,16 @@ export const services: Service[] = [
             required: false,
             description: "External provider message ID",
           },
+          {
+            name: "sent_via_provider",
+            label: "PROVIDER",
+            type: "select",
+            required: true,
+            options: [
+              { value: "twilio", label: "TWILIO" },
+              { value: "resend", label: "RESEND" },
+            ],
+          }
         ],
       },
       {
@@ -171,6 +171,16 @@ export const services: Service[] = [
             required: true,
             description: "UUID of the notification",
           },
+          {
+            name: "provider",
+            label: "PROVIDER",
+            type: "select",
+            required: true,
+            options: [
+              { value: "twilio", label: "TWILIO" },
+              { value: "resend", label: "RESEND" },
+            ],
+          }
         ],
       },
       {
@@ -197,6 +207,16 @@ export const services: Service[] = [
             required: false,
             description: "Optional error reason",
           },
+          {
+            name: "provider",
+            label: "PROVIDER",
+            type: "select",
+            required: true,
+            options: [
+              { value: "twilio", label: "TWILIO" },
+              { value: "resend", label: "RESEND" },
+            ],
+          }
         ],
       },
       {

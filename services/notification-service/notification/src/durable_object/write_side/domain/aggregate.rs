@@ -1,8 +1,11 @@
 use std::{collections::HashMap, fmt::Debug};
 
-use fern_labour_notifications_shared::value_objects::{
-    NotificationChannel, NotificationDestination, NotificationStatus, NotificationTemplateData,
-    RenderedContent,
+use fern_labour_notifications_shared::{
+    NotificationCommand,
+    value_objects::{
+        NotificationChannel, NotificationDestination, NotificationStatus, NotificationTemplateData,
+        RenderedContent,
+    },
 };
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -10,8 +13,7 @@ use uuid::Uuid;
 use fern_labour_event_sourcing_rs::Aggregate;
 
 use crate::durable_object::write_side::domain::{
-    NotificationCommand, NotificationContentRedacted, NotificationDeleted, NotificationError,
-    NotificationEvent,
+    NotificationContentRedacted, NotificationDeleted, NotificationError, NotificationEvent,
     events::{
         NotificationDelivered, NotificationDeliveryFailed, NotificationDispatched,
         NotificationRequested, RenderedContentStored,

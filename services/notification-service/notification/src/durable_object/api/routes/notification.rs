@@ -4,7 +4,7 @@ use worker::{Request, Response};
 
 use crate::durable_object::api::{ApiResult, router::RequestContext};
 
-pub async fn handle_domain_command(
+pub async fn handle_notification_command(
     mut req: Request,
     ctx: RequestContext<'_>,
     user: User,

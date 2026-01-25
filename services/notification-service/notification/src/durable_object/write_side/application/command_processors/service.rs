@@ -1,13 +1,11 @@
 use anyhow::{Context, Result, anyhow};
 use fern_labour_notifications_shared::{
-    ServiceCommand,
+    NotificationCommand, ServiceCommand,
     service_clients::{
         DispatchClient, DispatchRequest, GenerationClient, dispatch::requests::RedactRequest,
     },
 };
 use tracing::info;
-
-use crate::durable_object::write_side::domain::NotificationCommand;
 
 pub struct ServiceCommandProcessor {
     generation_client: Box<dyn GenerationClient>,
