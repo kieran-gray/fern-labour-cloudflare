@@ -1,9 +1,9 @@
-use fern_labour_notifications_shared::value_objects::NotificationStatus;
+use fern_labour_notifications_shared::{NotificationCommand, value_objects::NotificationStatus};
 use fern_labour_workers_shared::User;
 use tracing::{info, warn};
 use worker::{Request, Response, RouteContext};
 
-use crate::{api_worker::AppState, durable_object::write_side::domain::NotificationCommand};
+use crate::api_worker::AppState;
 
 pub async fn process_delivery_webhook(
     req: Request,
@@ -45,7 +45,7 @@ pub async fn process_delivery_webhook(
             notification.notification_id,
             command,
             &user,
-            "/notification/domain",
+            "/notification/command",
         )
         .await
     {

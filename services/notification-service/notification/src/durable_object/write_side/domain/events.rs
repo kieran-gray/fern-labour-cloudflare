@@ -47,7 +47,6 @@ pub struct NotificationDeliveryFailed {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct NotificationContentRedacted {
     pub notification_id: Uuid,
-    pub external_id: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

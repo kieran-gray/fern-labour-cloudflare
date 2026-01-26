@@ -55,7 +55,7 @@ pub async fn handle_create_notification(
             notification_id,
             domain_command,
             &user,
-            "/notification/domain",
+            "/notification/command",
         )
         .await
         .map_err(|e| format!("Failed to send command to notification aggregate: {e}"))?;

@@ -1,5 +1,5 @@
 use fern_labour_workers_shared::{
-    CorsContext,
+    CorsContext, auth_issuers,
     clients::{AuthServiceClient, worker_clients::auth::User},
 };
 use tracing::info;
@@ -44,7 +44,10 @@ async fn provider_auth(
             ));
         }
     };
-    match auth_service.authenticate(&authorization).await {
+    match auth_service
+        .authenticate(&authorization, vec![auth_issuers::CLOUDFLARE.to_string()])
+        .await
+    {
         Ok(user) => Ok(user),
         Err(e) => {
             info!(error = ?e, "User verification failed");

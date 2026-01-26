@@ -182,7 +182,7 @@ export type ArtOptions = {
   mobile?: boolean;
 };
 
-export function splitText(text: string, maxWidth: number): string[] {
+function splitText(text: string, maxWidth: number): string[] {
   const words = text.split(" ");
   const lines: string[] = [];
   let currentLine = "";

@@ -1,4 +1,4 @@
-use fern_labour_workers_shared::{CorsContext, clients::worker_clients::auth::User};
+use fern_labour_workers_shared::{CorsContext, auth_issuers, clients::worker_clients::auth::User};
 use tracing::info;
 use worker::{Request, Response, Result, RouteContext};
 
@@ -37,7 +37,18 @@ where
             return Ok(cors_context.add_to_response(response));
         }
     };
-    let user = match ctx.data.auth_service.authenticate(&authorization).await {
+    let user = match ctx
+        .data
+        .auth_service
+        .authenticate(
+            &authorization,
+            vec![
+                auth_issuers::CLOUDFLARE.to_string(),
+                auth_issuers::CLERK.to_string(),
+            ],
+        )
+        .await
+    {
         Ok(user) => user,
         Err(e) => {
             info!(error = ?e, "User verification failed");
@@ -80,7 +91,18 @@ where
         return Ok(cors_context.add_to_response(response));
     };
 
-    let user = match ctx.data.auth_service.authenticate(authorization).await {
+    let user = match ctx
+        .data
+        .auth_service
+        .authenticate(
+            authorization,
+            vec![
+                auth_issuers::CLOUDFLARE.to_string(),
+                auth_issuers::CLERK.to_string(),
+            ],
+        )
+        .await
+    {
         Ok(user) => user,
         Err(e) => {
             info!(error = ?e, "User verification failed");

@@ -91,16 +91,6 @@ export const services: Service[] = [
             placeholder: '{"key": "value"}',
             required: false,
           },
-          {
-            name: "priority",
-            label: "PRIORITY",
-            type: "select",
-            required: false,
-            options: [
-              { value: "normal", label: "NORMAL" },
-              { value: "high", label: "HIGH" },
-            ],
-          },
         ],
       },
       {
@@ -153,6 +143,16 @@ export const services: Service[] = [
             required: false,
             description: "External provider message ID",
           },
+          {
+            name: "sent_via_provider",
+            label: "PROVIDER",
+            type: "select",
+            required: true,
+            options: [
+              { value: "twilio", label: "TWILIO" },
+              { value: "resend", label: "RESEND" },
+            ],
+          }
         ],
       },
       {
@@ -171,6 +171,16 @@ export const services: Service[] = [
             required: true,
             description: "UUID of the notification",
           },
+          {
+            name: "provider",
+            label: "PROVIDER",
+            type: "select",
+            required: true,
+            options: [
+              { value: "twilio", label: "TWILIO" },
+              { value: "resend", label: "RESEND" },
+            ],
+          }
         ],
       },
       {
@@ -196,6 +206,52 @@ export const services: Service[] = [
             placeholder: "Delivery failed: Invalid email address",
             required: false,
             description: "Optional error reason",
+          },
+          {
+            name: "provider",
+            label: "PROVIDER",
+            type: "select",
+            required: true,
+            options: [
+              { value: "twilio", label: "TWILIO" },
+              { value: "resend", label: "RESEND" },
+            ],
+          }
+        ],
+      },
+      {
+        id: "mark_content_redacted",
+        name: "MARK_CONTENT_REDACTED",
+        description: "Mark a notification as having its content successfully redacted",
+        endpoint: "/api/v1/admin/command",
+        method: "POST",
+        category: "INTERNAL_OPS",
+        fields: [
+          {
+            name: "notification_id",
+            label: "NOTIFICATION_ID",
+            type: "text",
+            placeholder: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            required: true,
+            description: "UUID of the notification",
+          },
+        ],
+      },
+      {
+        id: "delete_notification",
+        name: "DELETE_NOTIFICATION",
+        description: "Marks a notification as deleted. It will be cleaned up via a weekly scheduled cron job.",
+        endpoint: "/api/v1/admin/command",
+        method: "POST",
+        category: "INTERNAL_OPS",
+        fields: [
+          {
+            name: "notification_id",
+            label: "NOTIFICATION_ID",
+            type: "text",
+            placeholder: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            required: true,
+            description: "UUID of the notification",
           },
         ],
       },

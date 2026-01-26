@@ -40,7 +40,7 @@
       "cloudflare": {
         "issuer_url": "https://kieran-gray.cloudflareaccess.com/",
         "jwks_path": "cdn-cgi/access/certs",
-        "audience": "2479075b8cec955a824027301a8c611e914863c26996fbf2522769a1e236e4a1",
+        "audience": "000546350c2136dbaef374bcf858a71de1dd2425997eb0eecf161cdcae967705",
         "name": "Cloudflare"
       },
       "clerk": {

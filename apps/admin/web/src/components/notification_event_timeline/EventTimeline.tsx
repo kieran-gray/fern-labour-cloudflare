@@ -8,6 +8,8 @@ import {
   FileCode,
   Activity,
   RefreshCw,
+  ShieldOff,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Event, EventsResponse } from "./EventTypes";
@@ -129,6 +131,28 @@ export const EventTimeline = ({ notificationId }: EventTimelineProps) => {
           bgColor: "bg-red-600",
           borderColor: "border-red-600",
           details: [{ label: "ERROR", value: data.error }],
+        };
+
+      case "NotificationContentRedacted":
+        return {
+          label: "CONTENT_REDACTED",
+          code: "RED",
+          icon: <ShieldOff className="size-5" />,
+          color: "text-yellow-600",
+          bgColor: "bg-yellow-600",
+          borderColor: "border-yellow-600",
+          details: [{ label: "EXTERNAL_ID", value: data.external_id }],
+        };
+
+      case "NotificationDeleted":
+        return {
+          label: "NOTIFICATION_DELETED",
+          code: "DLT",
+          icon: <Trash2 className="size-5" />,
+          color: "text-red-700",
+          bgColor: "bg-red-700",
+          borderColor: "border-red-700",
+          details: [],
         };
 
       default:

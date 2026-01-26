@@ -21,7 +21,12 @@ pub async fn verify_token_handler(
         }
     };
 
-    match ctx.data.auth_service.get_user_id(&body.token).await {
+    match ctx
+        .data
+        .auth_service
+        .get_user_id(&body.token, body.allowed_issuers)
+        .await
+    {
         Ok(user_id) => {
             info!(user_id = %user_id, "Token verified successfully");
             let response = VerifyTokenResponse { user_id };
@@ -46,7 +51,12 @@ pub async fn authenticate_handler(
         }
     };
 
-    match ctx.data.auth_service.authenticate(&body.token).await {
+    match ctx
+        .data
+        .auth_service
+        .authenticate(&body.token, body.allowed_issuers)
+        .await
+    {
         Ok(user) => {
             info!(user_id = %user.user_id, email = ?user.email, "Authentication successful");
             let response = AuthenticateResponse { user };

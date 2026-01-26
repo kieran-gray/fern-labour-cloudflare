@@ -5,7 +5,7 @@ use crate::durable_object::{
         middleware::with_auth_context,
         routes::{
             admin::handle_admin_command, events::handle_events_query,
-            notification::handle_domain_command,
+            notification::handle_notification_command,
         },
     },
     state::AggregateServices,
@@ -27,8 +27,8 @@ pub async fn route_request(req: Request, services: &AggregateServices) -> Result
     let ctx = RequestContext::new(services);
 
     match (method, path.as_str()) {
-        (Method::Post, "/notification/domain") => {
-            with_auth_context(handle_domain_command, req, ctx).await
+        (Method::Post, "/notification/command") => {
+            with_auth_context(handle_notification_command, req, ctx).await
         }
         (Method::Post, "/admin/command") => with_auth_context(handle_admin_command, req, ctx).await,
         (Method::Get, "/notification/events") => {

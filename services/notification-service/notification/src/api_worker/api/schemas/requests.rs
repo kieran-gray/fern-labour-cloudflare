@@ -1,14 +1,13 @@
 use std::str::FromStr;
 
 use anyhow::{Context, Result};
+use fern_labour_notifications_shared::NotificationCommand;
 use fern_labour_notifications_shared::service_clients::notification::NotificationRequest;
 use fern_labour_notifications_shared::value_objects::{
     NotificationChannel, NotificationDestination,
 };
 use strum::VariantNames;
 use uuid::Uuid;
-
-use crate::durable_object::write_side::domain::NotificationCommand;
 
 pub trait NotificationRequestExt {
     fn try_into_domain(self, notification_id: Uuid) -> Result<NotificationCommand>;

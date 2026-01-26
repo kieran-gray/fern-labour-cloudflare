@@ -1,7 +1,8 @@
 use anyhow::{Result, anyhow};
 use fern_labour_event_sourcing_rs::{Aggregate, AggregateRepositoryTrait};
+use fern_labour_notifications_shared::NotificationCommand;
 
-use crate::durable_object::write_side::domain::{Notification, NotificationCommand};
+use crate::durable_object::write_side::domain::Notification;
 
 pub struct NotificationCommandProcessor {
     repository: Box<dyn AggregateRepositoryTrait<Notification>>,

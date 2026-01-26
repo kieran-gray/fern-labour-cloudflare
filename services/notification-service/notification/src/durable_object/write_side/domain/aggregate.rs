@@ -1,8 +1,11 @@
 use std::{collections::HashMap, fmt::Debug};
 
-use fern_labour_notifications_shared::value_objects::{
-    NotificationChannel, NotificationDestination, NotificationStatus, NotificationTemplateData,
-    RenderedContent,
+use fern_labour_notifications_shared::{
+    NotificationCommand,
+    value_objects::{
+        NotificationChannel, NotificationDestination, NotificationStatus, NotificationTemplateData,
+        RenderedContent,
+    },
 };
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -10,8 +13,7 @@ use uuid::Uuid;
 use fern_labour_event_sourcing_rs::Aggregate;
 
 use crate::durable_object::write_side::domain::{
-    NotificationCommand, NotificationContentRedacted, NotificationDeleted, NotificationError,
-    NotificationEvent,
+    NotificationContentRedacted, NotificationDeleted, NotificationError, NotificationEvent,
     events::{
         NotificationDelivered, NotificationDeliveryFailed, NotificationDispatched,
         NotificationRequested, RenderedContentStored,
@@ -256,10 +258,7 @@ impl Aggregate for Notification {
                     },
                 )]
             }
-            NotificationCommand::MarkContentRedacted {
-                notification_id,
-                external_id,
-            } => {
+            NotificationCommand::MarkContentRedacted { notification_id } => {
                 let Some(notification) = &state else {
                     return Err(NotificationError::NotFound);
                 };
@@ -271,10 +270,7 @@ impl Aggregate for Notification {
                 }
 
                 vec![NotificationEvent::NotificationContentRedacted(
-                    NotificationContentRedacted {
-                        notification_id,
-                        external_id,
-                    },
+                    NotificationContentRedacted { notification_id },
                 )]
             }
             NotificationCommand::DeleteNotification { notification_id } => {
@@ -793,10 +789,7 @@ mod tests {
         assert_eq!(notification.status(), &NotificationStatus::DELIVERED);
 
         notification.apply(&NotificationEvent::NotificationContentRedacted(
-            NotificationContentRedacted {
-                notification_id,
-                external_id: "ext-123".to_string(),
-            },
+            NotificationContentRedacted { notification_id },
         ));
         assert_eq!(notification.status(), &NotificationStatus::REDACTED);
 

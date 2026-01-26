@@ -1,3 +1,4 @@
+pub mod auth_issuers;
 pub mod cache;
 pub mod clients;
 pub mod cors;

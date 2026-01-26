@@ -34,13 +34,13 @@ pub enum ServiceCommand {
 impl ServiceCommand {
     pub fn notification_id(&self) -> Uuid {
         match self {
-            ServiceCommand::RenderNotification {
+            Self::RenderNotification {
                 notification_id, ..
             } => *notification_id,
-            ServiceCommand::DispatchNotification {
+            Self::DispatchNotification {
                 notification_id, ..
             } => *notification_id,
-            ServiceCommand::RedactNotificationContent {
+            Self::RedactNotificationContent {
                 notification_id, ..
             } => *notification_id,
         }

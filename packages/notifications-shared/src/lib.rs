@@ -5,7 +5,7 @@ pub mod value_objects;
 
 pub use commands::{
     admin::{AdminApiCommand, AdminCommand},
-    api::PublicCommand,
+    notification::NotificationCommand,
     service::ServiceCommand,
 };
 pub use exceptions::{AppError, IntoWorkerResponse};

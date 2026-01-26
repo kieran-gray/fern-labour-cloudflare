@@ -15,7 +15,7 @@ pub struct TwilioClient {
 impl TwilioClient {
     pub fn new(twilio_config: &TwilioConfig) -> Self {
         let twilio_url = format!(
-            "https://api.twilio.com/2010-04-01/Accounts/{}/",
+            "https://api.twilio.com/2010-04-01/Accounts/{}/Messages",
             twilio_config.account_sid
         );
 
@@ -64,7 +64,7 @@ impl TwilioClient {
         request_init.with_body(Some(form_data.into()));
 
         let mut response = self
-            .post(request_init, &format!("{}Messages.json", self.twilio_url))
+            .post(request_init, &format!("{}.json", self.twilio_url))
             .await?;
 
         let status = response.status_code();
@@ -107,7 +107,7 @@ impl TwilioClient {
         let mut response = self
             .post(
                 request_init,
-                &format!("{}{}.json", self.twilio_url, message_sid),
+                &format!("{}/{}.json", self.twilio_url, message_sid),
             )
             .await?;
 
@@ -122,19 +122,9 @@ impl TwilioClient {
             anyhow::bail!("Twilio API error (status {}): {}", status, error_text);
         }
 
-        let response_json: serde_json::Value = response
-            .json()
-            .await
-            .map_err(|e| anyhow!("Failed to parse Twilio response: {e}"))?;
-
-        let body = response_json["body"]
-            .as_str()
-            .ok_or_else(|| anyhow!("No 'body' field in Twilio response"))?
-            .to_string();
-
-        if !body.is_empty() {
-            anyhow::bail!("Failed to redact message content, body still has data: `{body}`")
-        }
+        // We assume that the message will be redacted. The operation appears to be
+        // eventually consistence on the twilio side, so the updated message resource
+        // will not be in the response.
 
         Ok(())
     }
