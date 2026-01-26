@@ -3,7 +3,7 @@ use worker::{Request, Response, Result, RouteContext};
 
 use crate::{application::exceptions::AppError, setup::app_state::AppState};
 
-use fern_labour_workers_shared::cors::CorsContext;
+use fern_labour_workers_shared::{auth_issuers, cors::CorsContext};
 
 pub async fn authenticated<F, Fut>(
     handler: F,
@@ -27,7 +27,12 @@ where
         }
     };
 
-    let user_id = match ctx.data.auth_service.verify_token(&authorization).await {
+    let user_id = match ctx
+        .data
+        .auth_service
+        .verify_token(&authorization, vec![auth_issuers::CLOUDFLARE.to_string()])
+        .await
+    {
         Ok(user_id) => user_id,
         Err(e) => {
             info!(error = ?e, "User verification failed");

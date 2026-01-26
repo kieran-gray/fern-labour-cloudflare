@@ -1,6 +1,6 @@
 use worker::*;
 
-use crate::api::routes::auth_verify::{authenticate_handler, verify_token_handler};
+use crate::api::routes::auth::{authenticate_handler, verify_token_handler};
 use crate::api::utils::handlers::create_options_handler;
 use crate::setup::app_state::AppState;
 

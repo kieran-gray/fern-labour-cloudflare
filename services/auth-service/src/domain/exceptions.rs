@@ -1,29 +1,13 @@
-/// Unified error type for the auth service.
-/// Consolidates DomainError, RepositoryError, AppError, and AuthError into a single type.
 #[derive(Debug, Clone)]
 pub enum AuthError {
-    /// JWT format or structure is invalid
     InvalidToken(String),
-
-    /// Token claims validation failed (expired, invalid audience, etc.)
     InvalidClaims(String),
-
-    /// Issuer URL not found in registry
     UnknownIssuer(String),
-
-    /// Issuer configuration is invalid
     InvalidIssuer(String),
-
-    /// Signature verification failed
+    IssuerNotAllowed(String),
     VerificationFailed(String),
-
-    /// Failed to fetch or decode JWKS
     JwksFetchFailed(String),
-
-    /// Identity extraction from claims failed
     ExtractionFailed(String),
-
-    /// Unexpected internal error
     InternalError(String),
 }
 
@@ -34,6 +18,7 @@ impl std::fmt::Display for AuthError {
             AuthError::InvalidClaims(msg) => write!(f, "Invalid claims: {msg}"),
             AuthError::UnknownIssuer(issuer) => write!(f, "Unknown issuer: {issuer}"),
             AuthError::InvalidIssuer(msg) => write!(f, "Invalid issuer: {msg}"),
+            AuthError::IssuerNotAllowed(msg) => write!(f, "Issuer not allowed: {msg}"),
             AuthError::VerificationFailed(msg) => write!(f, "Verification failed: {msg}"),
             AuthError::JwksFetchFailed(msg) => write!(f, "JWKS fetch failed: {msg}"),
             AuthError::ExtractionFailed(msg) => write!(f, "Extraction failed: {msg}"),
@@ -51,6 +36,7 @@ impl AuthError {
             AuthError::InvalidClaims(_) => 401,
             AuthError::UnknownIssuer(_) => 401,
             AuthError::InvalidIssuer(_) => 500,
+            AuthError::IssuerNotAllowed(_) => 403,
             AuthError::VerificationFailed(_) => 401,
             AuthError::JwksFetchFailed(_) => 500,
             AuthError::ExtractionFailed(_) => 500,

@@ -28,6 +28,7 @@ impl std::error::Error for AuthClientError {}
 #[derive(Serialize)]
 struct VerifyTokenRequest {
     token: String,
+    allowed_issuers: Vec<String>,
 }
 
 #[derive(Deserialize)]
@@ -70,8 +71,16 @@ struct ErrorResponse {
 
 #[async_trait(?Send)]
 pub trait AuthServiceClient {
-    async fn verify_token(&self, token: &str) -> Result<String, AuthClientError>;
-    async fn authenticate(&self, token: &str) -> Result<User, AuthClientError>;
+    async fn verify_token(
+        &self,
+        token: &str,
+        allowed_issuers: Vec<String>,
+    ) -> Result<String, AuthClientError>;
+    async fn authenticate(
+        &self,
+        token: &str,
+        allowed_issuers: Vec<String>,
+    ) -> Result<User, AuthClientError>;
 }
 
 pub struct FetcherAuthServiceClient {
@@ -109,9 +118,14 @@ impl FetcherAuthServiceClient {
 
 #[async_trait(?Send)]
 impl AuthServiceClient for FetcherAuthServiceClient {
-    async fn verify_token(&self, token: &str) -> Result<String, AuthClientError> {
+    async fn verify_token(
+        &self,
+        token: &str,
+        allowed_issuers: Vec<String>,
+    ) -> Result<String, AuthClientError> {
         let body = VerifyTokenRequest {
             token: token.to_string(),
+            allowed_issuers,
         };
 
         // The 'https://fernlabour.com' bit of the URL below does nothing since we are calling the
@@ -140,9 +154,14 @@ impl AuthServiceClient for FetcherAuthServiceClient {
         }
     }
 
-    async fn authenticate(&self, token: &str) -> Result<User, AuthClientError> {
+    async fn authenticate(
+        &self,
+        token: &str,
+        allowed_issuers: Vec<String>,
+    ) -> Result<User, AuthClientError> {
         let body = VerifyTokenRequest {
             token: token.to_string(),
+            allowed_issuers,
         };
 
         let mut response = self

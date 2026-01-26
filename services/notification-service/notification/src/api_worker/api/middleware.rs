@@ -1,4 +1,8 @@
-use fern_labour_workers_shared::{CorsContext, clients::worker_clients::auth::User};
+use fern_labour_workers_shared::{
+    CorsContext, auth_issuers,
+    clients::{AuthServiceClient, worker_clients::auth::User},
+};
+use tracing::info;
 use worker::{Request, Response, Result, RouteContext};
 
 use crate::api_worker::AppState;
@@ -26,6 +30,35 @@ fn internal_auth(req: &Request, internal_service_token: &str) -> Option<User> {
     Some(User::internal(&service_id))
 }
 
+#[allow(clippy::borrowed_box)]
+async fn provider_auth(
+    req: &Request,
+    auth_service: &Box<dyn AuthServiceClient>,
+) -> std::result::Result<User, Result<Response>> {
+    let authorization = match req.headers().get("Authorization").ok().flatten() {
+        Some(auth_header) => auth_header,
+        None => {
+            return Err(Response::error(
+                "Unauthorised: Not Authenticated".to_string(),
+                401,
+            ));
+        }
+    };
+    match auth_service
+        .authenticate(&authorization, vec![auth_issuers::CLOUDFLARE.to_string()])
+        .await
+    {
+        Ok(user) => Ok(user),
+        Err(e) => {
+            info!(error = ?e, "User verification failed");
+            Err(Response::error(
+                "Unauthorised: User verification failed".to_string(),
+                401,
+            ))
+        }
+    }
+}
+
 pub async fn authenticated<F, Fut>(
     handler: F,
     req: Request,
@@ -40,8 +73,12 @@ where
         return Ok(response);
     }
 
-    let Some(user) = internal_auth(&req, &ctx.data.config.internal_service_token) else {
-        return Response::error("Unauthorised: Not Authenticated".to_string(), 401);
+    let user = match internal_auth(&req, &ctx.data.config.internal_service_token) {
+        Some(user) => user,
+        None => match provider_auth(&req, &ctx.data.auth_service).await {
+            Ok(user) => user,
+            Err(result) => return result,
+        },
     };
 
     handler(req, ctx, cors_context, user).await

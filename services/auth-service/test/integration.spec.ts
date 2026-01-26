@@ -9,6 +9,8 @@ import { describe, it, expect, beforeAll, afterEach } from "vitest";
  */
 const TEST_AUTH_TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3Qta2V5LTEyMyJ9.eyJpc3MiOiJodHRwczovL3F1ZXN0LWxvY2sudWsuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfHRlc3QtdXNlci00NTYiLCJhdWQiOlsiaHR0cHM6Ly9hcGkucXVlc3QtbG9jay5jb20iXSwiaWF0IjoxNzYxMTY0NDk1LCJleHAiOjIwNzY1MjQ0OTV9.xBCtYbefeTYejZACZq__prQAll9_W6LUEO41MUqK2tDMbt_MtC0ETqdDAkrfAOUsuK6pqzrp6Mly2KVURpn7qii6fGV8Y8xu8OU6oQTdv1dRPlsvBJ1UJNJkM8nBzjP_LTfkk5Cyy3U3XOJvFyOuEWiwntZHyDh6rN0oqeg39B2sXyAwPddimDP-YBurBlPS_1zDxlNXKvsgV8vkwpH-OJwcMAsD6_08oJh2TWQz1qd4TW2HXhPxRPc1CL4yzELhXFFBhNgLKi_-gXGfsTtH0Cqiusvq4VLXgR_Tm-EAtlY6VzFh904Y83MSwaazgg583TG6NFXmSmDl_RoSLXmc2g";
 
+const AUTH0_ISSUER = "Auth0";
+
 function setupJwksMock(): void {
   fetchMock
     .get("https://quest-lock.uk.auth0.com")
@@ -57,7 +59,7 @@ describe("Authentication Worker", () => {
           "Content-Type": "application/json",
           Origin: "http://evil.com",
         },
-        body: JSON.stringify({ token: TEST_AUTH_TOKEN }),
+        body: JSON.stringify({ token: TEST_AUTH_TOKEN, allowed_issuers: [] }),
       });
 
       expect(response.headers.get("Access-Control-Allow-Origin")).toBeNull();
@@ -72,7 +74,22 @@ describe("Authentication Worker", () => {
           "Content-Type": "application/json",
           Origin: "http://localhost:5173",
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ allowed_issuers: [] }),
+      });
+
+      expect(response.status).toBe(400);
+      const data = await response.text();
+      expect(data).toContain("Invalid request body");
+    });
+
+    it("rejects requests without allowed_issuers field", async () => {
+      const response = await SELF.fetch("http://example.com/api/v1/auth/verify/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+        },
+        body: JSON.stringify({ token: TEST_AUTH_TOKEN }),
       });
 
       expect(response.status).toBe(400);
@@ -87,7 +104,7 @@ describe("Authentication Worker", () => {
           "Content-Type": "application/json",
           Origin: "http://localhost:5173",
         },
-        body: JSON.stringify({ token: "invalid-token-format" }),
+        body: JSON.stringify({ token: "invalid-token-format", allowed_issuers: [] }),
       });
 
       expect(response.status).toBe(401);
@@ -106,7 +123,7 @@ describe("Authentication Worker", () => {
           "Content-Type": "application/json",
           Origin: "http://localhost:5173",
         },
-        body: JSON.stringify({ token: invalidToken }),
+        body: JSON.stringify({ token: invalidToken, allowed_issuers: [] }),
       });
 
       expect(response.status).toBe(401);
@@ -123,7 +140,7 @@ describe("Authentication Worker", () => {
           "Content-Type": "application/json",
           Origin: "http://localhost:5173",
         },
-        body: JSON.stringify({ token: TEST_AUTH_TOKEN }),
+        body: JSON.stringify({ token: TEST_AUTH_TOKEN, allowed_issuers: [] }),
       });
 
       expect(response.status).toBe(200);
@@ -140,7 +157,7 @@ describe("Authentication Worker", () => {
           "Content-Type": "application/json",
           Origin: "http://localhost:5173",
         },
-        body: JSON.stringify({ token: TEST_AUTH_TOKEN }),
+        body: JSON.stringify({ token: TEST_AUTH_TOKEN, allowed_issuers: [] }),
       });
 
       expect(response1.status).toBe(200);
@@ -153,12 +170,154 @@ describe("Authentication Worker", () => {
           "Content-Type": "application/json",
           Origin: "http://localhost:5173",
         },
-        body: JSON.stringify({ token: TEST_AUTH_TOKEN }),
+        body: JSON.stringify({ token: TEST_AUTH_TOKEN, allowed_issuers: [] }),
       });
 
       expect(response2.status).toBe(200);
       const data2 = await response2.json() as any;
       expect(data2.user_id).toBe("auth0|test-user-456");
+    });
+  });
+
+  describe("Issuer Restriction", () => {
+    it("allows token when issuer is in allowed_issuers list", async () => {
+      setupJwksMock();
+
+      const response = await SELF.fetch("http://example.com/api/v1/auth/verify/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+        },
+        body: JSON.stringify({
+          token: TEST_AUTH_TOKEN,
+          allowed_issuers: [AUTH0_ISSUER],
+        }),
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json() as any;
+      expect(data.user_id).toBe("auth0|test-user-456");
+    });
+
+    it("allows token when issuer is one of multiple allowed_issuers", async () => {
+      setupJwksMock();
+
+      const response = await SELF.fetch("http://example.com/api/v1/auth/verify/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+        },
+        body: JSON.stringify({
+          token: TEST_AUTH_TOKEN,
+          allowed_issuers: ["Cloudflare", AUTH0_ISSUER, "Clerk"],
+        }),
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json() as any;
+      expect(data.user_id).toBe("auth0|test-user-456");
+    });
+
+    it("rejects token with 403 when issuer is not in allowed_issuers list", async () => {
+      setupJwksMock();
+
+      const response = await SELF.fetch("http://example.com/api/v1/auth/verify/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+        },
+        body: JSON.stringify({
+          token: TEST_AUTH_TOKEN,
+          allowed_issuers: ["Cloudflare"],
+        }),
+      });
+
+      expect(response.status).toBe(403);
+      const data = await response.text();
+      expect(data).toBe("Issuer not allowed: Auth0");
+    });
+
+    it("rejects token with 403 when allowed_issuers contains only non-matching issuers", async () => {
+      setupJwksMock();
+
+      const response = await SELF.fetch("http://example.com/api/v1/auth/verify/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+        },
+        body: JSON.stringify({
+          token: TEST_AUTH_TOKEN,
+          allowed_issuers: ["Cloudflare", "Clerk"],
+        }),
+      });
+
+      expect(response.status).toBe(403);
+      const data = await response.text();
+      expect(data).toBe("Issuer not allowed: Auth0");
+    });
+
+    it("allows any issuer when allowed_issuers is empty", async () => {
+      setupJwksMock();
+
+      const response = await SELF.fetch("http://example.com/api/v1/auth/verify/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+        },
+        body: JSON.stringify({
+          token: TEST_AUTH_TOKEN,
+          allowed_issuers: [],
+        }),
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json() as any;
+      expect(data.user_id).toBe("auth0|test-user-456");
+    });
+
+    it("authenticate endpoint respects allowed_issuers restriction", async () => {
+      setupJwksMock();
+
+      const response = await SELF.fetch("http://example.com/api/v1/auth/authenticate/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+        },
+        body: JSON.stringify({
+          token: TEST_AUTH_TOKEN,
+          allowed_issuers: ["Cloudflare"],
+        }),
+      });
+
+      expect(response.status).toBe(403);
+      const data = await response.text();
+      expect(data).toBe("Issuer not allowed: Auth0");
+    });
+
+    it("authenticate endpoint allows token when issuer matches", async () => {
+      setupJwksMock();
+
+      const response = await SELF.fetch("http://example.com/api/v1/auth/authenticate/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+        },
+        body: JSON.stringify({
+          token: TEST_AUTH_TOKEN,
+          allowed_issuers: [AUTH0_ISSUER],
+        }),
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json() as any;
+      expect(data.user.user_id).toBe("auth0|test-user-456");
     });
   });
 });

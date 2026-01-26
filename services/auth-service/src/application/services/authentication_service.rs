@@ -11,13 +11,21 @@ use crate::{
             token_validation_service::TokenValidationServiceTrait,
         },
     },
-    domain::AuthError,
+    domain::{AuthError, Issuer},
 };
 
 #[async_trait(?Send)]
 pub trait AuthenticationServiceTrait: Send + Sync {
-    async fn authenticate(&self, token: &str) -> Result<UserDto, AuthError>;
-    async fn get_user_id(&self, token: &str) -> Result<String, AuthError>;
+    async fn authenticate(
+        &self,
+        token: &str,
+        allowed_issuers: Vec<String>,
+    ) -> Result<UserDto, AuthError>;
+    async fn get_user_id(
+        &self,
+        token: &str,
+        allowed_issuers: Vec<String>,
+    ) -> Result<String, AuthError>;
 }
 
 pub struct AuthenticationService {
@@ -35,15 +43,33 @@ impl AuthenticationService {
             extractor,
         }
     }
+
+    fn validate_issuer_allowed(
+        &self,
+        issuer: &Issuer,
+        allowed: &Vec<String>,
+    ) -> Result<(), AuthError> {
+        match allowed.as_slice() {
+            [] => Ok(()),
+            issuers if issuers.contains(&issuer.name) => Ok(()),
+            _ => Err(AuthError::IssuerNotAllowed(issuer.name.clone())),
+        }
+    }
 }
 
 #[async_trait(?Send)]
 impl AuthenticationServiceTrait for AuthenticationService {
-    async fn authenticate(&self, token: &str) -> Result<UserDto, AuthError> {
+    async fn authenticate(
+        &self,
+        token: &str,
+        allowed_issuers: Vec<String>,
+    ) -> Result<UserDto, AuthError> {
         let (claims, issuer) = self.validator.validate_token(token).await.map_err(|e| {
             error!(error = %e, "Token validation failed");
             e
         })?;
+
+        self.validate_issuer_allowed(&issuer, &allowed_issuers)?;
 
         let principal = self
             .extractor
@@ -56,11 +82,17 @@ impl AuthenticationServiceTrait for AuthenticationService {
         Ok(UserDto::from(principal))
     }
 
-    async fn get_user_id(&self, token: &str) -> Result<String, AuthError> {
-        let (claims, _issuer) = self.validator.validate_token(token).await.map_err(|e| {
+    async fn get_user_id(
+        &self,
+        token: &str,
+        allowed_issuers: Vec<String>,
+    ) -> Result<String, AuthError> {
+        let (claims, issuer) = self.validator.validate_token(token).await.map_err(|e| {
             error!(error = %e, "Token validation failed");
             e
         })?;
+
+        self.validate_issuer_allowed(&issuer, &allowed_issuers)?;
 
         Ok(claims.subject)
     }
