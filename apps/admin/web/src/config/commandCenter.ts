@@ -152,7 +152,7 @@ export const services: Service[] = [
               { value: "twilio", label: "TWILIO" },
               { value: "resend", label: "RESEND" },
             ],
-          }
+          },
         ],
       },
       {
@@ -180,7 +180,7 @@ export const services: Service[] = [
               { value: "twilio", label: "TWILIO" },
               { value: "resend", label: "RESEND" },
             ],
-          }
+          },
         ],
       },
       {
@@ -216,13 +216,14 @@ export const services: Service[] = [
               { value: "twilio", label: "TWILIO" },
               { value: "resend", label: "RESEND" },
             ],
-          }
+          },
         ],
       },
       {
         id: "mark_content_redacted",
         name: "MARK_CONTENT_REDACTED",
-        description: "Mark a notification as having its content successfully redacted",
+        description:
+          "Mark a notification as having its content successfully redacted",
         endpoint: "/api/v1/admin/command",
         method: "POST",
         category: "INTERNAL_OPS",
@@ -240,7 +241,8 @@ export const services: Service[] = [
       {
         id: "delete_notification",
         name: "DELETE_NOTIFICATION",
-        description: "Marks a notification as deleted. It will be cleaned up via a weekly scheduled cron job.",
+        description:
+          "Marks a notification as deleted. It will be cleaned up via a weekly scheduled cron job.",
         endpoint: "/api/v1/admin/command",
         method: "POST",
         category: "INTERNAL_OPS",

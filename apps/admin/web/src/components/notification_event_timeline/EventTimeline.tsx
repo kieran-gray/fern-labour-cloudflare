@@ -80,15 +80,16 @@ export const EventTimeline = ({ notificationId }: EventTimelineProps) => {
             { label: "CHANNEL", value: data.channel.toUpperCase() },
             {
               label: "DESTINATION",
-              value: `${data.destination.type.toUpperCase()}: ${data.destination.value}`,
+              value: `${data.destination.type.toUpperCase()}: ${
+                data.destination.value
+              }`,
             },
             { label: "TEMPLATE", value: data.template_data.type.toUpperCase() },
           ],
         };
 
       case "RenderedContentStored": {
-        const contentType =
-          Object.keys(data.rendered_content)[0] || "Unknown";
+        const contentType = Object.keys(data.rendered_content)[0] || "Unknown";
         return {
           label: "CONTENT_RENDERED",
           code: "RND",
@@ -96,7 +97,9 @@ export const EventTimeline = ({ notificationId }: EventTimelineProps) => {
           color: "text-cp-gray",
           bgColor: "bg-cp-gray",
           borderColor: "border-cp-gray",
-          details: [{ label: "CONTENT_TYPE", value: contentType.toUpperCase() }],
+          details: [
+            { label: "CONTENT_TYPE", value: contentType.toUpperCase() },
+          ],
         };
       }
 
