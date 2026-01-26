@@ -5,7 +5,7 @@ export const PrivacyPolicy = () => {
     <div className={classes.root}>
       <h1 id="privacy-policy">PRIVACY POLICY</h1>
       <p>
-        <strong>Last updated March 05, 2025</strong>
+        <strong>Last updated January 26, 2026</strong>
       </p>
       <p>
         This Privacy Notice for Fern Labour (&#39;<strong>we</strong>&#39;, &#39;<strong>us</strong>
@@ -137,23 +137,26 @@ export const PrivacyPolicy = () => {
         <a href="#infosafe">7. HOW DO WE KEEP YOUR INFORMATION SAFE?</a>
       </p>
       <p>
-        <a href="#infominors">8. DO WE COLLECT INFORMATION FROM MINORS?</a>
+        <a href="#datatransfers">8. INTERNATIONAL DATA TRANSFERS</a>
       </p>
       <p>
-        <a href="#privacyrights">9. WHAT ARE YOUR PRIVACY RIGHTS?</a>
+        <a href="#infominors">9. DO WE COLLECT INFORMATION FROM MINORS?</a>
       </p>
       <p>
-        <a href="#DNT">10. CONTROLS FOR DO-NOT-TRACK FEATURES</a>
+        <a href="#privacyrights">10. WHAT ARE YOUR PRIVACY RIGHTS?</a>
       </p>
       <p>
-        <a href="#policyupdates">11. DO WE MAKE UPDATES TO THIS NOTICE?</a>
+        <a href="#DNT">11. CONTROLS FOR DO-NOT-TRACK FEATURES</a>
       </p>
       <p>
-        <a href="#contact">12. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</a>
+        <a href="#policyupdates">12. DO WE MAKE UPDATES TO THIS NOTICE?</a>
+      </p>
+      <p>
+        <a href="#contact">13. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</a>
       </p>
       <p>
         <a href="#request">
-          13. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM YOU?
+          14. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM YOU?
         </a>
       </p>
       <h2 id="infocollect">1. WHAT INFORMATION DO WE COLLECT?</h2>
@@ -220,18 +223,6 @@ export const PrivacyPolicy = () => {
       <p>
         All personal information that you provide to us must be true, complete, and accurate, and
         you must notify us of any changes to such personal information.
-      </p>
-      <h3 id="google-api">Google API</h3>
-      <p>
-        Our use of information received from Google APIs will adhere to{' '}
-        <a href="https://developers.google.com/terms/api-services-user-data-policy">
-          Google API Services User Data Policy
-        </a>{' '}
-        , including the{' '}
-        <a href="https://developers.google.com/terms/api-services-user-data-policy#limited-use">
-          Limited Use requirements
-        </a>
-        .{' '}
       </p>
       <h2 id="infouse">2. HOW DO WE PROCESS YOUR INFORMATION?</h2>
       <p>
@@ -369,6 +360,49 @@ export const PrivacyPolicy = () => {
           </p>
         </li>
       </ul>
+      <p>
+        <strong>Service Providers.</strong> We share your information with third-party service
+        providers who perform services on our behalf:
+      </p>
+      <ul>
+        <li>
+          <p>
+            <strong>Clerk</strong> - Authentication services. Stores your name, email address, and
+            phone number. You can delete your Clerk account through the profile link in the
+            application. Privacy policy:{' '}
+            <a href="https://clerk.com/legal/privacy">https://clerk.com/legal/privacy</a>
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong>Cloudflare</strong> - Infrastructure and data storage services. Privacy policy:{' '}
+            <a href="https://www.cloudflare.com/privacypolicy/">
+              https://www.cloudflare.com/privacypolicy/
+            </a>
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong>Resend</strong> - Email delivery services. Privacy policy:{' '}
+            <a href="https://resend.com/legal/privacy-policy">
+              https://resend.com/legal/privacy-policy
+            </a>
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong>Stripe</strong> - Payment processing for subscription upgrades. Privacy policy:{' '}
+            <a href="https://stripe.com/gb/privacy">https://stripe.com/gb/privacy</a>
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong>Twilio</strong> - SMS and WhatsApp messaging services for subscribers. Message
+            content is immediately redacted upon confirmed delivery. Privacy policy:{' '}
+            <a href="https://www.twilio.com/legal/privacy">https://www.twilio.com/legal/privacy</a>
+          </p>
+        </li>
+      </ul>
       <h2 id="sociallogins">5. HOW DO WE HANDLE YOUR SOCIAL LOGINS?</h2>
       <p>
         <strong>In Short:</strong>
@@ -401,13 +435,28 @@ export const PrivacyPolicy = () => {
           Privacy Notice unless otherwise required by law.
         </em>
       </p>
-      <p>
-        We will only keep your personal information for as long as it is necessary for the purposes
-        set out in this Privacy Notice, unless a longer retention period is required or permitted by
-        law (such as tax, accounting, or other legal requirements). No purpose in this notice will
-        require us keeping your personal information for longer than the period of time in which
-        users have an account with us .
-      </p>
+      <p>We retain different categories of data for different periods:</p>
+      <ul>
+        <li>
+          <p>
+            <strong>SMS and WhatsApp notifications:</strong> Message content is immediately redacted
+            upon confirmed delivery. Associated metadata is deleted within seven days.
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong>Labour and contraction data:</strong> Stored in isolated storage unique to each
+            labour session. This data is retained until you delete the labour through the
+            application. Deleted labours are permanently removed on a scheduled cleanup cycle.
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong>Account information:</strong> Retained for as long as your account remains
+            active. You can delete your account through the profile link in the application.
+          </p>
+        </li>
+      </ul>
       <p>
         When we have no ongoing legitimate business need to process your personal information, we
         will either delete or anonymise such information, or, if this is not possible (for example,
@@ -425,16 +474,57 @@ export const PrivacyPolicy = () => {
       </p>
       <p>
         We have implemented appropriate and reasonable technical and organisational security
-        measures designed to protect the security of any personal information we process. However,
-        despite our safeguards and efforts to secure your information, no electronic transmission
-        over the Internet or information storage technology can be guaranteed to be 100% secure, so
-        we cannot promise or guarantee that hackers, cybercriminals, or other unauthorised third
-        parties will not be able to defeat our security and improperly collect, access, steal, or
-        modify your information. Although we will do our best to protect your personal information,
-        transmission of personal information to and from our Services is at your own risk. You
-        should only access the Services within a secure environment.
+        measures designed to protect the security of any personal information we process, including:
       </p>
-      <h2 id="infominors">8. DO WE COLLECT INFORMATION FROM MINORS?</h2>
+      <ul>
+        <li>
+          <p>
+            <strong>Data isolation:</strong> Each labour session is stored in its own isolated
+            storage container, preventing cross-contamination between users&#39; data.
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong>Encryption in transit:</strong> All data transmitted between your device and our
+            services is encrypted using TLS (Transport Layer Security).
+          </p>
+        </li>
+        <li>
+          <p>
+            <strong>Data minimization:</strong> Notification content (SMS/WhatsApp) is immediately
+            redacted upon delivery, and associated metadata is regularly purged.
+          </p>
+        </li>
+      </ul>
+      <p>
+        However, despite our safeguards and efforts to secure your information, no electronic
+        transmission over the Internet or information storage technology can be guaranteed to be
+        100% secure, so we cannot promise or guarantee that hackers, cybercriminals, or other
+        unauthorised third parties will not be able to defeat our security and improperly collect,
+        access, steal, or modify your information. Although we will do our best to protect your
+        personal information, transmission of personal information to and from our Services is at
+        your own risk. You should only access the Services within a secure environment.
+      </p>
+      <h2 id="datatransfers">8. INTERNATIONAL DATA TRANSFERS</h2>
+      <p>
+        <strong>In Short:</strong>
+        <em>
+          Your data may be processed in multiple locations globally. We rely on approved transfer
+          mechanisms to protect your data.
+        </em>
+      </p>
+      <p>
+        Our Services are hosted on Cloudflare&#39;s global network. Your data is processed at edge
+        locations geographically close to you to minimize latency. This means your personal
+        information may be processed outside your country of residence, including outside the
+        European Economic Area (EEA) or United Kingdom.
+      </p>
+      <p>
+        Where we transfer personal information outside the EEA or UK, we ensure appropriate
+        safeguards are in place, including Standard Contractual Clauses (SCCs) approved by the
+        European Commission, and Data Processing Addenda with our service providers.
+      </p>
+      <h2 id="infominors">9. DO WE COLLECT INFORMATION FROM MINORS?</h2>
       <p>
         <strong>In Short:</strong>
         <em>We do not knowingly collect data from or market to children under 18 years of age .</em>
@@ -452,7 +542,7 @@ export const PrivacyPolicy = () => {
         </a>{' '}
         .
       </p>
-      <h2 id="privacyrights">9. WHAT ARE YOUR PRIVACY RIGHTS?</h2>
+      <h2 id="privacyrights">10. WHAT ARE YOUR PRIVACY RIGHTS?</h2>
       <p>
         <strong>In Short:</strong>{' '}
         <em>
@@ -530,7 +620,7 @@ export const PrivacyPolicy = () => {
         </a>{' '}
         .
       </p>
-      <h2 id="DNT">10. CONTROLS FOR DO-NOT-TRACK FEATURES</h2>
+      <h2 id="DNT">11. CONTROLS FOR DO-NOT-TRACK FEATURES</h2>
       <p>
         Most web browsers and some mobile operating systems and mobile applications include a
         Do-Not-Track ( &#39;DNT&#39; ) feature or setting you can activate to signal your privacy
@@ -541,7 +631,7 @@ export const PrivacyPolicy = () => {
         standard for online tracking is adopted that we must follow in the future, we will inform
         you about that practice in a revised version of this Privacy Notice.
       </p>
-      <h2 id="policyupdates">11. DO WE MAKE UPDATES TO THIS NOTICE?</h2>
+      <h2 id="policyupdates">12. DO WE MAKE UPDATES TO THIS NOTICE?</h2>
       <p>
         <strong>In Short:</strong> Yes, we will update this notice as necessary to stay compliant
         with relevant laws._
@@ -553,7 +643,7 @@ export const PrivacyPolicy = () => {
         such changes or by directly sending you a notification. We encourage you to review this
         Privacy Notice frequently to be informed of how we are protecting your information.
       </p>
-      <h2 id="contact">12. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</h2>
+      <h2 id="contact">13. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</h2>
       <p>
         If you have questions or comments about this notice, you may contact our Data Protection
         Officer (DPO) by email at{' '}
@@ -572,7 +662,7 @@ export const PrivacyPolicy = () => {
         or by visiting{' '}
         <a href="http://www.fernlabour.com/contact">http://www.fernlabour.com/contact</a>
       </p>
-      <h2 id="request">13. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM YOU?</h2>
+      <h2 id="request">14. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM YOU?</h2>
       <p>
         Based on the applicable laws of your country , you may have the right to request access to
         the personal information we collect from you, details about how we have processed it,

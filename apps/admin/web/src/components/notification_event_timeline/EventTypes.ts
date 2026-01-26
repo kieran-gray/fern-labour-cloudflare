@@ -53,7 +53,6 @@ export interface NotificationFailedData {
 
 export interface NotificationContentRedacted {
   notification_id: string;
-  external_id: string;
 }
 
 export interface NotificationDeleted {
