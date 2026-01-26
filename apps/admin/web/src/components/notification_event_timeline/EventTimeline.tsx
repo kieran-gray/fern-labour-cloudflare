@@ -144,7 +144,7 @@ export const EventTimeline = ({ notificationId }: EventTimelineProps) => {
           color: "text-yellow-600",
           bgColor: "bg-yellow-600",
           borderColor: "border-yellow-600",
-          details: [{ label: "EXTERNAL_ID", value: data.external_id }],
+          details: [],
         };
 
       case "NotificationDeleted":
