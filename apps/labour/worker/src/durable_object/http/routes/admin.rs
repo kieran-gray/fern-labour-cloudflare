@@ -3,7 +3,7 @@ use fern_labour_workers_shared::User;
 use tracing::{error, info};
 use worker::{Request, Response};
 
-use crate::durable_object::{http::ApiResult, http::router::RequestContext};
+use crate::durable_object::http::router::RequestContext;
 
 pub async fn handle_admin_command(
     mut req: Request,
@@ -30,17 +30,13 @@ pub async fn handle_admin_command(
         "Processing admin command"
     );
 
-    let result = ctx
-        .data
+    // Returning a response so we can control if the alarm handler runs based on
+    // the command that was handled.
+    // We need it to run for a rebuild, but definitely not for a deletion.
+    ctx.data
         .write_model()
         .admin_command_processor
-        .handle(admin_command);
-
-    if let Err(ref err) = result {
-        error!("Command execution failed: {}", err);
-    } else {
-        info!("Command executed successfully");
-    }
-
-    Ok(ApiResult::from_unit_result(result).into_response())
+        .handle(admin_command)
+        .await
+        .map_err(|err| worker::Error::RustError(err.to_string()))
 }

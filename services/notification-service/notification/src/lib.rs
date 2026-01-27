@@ -64,7 +64,7 @@ async fn scheduled(controller: ScheduledEvent, env: Env, _ctx: ScheduleContext) 
                     return;
                 }
             };
-        let admin_user = User::internal("fern-labour-notifications-admin");
+        let admin_user = User::internal("notifications-admin");
 
         let notification_count = deleted_notification_ids.len();
         for notification_id in deleted_notification_ids {

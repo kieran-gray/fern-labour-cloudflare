@@ -113,7 +113,7 @@ async fn handle_checkout_completed(
         access_level: SubscriberAccessLevel::SUPPORTER,
     });
 
-    let internal_user = User::internal("fern-labour-stripe-webhook");
+    let internal_user = User::internal("stripe-webhook");
 
     let result = ctx
         .data

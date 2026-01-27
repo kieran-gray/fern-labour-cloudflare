@@ -29,6 +29,11 @@
       "enabled": true
     }
   },
+  "triggers": {
+    "crons": [
+      "0 18 * * 1"
+    ]
+  },
   "services": [
     {
       "binding": "NOTIFICATION_SERVICE_API",

@@ -1,5 +1,5 @@
 use anyhow::{Result, anyhow};
-use fern_labour_event_sourcing_rs::PaginatedResponse;
+use fern_labour_event_sourcing_rs::{PaginatedResponse, SyncRepositoryTrait};
 use fern_labour_labour_shared::{
     ApiQuery, ContractionQuery, LabourQuery, LabourUpdateQuery,
     queries::subscription::SubscriptionQuery,
@@ -7,14 +7,13 @@ use fern_labour_labour_shared::{
 use fern_labour_workers_shared::User;
 use serde_json::Value;
 
-use super::read_models::{
-    contractions::ContractionReadModelQueryHandler, labour::LabourReadModelQueryHandler,
-    labour_updates::LabourUpdateReadModelQueryHandler,
-    subscription_token::SubscriptionTokenQueryHandler, subscriptions::SubscriptionQueryHandler,
-};
 use crate::durable_object::{
     authorization::{Action, Authorizer, QueryAction, resolve_principal},
     http::utils::{build_paginated_response, decode_cursor},
+    read_side::read_models::{
+        subscription_token::SubscriptionTokenRepositoryTrait,
+        subscriptions::sync_repository::SubscriptionRepositoryTrait,
+    },
     setup::state::ReadModel,
 };
 
@@ -33,6 +32,12 @@ impl<'a> QueryHandler<'a> {
 
     pub fn handle(&self, query: ApiQuery, user: &User) -> Result<Value> {
         let aggregate = self.read_model.aggregate_repository.load()?;
+
+        if let Some(ref labour) = aggregate
+            && labour.is_deleted()
+        {
+            anyhow::bail!("Labour has been deleted")
+        }
 
         let action = match &query {
             ApiQuery::Labour(_) => Action::Query(QueryAction::GetLabour),
@@ -67,7 +72,16 @@ impl<'a> QueryHandler<'a> {
     fn handle_labour(&self, query: LabourQuery) -> Result<Value> {
         match query {
             LabourQuery::GetLabour { .. } => {
-                let labour = self.read_model.labour_query.get()?;
+                let labour = match self
+                    .read_model
+                    .labour_repository
+                    .get(1, None)?
+                    .into_iter()
+                    .next()
+                {
+                    Some(labour) => Ok(labour),
+                    None => Err(anyhow!("Labour not found")),
+                }?;
                 Ok(serde_json::to_value(labour)?)
             }
         }
@@ -77,7 +91,10 @@ impl<'a> QueryHandler<'a> {
         match query {
             ContractionQuery::GetContractions { limit, cursor, .. } => {
                 let decoded = decode_cursor(cursor);
-                let items = self.read_model.contraction_query.get(limit + 1, decoded)?;
+                let items = self
+                    .read_model
+                    .contraction_repository
+                    .get(limit + 1, decoded)?;
                 Ok(serde_json::to_value(build_paginated_response(
                     items, limit,
                 ))?)
@@ -85,7 +102,7 @@ impl<'a> QueryHandler<'a> {
             ContractionQuery::GetContractionById { contraction_id, .. } => {
                 let item = self
                     .read_model
-                    .contraction_query
+                    .contraction_repository
                     .get_by_id(contraction_id)?;
                 Ok(serde_json::to_value(item)?)
             }
@@ -98,7 +115,7 @@ impl<'a> QueryHandler<'a> {
                 let decoded_cursor = decode_cursor(cursor);
                 let response = self
                     .read_model
-                    .labour_update_query
+                    .labour_update_repository
                     .get(limit + 1, decoded_cursor)
                     .map(|items| build_paginated_response(items, limit))?;
                 Ok(serde_json::to_value(response)?)
@@ -108,7 +125,7 @@ impl<'a> QueryHandler<'a> {
             } => {
                 let response = self
                     .read_model
-                    .labour_update_query
+                    .labour_update_repository
                     .get_by_id(labour_update_id)
                     .map(|u| vec![u])
                     .map(|items| PaginatedResponse {
@@ -124,7 +141,7 @@ impl<'a> QueryHandler<'a> {
     fn handle_subscription(&self, query: SubscriptionQuery, user: &User) -> Result<Value> {
         match query {
             SubscriptionQuery::GetSubscriptionToken { .. } => {
-                let token = match self.read_model.subscription_token_query.get() {
+                let token = match self.read_model.subscription_token_repository.get_token() {
                     Ok(Some(token)) => token.token,
                     Ok(_) | Err(_) => anyhow::bail!("No subcription token available"),
                 };
@@ -133,7 +150,7 @@ impl<'a> QueryHandler<'a> {
             SubscriptionQuery::GetLabourSubscriptions { .. } => {
                 let subscriptions = self
                     .read_model
-                    .subscription_query
+                    .subscription_repository
                     .get(100, None) // TODO: when someone has 101 subs lol
                     .map(|items| build_paginated_response(items, 100))?;
 
@@ -142,8 +159,8 @@ impl<'a> QueryHandler<'a> {
             SubscriptionQuery::GetUserSubscription { .. } => {
                 let subscription = self
                     .read_model
-                    .subscription_query
-                    .get_user_subscription(user.user_id.clone())?;
+                    .subscription_repository
+                    .get_by_subscriber_id(&user.user_id)?;
 
                 Ok(serde_json::to_value(subscription)?)
             }

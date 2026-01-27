@@ -23,7 +23,7 @@ pub async fn process_delivery_webhook(
         .await
         .map_err(|e| worker::Error::RustError(format!("Failed to fetch notification: {}", e)))?;
 
-    let user = User::internal("fern-labour-internal-notification");
+    let user = User::internal("notification");
 
     let command = match webhook_interpretation.status {
         NotificationStatus::DELIVERED => NotificationCommand::MarkAsDelivered {

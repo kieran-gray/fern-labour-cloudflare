@@ -60,7 +60,12 @@ impl LabourStatusReadModelProjector {
                 Some(labour)
             }
 
-            LabourEvent::LabourDeleted(_) => None,
+            LabourEvent::LabourDeleted(_) => {
+                let mut labour = model?;
+                labour.deleted_at = Some(timestamp);
+                labour.updated_at = timestamp;
+                Some(labour)
+            }
             _ => model,
         }
     }
@@ -104,24 +109,14 @@ impl IncrementalAsyncProjector<LabourEvent> for LabourStatusReadModelProjector {
             current_model = self.project_event(current_model, envelope);
         }
 
-        if before != current_model {
-            match (&before, &current_model) {
-                (Some(old_model), None) => {
-                    info!(projector = %self.name, "Model deleted, removing from D1");
-                    self.repository
-                        .delete(old_model.labour_id)
-                        .await
-                        .map_err(|e| anyhow!("Failed to delete: {e}"))?;
-                }
-                (_, Some(new_model)) => {
-                    info!(projector = %self.name, "Model changed, persisting to D1");
-                    self.repository
-                        .overwrite(new_model)
-                        .await
-                        .map_err(|e| anyhow!("Failed to persist: {e}"))?;
-                }
-                (None, None) => {}
-            }
+        if before != current_model
+            && let Some(new_model) = &current_model
+        {
+            info!(projector = %self.name, "Model changed, persisting to D1");
+            self.repository
+                .overwrite(new_model)
+                .await
+                .map_err(|e| anyhow!("Failed to persist: {e}"))?;
         }
 
         let new_state = CachedReadModelState::new(max_sequence, current_model);
