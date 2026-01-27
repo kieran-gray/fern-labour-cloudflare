@@ -17,6 +17,23 @@ const SLIDE_DISTANCE = 20;
 
 const easeOutExpo = [0.16, 1, 0.3, 1] as const;
 
+type Direction = 'left' | 'right' | null;
+
+const variants = {
+  initial: (dir: Direction) => ({
+    opacity: 1,
+    x: dir === 'right' ? SLIDE_DISTANCE : dir === 'left' ? -SLIDE_DISTANCE : 0,
+  }),
+  animate: {
+    opacity: 1,
+    x: 0,
+  },
+  exit: (dir: Direction) => ({
+    opacity: 0,
+    x: dir === 'right' ? -SLIDE_DISTANCE : dir === 'left' ? SLIDE_DISTANCE : 0,
+  }),
+};
+
 export const TabTransition = ({
   activeTab,
   renderTab,
@@ -27,26 +44,6 @@ export const TabTransition = ({
 }: TabTransitionProps) => {
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const getInitialX = () => {
-    if (direction === 'right') {
-      return SLIDE_DISTANCE;
-    }
-    if (direction === 'left') {
-      return -SLIDE_DISTANCE;
-    }
-    return 0;
-  };
-
-  const getExitX = () => {
-    if (direction === 'right') {
-      return -SLIDE_DISTANCE;
-    }
-    if (direction === 'left') {
-      return SLIDE_DISTANCE;
-    }
-    return 0;
-  };
-
   const containerClassName = [classes.container, className].filter(Boolean).join(' ');
 
   return (
@@ -54,6 +51,7 @@ export const TabTransition = ({
       <TransitionStatusProvider value={isAnimating}>
         <AnimatePresence
           mode="wait"
+          custom={direction}
           initial={false}
           onExitComplete={() => {
             setIsAnimating(false);
@@ -63,9 +61,11 @@ export const TabTransition = ({
           <motion.div
             key={activeTab}
             className={classes.panel}
-            initial={{ opacity: 1, x: getInitialX() }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: getExitX() }}
+            custom={direction}
+            variants={variants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
             transition={{
               duration: ANIMATION_DURATION * 0.5,
               ease: easeOutExpo,
