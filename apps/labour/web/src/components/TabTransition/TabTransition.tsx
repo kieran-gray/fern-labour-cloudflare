@@ -53,7 +53,7 @@ export const TabTransition = ({
     <div className={containerClassName} style={style}>
       <TransitionStatusProvider value={isAnimating}>
         <AnimatePresence
-          mode="popLayout"
+          mode="wait"
           initial={false}
           onExitComplete={() => {
             setIsAnimating(false);
@@ -63,11 +63,11 @@ export const TabTransition = ({
           <motion.div
             key={activeTab}
             className={classes.panel}
-            initial={{ opacity: 0, x: getInitialX() }}
+            initial={{ opacity: 1, x: getInitialX() }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: getExitX() }}
             transition={{
-              duration: ANIMATION_DURATION,
+              duration: ANIMATION_DURATION * 0.5,
               ease: easeOutExpo,
             }}
             onAnimationStart={() => setIsAnimating(true)}

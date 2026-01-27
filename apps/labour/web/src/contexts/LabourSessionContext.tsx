@@ -4,7 +4,9 @@ import {
   SubscriberStatus,
   SubscriptionReadModel,
 } from '@base/clients/labour_service/types';
+import { clearPersistedQueryCache } from '@base/offline/persistence/queryPersistence';
 import { useAuth } from '@clerk/clerk-react';
+import { useQueryClient } from '@tanstack/react-query';
 
 export enum AppMode {
   Subscriber = 'Subscriber',
@@ -40,6 +42,7 @@ const LabourSessionContext = createContext<LabourSessionContextType | undefined>
 
 export const LabourSessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userId } = useAuth();
+  const queryClient = useQueryClient();
 
   const [mode, setModeState] = useState<AppMode | null>(() => {
     const stored = localStorage.getItem(`${userId}:appMode`);
@@ -111,10 +114,15 @@ export const LabourSessionProvider: React.FC<{ children: React.ReactNode }> = ({
     setModeState(newMode);
   }, []);
 
-  const selectSubscription = useCallback((sub: SubscriptionReadModel) => {
-    setSubscriptionState(sub);
-    setLabourIdState(sub.labour_id);
-  }, []);
+  const selectSubscription = useCallback(
+    (sub: SubscriptionReadModel) => {
+      queryClient.clear();
+      clearPersistedQueryCache();
+      setSubscriptionState(sub);
+      setLabourIdState(sub.labour_id);
+    },
+    [queryClient]
+  );
 
   const updateSubscription = useCallback((sub: SubscriptionReadModel) => {
     setSubscriptionState(sub);
@@ -123,13 +131,17 @@ export const LabourSessionProvider: React.FC<{ children: React.ReactNode }> = ({
   const clearSubscription = useCallback(() => {
     setSubscriptionState(null);
     setLabourIdState(null);
-  }, []);
+    queryClient.clear();
+    clearPersistedQueryCache();
+  }, [queryClient]);
 
   const clearSession = useCallback(() => {
     setLabourIdState(null);
     setSubscriptionState(null);
     setModeState(null);
-  }, []);
+    queryClient.clear();
+    clearPersistedQueryCache();
+  }, [queryClient]);
 
   const value: LabourSessionContextType = {
     labourId,
