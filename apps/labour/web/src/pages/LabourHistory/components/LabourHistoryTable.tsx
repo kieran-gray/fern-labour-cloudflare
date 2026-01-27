@@ -58,9 +58,12 @@ export function LabourHistoryTable() {
 
   const handleDeleteConfirm = () => {
     if (deleteLabourId) {
-      deleteMutation.mutate(deleteLabourId);
+      deleteMutation.mutate(deleteLabourId, {
+        onSuccess: () => {
+          clearSession();
+        },
+      });
       setDeleteLabourId(null);
-      clearSession();
     }
   };
 

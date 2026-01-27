@@ -100,6 +100,12 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
           setIsConnected(false);
           wsRef.current = null;
 
+          pendingCommandsRef.current.forEach(({ reject, timeout }) => {
+            clearTimeout(timeout);
+            reject(new Error('WebSocket disconnected'));
+          });
+          pendingCommandsRef.current.clear();
+
           if (shouldReconnectRef.current) {
             reconnectTimeoutRef.current = setTimeout(connect, 3000);
           }

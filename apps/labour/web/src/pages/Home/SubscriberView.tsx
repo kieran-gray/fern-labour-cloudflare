@@ -42,15 +42,15 @@ import baseClasses from '@styles/base.module.css';
 const FULL_ACCESS_TABS = [
   { id: 'subscriptions', label: 'Subscriptions', icon: IconUsers },
   { id: 'details', label: 'Details', icon: IconPencil },
-  { id: 'updates', label: 'Updates', icon: IconMessage, scrollToTop: false },
-  { id: 'track', label: 'Track', icon: IconStopwatch, scrollToTop: false },
+  { id: 'updates', label: 'Updates', icon: IconMessage },
+  { id: 'track', label: 'Track', icon: IconStopwatch },
   { id: 'stats', label: 'Stats', icon: IconChartHistogram },
 ] as const;
 
 const SUPPORT_PERSON_TABS = [
   { id: 'subscriptions', label: 'Subscriptions', icon: IconUsers },
   { id: 'details', label: 'Details', icon: IconPencil },
-  { id: 'updates', label: 'Updates', icon: IconMessage, scrollToTop: false },
+  { id: 'updates', label: 'Updates', icon: IconMessage },
   { id: 'stats', label: 'Stats', icon: IconChartHistogram },
   { id: 'gifts', label: 'Gifts', icon: IconShoppingBag },
 ] as const;
@@ -58,7 +58,7 @@ const SUPPORT_PERSON_TABS = [
 const LOVED_ONE_TABS = [
   { id: 'subscriptions', label: 'Subscriptions', icon: IconUsers },
   { id: 'details', label: 'Details', icon: IconPencil },
-  { id: 'updates', label: 'Updates', icon: IconMessage, scrollToTop: false },
+  { id: 'updates', label: 'Updates', icon: IconMessage },
   { id: 'gifts', label: 'Gifts', icon: IconShoppingBag },
 ] as const;
 

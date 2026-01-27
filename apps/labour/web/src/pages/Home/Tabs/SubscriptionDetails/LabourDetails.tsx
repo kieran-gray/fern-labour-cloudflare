@@ -98,7 +98,7 @@ export function SubscriberLabourDetails({ labour, motherName }: SubscriberLabour
         {/* Closing Note (if completed) */}
         {isCompleted && labour.notes && (
           <div className={classes.noteCard}>
-            <p className={classes.noteLabel}>{motherName}'s closing note</p>
+            <p className={classes.noteLabel}>{motherName} closing note</p>
             <p className={classes.noteText}>{labour.notes}</p>
           </div>
         )}

@@ -18,13 +18,11 @@ React frontend with a Rust backend built on Cloudflare Workers and Durable Objec
 
 ### Frontend
 
-- React 18 with TypeScript
+- React & TypeScript
 - Vite for builds
 - WebSocket connection for real-time updates
 
-### Backend architecture
-
-**Infrastructure**
+#### Backend architecture
 
 Cloudflare Workers run at the edge across hundreds of data centers globally, so latency is low everywhere. Workers can be exposed publicly via HTTP or accessed privately through Service Bindings (which run in the same process with almost no overhead).
 
@@ -32,24 +30,33 @@ Durable Objects (DOs) extend this with stateful execution. Each DO has its own t
 
 The labour app allocates one Durable Object per labour. This gives each labour its own isolated "server" that lives in a geographically close data center, manages its own WebSocket connections to clients, and owns its data completely. Storage and compute are essentially sharded per labour (per aggregate in DDD terms).
 
-**Command and query design**
+#### Command and query design
 
-The backend uses CQRS (Command Query Responsibility Segregation) and Event Sourcing:
+The backend follows CQRS (Command Query Responsibility Segregation) with event sourcing:
 
-- Commands modify state and produce events. They either succeed silently (returning a 204 response) or are rejected.
-- Events are the source of truth and trigger side effects separately from the command request.
-- Queries read from projections (materialized views of the events).
+* **Commands** execute domain logic, mutate state, and append events. They either succeed (returning `204 No Content`) or are rejected.
+* **Events** are the source of truth and drive all side effects independently of the command request.
+* **Queries** read from projections (materialized views derived from events).
 
-Durable Objects fit this pattern well:
+#### Why Durable Objects are a good fit
 
-- Each DO's ID is globally unique and runs on a single thread, guaranteeing serial execution.
-- SQLite storage is synchronous and in-process, so commands execute synchronously without async overhead.
-- An alarm handler runs after the command completes, handling async work like projections, external API calls, and WebSocket broadcasts.
-- Only one alarm runs per DO at a time, and failed alarms retry with exponential backoff (up to 6 times).
+Durable Objects align naturally with CQRS and event sourcing because they provide a *synchronous, single-threaded execution model* for the write path:
 
-This design separates the write path (synchronous, single-threaded) from the read path (async, eventually consistent). If a side effect fails, the entire chain retries rather than silently dropping work.
+* Each Durable Object instance is addressed by a globally unique ID and executes on a **single thread**, guaranteeing strict serialisation of commands.
+* Storage is **synchronous, in-process SQLite**, so reads and writes complete immediately (although some time is taken post-request for the changes to be fully durable (I don't want to get into input/output gates here)) and the command path never needs `async` or `await`.
+* Because there is no asynchronous I/O in the write path, the scheduler cannot interleave other work mid-command, so state transitions and event persistence are atomic by construction.
 
-### Request flow
+Asynchronous work is explicitly deferred:
+
+* An **alarm handler** runs *after* the command completes and handles side effects such as projection updates, external API calls, and WebSocket broadcasts.
+* Only one alarm may run per Durable Object at a time, and failures automatically retry with exponential backoff (up to six attempts).
+
+This cleanly separates concerns:
+
+* **Write path**: synchronous, single-threaded, deterministic.
+* **Read path / side effects**: asynchronous and eventually consistent.
+
+#### Request flow
 
 **Write path**
 
@@ -68,7 +75,7 @@ Once the write returns, the [alarm handler](apps/labour/worker/src/durable_objec
 
 1. Project events into local read models (DO storage)
 2. Broadcast new events to connected WebSocket clients
-3. Project events into external read models (for cross-labour queries)
+3. Project events into external read models (In a central D1 database for cross-labour queries)
 4. Execute any policies that generate further side effects (sending notifications, API calls, etc.)
 5. If new events were generated, schedule another alarm
 
@@ -81,13 +88,14 @@ Queries follow the same routing as writes but skip the event store and directly 
 Static NextJS site exported to HTML for fast load times. Currently deployed at [staging.fernlabour.com](https://staging.fernlabour.com).
 
 Built with:
-- NextJS 13
-- TypeScript
+- NextJS & Typescript
 - Tailwind CSS
 
 ## Admin dashboard
 
-Not really used at the moment, but it's a Cassette-Futurism inspired admin dashboard. [Demo here](https://admin-demo.kgdev.me/)
+Admin dashboard used to track contact-us message requests and outgoing notifications.
+
+Cassette-Futurism inspired. [Demo here](https://admin-demo.kgdev.me/)
 
 ## Services
 
