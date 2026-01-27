@@ -1,4 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { TransitionStatusProvider } from './TransitionStatusContext';
 import classes from './TabTransition.module.css';
 
@@ -11,17 +12,10 @@ interface TabTransitionProps {
   onTransitionEnd?: () => void;
 }
 
-const ANIMATION_DURATION_MS = 300;
+const ANIMATION_DURATION = 0.4;
+const SLIDE_DISTANCE = 20;
 
-const getAnimationClass = (
-  type: 'enter' | 'exit',
-  direction: 'left' | 'right' | null
-): string | undefined => {
-  if (direction === 'right') {
-    return type === 'enter' ? classes.slideInRight : classes.slideOutLeft;
-  }
-  return type === 'enter' ? classes.slideInLeft : classes.slideOutRight;
-};
+const easeOutExpo = [0.16, 1, 0.3, 1] as const;
 
 export const TabTransition = ({
   activeTab,
@@ -31,91 +25,56 @@ export const TabTransition = ({
   style,
   onTransitionEnd,
 }: TabTransitionProps) => {
-  const [displayTab, setDisplayTab] = useState(activeTab);
-  const [previousTab, setPreviousTab] = useState<string | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
-  const animationDirection = useRef(direction);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const activeTabRef = useRef<HTMLDivElement>(null);
-  const [containerHeight, setContainerHeight] = useState<number | 'auto'>('auto');
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const onTransitionEndRef = useRef(onTransitionEnd);
-  useEffect(() => {
-    onTransitionEndRef.current = onTransitionEnd;
-  }, [onTransitionEnd]);
-
-  useEffect(() => {
-    if (activeTab !== displayTab) {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      if (containerRef.current) {
-        setContainerHeight(containerRef.current.offsetHeight);
-      }
-
-      setPreviousTab(displayTab);
-      setDisplayTab(activeTab);
-      setIsAnimating(true);
-      animationDirection.current = direction;
-
-      timeoutRef.current = setTimeout(() => {
-        setPreviousTab(null);
-        setIsAnimating(false);
-        setContainerHeight('auto');
-        onTransitionEndRef.current?.();
-        timeoutRef.current = null;
-      }, ANIMATION_DURATION_MS);
+  const getInitialX = () => {
+    if (direction === 'right') {
+      return SLIDE_DISTANCE;
     }
-  }, [activeTab, displayTab, direction]);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
-  useLayoutEffect(() => {
-    if (isAnimating && activeTabRef.current) {
-      setContainerHeight(activeTabRef.current.offsetHeight);
+    if (direction === 'left') {
+      return -SLIDE_DISTANCE;
     }
-  }, [isAnimating, displayTab]);
+    return 0;
+  };
 
-  const containerClassName = [classes.container, isAnimating && classes.animating, className]
-    .filter(Boolean)
-    .join(' ');
+  const getExitX = () => {
+    if (direction === 'right') {
+      return -SLIDE_DISTANCE;
+    }
+    if (direction === 'left') {
+      return SLIDE_DISTANCE;
+    }
+    return 0;
+  };
+
+  const containerClassName = [classes.container, className].filter(Boolean).join(' ');
 
   return (
-    <div
-      ref={containerRef}
-      className={containerClassName}
-      style={{
-        ...style,
-        height: containerHeight === 'auto' ? 'auto' : `${containerHeight}px`,
-      }}
-    >
+    <div className={containerClassName} style={style}>
       <TransitionStatusProvider value={isAnimating}>
-        {isAnimating && previousTab && (
-          <div
-            key={`prev-${previousTab}`}
-            className={`${classes.panel} ${getAnimationClass('exit', animationDirection.current)}`}
-            aria-hidden="true"
-          >
-            {renderTab(previousTab)}
-          </div>
-        )}
-
-        <div
-          ref={activeTabRef}
-          key={`curr-${displayTab}`}
-          className={`${classes.panel} ${isAnimating ? getAnimationClass('enter', animationDirection.current) : ''}`}
+        <AnimatePresence
+          mode="popLayout"
+          initial={false}
+          onExitComplete={() => {
+            setIsAnimating(false);
+            onTransitionEnd?.();
+          }}
         >
-          {renderTab(displayTab)}
-        </div>
+          <motion.div
+            key={activeTab}
+            className={classes.panel}
+            initial={{ opacity: 0, x: getInitialX() }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: getExitX() }}
+            transition={{
+              duration: ANIMATION_DURATION,
+              ease: easeOutExpo,
+            }}
+            onAnimationStart={() => setIsAnimating(true)}
+          >
+            {renderTab(activeTab)}
+          </motion.div>
+        </AnimatePresence>
       </TransitionStatusProvider>
     </div>
   );
