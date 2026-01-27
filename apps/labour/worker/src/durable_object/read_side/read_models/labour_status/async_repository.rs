@@ -1,12 +1,17 @@
 use anyhow::{Context, Result, anyhow};
 use async_trait::async_trait;
+use chrono::Utc;
 use fern_labour_event_sourcing_rs::{
     AsyncRepositoryTrait, AsyncRepositoryUserTrait, DecodedCursor,
 };
+use serde::Deserialize;
 use uuid::Uuid;
-use worker::D1Database;
+use worker::{D1Database, wasm_bindgen::JsValue};
 
 use super::read_model::{LabourStatusReadModel, LabourStatusRow};
+use crate::durable_object::read_side::read_models::d1_helpers::{
+    PaginatedQueryBuilder, option_datetime_to_jsvalue, option_string_to_jsvalue,
+};
 
 #[async_trait(?Send)]
 pub trait LabourStatusRepositoryTrait:
@@ -14,6 +19,8 @@ pub trait LabourStatusRepositoryTrait:
 {
     async fn get_active_labour(&self, user_id: String) -> Result<Option<LabourStatusReadModel>>;
     async fn get_by_ids(&self, labour_ids: Vec<Uuid>) -> Result<Vec<LabourStatusReadModel>>;
+    async fn get_pending_cleanup_ids(&self) -> Result<Vec<Uuid>>;
+    async fn mark_do_cleaned_up(&self, labour_id: Uuid) -> Result<()>;
 }
 
 pub struct D1LabourStatusRepository {
@@ -24,6 +31,24 @@ impl D1LabourStatusRepository {
     pub fn create(db: D1Database) -> Self {
         Self { db }
     }
+}
+
+fn model_to_bindings(labour: &LabourStatusReadModel) -> [JsValue; 9] {
+    [
+        labour.labour_id.to_string().into(),
+        labour.mother_id.clone().into(),
+        labour.mother_name.clone().into(),
+        labour.current_phase.to_string().into(),
+        option_string_to_jsvalue(labour.labour_name.as_ref()),
+        labour.created_at.to_rfc3339().into(),
+        labour.updated_at.to_rfc3339().into(),
+        option_datetime_to_jsvalue(labour.deleted_at),
+        option_datetime_to_jsvalue(labour.do_cleaned_up_at),
+    ]
+}
+
+fn rows_to_read_models(rows: Vec<LabourStatusRow>) -> Result<Vec<LabourStatusReadModel>> {
+    rows.into_iter().map(|row| row.into_read_model()).collect()
 }
 
 #[async_trait(?Send)]
@@ -49,67 +74,43 @@ impl AsyncRepositoryTrait<LabourStatusReadModel> for D1LabourStatusRepository {
         limit: usize,
         cursor: Option<DecodedCursor>,
     ) -> Result<Vec<LabourStatusReadModel>> {
-        let mut query = "SELECT * FROM labour_status".to_string();
-        let mut bindings = vec![];
+        let (query, bindings) =
+            PaginatedQueryBuilder::new("SELECT * FROM labour_status WHERE deleted_at IS NULL")
+                .apply_cursor(cursor)
+                .apply_limit(limit)
+                .build();
 
-        if let Some(cur) = cursor {
-            query.push_str(" WHERE updated_at < ?1 OR (updated_at = ?1 AND labour_id < ?2)");
-            bindings.push(cur.last_updated_at.to_rfc3339().into());
-            bindings.push(cur.last_id.to_string().into());
-        }
-
-        let limit_param_index = bindings.len() + 1;
-        query.push_str(&format!(
-            " ORDER BY updated_at DESC, labour_id DESC LIMIT ?{}",
-            limit_param_index
-        ));
-
-        let plus_one_limit = limit + 1;
-        bindings.push((plus_one_limit as f64).into());
-
-        let statement = self
+        let rows: Vec<LabourStatusRow> = self
             .db
             .prepare(query)
             .bind(&bindings)
-            .context("Failed to bind parameters")?;
-
-        let rows: Vec<LabourStatusRow> = statement
+            .context("Failed to bind parameters")?
             .all()
             .await
             .context("Failed to fetch labour status")?
             .results()
             .context("Failed to parse labour status results")?;
 
-        rows.into_iter().map(|row| row.into_read_model()).collect()
+        rows_to_read_models(rows)
     }
 
     async fn upsert(&self, labour: &LabourStatusReadModel) -> Result<()> {
-        let labour_name_value = match &labour.labour_name {
-            Some(name) => name.clone().into(),
-            None => worker::wasm_bindgen::JsValue::NULL,
-        };
-
         self.db
             .prepare(
                 "INSERT INTO labour_status (
-                    labour_id, mother_id, mother_name, current_phase, labour_name, created_at, updated_at
+                    labour_id, mother_id, mother_name, current_phase, labour_name,
+                    created_at, updated_at, deleted_at, do_cleaned_up_at
                  )
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
                  ON CONFLICT(labour_id)
                  DO UPDATE SET
                     current_phase = ?4,
                     labour_name = ?5,
-                    updated_at = ?7",
+                    updated_at = ?7,
+                    deleted_at = ?8,
+                    do_cleaned_up_at = ?9",
             )
-            .bind(&[
-                labour.labour_id.to_string().into(),
-                labour.mother_id.clone().into(),
-                labour.mother_name.clone().into(),
-                labour.current_phase.to_string().into(),
-                labour_name_value,
-                labour.created_at.to_rfc3339().into(),
-                labour.updated_at.to_rfc3339().into(),
-            ])
+            .bind(&model_to_bindings(labour))
             .context("Failed to prepare labour status upsert")?
             .run()
             .await
@@ -137,27 +138,15 @@ impl AsyncRepositoryTrait<LabourStatusReadModel> for D1LabourStatusRepository {
     }
 
     async fn overwrite(&self, labour: &LabourStatusReadModel) -> Result<()> {
-        let labour_name_value = match &labour.labour_name {
-            Some(name) => name.clone().into(),
-            None => worker::wasm_bindgen::JsValue::NULL,
-        };
-
         self.db
             .prepare(
                 "INSERT OR REPLACE INTO labour_status (
-                    labour_id, mother_id, mother_name, current_phase, labour_name, created_at, updated_at
+                    labour_id, mother_id, mother_name, current_phase, labour_name,
+                    created_at, updated_at, deleted_at, do_cleaned_up_at
                  )
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
             )
-            .bind(&[
-                labour.labour_id.to_string().into(),
-                labour.mother_id.clone().into(),
-                labour.mother_name.clone().into(),
-                labour.current_phase.to_string().into(),
-                labour_name_value,
-                labour.created_at.to_rfc3339().into(),
-                labour.updated_at.to_rfc3339().into(),
-            ])
+            .bind(&model_to_bindings(labour))
             .context("Failed to prepare labour status overwrite")?
             .run()
             .await
@@ -175,38 +164,26 @@ impl AsyncRepositoryUserTrait<LabourStatusReadModel> for D1LabourStatusRepositor
         limit: usize,
         cursor: Option<DecodedCursor>,
     ) -> Result<Vec<LabourStatusReadModel>> {
-        let mut query = "SELECT * FROM labour_status WHERE mother_id = ?1".to_string();
-        let mut bindings = vec![user_id.into()];
+        let (query, bindings) = PaginatedQueryBuilder::new(
+            "SELECT * FROM labour_status WHERE mother_id = ?1 AND deleted_at IS NULL",
+        )
+        .with_binding(user_id.into())
+        .apply_cursor(cursor)
+        .apply_limit(limit)
+        .build();
 
-        if let Some(cur) = cursor {
-            query.push_str(" WHERE updated_at < ?2 OR (updated_at = ?2 AND labour_id < ?3)");
-            bindings.push(cur.last_updated_at.to_rfc3339().into());
-            bindings.push(cur.last_id.to_string().into());
-        }
-
-        let limit_param_index = bindings.len() + 1;
-        query.push_str(&format!(
-            " ORDER BY updated_at DESC, labour_id DESC LIMIT ?{}",
-            limit_param_index
-        ));
-
-        let plus_one_limit = limit + 1;
-        bindings.push((plus_one_limit as f64).into());
-
-        let statement = self
+        let rows: Vec<LabourStatusRow> = self
             .db
             .prepare(query)
             .bind(&bindings)
-            .context("Failed to bind parameters")?;
-
-        let rows: Vec<LabourStatusRow> = statement
+            .context("Failed to bind parameters")?
             .all()
             .await
             .context("Failed to fetch labour status")?
             .results()
             .context("Failed to parse labour status results")?;
 
-        rows.into_iter().map(|row| row.into_read_model()).collect()
+        rows_to_read_models(rows)
     }
 }
 
@@ -216,7 +193,8 @@ impl LabourStatusRepositoryTrait for D1LabourStatusRepository {
         let result: Option<LabourStatusRow> = self
             .db
             .prepare(
-                "SELECT * FROM labour_status WHERE mother_id = ?1 AND current_phase != 'COMPLETE'",
+                "SELECT * FROM labour_status
+                 WHERE mother_id = ?1 AND current_phase != 'COMPLETE' AND deleted_at IS NULL",
             )
             .bind(&[user_id.to_string().into()])
             .context("Failed to prepare active labour query")?
@@ -237,7 +215,7 @@ impl LabourStatusRepositoryTrait for D1LabourStatusRepository {
 
         let placeholders: Vec<String> = (1..=labour_ids.len()).map(|i| format!("?{}", i)).collect();
         let query = format!(
-            "SELECT * FROM labour_status WHERE labour_id IN ({})",
+            "SELECT * FROM labour_status WHERE labour_id IN ({}) AND deleted_at IS NULL",
             placeholders.join(", ")
         );
 
@@ -257,6 +235,45 @@ impl LabourStatusRepositoryTrait for D1LabourStatusRepository {
             .results()
             .context("Failed to parse labour status results")?;
 
-        rows.into_iter().map(|row| row.into_read_model()).collect()
+        rows_to_read_models(rows)
+    }
+
+    async fn get_pending_cleanup_ids(&self) -> Result<Vec<Uuid>> {
+        #[derive(Deserialize)]
+        struct LabourIdRow {
+            pub labour_id: String,
+        }
+
+        let rows: Vec<LabourIdRow> = self
+            .db
+            .prepare(
+                "SELECT labour_id FROM labour_status
+                 WHERE deleted_at IS NOT NULL AND do_cleaned_up_at IS NULL",
+            )
+            .all()
+            .await
+            .context("Failed to fetch pending cleanup IDs")?
+            .results()
+            .context("Failed to parse pending cleanup IDs")?;
+
+        rows.into_iter()
+            .map(|row| {
+                Uuid::parse_str(&row.labour_id)
+                    .context(format!("Invalid labour_id UUID: {}", row.labour_id))
+            })
+            .collect()
+    }
+
+    async fn mark_do_cleaned_up(&self, labour_id: Uuid) -> Result<()> {
+        let now = Utc::now();
+        self.db
+            .prepare("UPDATE labour_status SET do_cleaned_up_at = ?1 WHERE labour_id = ?2")
+            .bind(&[now.to_rfc3339().into(), labour_id.to_string().into()])
+            .context("Failed to prepare mark DO cleaned up query")?
+            .run()
+            .await
+            .context("Failed to mark DO as cleaned up")?;
+
+        Ok(())
     }
 }

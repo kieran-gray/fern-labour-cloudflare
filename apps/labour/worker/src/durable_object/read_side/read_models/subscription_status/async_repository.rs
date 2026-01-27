@@ -7,11 +7,14 @@ use uuid::Uuid;
 use worker::D1Database;
 
 use super::read_model::{SubscriptionStatusReadModel, SubscriptionStatusRow};
+use crate::durable_object::read_side::read_models::d1_helpers::PaginatedQueryBuilder;
 
+#[async_trait(?Send)]
 pub trait SubscriptionStatusRepositoryTrait:
     AsyncRepositoryTrait<SubscriptionStatusReadModel>
     + AsyncRepositoryUserTrait<SubscriptionStatusReadModel>
 {
+    async fn delete_by_labour_id(&self, labour_id: Uuid) -> Result<()>;
 }
 
 pub struct D1SubscriptionStatusRepository {
@@ -47,31 +50,19 @@ impl AsyncRepositoryTrait<SubscriptionStatusReadModel> for D1SubscriptionStatusR
         limit: usize,
         cursor: Option<DecodedCursor>,
     ) -> Result<Vec<SubscriptionStatusReadModel>> {
-        let mut query = "SELECT * FROM subscription_status".to_string();
-        let mut bindings = vec![];
+        let (query, bindings) = PaginatedQueryBuilder::with_id_column(
+            "SELECT * FROM subscription_status WHERE 1=1",
+            "subscription_id",
+        )
+        .apply_cursor(cursor)
+        .apply_limit(limit)
+        .build();
 
-        if let Some(cur) = cursor {
-            query.push_str(" AND updated_at < ?1 OR (updated_at = ?1 AND subscription_id < ?2)");
-            bindings.push(cur.last_updated_at.to_rfc3339().into());
-            bindings.push(cur.last_id.to_string().into());
-        }
-
-        let limit_param_index = bindings.len() + 1;
-        query.push_str(&format!(
-            " ORDER BY updated_at DESC, subscription_id DESC LIMIT ?{}",
-            limit_param_index
-        ));
-
-        let plus_one_limit = limit + 1;
-        bindings.push((plus_one_limit as f64).into());
-
-        let statement = self
+        let rows: Vec<SubscriptionStatusRow> = self
             .db
             .prepare(query)
             .bind(&bindings)
-            .context("Failed to bind parameters")?;
-
-        let rows: Vec<SubscriptionStatusRow> = statement
+            .context("Failed to bind parameters")?
             .all()
             .await
             .context("Failed to fetch subscription status")?
@@ -160,33 +151,20 @@ impl AsyncRepositoryUserTrait<SubscriptionStatusReadModel> for D1SubscriptionSta
         limit: usize,
         cursor: Option<DecodedCursor>,
     ) -> Result<Vec<SubscriptionStatusReadModel>> {
-        let mut query =
-            "SELECT * FROM subscription_status WHERE subscriber_id = ?1 AND status='SUBSCRIBED'"
-                .to_string();
-        let mut bindings = vec![user_id.into()];
+        let (query, bindings) = PaginatedQueryBuilder::with_id_column(
+            "SELECT * FROM subscription_status WHERE subscriber_id = ?1 AND status='SUBSCRIBED'",
+            "subscription_id",
+        )
+        .with_binding(user_id.into())
+        .apply_cursor(cursor)
+        .apply_limit(limit)
+        .build();
 
-        if let Some(cur) = cursor {
-            query.push_str(" AND updated_at < ?2 OR (updated_at = ?2 AND subscription_id < ?3)");
-            bindings.push(cur.last_updated_at.to_rfc3339().into());
-            bindings.push(cur.last_id.to_string().into());
-        }
-
-        let limit_param_index = bindings.len() + 1;
-        query.push_str(&format!(
-            " ORDER BY updated_at DESC, subscription_id DESC LIMIT ?{}",
-            limit_param_index
-        ));
-
-        let plus_one_limit = limit + 1;
-        bindings.push((plus_one_limit as f64).into());
-
-        let statement = self
+        let rows: Vec<SubscriptionStatusRow> = self
             .db
             .prepare(query)
             .bind(&bindings)
-            .context("Failed to bind parameters")?;
-
-        let rows: Vec<SubscriptionStatusRow> = statement
+            .context("Failed to bind parameters")?
             .all()
             .await
             .context("Failed to fetch subscription status")?
@@ -197,4 +175,17 @@ impl AsyncRepositoryUserTrait<SubscriptionStatusReadModel> for D1SubscriptionSta
     }
 }
 
-impl SubscriptionStatusRepositoryTrait for D1SubscriptionStatusRepository {}
+#[async_trait(?Send)]
+impl SubscriptionStatusRepositoryTrait for D1SubscriptionStatusRepository {
+    async fn delete_by_labour_id(&self, labour_id: Uuid) -> Result<()> {
+        self.db
+            .prepare("DELETE FROM subscription_status WHERE labour_id = ?1")
+            .bind(&[labour_id.to_string().into()])
+            .context("Failed to prepare delete by labour_id query")?
+            .run()
+            .await
+            .context("Failed to delete subscription status by labour_id")?;
+
+        Ok(())
+    }
+}

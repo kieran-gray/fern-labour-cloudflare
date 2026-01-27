@@ -361,6 +361,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "base64",
+ "chrono",
  "fern-labour-notifications-shared",
  "serde",
  "serde_json",

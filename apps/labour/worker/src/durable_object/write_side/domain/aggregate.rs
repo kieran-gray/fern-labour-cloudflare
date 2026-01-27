@@ -28,6 +28,7 @@ pub struct Labour {
     subscriptions: Vec<Subscription>,
     start_time: Option<DateTime<Utc>>,
     end_time: Option<DateTime<Utc>>,
+    deleted: bool,
 }
 
 impl Labour {
@@ -37,6 +38,10 @@ impl Labour {
 
     pub fn phase(&self) -> &LabourPhase {
         &self.phase
+    }
+
+    pub fn is_deleted(&self) -> bool {
+        self.deleted
     }
 
     pub fn subscriptions(&self) -> &[Subscription] {
@@ -307,9 +312,10 @@ impl Aggregate for Labour {
             LabourEvent::SubscriptionTokenInvalidated(_) => {
                 self.subscription_token = None;
             }
-            LabourEvent::LabourPlanUpdated(_)
-            | LabourEvent::LabourInviteSent(_)
-            | LabourEvent::LabourDeleted(_) => {}
+            LabourEvent::LabourDeleted(_) => {
+                self.deleted = true;
+            }
+            LabourEvent::LabourPlanUpdated(_) | LabourEvent::LabourInviteSent(_) => {}
         }
     }
 
@@ -379,6 +385,7 @@ impl Aggregate for Labour {
                 subscriptions: vec![],
                 start_time: None,
                 end_time: None,
+                deleted: false,
             },
             _ => return None,
         };

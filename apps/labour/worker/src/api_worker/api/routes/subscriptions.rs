@@ -1,13 +1,7 @@
 use fern_labour_workers_shared::{CorsContext, clients::worker_clients::auth::User};
 use worker::{Request, Response, RouteContext};
 
-use crate::{
-    api_worker::AppState,
-    durable_object::read_side::read_models::{
-        labour_status::LabourStatusReadModelQueryHandler,
-        subscription_status::SubscriptionStatusReadModelQueryHandler,
-    },
-};
+use crate::api_worker::AppState;
 
 pub async fn get_user_subscriptions(
     _req: Request,
@@ -17,8 +11,8 @@ pub async fn get_user_subscriptions(
 ) -> worker::Result<Response> {
     let subscription_status = ctx
         .data
-        .subscription_status_query
-        .get_by_user_id(user.user_id)
+        .subscription_status_repository
+        .get_by_user_id(user.user_id, 100, None)
         .await
         .map_err(|e| format!("Failed to query subscription status: {e}"))?;
 
@@ -36,8 +30,8 @@ pub async fn get_subscribed_labours(
 ) -> worker::Result<Response> {
     let subscriptions = ctx
         .data
-        .subscription_status_query
-        .get_by_user_id(user.user_id)
+        .subscription_status_repository
+        .get_by_user_id(user.user_id, 100, None)
         .await
         .map_err(|e| format!("Failed to query subscription status: {e}"))?;
 
@@ -45,7 +39,7 @@ pub async fn get_subscribed_labours(
 
     let labours = ctx
         .data
-        .labour_status_query
+        .labour_status_repository
         .get_by_ids(labour_ids)
         .await
         .map_err(|e| format!("Failed to query labour status: {e}"))?;

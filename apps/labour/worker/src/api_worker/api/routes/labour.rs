@@ -5,12 +5,9 @@ use tracing::{error, info};
 use uuid::Uuid;
 use worker::{Request, Response, RouteContext};
 
-use crate::{
-    api_worker::{
-        AppState,
-        api::{exceptions::ApiError, schemas::requests::PlanLabourRequest},
-    },
-    durable_object::read_side::read_models::labour_status::LabourStatusReadModelQueryHandler,
+use crate::api_worker::{
+    AppState,
+    api::{exceptions::ApiError, schemas::requests::PlanLabourRequest},
 };
 
 #[derive(Serialize)]
@@ -37,8 +34,8 @@ pub async fn handle_plan_labour(
 
     let existing_active = ctx
         .data
-        .labour_status_query
-        .get_active(user.user_id.clone())
+        .labour_status_repository
+        .get_active_labour(user.user_id.clone())
         .await
         .map_err(|e| format!("Failed to query active labour: {e}"))?;
 
@@ -90,8 +87,8 @@ pub async fn get_labour_history(
 ) -> worker::Result<Response> {
     let labour_status = ctx
         .data
-        .labour_status_query
-        .get_by_user_id(user.user_id)
+        .labour_status_repository
+        .get_by_user_id(user.user_id, 100, None) // TODO when someone has 100 babies
         .await
         .map_err(|e| format!("Failed to query labour status: {e}"))?;
 
@@ -109,8 +106,8 @@ pub async fn get_active_labour(
 ) -> worker::Result<Response> {
     let labour_status = ctx
         .data
-        .labour_status_query
-        .get_active(user.user_id)
+        .labour_status_repository
+        .get_active_labour(user.user_id)
         .await
         .map_err(|e| format!("Failed to query active labour: {e}"))?;
 

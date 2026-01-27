@@ -23,25 +23,16 @@ use crate::durable_object::{
             async_processor::AsyncProjectionProcessor, sync_processor::SyncProjectionProcessor,
         },
         read_models::{
-            contractions::{
-                ContractionReadModelProjector, ContractionReadModelQuery, SqlContractionRepository,
-            },
+            contractions::{ContractionReadModelProjector, SqlContractionRepository},
             events::query::EventQuery,
-            labour::{LabourReadModelProjector, LabourReadModelQuery, SqlLabourRepository},
+            labour::{LabourReadModelProjector, SqlLabourRepository},
             labour_status::{D1LabourStatusRepository, LabourStatusReadModelProjector},
-            labour_updates::{
-                LabourUpdateReadModelProjector, LabourUpdateReadModelQuery,
-                SqlLabourUpdateRepository,
-            },
+            labour_updates::{LabourUpdateReadModelProjector, SqlLabourUpdateRepository},
             subscription_status::{
                 D1SubscriptionStatusRepository, SubscriptionStatusReadModelProjector,
             },
-            subscription_token::{
-                SqlSubscriptionTokenRepository, SubscriptionTokenProjector, SubscriptionTokenQuery,
-            },
-            subscriptions::{
-                SqlSubscriptionRepository, SubscriptionQuery, SubscriptionReadModelProjector,
-            },
+            subscription_token::{SqlSubscriptionTokenRepository, SubscriptionTokenProjector},
+            subscriptions::{SqlSubscriptionRepository, SubscriptionReadModelProjector},
         },
     },
     setup::config::Config,
@@ -63,11 +54,11 @@ pub struct WriteModel {
 pub struct ReadModel {
     pub aggregate_repository: Rc<dyn AggregateRepositoryTrait<Labour>>,
     pub event_query: EventQuery,
-    pub labour_query: LabourReadModelQuery,
-    pub contraction_query: ContractionReadModelQuery,
-    pub labour_update_query: LabourUpdateReadModelQuery,
-    pub subscription_query: SubscriptionQuery,
-    pub subscription_token_query: SubscriptionTokenQuery,
+    pub labour_repository: SqlLabourRepository,
+    pub contraction_repository: SqlContractionRepository,
+    pub labour_update_repository: SqlLabourUpdateRepository,
+    pub subscription_repository: SqlSubscriptionRepository,
+    pub subscription_token_repository: SqlSubscriptionTokenRepository,
 }
 
 pub struct AsyncProcessors {
@@ -102,7 +93,8 @@ impl LabourCircleServices {
         let checkpoint_repository = Box::new(SqlCheckpointRepository::create(sql.clone()));
         checkpoint_repository.init_schema()?;
 
-        let admin_command_processor = AdminCommandProcessor::create(checkpoint_repository);
+        let admin_command_processor =
+            AdminCommandProcessor::create(checkpoint_repository, state.storage());
 
         Ok(WriteModel {
             labour_command_processor,
@@ -118,29 +110,20 @@ impl LabourCircleServices {
         let sql = state.storage().sql();
         let event_query = EventQuery::new(aggregate_repository.clone());
 
-        let labour_repository = Box::new(SqlLabourRepository::create(sql.clone()));
-        let labour_query = LabourReadModelQuery::create(labour_repository);
-
-        let contraction_repository = Box::new(SqlContractionRepository::create(sql.clone()));
-        let contraction_query = ContractionReadModelQuery::create(contraction_repository);
-
-        let labour_update_repository = Box::new(SqlLabourUpdateRepository::create(sql.clone()));
-        let labour_update_query = LabourUpdateReadModelQuery::create(labour_update_repository);
-
-        let subscription_repository = Box::new(SqlSubscriptionRepository::create(sql.clone()));
-        let subscription_query = SubscriptionQuery::create(subscription_repository);
-
-        let sub_token_repo = Box::new(SqlSubscriptionTokenRepository::create(sql.clone()));
-        let subscription_token_query = SubscriptionTokenQuery::create(sub_token_repo);
+        let labour_repository = SqlLabourRepository::create(sql.clone());
+        let contraction_repository = SqlContractionRepository::create(sql.clone());
+        let labour_update_repository = SqlLabourUpdateRepository::create(sql.clone());
+        let subscription_repository = SqlSubscriptionRepository::create(sql.clone());
+        let subscription_token_repository = SqlSubscriptionTokenRepository::create(sql.clone());
 
         Ok(ReadModel {
             aggregate_repository,
             event_query,
-            labour_query,
-            contraction_query,
-            labour_update_query,
-            subscription_query,
-            subscription_token_query,
+            labour_repository,
+            contraction_repository,
+            labour_update_repository,
+            subscription_repository,
+            subscription_token_repository,
         })
     }
 

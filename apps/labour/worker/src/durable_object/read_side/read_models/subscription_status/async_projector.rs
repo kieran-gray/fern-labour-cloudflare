@@ -80,6 +80,8 @@ impl SubscriptionStatusReadModelProjector {
                 Some(subscription)
             }
 
+            LabourEvent::LabourDeleted(_) => None,
+
             _ => model,
         }
     }
