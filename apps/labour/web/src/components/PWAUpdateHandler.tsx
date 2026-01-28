@@ -50,6 +50,7 @@ export function PWAUpdateHandler() {
           </Group>
         ),
         color: 'blue',
+        radius: 'lg',
         autoClose: false,
         withCloseButton: true,
       });
