@@ -1,5 +1,6 @@
 .content {
   max-width: 550px;
+  flex-grow: 1;
   margin-right: calc(var(--mantine-spacing-xl));
 
   @media (max-width: $mantine-breakpoint-md) {
