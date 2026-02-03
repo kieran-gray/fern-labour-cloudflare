@@ -175,8 +175,8 @@ export const Pricing01 = ({ title, description, callToActionUrl = '#' }: Pricing
             <motion.div variants={cardVariants} className={classes.pricingCardWrapper}>
               <PricingCard
                 shadow="sm"
-                title="For Mum"
-                description="Track for free, forever"
+                title="The App"
+                description="For you and your circle"
                 cta={
                   <Button
                     component={NextLink}
@@ -195,7 +195,7 @@ export const Pricing01 = ({ title, description, callToActionUrl = '#' }: Pricing
                   </Icon>
                 }
                 price="Free"
-                pricingPeriod=""
+                pricingPeriod="forever"
                 items={[
                   {
                     title: 'Unlimited tracking',
@@ -207,11 +207,20 @@ export const Pricing01 = ({ title, description, callToActionUrl = '#' }: Pricing
                     ),
                   },
                   {
-                    title: 'Share with your circle',
-                    description: 'Invite family and friends',
+                    title: 'Invite your circle',
+                    description: 'Share with family and friends',
                     icon: (
                       <Icon>
                         <IconUsers size={21} />
+                      </Icon>
+                    ),
+                  },
+                  {
+                    title: 'Real-time updates',
+                    description: 'Syncs across all devices',
+                    icon: (
+                      <Icon>
+                        <IconDeviceMobileMessage size={21} />
                       </Icon>
                     ),
                   },
@@ -221,31 +230,31 @@ export const Pricing01 = ({ title, description, callToActionUrl = '#' }: Pricing
             <motion.div variants={cardVariants} className={classes.pricingCardWrapper}>
               <PricingCard
                 shadow="sm"
-                title="For Family"
-                description="Follow along"
+                title="SMS & WhatsApp"
+                description="Optional upgrade for subscribers"
                 cta={
                   <Button
                     component={NextLink}
-                    radius="xl"
                     href={callToActionUrl}
-                    variant="light"
+                    radius="xl"
                     size="lg"
+                    variant="light"
                     fullWidth
                   >
-                    Join someone's circle
+                    Get notifications
                   </Button>
                 }
                 icon={
                   <Icon>
-                    <IconUsers size={21} />
+                    <IconBellRinging size={21} />
                   </Icon>
                 }
-                price="Free"
-                pricingPeriod=""
+                price="£2.50"
+                pricingPeriod="one-time"
                 items={[
                   {
-                    title: 'View updates',
-                    description: 'See updates as they happen',
+                    title: 'Instant SMS alerts',
+                    description: 'Notify your circle via text',
                     icon: (
                       <Icon>
                         <IconMessage size={21} />
@@ -253,57 +262,20 @@ export const Pricing01 = ({ title, description, callToActionUrl = '#' }: Pricing
                     ),
                   },
                   {
-                    title: 'Stay connected',
-                    description: 'Follow from anywhere',
+                    title: 'WhatsApp messages',
+                    description: 'Send updates via WhatsApp',
                     icon: (
                       <Icon>
-                        <IconUsers size={21} />
-                      </Icon>
-                    ),
-                  },
-                ]}
-              />
-            </motion.div>
-            <motion.div variants={cardVariants} className={classes.pricingCardWrapper}>
-              <PricingCard
-                shadow="sm"
-                title="Stay Closer"
-                description="Real-time notifications"
-                cta={
-                  <Button
-                    component={NextLink}
-                    href={callToActionUrl}
-                    radius="xl"
-                    size="lg"
-                    variant="light"
-                    fullWidth
-                  >
-                    Add notifications
-                  </Button>
-                }
-                icon={
-                  <Icon>
-                    <IconDeviceMobileMessage size={21} />
-                  </Icon>
-                }
-                price="£2.50"
-                pricingPeriod="one-time"
-                items={[
-                  {
-                    title: 'Everything above',
-                    description: 'All free features included',
-                    icon: (
-                      <Icon>
-                        <IconUsers size={21} />
+                        <IconDeviceMobileMessage size={21} />
                       </Icon>
                     ),
                   },
                   {
-                    title: 'Instant notifications',
-                    description: 'Updates by SMS or WhatsApp',
+                    title: 'Paid by subscriber',
+                    description: 'One-time fee per subscriber',
                     icon: (
                       <Icon>
-                        <IconBellRinging size={21} />
+                        <IconUser size={21} />
                       </Icon>
                     ),
                   },

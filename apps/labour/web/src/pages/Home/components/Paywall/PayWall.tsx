@@ -33,9 +33,9 @@ export const PayWall = () => {
 
   const description = (
     <>
-      Upgrade your subscription now to get live notifications to your phone.
+      Upgrade to get live notifications straight to your phone.
       <br />
-      Choose between SMS*, WhatsApp, and Email notifications so you never miss an update.
+      Stay connected with SMS or WhatsApp alerts and never miss an update.
     </>
   );
 

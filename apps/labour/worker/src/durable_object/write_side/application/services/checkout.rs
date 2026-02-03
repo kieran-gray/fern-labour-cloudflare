@@ -8,7 +8,7 @@ use fern_labour_labour_shared::{
 };
 use fern_labour_workers_shared::{
     User,
-    clients::{CheckoutSessionRequest, StripeClient},
+    clients::{CheckoutSessionRequest, StripeClient, worker_clients::stripe::AutomaticTax},
 };
 use serde::Serialize;
 
@@ -86,6 +86,9 @@ impl CheckoutService {
                         ("labour_id".to_string(), labour_id.to_string()),
                         ("subscription_id".to_string(), subscription_id.to_string()),
                     ],
+                    customer_email: user.email,
+                    allow_promotion_codes: true,
+                    automatic_tax: AutomaticTax { enabled: true },
                 };
 
                 let response = self

@@ -1,6 +1,5 @@
 use fern_labour_labour_shared::{
-    ApiCommand, SubscriberCommand, commands::checkout::CheckoutCommand,
-    value_objects::SubscriberAccessLevel,
+    ApiCommand, SubscriberCommand, value_objects::SubscriberAccessLevel,
 };
 use fern_labour_workers_shared::{CorsContext, clients::worker_clients::auth::User};
 use tracing::{error, info, warn};
@@ -20,8 +19,8 @@ pub async fn handle_create_checkout_session(
     cors_context: CorsContext,
     user: User,
 ) -> worker::Result<Response> {
-    let command: CheckoutCommand = match req.json().await {
-        Ok(c) => c,
+    let command: ApiCommand = match req.json().await {
+        Ok(cmd) => cmd,
         Err(e) => {
             error!(user_id = %user.user_id, error = ?e, "Failed to parse checkout request");
             let response = Response::from(ApiError::ValidationError(

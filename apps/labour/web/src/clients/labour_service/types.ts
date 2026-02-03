@@ -314,7 +314,8 @@ export type ApiCommand =
   | { type: 'Labour'; payload: LabourCommand }
   | { type: 'LabourUpdate'; payload: LabourUpdateCommand }
   | { type: 'Subscriber'; payload: SubscriberCommand }
-  | { type: 'Subscription'; payload: SubscriptionCommand };
+  | { type: 'Subscription'; payload: SubscriptionCommand }
+  | { type: 'Checkout'; payload: CreateCheckoutSessionCommand };
 
 // Query Types
 

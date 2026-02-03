@@ -96,7 +96,7 @@ export function InviteFlow() {
           transition={{ duration: 0.6, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
           viewport={{ once: true, margin: '-10%' }}
         >
-          <Title className={classes.title}>This moment is yours to share</Title>
+          <Title className={classes.title}>Gather your support circle</Title>
           <Text className={classes.description}>
             Choose who is part of your circle. When someone asks to join, you decide.
           </Text>

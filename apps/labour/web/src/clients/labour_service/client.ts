@@ -7,12 +7,12 @@
 
 import type {
   AdminCommand,
+  ApiCommand,
   ApiResponse,
   CommandResponse,
   ContractionCommand,
   ContractionQuery,
   ContractionReadModel,
-  CreateCheckoutSessionCommand,
   CreateCheckoutSessionResponse,
   Cursor,
   LabourCommand,
@@ -816,7 +816,7 @@ export class LabourServiceClient {
   }
 
   async createCheckoutSession(
-    request: CreateCheckoutSessionCommand
+    request: ApiCommand
   ): Promise<ApiResponse<CreateCheckoutSessionResponse>> {
     const headers = await this.getHeaders();
     const url = `${this.config.baseUrl}/api/v1/payments/checkout`;

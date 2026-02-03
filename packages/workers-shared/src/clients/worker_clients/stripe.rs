@@ -21,11 +21,19 @@ pub struct StripePriceList {
 }
 
 #[derive(Debug, Clone)]
+pub struct AutomaticTax {
+    pub enabled: bool
+}
+
+#[derive(Debug, Clone)]
 pub struct CheckoutSessionRequest {
     pub success_url: String,
     pub cancel_url: String,
     pub price_lookup_key: String,
     pub metadata: Vec<(String, String)>,
+    pub customer_email: Option<String>,
+    pub allow_promotion_codes: bool,
+    pub automatic_tax: AutomaticTax,
 }
 
 #[derive(Debug)]
@@ -129,9 +137,15 @@ impl WorkerStripeClient {
             ("mode".to_string(), "payment".to_string()),
             ("success_url".to_string(), request.success_url.clone()),
             ("cancel_url".to_string(), request.cancel_url.clone()),
+            ("allow_promotion_codes".to_string(), request.allow_promotion_codes.to_string()),
             ("line_items[0][price]".to_string(), price_id.to_string()),
             ("line_items[0][quantity]".to_string(), "1".to_string()),
+            ("automatic_tax[enabled]".to_string(), request.automatic_tax.enabled.to_string()),
         ];
+
+        if let Some(email) = request.customer_email.clone() {
+            params.push(("customer_email".to_string(), email))
+        }
 
         for (key, value) in &request.metadata {
             params.push((format!("metadata[{}]", key), value.clone()));

@@ -58,7 +58,7 @@ export function SimpleUpdates() {
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           viewport={{ once: true, margin: '-10%' }}
         >
-          <Title className={classes.title}>Share when it feels right</Title>
+          <Title className={classes.title}>Update everyone on your terms</Title>
           <Text className={classes.description}>
             Send news when you're ready. With one tap everyone in your circle gets the same update,
             so you can get back to what matters.

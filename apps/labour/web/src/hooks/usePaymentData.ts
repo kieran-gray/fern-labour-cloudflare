@@ -26,7 +26,7 @@ export function useCreateCheckoutSession(client: LabourServiceClient) {
           cancel_url: cancelUrl,
         },
       };
-      const response = await client.createCheckoutSession(command);
+      const response = await client.createCheckoutSession({ type: 'Checkout', payload: command });
 
       if (!response.success || !response.data) {
         throw new Error(response.error || 'Failed to create checkout session');
