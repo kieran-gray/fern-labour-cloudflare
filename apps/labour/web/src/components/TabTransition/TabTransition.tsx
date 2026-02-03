@@ -21,7 +21,7 @@ type Direction = 'left' | 'right' | null;
 
 const variants = {
   initial: (dir: Direction) => ({
-    opacity: 1,
+    opacity: 0,
     x: dir === 'right' ? SLIDE_DISTANCE : dir === 'left' ? -SLIDE_DISTANCE : 0,
   }),
   animate: {
