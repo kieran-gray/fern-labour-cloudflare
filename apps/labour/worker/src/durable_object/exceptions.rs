@@ -1,16 +1,24 @@
-use crate::durable_object::write_side::domain::LabourError;
+use tracing::error;
+
+use crate::durable_object::{authorization::DenyReason, write_side::domain::LabourError};
 
 #[derive(Debug)]
 pub enum AppError {
-    Domain(LabourError),
-    Unauthorised(String),
+    BadRequest(String),
+    Forbidden(String),
+    NotFound(String),
+    Gone(String),
+    Internal(String),
 }
 
 impl std::fmt::Display for AppError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            AppError::Domain(e) => write!(f, "{}", e),
-            AppError::Unauthorised(msg) => write!(f, "{}", msg),
+            AppError::BadRequest(msg) => write!(f, "{msg}"),
+            AppError::Forbidden(msg) => write!(f, "{msg}"),
+            AppError::NotFound(msg) => write!(f, "{msg}"),
+            AppError::Gone(msg) => write!(f, "{msg}"),
+            AppError::Internal(msg) => write!(f, "{msg}"),
         }
     }
 }
@@ -20,32 +28,42 @@ impl std::error::Error for AppError {}
 impl From<AppError> for worker::Response {
     fn from(error: AppError) -> Self {
         let (msg, status) = match &error {
-            AppError::Domain(err) => (err.to_string(), 400),
-            AppError::Unauthorised(err) => (err.clone(), 403),
+            AppError::BadRequest(msg) => (msg.as_str(), 400),
+            AppError::Forbidden(msg) => (msg.as_str(), 403),
+            AppError::NotFound(msg) => (msg.as_str(), 404),
+            AppError::Gone(msg) => (msg.as_str(), 410),
+            AppError::Internal(inner) => {
+                error!("Internal error: {}", inner);
+                ("An internal server error occurred", 500)
+            }
         };
-        worker::Response::error(&msg, status).unwrap()
+        worker::Response::error(msg, status).unwrap()
     }
 }
 
-pub trait IntoWorkerResponse {
-    fn into_response(self) -> worker::Response;
-}
-
-impl IntoWorkerResponse for anyhow::Error {
-    fn into_response(self) -> worker::Response {
-        if let Some(app_err) = self.downcast_ref::<AppError>() {
-            return worker::Response::from(app_err.clone());
+impl From<LabourError> for AppError {
+    fn from(err: LabourError) -> Self {
+        match err {
+            LabourError::NotFound => AppError::NotFound(err.to_string()),
+            _ => AppError::BadRequest(err.to_string()),
         }
-
-        worker::Response::error(format!("{:#}", self), 500).unwrap()
     }
 }
 
-impl Clone for AppError {
-    fn clone(&self) -> Self {
-        match self {
-            AppError::Domain(e) => AppError::Domain(e.clone()),
-            AppError::Unauthorised(msg) => AppError::Unauthorised(msg.clone()),
-        }
+impl From<DenyReason> for AppError {
+    fn from(reason: DenyReason) -> Self {
+        AppError::Forbidden(reason.to_string())
+    }
+}
+
+impl From<serde_json::Error> for AppError {
+    fn from(err: serde_json::Error) -> Self {
+        AppError::Internal(format!("Serialization error: {err}"))
+    }
+}
+
+impl From<anyhow::Error> for AppError {
+    fn from(err: anyhow::Error) -> Self {
+        AppError::Internal(format!("{err:#}"))
     }
 }

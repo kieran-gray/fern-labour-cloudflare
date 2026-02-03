@@ -1,6 +1,6 @@
 use worker::Response;
 
-use crate::durable_object::exceptions::IntoWorkerResponse;
+use crate::durable_object::exceptions::AppError;
 
 pub enum ApiResult {
     Success(Response),
@@ -24,17 +24,17 @@ impl ApiResult {
         matches!(self, ApiResult::Success(_))
     }
 
-    pub fn from_unit_result(result: anyhow::Result<()>) -> Self {
+    pub fn from_unit_result(result: Result<(), AppError>) -> Self {
         match result {
             Ok(()) => Self::Success(Response::empty().unwrap().with_status(204)),
-            Err(err) => Self::Failed(err.into_response()),
+            Err(err) => Self::Failed(err.into()),
         }
     }
 
-    pub fn from_json_result<T: serde::Serialize>(result: anyhow::Result<T>) -> Self {
+    pub fn from_json_result<T: serde::Serialize>(result: Result<T, AppError>) -> Self {
         match result {
             Ok(data) => Self::Success(Response::from_json(&data).unwrap()),
-            Err(err) => Self::Failed(err.into_response()),
+            Err(err) => Self::Failed(err.into()),
         }
     }
 }

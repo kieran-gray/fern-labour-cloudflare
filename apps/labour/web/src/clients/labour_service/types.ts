@@ -519,6 +519,7 @@ export type ApiResponse<T = unknown> = {
   success: boolean;
   data?: T;
   error?: string;
+  status?: number;
 };
 
 export type CommandResponse = ApiResponse<void>;

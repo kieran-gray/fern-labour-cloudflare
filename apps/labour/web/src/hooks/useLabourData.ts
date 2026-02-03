@@ -19,6 +19,15 @@ import { notifications } from '@mantine/notifications';
 import { createMutation, createSimpleMutation } from './createMutation';
 import { queryKeys } from './queryKeys';
 
+export class LabourServiceError extends Error {
+  status?: number;
+  constructor(message: string, status?: number) {
+    super(message);
+    this.status = status;
+    Object.setPrototypeOf(this, LabourServiceError.prototype);
+  }
+}
+
 // =============================================================================
 // Query Hooks
 // =============================================================================
@@ -38,7 +47,10 @@ export function useCurrentLabour(client: LabourServiceClient, labourId: string |
         const activeResponse = await client.getActiveLabour();
 
         if (!activeResponse.success) {
-          throw new Error(activeResponse.error || 'Failed to load active labour');
+          throw new LabourServiceError(
+            activeResponse.error || 'Failed to load active labour',
+            activeResponse.status
+          );
         }
 
         if (!activeResponse.data) {
@@ -51,7 +63,7 @@ export function useCurrentLabour(client: LabourServiceClient, labourId: string |
       const response = await client.getLabour(targetLabourId);
 
       if (!response.success || !response.data) {
-        throw new Error(response.error || 'Failed to load labour');
+        throw new LabourServiceError(response.error || 'Failed to load labour', response.status);
       }
 
       return response.data;
@@ -77,7 +89,7 @@ export function useLabourById(client: LabourServiceClient, labourId: string | nu
       const response = await client.getLabour(labourId);
 
       if (!response.success || !response.data) {
-        throw new Error(response.error || 'Failed to load labour');
+        throw new LabourServiceError(response.error || 'Failed to load labour', response.status);
       }
 
       return response.data;
@@ -211,7 +223,10 @@ export function useUserSubscription(client: LabourServiceClient, labourId: strin
       const response = await client.getUserSubscription(labourId);
 
       if (!response.success || !response.data) {
-        throw new Error(response.error || 'Failed to load subscription');
+        throw new LabourServiceError(
+          response.error || 'Failed to load subscription',
+          response.status
+        );
       }
 
       return response.data;

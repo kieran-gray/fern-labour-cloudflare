@@ -186,7 +186,10 @@ export const SubscriberView = () => {
   const error = subError || labourError;
 
   useEffect(() => {
-    if (isError && error?.message.includes('Authorization')) {
+    const isAuthError = error?.message.includes('Authorization');
+    const isGoneError = (error as any)?.status === 410;
+
+    if (isError && (isAuthError || isGoneError)) {
       clearSession();
       navigate('/');
     }
