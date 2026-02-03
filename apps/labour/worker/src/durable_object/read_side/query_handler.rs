@@ -1,4 +1,3 @@
-use anyhow::{Result, anyhow};
 use fern_labour_event_sourcing_rs::{PaginatedResponse, SyncRepositoryTrait};
 use fern_labour_labour_shared::{
     ApiQuery, ContractionQuery, LabourQuery, LabourUpdateQuery,
@@ -9,6 +8,7 @@ use serde_json::Value;
 
 use crate::durable_object::{
     authorization::{Action, Authorizer, QueryAction, resolve_principal},
+    exceptions::AppError,
     http::utils::{build_paginated_response, decode_cursor},
     read_side::read_models::{
         subscription_token::SubscriptionTokenRepositoryTrait,
@@ -30,13 +30,13 @@ impl<'a> QueryHandler<'a> {
         }
     }
 
-    pub fn handle(&self, query: ApiQuery, user: &User) -> Result<Value> {
+    pub fn handle(&self, query: ApiQuery, user: &User) -> Result<Value, AppError> {
         let aggregate = self.read_model.aggregate_repository.load()?;
 
         if let Some(ref labour) = aggregate
             && labour.is_deleted()
         {
-            anyhow::bail!("Labour has been deleted")
+            return Err(AppError::Gone("Labour has been deleted".into()));
         }
 
         let action = match &query {
@@ -58,8 +58,7 @@ impl<'a> QueryHandler<'a> {
 
         let principal = resolve_principal(user, aggregate.as_ref());
         self.authorizer
-            .authorize(&principal, &action, aggregate.as_ref())
-            .map_err(|e| anyhow!("Authorization failed: {}", e))?;
+            .authorize(&principal, &action, aggregate.as_ref())?;
 
         match query {
             ApiQuery::Labour(q) => self.handle_labour(q),
@@ -69,25 +68,22 @@ impl<'a> QueryHandler<'a> {
         }
     }
 
-    fn handle_labour(&self, query: LabourQuery) -> Result<Value> {
+    fn handle_labour(&self, query: LabourQuery) -> Result<Value, AppError> {
         match query {
             LabourQuery::GetLabour { .. } => {
-                let labour = match self
+                let labour = self
                     .read_model
                     .labour_repository
                     .get(1, None)?
                     .into_iter()
                     .next()
-                {
-                    Some(labour) => Ok(labour),
-                    None => Err(anyhow!("Labour not found")),
-                }?;
+                    .ok_or_else(|| AppError::NotFound("Labour not found".into()))?;
                 Ok(serde_json::to_value(labour)?)
             }
         }
     }
 
-    fn handle_contraction(&self, query: ContractionQuery) -> Result<Value> {
+    fn handle_contraction(&self, query: ContractionQuery) -> Result<Value, AppError> {
         match query {
             ContractionQuery::GetContractions { limit, cursor, .. } => {
                 let decoded = decode_cursor(cursor);
@@ -109,7 +105,7 @@ impl<'a> QueryHandler<'a> {
         }
     }
 
-    fn handle_labour_update(&self, query: LabourUpdateQuery) -> Result<Value> {
+    fn handle_labour_update(&self, query: LabourUpdateQuery) -> Result<Value, AppError> {
         match query {
             LabourUpdateQuery::GetLabourUpdates { limit, cursor, .. } => {
                 let decoded_cursor = decode_cursor(cursor);
@@ -138,13 +134,19 @@ impl<'a> QueryHandler<'a> {
         }
     }
 
-    fn handle_subscription(&self, query: SubscriptionQuery, user: &User) -> Result<Value> {
+    fn handle_subscription(
+        &self,
+        query: SubscriptionQuery,
+        user: &User,
+    ) -> Result<Value, AppError> {
         match query {
             SubscriptionQuery::GetSubscriptionToken { .. } => {
-                let token = match self.read_model.subscription_token_repository.get_token() {
-                    Ok(Some(token)) => token.token,
-                    Ok(_) | Err(_) => anyhow::bail!("No subcription token available"),
-                };
+                let token = self
+                    .read_model
+                    .subscription_token_repository
+                    .get_token()?
+                    .ok_or_else(|| AppError::NotFound("No subscription token available".into()))?
+                    .token;
                 Ok(serde_json::json!({ "token": token }))
             }
             SubscriptionQuery::GetLabourSubscriptions { .. } => {

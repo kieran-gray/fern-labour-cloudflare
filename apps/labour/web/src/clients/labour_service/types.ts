@@ -314,7 +314,8 @@ export type ApiCommand =
   | { type: 'Labour'; payload: LabourCommand }
   | { type: 'LabourUpdate'; payload: LabourUpdateCommand }
   | { type: 'Subscriber'; payload: SubscriberCommand }
-  | { type: 'Subscription'; payload: SubscriptionCommand };
+  | { type: 'Subscription'; payload: SubscriptionCommand }
+  | { type: 'Checkout'; payload: CreateCheckoutSessionCommand };
 
 // Query Types
 
@@ -519,6 +520,7 @@ export type ApiResponse<T = unknown> = {
   success: boolean;
   data?: T;
   error?: string;
+  status?: number;
 };
 
 export type CommandResponse = ApiResponse<void>;

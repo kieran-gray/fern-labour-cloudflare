@@ -52,7 +52,7 @@ export function RolesExplained() {
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           viewport={{ once: true, margin: '-10%' }}
         >
-          <Title className={classes.title}>Share without oversharing</Title>
+          <Title className={classes.title}>The right details, for the right people</Title>
           <Text className={classes.subtitle}>You decide what each person can see and do.</Text>
         </motion.div>
 

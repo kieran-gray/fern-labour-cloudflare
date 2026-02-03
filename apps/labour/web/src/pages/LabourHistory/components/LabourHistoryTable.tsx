@@ -45,6 +45,12 @@ export function LabourHistoryTable() {
     (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
   );
 
+  const handleStartNewLabour = () => {
+    clearSession();
+    setMode(AppMode.Birth);
+    navigate('/');
+  };
+
   const handleViewLabour = (selectedLabourId: string) => {
     if (labourId === selectedLabourId) {
       clearSession();
@@ -93,7 +99,7 @@ export function LabourHistoryTable() {
           variant="light"
           radius="xl"
           size="md"
-          onClick={() => navigate('/')}
+          onClick={handleStartNewLabour}
         >
           Start New Labour
         </Button>

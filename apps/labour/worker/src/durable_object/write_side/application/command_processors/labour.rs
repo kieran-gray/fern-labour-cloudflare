@@ -1,11 +1,11 @@
 use std::rc::Rc;
 
-use anyhow::{Result, anyhow};
 use fern_labour_event_sourcing_rs::{Aggregate, AggregateRepositoryTrait};
 use fern_labour_workers_shared::User;
 
 use crate::durable_object::{
     authorization::{Action, Authorizer, resolve_principal},
+    exceptions::AppError,
     write_side::domain::{Labour, LabourCommand},
 };
 
@@ -23,18 +23,16 @@ impl LabourCommandProcessor {
         }
     }
 
-    pub fn handle_command(&self, command: LabourCommand, user: User) -> Result<()> {
+    pub fn handle_command(&self, command: LabourCommand, user: User) -> Result<(), AppError> {
         let aggregate = self.repository.load()?;
 
         let principal = resolve_principal(&user, aggregate.as_ref());
         let action = Action::Command(command.clone());
 
         self.authorizer
-            .authorize(&principal, &action, aggregate.as_ref())
-            .map_err(|e| anyhow!("Authorization failed: {}", e))?;
+            .authorize(&principal, &action, aggregate.as_ref())?;
 
-        let events = Labour::handle_command(aggregate.as_ref(), command)
-            .map_err(|e| anyhow!("Domain error: {}", e))?;
+        let events = Labour::handle_command(aggregate.as_ref(), command)?;
 
         if events.is_empty() {
             return Ok(());

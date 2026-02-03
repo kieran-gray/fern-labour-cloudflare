@@ -7,12 +7,12 @@
 
 import type {
   AdminCommand,
+  ApiCommand,
   ApiResponse,
   CommandResponse,
   ContractionCommand,
   ContractionQuery,
   ContractionReadModel,
-  CreateCheckoutSessionCommand,
   CreateCheckoutSessionResponse,
   Cursor,
   LabourCommand,
@@ -109,6 +109,7 @@ export class LabourServiceClient {
         return {
           success: false,
           error: errorText || `HTTP ${response.status}: ${response.statusText}`,
+          status: response.status,
         };
       }
 
@@ -117,11 +118,13 @@ export class LabourServiceClient {
       return {
         success: true,
         data,
+        status: response.status,
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
+        status: 500,
       };
     }
   }
@@ -150,6 +153,7 @@ export class LabourServiceClient {
         return {
           success: false,
           error: errorText || `HTTP ${response.status}: ${response.statusText}`,
+          status: response.status,
         };
       }
 
@@ -158,11 +162,13 @@ export class LabourServiceClient {
       return {
         success: true,
         data,
+        status: response.status,
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
+        status: 500,
       };
     }
   }
@@ -541,6 +547,7 @@ export class LabourServiceClient {
         return {
           success: false,
           error: errorText || `HTTP ${response.status}: ${response.statusText}`,
+          status: response.status,
         };
       }
 
@@ -549,11 +556,13 @@ export class LabourServiceClient {
       return {
         success: true,
         data,
+        status: response.status,
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
+        status: 500,
       };
     }
   }
@@ -583,6 +592,7 @@ export class LabourServiceClient {
         return {
           success: false,
           error: errorText || `HTTP ${response.status}: ${response.statusText}`,
+          status: response.status,
         };
       }
 
@@ -591,11 +601,13 @@ export class LabourServiceClient {
       return {
         success: true,
         data,
+        status: response.status,
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
+        status: 500,
       };
     }
   }
@@ -615,6 +627,7 @@ export class LabourServiceClient {
         return {
           success: false,
           error: errorText || `HTTP ${response.status}: ${response.statusText}`,
+          status: response.status,
         };
       }
 
@@ -623,11 +636,13 @@ export class LabourServiceClient {
       return {
         success: true,
         data,
+        status: response.status,
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
+        status: 500,
       };
     }
   }
@@ -745,6 +760,7 @@ export class LabourServiceClient {
         return {
           success: false,
           error: errorText || `HTTP ${response.status}: ${response.statusText}`,
+          status: response.status,
         };
       }
 
@@ -753,11 +769,13 @@ export class LabourServiceClient {
       return {
         success: true,
         data,
+        status: response.status,
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
+        status: 500,
       };
     }
   }
@@ -777,6 +795,7 @@ export class LabourServiceClient {
         return {
           success: false,
           error: errorText || `HTTP ${response.status}: ${response.statusText}`,
+          status: response.status,
         };
       }
 
@@ -785,17 +804,19 @@ export class LabourServiceClient {
       return {
         success: true,
         data,
+        status: response.status,
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
+        status: 500,
       };
     }
   }
 
   async createCheckoutSession(
-    request: CreateCheckoutSessionCommand
+    request: ApiCommand
   ): Promise<ApiResponse<CreateCheckoutSessionResponse>> {
     const headers = await this.getHeaders();
     const url = `${this.config.baseUrl}/api/v1/payments/checkout`;
