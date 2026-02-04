@@ -25,10 +25,13 @@
     "@mantine/hooks": "^7.17.2",
     "@next/bundle-analyzer": "^15.1.5",
     "@tabler/icons-react": "^3.28.1",
+    "date-fns": "^4.1.0",
+    "gray-matter": "^4.0.3",
     "motion": "^12.4.7",
     "next": "^15.2.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-markdown": "^10.1.0",
     "react-turnstile": "^1.1.4"
   },
   "devDependencies": {
@@ -56,7 +59,9 @@
     "printWidth": 100,
     "singleQuote": true,
     "trailingComma": "es5",
-    "plugins": ["@ianvs/prettier-plugin-sort-imports"],
+    "plugins": [
+      "@ianvs/prettier-plugin-sort-imports"
+    ],
     "importOrder": [
       ".*styles.css$",
       "",
@@ -85,8 +90,13 @@
     ]
   },
   "stylelint": {
-    "extends": ["stylelint-config-standard-scss"],
-    "ignoreFiles": [".next/**", "out/**"],
+    "extends": [
+      "stylelint-config-standard-scss"
+    ],
+    "ignoreFiles": [
+      ".next/**",
+      "out/**"
+    ],
     "rules": {
       "custom-property-pattern": null,
       "selector-class-pattern": null,
@@ -108,13 +118,17 @@
       "selector-pseudo-class-no-unknown": [
         true,
         {
-          "ignorePseudoClasses": ["global"]
+          "ignorePseudoClasses": [
+            "global"
+          ]
         }
       ],
       "property-no-unknown": [
         true,
         {
-          "ignoreProperties": ["composes"]
+          "ignoreProperties": [
+            "composes"
+          ]
         }
       ]
     }
