@@ -1,0 +1,122 @@
+.root {
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 3px, rgba(0, 0, 0, 0.05) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    margin: 30px auto;
+    position: relative;
+}
+
+.content {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--mantine-color-gray-7);
+    width: 100%;
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+    font-family: 'Poppins', sans-serif;
+    color: var(--mantine-color-gray-9);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.content h1 {
+    font-size: 2.5rem;
+    margin-top: 0;
+}
+
+.content h2 {
+    font-size: 1.75rem;
+}
+
+.content h3 {
+    font-size: 1.5rem;
+}
+
+.content p {
+    margin-bottom: 1.5rem;
+}
+
+.content ul,
+.content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+}
+
+.content li {
+    margin-bottom: 0.5rem;
+}
+
+.content a {
+    color: var(--mantine-color-pink-6);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+.content a:hover {
+    border-bottom-color: var(--mantine-color-pink-6);
+}
+
+.content blockquote {
+    border-left: 4px solid var(--mantine-color-pink-3);
+    margin: 1.5rem 0;
+    padding: 1rem 1.5rem;
+    background-color: var(--mantine-color-pink-0);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--mantine-color-gray-8);
+}
+
+.content hr {
+    border: 0;
+    border-top: 1px solid var(--mantine-color-gray-2);
+    margin: 3rem 10%;
+}
+
+.content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 2rem 0;
+}
+
+@media (max-width: 48em) {
+    .root {
+        padding: 15px;
+        border-radius: 16px;
+    }
+
+    .content {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .content h1 {
+        font-size: 2rem;
+    }
+
+    .content h2 {
+        font-size: 1.5rem;
+    }
+
+    .content h3 {
+        font-size: 1.25rem;
+    }
+
+    .content blockquote {
+        margin: 1rem 0;
+        padding: 0.75rem 1rem;
+    }
+}
