@@ -1,13 +1,10 @@
 ---
 title: 'Welcome to Fern Labour'
 excerpt: 'A warm welcome to our new blog. Here we share tips for labour, peace of mind, and how to use Fern Labour to stay present.'
-date: '2025-10-24'
+date: '2026-02-04'
 readingTime: '2 min read'
 category: 'Welcome'
 ---
-
-# A Warm Welcome
-
 You're here. We're glad.
 
 Labour is coming, and your mind might already be running through the list: how to track contractions, who needs to know when, how to stay grounded when things get intense. That's where Fern Labour comes in. We handle the logistics so you don't have to.

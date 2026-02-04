@@ -28,10 +28,13 @@ const HEADER_LINKS: HeaderLink[] = [
   { label: 'Home', href: '#home' },
   { label: 'How It Works', href: '#features' },
   { label: 'Pricing', href: '#pricing' },
-  { label: 'FAQs', href: '#faqs' },
+  { label: 'Blog', href: '/blog' },
 ];
 
-const OTHER_PAGE_HEADER_LINKS: HeaderLink[] = [{ label: 'Home', href: '/' }];
+const OTHER_PAGE_HEADER_LINKS: HeaderLink[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Blog', href: '/blog' },
+];
 
 type Header01Props = ContainerProps & {
   /** Logo to display in the header */
@@ -192,7 +195,7 @@ export const Header01 = ({
             header: classes.drawer,
             body: classes.drawerBody,
           }}
-          overlayProps={{ backgroundOpacity: 0.4, blur: 3 }}
+          overlayProps={{ backgroundOpacity: 0.2, blur: 2 }}
           position="left"
           opened={opened}
           onClose={toggle}
