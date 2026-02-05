@@ -87,9 +87,13 @@
 
 .content img {
     max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin: 2rem 0;
+    max-height: 600px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 12px;
+    margin: 2rem auto;
+    display: block;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 @media (max-width: 48em) {

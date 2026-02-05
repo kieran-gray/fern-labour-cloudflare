@@ -40,6 +40,7 @@ export default function BlogPost({ post }: BlogPostProps) {
               headline: post.title,
               description: post.excerpt,
               datePublished: post.date,
+              image: (post.ogImage as string) || (post.coverImage as string) || undefined,
               author: {
                 '@type': 'Organization',
                 name: 'Fern Labour',
@@ -112,9 +113,9 @@ export default function BlogPost({ post }: BlogPostProps) {
                 </Text>
               </Group>
               <Text c="dimmed" mb="md" lh={1.6}>
-                We're a small, supportive team building tools to help you stay present and calm
-                during labour. Our app lets you track your contractions quietly and keep your loved
-                ones in the loop without the noise.
+                Fern Labour is a labour tracking app made by a husband-and-wife team.
+                It helps you track contractions, keep your attention where it belongs, and let loved ones know how things are going.
+                The contraction timer runs quietly, so it supports you without asking for attention when you need calm most.
               </Text>
               <Button
                 component="a"
@@ -136,9 +137,9 @@ export default function BlogPost({ post }: BlogPostProps) {
                   About Fern Labour
                 </Text>
                 <Text c="dimmed" mb="md" lh={1.6}>
-                  We're a small, supportive team building tools to help you stay present and calm
-                  during labour. Our app lets you track your contractions quietly and keep your
-                  loved ones in the loop without the noise.
+                  Fern Labour is a labour tracking app made by a husband-and-wife team.
+                  It helps you track contractions, keep your attention where it belongs, and let loved ones know how things are going.
+                  The contraction timer runs quietly, so it supports you without asking for attention when you need calm most.
                 </Text>
                 <Button
                   component="a"

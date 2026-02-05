@@ -157,20 +157,20 @@ export const SubscribersHelpModal = ({
 
         {/* Requests */}
         <div className={modalClasses.helpSection}>
-          <Text className={modalClasses.helpSectionTitle}>Requests tab</Text>
+          <Text className={modalClasses.helpSectionTitle}>Pending requests</Text>
           <Text className={modalClasses.helpText} size="sm" mb="sm">
-            People waiting for your approval appear here. Accept to let them follow your labour, or
-            reject to deny access (they can request again).
+            People waiting for your approval appear at the top of the list. Accept to let them follow
+            your labour, or reject to deny access.
           </Text>
-          <MockSubscriberCard name="Sarah Johnson" initials="SJ" color="pink" status="requested" />
+          <MockSubscriberCard name="Sarah Johnson" initials="SJ" color="orange" status="requested" />
         </div>
 
         {/* Active subscribers */}
         <div className={modalClasses.helpSection}>
-          <Text className={modalClasses.helpSectionTitle}>Active tab</Text>
+          <Text className={modalClasses.helpSectionTitle}>Active subscribers</Text>
           <Text className={modalClasses.helpText} size="sm" mb="sm">
-            Approved subscribers appear here with their role. Tap the menu to change their role,
-            remove access, or block them.
+            Approved subscribers appear below requests. You can manage their role or remove them at
+            any time using the menu.
           </Text>
           <Stack gap="xs">
             <MockSubscriberCard
@@ -192,12 +192,12 @@ export const SubscribersHelpModal = ({
 
         {/* Blocked */}
         <div className={modalClasses.helpSection}>
-          <Text className={modalClasses.helpSectionTitle}>Blocked tab</Text>
+          <Text className={modalClasses.helpSectionTitle}>Blocked users</Text>
           <Text className={modalClasses.helpText} size="sm" mb="sm">
-            Blocked people cannot access your labour or request access again. Unblock them if you
-            change your mind.
+            Blocked users are hidden by default at the bottom of the list. Click "Blocked" to expand
+            the list and manage them.
           </Text>
-          <MockSubscriberCard name="Alex Brown" initials="AB" color="red" status="blocked" />
+          <MockSubscriberCard name="Alex Brown" initials="AB" color="gray" status="blocked" />
         </div>
 
         {/* Subscriber roles */}

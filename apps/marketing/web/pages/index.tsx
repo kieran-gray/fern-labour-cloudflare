@@ -16,6 +16,7 @@ import { SimpleUpdates } from '@/components/Landing/SimpleUpdates/SimpleUpdates'
 import { SubscriberBenefits } from '@/components/Landing/SubscriberBenefits/SubscriberBenefits';
 import { SubscriberExperience } from '@/components/Landing/SubscriberExperience/SubscriberExperience';
 import { TrackTogether } from '@/components/Landing/TrackTogether/TrackTogether';
+import { faqs } from '@/components/Landing/FAQ/faqData';
 
 export default function HomePage() {
   return (
@@ -27,6 +28,47 @@ export default function HomePage() {
           content="Track contractions and keep your family close, without the distraction. Free for mums."
         />
         <meta property="og:url" content="https://fernlabour.com" />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@graph': [
+                {
+                  '@type': 'SoftwareApplication',
+                  name: 'Fern Labour',
+                  applicationCategory: 'HealthApplication',
+                  operatingSystem: 'Browser',
+                  offers: {
+                    '@type': 'Offer',
+                    price: '0',
+                    priceCurrency: 'GBP',
+                  },
+                  description:
+                    'Free contraction timer and labour tracking app. Share updates with family and keep your birth partner involved.',
+                },
+                {
+                  '@type': 'Organization',
+                  name: 'Fern Labour',
+                  url: 'https://fernlabour.com',
+                  logo: 'https://fernlabour.com/logo/logo.svg',
+                },
+                {
+                  '@type': 'FAQPage',
+                  mainEntity: faqs.map((faq) => ({
+                    '@type': 'Question',
+                    name: faq.question,
+                    acceptedAnswer: {
+                      '@type': 'Answer',
+                      text: faq.answer,
+                    },
+                  })),
+                },
+              ],
+            }),
+          }}
+        />
       </Head>
       <Header01
         breakpoint="sm"
