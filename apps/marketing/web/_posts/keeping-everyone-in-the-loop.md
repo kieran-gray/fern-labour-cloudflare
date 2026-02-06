@@ -19,7 +19,7 @@ Status updates are for the small things. "Trying the bath," "Eating some toast,"
 *   **How they see them:** They appear in the "Updates" feed inside the app.
 *   **Notifications:** None. We don't send push notifications for these. This creates a low-pressure space where you can post at any time, even 3am, without worrying about waking anyone up.
 
-> ![Status Update](/images/blog/keeping-everyone-in-the-loop/status-update.png)
+![Status Update](/images/blog/keeping-everyone-in-the-loop/status-update.png)
 
 ## Level 2: Announcements
 *For the big news*
@@ -30,7 +30,7 @@ Announcements are for milestones. "Heading to hospital," "Baby is here!"
 *   **How they see them:** These are broadcast. Depending on their notification settings, your circle will get an SMS or a WhatsApp message with the important news.
 *   **Visuals:** These appear with a distinct highlight in the feed so they can't be missed.
 
-> ![Announcement](/images/blog/keeping-everyone-in-the-loop/announcement.png)
+![Announcement](/images/blog/keeping-everyone-in-the-loop/announcement.png)
 
 ## Level 3: App Messages
 *Just for you*

@@ -33,7 +33,7 @@ You don't need to memorize these numbers. As you track, Fern Labour watches the 
 *   **Prepare Alert:** When you hit the frequency and duration targets (e.g., 3 mins apart, 1 min long) for a short burst (4 contractions), we'll send a "Prepare" alert. This is your cue to get the bags ready and maybe call the midwife to give them a heads up. If you haven't been tracking for a full hour, consider that it may already be time to go to the hospital. Always consider your contractions and use your judgement.
 *   **Go Alert:** If that pattern holds steady for a full hour, we'll show the "Go to Hospital" alert.
 
-> ![Hospital Alert](/images/blog/knowing-when-to-go-to-hospital/hospital-alert.png)
+![Hospital Alert](/images/blog/knowing-when-to-go-to-hospital/hospital-alert.png)
 
 ## When to Call Urgently
 

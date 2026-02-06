@@ -21,7 +21,7 @@ The main stat you'll look at is the **Contraction Chart**. It might look like ju
     *   🟡 **Yellow:** Moderate (4-7)
     *   🔴 **Red:** Strong (8-10)
 
-> ![Labour Statistics Chart](/images/blog/understanding-your-labour-stats/statistics-chart.png)
+![Labour Statistics Chart](/images/blog/understanding-your-labour-stats/statistics-chart.png)
 
 ## The 3 Signs of Progress
 
@@ -50,7 +50,7 @@ Above the chart, you'll see simple averages. Here is what they mean:
 *   **Intensity:** Your average pain rating.
 *   **Count:** The total number of contractions in the selected period.
 
-> ![Key Metrics](/images/blog/understanding-your-labour-stats/key-metrics.png)
+![Key Metrics](/images/blog/understanding-your-labour-stats/key-metrics.png)
 
 ## A Note for Partners
 

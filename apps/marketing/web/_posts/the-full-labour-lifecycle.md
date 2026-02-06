@@ -15,7 +15,7 @@ We know that sometimes you download an app *while* you are having a contraction.
 1.  **Tell us about you:** Start by entering your due date and whether this is your first baby, optionally add a Labour Circle name.
 2. **Continue:** Register or sign in to enter the app.
 
-> ![Onboarding Screen](/images/blog/the-full-labour-lifecycle/onboarding.png)
+![Onboarding Screen](/images/blog/the-full-labour-lifecycle/onboarding.png)
 
 That's it. You are ready to track.
 
@@ -47,7 +47,7 @@ When your baby arrives (congratulations!), there is one final step.
 
 Go to the **Manage Labour** tab. You'll see a section called "Ready to complete your labour?".
 
-> ![Complete Labour Screen](/images/blog/the-full-labour-lifecycle/complete-labour.png)
+![Complete Labour Screen](/images/blog/the-full-labour-lifecycle/complete-labour.png)
 
 Tap **Complete Labour**. You can add a closing note: a message to your circle, the time of birth, or just a simple "We did it."
 

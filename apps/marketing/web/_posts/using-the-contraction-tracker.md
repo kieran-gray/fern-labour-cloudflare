@@ -18,7 +18,7 @@ Tracking should be instinctual.
 
 That's it. The app handles the math, calculating the duration and the frequency (the time from the start of one to the start of the next).
 
-> ![Track Tab](/images/blog/using-the-contraction-tracker/track-tab.png)
+![Track Tab](/images/blog/using-the-contraction-tracker/track-tab.png)
 
 ## Measuring Intensity
 
@@ -30,15 +30,13 @@ Not all contractions are created equal. As labour progresses, they will likely g
 
 You can slide the intensity bar while the contraction is ticking or adjust it afterwards. Don't worry about being perfectly precise, it's the trend that matters.
 
-> ![Intensity Slider](/images/blog/using-the-contraction-tracker/intensity-slider.png)
-
 ## In the Moment
 
 We know that staring at a screen isn't helpful when you're surging. When a contraction is active, the app switches to a focused, high-contrast mode with a clear timer and a simple reminder: **"Breathe slowly and steadily."**
 
 Between contractions, we'll show you exactly how long it's been since the last one finished, giving you a clear sense of your rest periods.
 
-> ![Active Contraction](/images/blog/using-the-contraction-tracker/active-contraction.png)
+![Active Contraction](/images/blog/using-the-contraction-tracker/active-contraction.png)
 
 ## Oops, I messed up!
 
@@ -47,6 +45,8 @@ Did you forget to hit stop? Or maybe you tapped start by accident? It happens to
 You can easily fix your history:
 *   **Quick Fix:** Tap any bar on the mini-chart to instantly edit or delete that contraction.
 *   **Full History:** Tap "View history" to see your entire timeline. From here, you can tweak start times, end times, or intensity levels for any entry.
+
+![Edit Contraction](/images/blog/using-the-contraction-tracker/edit-contraction.png)
 
 ## Trust the Pattern
 

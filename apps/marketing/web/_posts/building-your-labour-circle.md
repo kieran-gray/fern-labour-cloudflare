@@ -28,9 +28,13 @@ It's simple to get started:
 
 When they click the link, they'll request to join your circle. You'll see these pop up at the top of your subscriber list. Nothing happens until you say yes—you have total control over who gets in.
 
+![Share Screen](/images/blog/building-your-labour-circle/share-screen.png)
+
 ## Understanding Roles
 
 Not everyone needs to see everything. Fern Labour has three distinct roles so you can decide how much detail to share.
+
+![Change Roles](/images/blog/building-your-labour-circle/change-roles.png)
 
 ### 1. Loved One
 *Perfect for: Parents, in-laws, siblings, and close friends.*
@@ -46,8 +50,6 @@ For those who need a bit more context to support you effectively.
 *   **Everything a Loved One sees, plus:**
 *   **Live Charts & Stats:** They can see your contraction frequency and intensity charts in real-time, helping them understand how things are progressing even from afar.
 
-> ![Subscriber List with Roles](/images/blog/building-your-labour-circle/subscribers-list.png)
-
 ### 3. Birth Partner
 *Perfect for: Your partner or main support person.*
 
@@ -55,6 +57,8 @@ This is your co-pilot. They have the highest level of access and can act on your
 *   **Everything a Support Person sees, plus:**
 *   **Track for you:** They can time contractions on their phone, and it syncs instantly to yours.
 *   **Send Updates:** They can write and send status updates or announcements to the rest of the circle, so you don't have to touch your phone.
+
+![Subscriber List with Roles](/images/blog/building-your-labour-circle/subscribers-list.png)
 
 ## Changing your mind
 
