@@ -23,6 +23,15 @@ function decodeCursor(cursorString: string): Cursor {
   }
 }
 
+function getNextPageCursor<T>(lastPage: PaginatedResponse<T> | undefined): string | undefined {
+  if (!lastPage?.has_more) {
+    return undefined;
+  }
+
+  const nextCursor = lastPage.next_cursor?.trim();
+  return nextCursor ? nextCursor : undefined;
+}
+
 export function useContractionsInfinite(
   client: LabourServiceClient,
   labourId: string | null,
@@ -48,7 +57,7 @@ export function useContractionsInfinite(
       return response.data;
     },
     initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage?.next_cursor ?? undefined,
+    getNextPageParam: (lastPage) => getNextPageCursor(lastPage),
     enabled: !!labourId && !!userId,
     refetchInterval: isConnected ? false : POLLING_INTERVAL_WHEN_DISCONNECTED,
     gcTime: 10 * 60 * 1000,
@@ -80,7 +89,7 @@ export function useLabourUpdatesInfinite(
       return response.data;
     },
     initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage?.next_cursor ?? undefined,
+    getNextPageParam: (lastPage) => getNextPageCursor(lastPage),
     enabled: !!labourId && !!userId,
     refetchInterval: isConnected ? false : POLLING_INTERVAL_WHEN_DISCONNECTED,
     gcTime: 10 * 60 * 1000,

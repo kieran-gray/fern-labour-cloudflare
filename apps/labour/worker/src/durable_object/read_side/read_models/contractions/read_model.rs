@@ -45,7 +45,7 @@ impl Cursor for ContractionReadModel {
 
     #[allow(clippy::misnamed_getters)]
     fn updated_at(&self) -> DateTime<Utc> {
-        self.created_at
+        self.duration.start_time().to_owned()
     }
 }
 

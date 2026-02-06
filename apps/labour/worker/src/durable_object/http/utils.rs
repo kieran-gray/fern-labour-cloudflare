@@ -24,11 +24,18 @@ pub fn build_paginated_response<T: CursorTrait>(
     }
 }
 
-pub fn decode_cursor(cursor: Option<Cursor>) -> Option<DecodedCursor> {
-    cursor.map(|c| DecodedCursor {
-        last_id: c.id,
-        last_updated_at: DateTime::parse_from_rfc3339(&c.updated_at)
-            .map(|dt| dt.with_timezone(&Utc))
-            .unwrap_or_else(|_| Utc::now()),
-    })
+pub fn decode_cursor(cursor: Option<Cursor>) -> Result<Option<DecodedCursor>, String> {
+    match cursor {
+        Some(c) => {
+            let last_updated_at = DateTime::parse_from_rfc3339(&c.updated_at)
+                .map(|dt| dt.with_timezone(&Utc))
+                .map_err(|e| format!("Failed to parse cursor date: {}", e))?;
+
+            Ok(Some(DecodedCursor {
+                last_id: c.id,
+                last_updated_at,
+            }))
+        }
+        None => Ok(None),
+    }
 }

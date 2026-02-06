@@ -48,7 +48,7 @@ export default function BlogIndex({ posts }: BlogIndexProps) {
                 <IconHeartHandshake style={{ width: '70%', height: '70%' }} />
               </ThemeIcon>
               <Text c="pink" fw={600} style={{ letterSpacing: 0.5 }}>
-                THE FERN LABOUR BLOG
+                The Fern Labour blog
               </Text>
             </Group>
 

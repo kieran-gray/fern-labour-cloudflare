@@ -3,7 +3,7 @@ title: 'Welcome to Fern Labour'
 excerpt: 'A warm welcome to our new blog. Here we share tips for labour, peace of mind, and how to use Fern Labour to stay present.'
 date: '2026-02-04'
 readingTime: '2 min read'
-category: 'Welcome'
+category: 'Getting Started'
 ---
 You're here. We're glad.
 

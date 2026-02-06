@@ -1,0 +1,13 @@
+{
+    "name": "fern-labour-scripts",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "seed": "tsx seed.ts"
+    },
+    "devDependencies": {
+        "tsx": "^4.7.0",
+        "@types/node": "^20.11.0"
+    }
+}
