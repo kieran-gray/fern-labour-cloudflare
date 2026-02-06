@@ -4,6 +4,7 @@ import { FooterSimple } from '@/components/Footer/Footer';
 import { Header01 } from '@/components/Header/Header';
 import { AlertsFeature } from '@/components/Landing/AlertsFeature/AlertsFeature';
 import { FAQ } from '@/components/Landing/FAQ/FAQ';
+import { faqs } from '@/components/Landing/FAQ/faqData';
 import { FinalCTA } from '@/components/Landing/FinalCTA/FinalCTA';
 import { Hero } from '@/components/Landing/Hero/Hero';
 import { InviteFlow } from '@/components/Landing/InviteFlow/InviteFlow';
@@ -16,7 +17,6 @@ import { SimpleUpdates } from '@/components/Landing/SimpleUpdates/SimpleUpdates'
 import { SubscriberBenefits } from '@/components/Landing/SubscriberBenefits/SubscriberBenefits';
 import { SubscriberExperience } from '@/components/Landing/SubscriberExperience/SubscriberExperience';
 import { TrackTogether } from '@/components/Landing/TrackTogether/TrackTogether';
-import { faqs } from '@/components/Landing/FAQ/faqData';
 
 export default function HomePage() {
   return (

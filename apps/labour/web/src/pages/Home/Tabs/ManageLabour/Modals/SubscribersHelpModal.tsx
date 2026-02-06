@@ -159,10 +159,15 @@ export const SubscribersHelpModal = ({
         <div className={modalClasses.helpSection}>
           <Text className={modalClasses.helpSectionTitle}>Pending requests</Text>
           <Text className={modalClasses.helpText} size="sm" mb="sm">
-            People waiting for your approval appear at the top of the list. Accept to let them follow
-            your labour, or reject to deny access.
+            People waiting for your approval appear at the top of the list. Accept to let them
+            follow your labour, or reject to deny access.
           </Text>
-          <MockSubscriberCard name="Sarah Johnson" initials="SJ" color="orange" status="requested" />
+          <MockSubscriberCard
+            name="Sarah Johnson"
+            initials="SJ"
+            color="orange"
+            status="requested"
+          />
         </div>
 
         {/* Active subscribers */}

@@ -4,9 +4,8 @@ import { useState } from 'react';
 import { IconMinus, IconPlus } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { Container, Text, Title } from '@mantine/core';
-import classes from './FAQ.module.css';
-
 import { faqs } from './faqData';
+import classes from './FAQ.module.css';
 
 const containerVariants = {
   hidden: { opacity: 0 },
