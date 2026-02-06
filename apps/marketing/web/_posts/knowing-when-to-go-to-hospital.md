@@ -1,7 +1,7 @@
 ---
 title: 'Knowing When to Go'
 excerpt: 'The 3-1-1 rule, the 5-1-1 rule, and the alerts Fern Labour uses to help you decide when it is time to head to the hospital or birth centre.'
-date: '2026-02-05'
+date: '2026-02-06'
 readingTime: '4 min read'
 category: 'Features'
 ---

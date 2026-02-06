@@ -1,7 +1,7 @@
 ---
 title: 'Using the Contraction Tracker'
 excerpt: 'A simple guide to tracking your labour progress with Fern Labour. Learn how to time contractions, rate their intensity, and stay calm in the moment.'
-date: '2026-02-05'
+date: '2026-02-06'
 readingTime: '3 min read'
 category: 'Features'
 ---

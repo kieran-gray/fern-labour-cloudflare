@@ -1,7 +1,7 @@
 ---
 title: 'Building your Labour Circle'
 excerpt: 'Learn how to invite your support team to Fern Labour, understand the different roles, and ensure the right people have the right access before the big day.'
-date: '2026-02-05'
+date: '2026-02-06'
 readingTime: '4 min read'
 category: 'Getting Started'
 ---

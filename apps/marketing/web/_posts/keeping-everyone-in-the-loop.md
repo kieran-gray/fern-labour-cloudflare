@@ -1,7 +1,7 @@
 ---
 title: 'Keeping Everyone in the Loop'
 excerpt: 'Say goodbye to group chats. Learn how to update your entire circle at once with Status Updates and Announcements.'
-date: '2026-02-05'
+date: '2026-02-06'
 readingTime: '3 min read'
 category: 'Features'
 ---

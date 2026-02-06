@@ -1,7 +1,7 @@
 ---
 title: 'Understanding your Labour Stats'
 excerpt: 'Decode the data. Learn how to read your contraction charts to spot the patterns that indicate labour is progressing.'
-date: '2026-02-05'
+date: '2026-02-06'
 readingTime: '3 min read'
 category: 'Features'
 ---
