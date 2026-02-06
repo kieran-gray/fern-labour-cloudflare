@@ -27,7 +27,8 @@
     "format": "npm run format --workspaces --if-present",
     "format:check": "npm run format:check --workspaces --if-present",
     "clean": "npm run clean --workspaces --if-present && cargo clean",
-    "migrate": "npm run migrate --workspaces --if-present"
+    "migrate": "npm run migrate --workspaces --if-present",
+    "seed": "cd scripts && npm install && npx tsx seed.ts"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.8.0",
