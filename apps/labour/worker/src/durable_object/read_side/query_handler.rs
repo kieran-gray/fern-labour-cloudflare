@@ -86,7 +86,8 @@ impl<'a> QueryHandler<'a> {
     fn handle_contraction(&self, query: ContractionQuery) -> Result<Value, AppError> {
         match query {
             ContractionQuery::GetContractions { limit, cursor, .. } => {
-                let decoded = decode_cursor(cursor);
+                let decoded =
+                    decode_cursor(cursor).map_err(|e| AppError::Internal(e.to_string()))?;
                 let items = self
                     .read_model
                     .contraction_repository
@@ -108,7 +109,8 @@ impl<'a> QueryHandler<'a> {
     fn handle_labour_update(&self, query: LabourUpdateQuery) -> Result<Value, AppError> {
         match query {
             LabourUpdateQuery::GetLabourUpdates { limit, cursor, .. } => {
-                let decoded_cursor = decode_cursor(cursor);
+                let decoded_cursor =
+                    decode_cursor(cursor).map_err(|e| AppError::Internal(e.to_string()))?;
                 let response = self
                     .read_model
                     .labour_update_repository
