@@ -94,7 +94,12 @@ export function TrackTogether() {
           </div>
 
           <div className={classes.syncArea}>
-            <svg className={classes.syncWave} viewBox="0 0 80 40" preserveAspectRatio="none">
+            <svg
+              className={classes.syncWave}
+              viewBox="0 0 80 40"
+              preserveAspectRatio="none"
+              data-active={activeDevice}
+            >
               <path
                 className={`${classes.syncPath} ${isTimerRunning ? classes.syncActive : ''}`}
                 d="M0,20 Q20,5 40,20 T80,20"
