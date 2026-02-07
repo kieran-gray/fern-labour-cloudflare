@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { IconArrowRight } from '@tabler/icons-react';
 import { motion } from 'motion/react';
-import { Box, Button, Container, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Container, Space, Stack, Text, Title } from '@mantine/core';
+import { SectionSeparator } from '@/components/SectionSeparator/SectionSeparator';
 import CSSParticles from '../../CSSParticles/CSSParticles';
 
 type FinalCTAProps = {
@@ -20,6 +21,8 @@ export const FinalCTA = ({ title, description, cta, subtitle }: FinalCTAProps) =
       pos="relative"
       style={{ overflow: 'hidden' }}
     >
+      <SectionSeparator position="top" color="#fff5f5" style={{ zIndex: 1 }} />
+      <Space h="xl" />
       <Box pos="absolute" top={0} left={0} w="100%" h="100%" style={{ zIndex: 0 }}>
         <CSSParticles id="cta-particles" color="#ffffff" opacity={0.1} />
       </Box>

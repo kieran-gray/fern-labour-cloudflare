@@ -1,5 +1,5 @@
 ---
-title: 'The Full Labour Lifecycle: From First Contraction to Final Push'
+title: 'Your Journey with Fern Labour'
 excerpt: 'A complete walkthrough of the Fern Labour journey. From setting up your account to tracking active labour and marking your journey as complete.'
 date: '2026-02-05'
 readingTime: '6 min read'

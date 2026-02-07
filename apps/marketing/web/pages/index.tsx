@@ -3,6 +3,7 @@ import { ContactMessageFloating } from '@/components/ContactUsFloating/ContactUs
 import { FooterSimple } from '@/components/Footer/Footer';
 import { Header01 } from '@/components/Header/Header';
 import { AlertsFeature } from '@/components/Landing/AlertsFeature/AlertsFeature';
+import { BlogTeaser } from '@/components/Landing/BlogTeaser/BlogTeaser';
 import { FAQ } from '@/components/Landing/FAQ/FAQ';
 import { faqs } from '@/components/Landing/FAQ/faqData';
 import { FinalCTA } from '@/components/Landing/FinalCTA/FinalCTA';
@@ -17,8 +18,13 @@ import { SimpleUpdates } from '@/components/Landing/SimpleUpdates/SimpleUpdates'
 import { SubscriberBenefits } from '@/components/Landing/SubscriberBenefits/SubscriberBenefits';
 import { SubscriberExperience } from '@/components/Landing/SubscriberExperience/SubscriberExperience';
 import { TrackTogether } from '@/components/Landing/TrackTogether/TrackTogether';
+import { getAllPosts, Post } from '@/lib/api';
 
-export default function HomePage() {
+interface HomePageProps {
+  posts: Post[];
+}
+
+export default function HomePage({ posts }: HomePageProps) {
   return (
     <>
       <Head>
@@ -111,6 +117,7 @@ export default function HomePage() {
         />
         <div id="#faqs" />
         <FAQ />
+        <BlogTeaser posts={posts} />
         <FinalCTA
           title="Create your circle"
           description="Preparing to give birth, or waiting for news? We'll help you stay close."
@@ -127,3 +134,13 @@ export default function HomePage() {
     </>
   );
 }
+
+export const getStaticProps = async () => {
+  const allPosts = getAllPosts(['title', 'date', 'slug', 'excerpt', 'readingTime', 'category']);
+
+  const recentPosts = allPosts.slice(0, 3);
+
+  return {
+    props: { posts: recentPosts },
+  };
+};
