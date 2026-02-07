@@ -202,4 +202,434 @@ describe("Labour Worker", () => {
       expect(Array.isArray(data)).toBe(true);
     });
   });
+
+  /**
+   * NOTE: DO bindings are not supported in the vitest-pool-workers environment for Rust WASM workers.
+   *
+   * See: https://developers.cloudflare.com/workers/testing/vitest-integration/durable-objects/
+   */
+
+  describe.skip("Labour Lifecycle", () => {
+    it("can plan a new labour", async () => {
+      const labourId = crypto.randomUUID();
+
+      const command = {
+        type: "Labour",
+        payload: {
+          type: "PlanLabour",
+          payload: {
+            labour_id: labourId,
+            mother_id: "test-user-123",
+            mother_name: "Test User",
+            first_labour: true,
+            due_date: new Date().toISOString(),
+            labour_name: "Baby Smith",
+          },
+        },
+      };
+
+      const response = await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify(command),
+      });
+
+      expect(response.status).toBe(200);
+    });
+
+    it("can retrieve active labour after planning", async () => {
+      const labourId = crypto.randomUUID();
+
+      // Plan the labour first
+      const planCommand = {
+        type: "Labour",
+        payload: {
+          type: "PlanLabour",
+          payload: {
+            labour_id: labourId,
+            mother_id: "test-user-123",
+            mother_name: "Test User",
+            first_labour: true,
+            due_date: new Date().toISOString(),
+            labour_name: "Active Test",
+          },
+        },
+      };
+
+      await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify(planCommand),
+      });
+
+      // Check active labour
+      const response = await SELF.fetch("http://example.com/api/v1/labour/active", {
+        method: "GET",
+        headers: {
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+      expect(data).not.toBeNull();
+      expect(data.labour_id).toBe(labourId);
+    });
+
+    it("can begin a labour", async () => {
+      const labourId = crypto.randomUUID();
+
+      // Plan first
+      const planCommand = {
+        type: "Labour",
+        payload: {
+          type: "PlanLabour",
+          payload: {
+            labour_id: labourId,
+            mother_id: "test-user-123",
+            mother_name: "Test User",
+            first_labour: true,
+            due_date: new Date().toISOString(),
+            labour_name: null,
+          },
+        },
+      };
+
+      await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify(planCommand),
+      });
+
+      // Begin labour
+      const beginCommand = {
+        type: "Labour",
+        payload: {
+          type: "BeginLabour",
+          payload: {
+            labour_id: labourId,
+          },
+        },
+      };
+
+      const response = await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify(beginCommand),
+      });
+
+      expect(response.status).toBe(200);
+    });
+
+    it("can complete a labour", async () => {
+      const labourId = crypto.randomUUID();
+
+      // Plan and begin
+      const planCommand = {
+        type: "Labour",
+        payload: {
+          type: "PlanLabour",
+          payload: {
+            labour_id: labourId,
+            mother_id: "test-user-123",
+            mother_name: "Test User",
+            first_labour: true,
+            due_date: new Date().toISOString(),
+            labour_name: null,
+          },
+        },
+      };
+
+      await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify(planCommand),
+      });
+
+      const beginCommand = {
+        type: "Labour",
+        payload: { type: "BeginLabour", payload: { labour_id: labourId } },
+      };
+
+      await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify(beginCommand),
+      });
+
+      // Complete
+      const completeCommand = {
+        type: "Labour",
+        payload: {
+          type: "CompleteLabour",
+          payload: {
+            labour_id: labourId,
+            notes: "Baby arrived safely!",
+          },
+        },
+      };
+
+      const response = await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify(completeCommand),
+      });
+
+      expect(response.status).toBe(200);
+    });
+  });
+
+  describe.skip("Contraction Tracking", () => {
+    it("can start a contraction", async () => {
+      const labourId = crypto.randomUUID();
+      const contractionId = crypto.randomUUID();
+
+      // Plan and begin labour first
+      await planAndBeginLabour(labourId);
+
+      const startCommand = {
+        type: "Contraction",
+        payload: {
+          type: "StartContraction",
+          payload: {
+            labour_id: labourId,
+            contraction_id: contractionId,
+            start_time: new Date().toISOString(),
+          },
+        },
+      };
+
+      const response = await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify(startCommand),
+      });
+
+      expect(response.status).toBe(200);
+    });
+
+    it("can end a contraction", async () => {
+      const labourId = crypto.randomUUID();
+      const contractionId = crypto.randomUUID();
+
+      await planAndBeginLabour(labourId);
+
+      // Start
+      const startCommand = {
+        type: "Contraction",
+        payload: {
+          type: "StartContraction",
+          payload: {
+            labour_id: labourId,
+            contraction_id: contractionId,
+            start_time: new Date(Date.now() - 60000).toISOString(),
+          },
+        },
+      };
+
+      await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify(startCommand),
+      });
+
+      // End
+      const endCommand = {
+        type: "Contraction",
+        payload: {
+          type: "EndContraction",
+          payload: {
+            labour_id: labourId,
+            contraction_id: contractionId,
+            end_time: new Date().toISOString(),
+            intensity: 5,
+          },
+        },
+      };
+
+      const response = await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify(endCommand),
+      });
+
+      expect(response.status).toBe(200);
+    });
+
+    it("can delete a contraction", async () => {
+      const labourId = crypto.randomUUID();
+      const contractionId = crypto.randomUUID();
+
+      await planAndBeginLabour(labourId);
+
+      // Start and end
+      await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify({
+          type: "Contraction",
+          payload: {
+            type: "StartContraction",
+            payload: { labour_id: labourId, contraction_id: contractionId, start_time: new Date(Date.now() - 60000).toISOString() },
+          },
+        }),
+      });
+
+      await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify({
+          type: "Contraction",
+          payload: {
+            type: "EndContraction",
+            payload: { labour_id: labourId, contraction_id: contractionId, end_time: new Date().toISOString(), intensity: 3 },
+          },
+        }),
+      });
+
+      // Delete
+      const deleteCommand = {
+        type: "Contraction",
+        payload: {
+          type: "DeleteContraction",
+          payload: { labour_id: labourId, contraction_id: contractionId },
+        },
+      };
+
+      const response = await SELF.fetch("http://example.com/api/v1/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify(deleteCommand),
+      });
+
+      expect(response.status).toBe(200);
+    });
+  });
+
+  describe.skip("Query Endpoint", () => {
+    it("can query contractions for a labour", async () => {
+      const labourId = crypto.randomUUID();
+
+      await planAndBeginLabour(labourId);
+
+      const query = {
+        type: "Contractions",
+        payload: {
+          labour_id: labourId,
+          limit: 10,
+          cursor: null,
+        },
+      };
+
+      const response = await SELF.fetch("http://example.com/api/v1/query", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:5173",
+          Authorization: "Bearer SUCCESS-token",
+        },
+        body: JSON.stringify(query),
+      });
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+      expect(data).toHaveProperty("items");
+      expect(Array.isArray(data.items)).toBe(true);
+    });
+  });
 });
+
+// Helper function
+async function planAndBeginLabour(labourId: string) {
+  await SELF.fetch("http://example.com/api/v1/command", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "http://localhost:5173",
+      Authorization: "Bearer SUCCESS-token",
+    },
+    body: JSON.stringify({
+      type: "Labour",
+      payload: {
+        type: "PlanLabour",
+        payload: {
+          labour_id: labourId,
+          mother_id: "test-user-123",
+          mother_name: "Test User",
+          first_labour: true,
+          due_date: new Date().toISOString(),
+          labour_name: null,
+        },
+      },
+    }),
+  });
+
+  await SELF.fetch("http://example.com/api/v1/command", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Origin: "http://localhost:5173",
+      Authorization: "Bearer SUCCESS-token",
+    },
+    body: JSON.stringify({
+      type: "Labour",
+      payload: {
+        type: "BeginLabour",
+        payload: { labour_id: labourId },
+      },
+    }),
+  });
+}
