@@ -10,7 +10,7 @@ const footerSections = [
       { name: 'Home', href: '#home' },
       { name: 'How It Works', href: '#features' },
       { name: 'Pricing', href: '#pricing' },
-      { name: 'Go to App', href: 'https://track.fernlabour.com', external: true },
+      { name: 'Blog', href: '/blog' },
     ],
   },
   {

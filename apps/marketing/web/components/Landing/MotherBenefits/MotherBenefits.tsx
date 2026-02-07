@@ -7,8 +7,7 @@ const benefits = [
   {
     icon: IconClick,
     title: 'Simple Tracking',
-    description:
-      'One giant button. Tap to start, tap to stop. No distractions when you need focus.',
+    description: 'Tap to start, tap to stop. No distractions when you need focus.',
   },
   {
     icon: IconChartBar,
