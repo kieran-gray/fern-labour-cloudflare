@@ -79,7 +79,7 @@ export default function HomePage({ posts }: HomePageProps) {
       <Header01
         breakpoint="sm"
         callToActionTitle="Go to app"
-        callToActionUrl={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL}
+        callToActionUrl={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || 'https://app.fernlabour.com'}
       />
       <div id="#home" />
       <Hero />

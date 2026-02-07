@@ -58,6 +58,7 @@ jobs:
           NEXT_PUBLIC_FRONTEND_URL: ${{ vars.FRONTEND_URL }}
           NEXT_PUBLIC_INSTAGRAM_URL: ${{ vars.INSTAGRAM_URL }}
           NEXT_PUBLIC_CLOUDFLARE_SITEKEY: ${{ vars.CLOUDFLARE_SITEKEY }}
+          NEXT_PUBLIC_APP_LABOUR_WEB_URL: ${{ vars.FRONTEND_URL }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v6

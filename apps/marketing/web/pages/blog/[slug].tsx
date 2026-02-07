@@ -53,7 +53,7 @@ export default function BlogPost({ post }: BlogPostProps) {
       <Header01
         breakpoint="sm"
         callToActionTitle="Go to app"
-        callToActionUrl={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL}
+        callToActionUrl={process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || 'https://app.fernlabour.com'}
         landingPage={false}
       />
 
