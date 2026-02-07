@@ -55,7 +55,6 @@ export function FooterSimple() {
                       key={linkIndex}
                       href={link.href}
                       className={classes.link}
-                      {...(link.external && { target: '_blank', rel: 'noopener noreferrer' })}
                       onClick={(event) => {
                         if (link.href.startsWith('#')) {
                           event.preventDefault();

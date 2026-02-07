@@ -111,6 +111,11 @@ impl DurableObject for LabourCircle {
             WebSocketRequest::ServerTimestamp => {
                 (true, Some(json!({"server_timestamp": Utc::now()})), None)
             }
+            WebSocketRequest::Ping => (
+                true,
+                Some(serde_json::Value::String("Pong".to_string())),
+                None,
+            ),
         };
 
         let response = serde_json::json!({

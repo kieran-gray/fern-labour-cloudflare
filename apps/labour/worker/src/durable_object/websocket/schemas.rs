@@ -15,6 +15,7 @@ pub enum WebSocketRequest {
         query: ApiQuery,
     },
     ServerTimestamp,
+    Ping,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

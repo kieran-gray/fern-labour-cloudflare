@@ -13,8 +13,11 @@ interface ContractionPage {
     contraction_id: string;
     labour_id: string;
     duration: { start_time: string; end_time: string };
+    duration_seconds: number;
     intensity: number | null;
     notes: string | null;
+    created_at: string;
+    updated_at: string;
   }>;
   next_cursor: string | null;
 }
@@ -75,8 +78,11 @@ export function useStartContractionOffline(client: LabourServiceClient) {
           start_time: optimisticStartTime,
           end_time: optimisticStartTime,
         },
+        duration_seconds: 0,
         intensity: null,
         notes: null,
+        created_at: optimisticStartTime,
+        updated_at: optimisticStartTime,
       };
 
       queryClient.setQueryData<InfiniteData<ContractionPage>>(
@@ -182,7 +188,8 @@ export function useEndContractionOffline(client: LabourServiceClient) {
         queryKeys.contractions.infinite(labourId)
       );
 
-      const optimisticEndTime = (endTime || new Date()).toISOString();
+      const optimisticEndDate = endTime || new Date();
+      const optimisticEndTime = optimisticEndDate.toISOString();
       queryClient.setQueryData<InfiniteData<ContractionPage>>(
         queryKeys.contractions.infinite(labourId),
         (old) => {
@@ -195,13 +202,19 @@ export function useEndContractionOffline(client: LabourServiceClient) {
               ...page,
               data: page.data.map((c) => {
                 if (c.contraction_id === contractionId) {
+                  const startTime = new Date(c.duration.start_time).getTime();
+                  const endTimeMs = optimisticEndDate.getTime();
+                  const durationSeconds = Math.max(0, Math.floor((endTimeMs - startTime) / 1000));
+
                   return {
                     ...c,
                     duration: {
                       ...c.duration,
                       end_time: optimisticEndTime,
                     },
+                    duration_seconds: durationSeconds,
                     intensity,
+                    updated_at: optimisticEndTime,
                   };
                 }
                 return c;

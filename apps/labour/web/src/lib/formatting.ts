@@ -21,6 +21,10 @@ export const formatTimeMilliseconds = (milliseconds: number) => {
 };
 
 export const formatTimeSeconds = (seconds: number): string => {
+  if (!Number.isFinite(seconds) || seconds < 0) {
+    return '00:00';
+  }
+
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds - h * 3600) / 60);
   const s = Math.floor(seconds - h * 3600 - m * 60);
