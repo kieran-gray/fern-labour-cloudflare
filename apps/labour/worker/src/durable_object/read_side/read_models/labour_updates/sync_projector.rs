@@ -82,3 +82,213 @@ impl SyncProjector<LabourEvent> for LabourUpdateReadModelProjector {
             .try_for_each(|envelope| self.project_event(envelope))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::Utc;
+    use fern_labour_event_sourcing_rs::{DecodedCursor, EventEnvelope, EventMetadata};
+    use fern_labour_labour_shared::value_objects::LabourUpdateType;
+    use std::cell::RefCell;
+    use std::collections::HashMap;
+    use uuid::Uuid;
+
+    use crate::durable_object::write_side::domain::events::{
+        LabourUpdateDeleted, LabourUpdateMessageUpdated, LabourUpdatePosted,
+    };
+
+    fn labour_id() -> Uuid {
+        Uuid::parse_str("00000000-0000-0000-0000-000000000001").unwrap()
+    }
+
+    fn update_id() -> Uuid {
+        Uuid::parse_str("00000000-0000-0000-0000-000000000002").unwrap()
+    }
+
+    fn metadata() -> EventMetadata {
+        EventMetadata {
+            aggregate_id: labour_id(),
+            sequence: 1,
+            event_version: 1,
+            timestamp: Utc::now(),
+            user_id: "test_user".to_string(),
+        }
+    }
+
+    struct MockLabourUpdateRepository {
+        store: RefCell<HashMap<Uuid, LabourUpdateReadModel>>,
+    }
+
+    impl MockLabourUpdateRepository {
+        fn new() -> Self {
+            Self {
+                store: RefCell::new(HashMap::new()),
+            }
+        }
+    }
+
+    impl SyncRepositoryTrait<LabourUpdateReadModel> for MockLabourUpdateRepository {
+        fn get_by_id(&self, id: Uuid) -> Result<LabourUpdateReadModel> {
+            self.store
+                .borrow()
+                .get(&id)
+                .cloned()
+                .ok_or_else(|| anyhow::anyhow!("Not found"))
+        }
+
+        fn get(
+            &self,
+            _limit: usize,
+            _cursor: Option<DecodedCursor>,
+        ) -> Result<Vec<LabourUpdateReadModel>> {
+            Ok(self.store.borrow().values().cloned().collect())
+        }
+
+        fn upsert(&self, model: &LabourUpdateReadModel) -> Result<()> {
+            self.store
+                .borrow_mut()
+                .insert(model.labour_update_id, model.clone());
+            Ok(())
+        }
+
+        fn delete(&self, id: Uuid) -> Result<()> {
+            self.store.borrow_mut().remove(&id);
+            Ok(())
+        }
+
+        fn overwrite(&self, model: &LabourUpdateReadModel) -> Result<()> {
+            self.upsert(model)
+        }
+    }
+
+    fn create_projector() -> (
+        LabourUpdateReadModelProjector,
+        std::rc::Rc<MockLabourUpdateRepository>,
+    ) {
+        struct Shared(std::rc::Rc<MockLabourUpdateRepository>);
+        impl SyncRepositoryTrait<LabourUpdateReadModel> for Shared {
+            fn get_by_id(&self, id: Uuid) -> Result<LabourUpdateReadModel> {
+                self.0.get_by_id(id)
+            }
+            fn get(
+                &self,
+                l: usize,
+                c: Option<DecodedCursor>,
+            ) -> Result<Vec<LabourUpdateReadModel>> {
+                self.0.get(l, c)
+            }
+            fn upsert(&self, m: &LabourUpdateReadModel) -> Result<()> {
+                self.0.upsert(m)
+            }
+            fn delete(&self, id: Uuid) -> Result<()> {
+                self.0.delete(id)
+            }
+            fn overwrite(&self, m: &LabourUpdateReadModel) -> Result<()> {
+                self.0.overwrite(m)
+            }
+        }
+        let repo = std::rc::Rc::new(MockLabourUpdateRepository::new());
+        let projector = LabourUpdateReadModelProjector {
+            name: "LabourUpdateReadModelProjector".to_string(),
+            repository: Box::new(Shared(repo.clone())),
+        };
+        (projector, repo)
+    }
+
+    #[test]
+    fn empty_batch_returns_ok() {
+        let (projector, _) = create_projector();
+        let result = projector.project_batch(&[]);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn labour_update_posted_creates_read_model() {
+        let (projector, repo) = create_projector();
+
+        let event = LabourEvent::LabourUpdatePosted(LabourUpdatePosted {
+            labour_id: labour_id(),
+            labour_update_id: update_id(),
+            labour_update_type: LabourUpdateType::ANNOUNCEMENT,
+            message: "Hello world!".to_string(),
+            application_generated: false,
+            sent_time: Utc::now(),
+        });
+
+        let result = projector.project_batch(&[EventEnvelope {
+            event,
+            metadata: metadata(),
+        }]);
+
+        assert!(result.is_ok());
+        let model = repo.get_by_id(update_id()).unwrap();
+        assert_eq!(model.message, "Hello world!");
+        assert_eq!(model.labour_update_type, LabourUpdateType::ANNOUNCEMENT);
+        assert!(!model.application_generated);
+    }
+
+    #[test]
+    fn labour_update_message_updated_changes_message() {
+        let (projector, repo) = create_projector();
+
+        let events = vec![
+            EventEnvelope {
+                event: LabourEvent::LabourUpdatePosted(LabourUpdatePosted {
+                    labour_id: labour_id(),
+                    labour_update_id: update_id(),
+                    labour_update_type: LabourUpdateType::ANNOUNCEMENT,
+                    message: "Original".to_string(),
+                    application_generated: false,
+                    sent_time: Utc::now(),
+                }),
+                metadata: metadata(),
+            },
+            EventEnvelope {
+                event: LabourEvent::LabourUpdateMessageUpdated(LabourUpdateMessageUpdated {
+                    labour_id: labour_id(),
+                    labour_update_id: update_id(),
+                    message: "Updated message".to_string(),
+                }),
+                metadata: metadata(),
+            },
+        ];
+
+        let result = projector.project_batch(&events);
+
+        assert!(result.is_ok());
+        let model = repo.get_by_id(update_id()).unwrap();
+        assert_eq!(model.message, "Updated message");
+        assert!(model.edited);
+    }
+
+    #[test]
+    fn labour_update_deleted_removes_read_model() {
+        let (projector, repo) = create_projector();
+
+        let events = vec![
+            EventEnvelope {
+                event: LabourEvent::LabourUpdatePosted(LabourUpdatePosted {
+                    labour_id: labour_id(),
+                    labour_update_id: update_id(),
+                    labour_update_type: LabourUpdateType::ANNOUNCEMENT,
+                    message: "Test".to_string(),
+                    application_generated: false,
+                    sent_time: Utc::now(),
+                }),
+                metadata: metadata(),
+            },
+            EventEnvelope {
+                event: LabourEvent::LabourUpdateDeleted(LabourUpdateDeleted {
+                    labour_id: labour_id(),
+                    labour_update_id: update_id(),
+                }),
+                metadata: metadata(),
+            },
+        ];
+
+        let result = projector.project_batch(&events);
+
+        assert!(result.is_ok());
+        assert!(repo.get_by_id(update_id()).is_err());
+    }
+}

@@ -744,6 +744,144 @@ mod tests {
             // Then
             assert!(matches!(result, Err(LabourError::InvalidCommand(_))));
         }
+
+        #[test]
+        fn update_contraction_with_adjacent_times_succeeds() {
+            use crate::durable_object::write_side::domain::commands::contraction::UpdateContraction;
+
+            let mut events = begun_labour_events();
+            let base_time = chrono::TimeZone::with_ymd_and_hms(&Utc, 2024, 1, 1, 12, 0, 0).unwrap();
+
+            let contraction_1_id = Uuid::now_v7();
+            events.push(LabourEvent::ContractionStarted(ContractionStarted {
+                labour_id: labour_id(),
+                contraction_id: contraction_1_id,
+                start_time: base_time,
+            }));
+            events.push(LabourEvent::ContractionEnded(ContractionEnded {
+                labour_id: labour_id(),
+                contraction_id: contraction_1_id,
+                end_time: base_time + chrono::Duration::minutes(1),
+                intensity: 5,
+            }));
+
+            let contraction_2_id = Uuid::now_v7();
+            events.push(LabourEvent::ContractionStarted(ContractionStarted {
+                labour_id: labour_id(),
+                contraction_id: contraction_2_id,
+                start_time: base_time + chrono::Duration::minutes(10),
+            }));
+            events.push(LabourEvent::ContractionEnded(ContractionEnded {
+                labour_id: labour_id(),
+                contraction_id: contraction_2_id,
+                end_time: base_time + chrono::Duration::minutes(11),
+                intensity: 5,
+            }));
+
+            let harness = AggregateTestHarness::given(events);
+
+            let result = harness.when(LabourCommand::UpdateContraction(UpdateContraction {
+                labour_id: labour_id(),
+                contraction_id: contraction_2_id,
+                start_time: Some(base_time + chrono::Duration::minutes(1)),
+                end_time: Some(base_time + chrono::Duration::minutes(2)),
+                intensity: None,
+            }));
+
+            assert!(result.is_ok());
+        }
+
+        #[test]
+        fn update_contraction_causing_partial_overlap_fails() {
+            use crate::durable_object::write_side::domain::commands::contraction::UpdateContraction;
+
+            let mut events = begun_labour_events();
+            let base_time = chrono::TimeZone::with_ymd_and_hms(&Utc, 2024, 1, 1, 12, 0, 0).unwrap();
+
+            let contraction_1_id = Uuid::now_v7();
+            events.push(LabourEvent::ContractionStarted(ContractionStarted {
+                labour_id: labour_id(),
+                contraction_id: contraction_1_id,
+                start_time: base_time,
+            }));
+            events.push(LabourEvent::ContractionEnded(ContractionEnded {
+                labour_id: labour_id(),
+                contraction_id: contraction_1_id,
+                end_time: base_time + chrono::Duration::minutes(1),
+                intensity: 5,
+            }));
+
+            let contraction_2_id = Uuid::now_v7();
+            events.push(LabourEvent::ContractionStarted(ContractionStarted {
+                labour_id: labour_id(),
+                contraction_id: contraction_2_id,
+                start_time: base_time + chrono::Duration::minutes(10),
+            }));
+            events.push(LabourEvent::ContractionEnded(ContractionEnded {
+                labour_id: labour_id(),
+                contraction_id: contraction_2_id,
+                end_time: base_time + chrono::Duration::minutes(11),
+                intensity: 5,
+            }));
+
+            let harness = AggregateTestHarness::given(events);
+
+            let result = harness.when(LabourCommand::UpdateContraction(UpdateContraction {
+                labour_id: labour_id(),
+                contraction_id: contraction_2_id,
+                start_time: Some(base_time + chrono::Duration::seconds(30)),
+                end_time: None,
+                intensity: None,
+            }));
+
+            assert!(matches!(result, Err(LabourError::ValidationError(_))));
+        }
+
+        #[test]
+        fn update_contraction_fully_contained_in_another_fails() {
+            use crate::durable_object::write_side::domain::commands::contraction::UpdateContraction;
+
+            let mut events = begun_labour_events();
+            let base_time = chrono::TimeZone::with_ymd_and_hms(&Utc, 2024, 1, 1, 12, 0, 0).unwrap();
+
+            let contraction_1_id = Uuid::now_v7();
+            events.push(LabourEvent::ContractionStarted(ContractionStarted {
+                labour_id: labour_id(),
+                contraction_id: contraction_1_id,
+                start_time: base_time,
+            }));
+            events.push(LabourEvent::ContractionEnded(ContractionEnded {
+                labour_id: labour_id(),
+                contraction_id: contraction_1_id,
+                end_time: base_time + chrono::Duration::minutes(2),
+                intensity: 5,
+            }));
+
+            let contraction_2_id = Uuid::now_v7();
+            events.push(LabourEvent::ContractionStarted(ContractionStarted {
+                labour_id: labour_id(),
+                contraction_id: contraction_2_id,
+                start_time: base_time + chrono::Duration::minutes(10),
+            }));
+            events.push(LabourEvent::ContractionEnded(ContractionEnded {
+                labour_id: labour_id(),
+                contraction_id: contraction_2_id,
+                end_time: base_time + chrono::Duration::minutes(11),
+                intensity: 5,
+            }));
+
+            let harness = AggregateTestHarness::given(events);
+
+            let result = harness.when(LabourCommand::UpdateContraction(UpdateContraction {
+                labour_id: labour_id(),
+                contraction_id: contraction_2_id,
+                start_time: Some(base_time + chrono::Duration::seconds(30)),
+                end_time: Some(base_time + chrono::Duration::seconds(90)),
+                intensity: None,
+            }));
+
+            assert!(matches!(result, Err(LabourError::ValidationError(_))));
+        }
     }
 
     mod phase_progression {
@@ -972,6 +1110,260 @@ mod tests {
             let events = result.expect("should succeed");
             assert_eq!(events.len(), 1);
             assert!(matches!(events[0], LabourEvent::ContractionEnded(_)));
+        }
+    }
+
+    mod subscription_lifecycle {
+        use super::*;
+        use crate::durable_object::write_side::domain::{
+            commands::{
+                subscriber::{RequestAccess, Unsubscribe},
+                subscription::{ApproveSubscriber, RemoveSubscriber, UnblockSubscriber},
+            },
+            events::{
+                SubscriberApproved, SubscriberBlocked, SubscriberRemoved, SubscriberRequested,
+                SubscriptionTokenSet,
+            },
+        };
+
+        const TOKEN: &str = "valid_token";
+
+        fn labour_with_token_events() -> Vec<LabourEvent> {
+            let mut events = planned_labour_events();
+            events.push(LabourEvent::SubscriptionTokenSet(SubscriptionTokenSet {
+                labour_id: labour_id(),
+                token: TOKEN.to_string(),
+            }));
+            events
+        }
+
+        fn subscriber_requested_event(subscription_id: Uuid) -> LabourEvent {
+            LabourEvent::SubscriberRequested(SubscriberRequested {
+                labour_id: labour_id(),
+                subscriber_name: "Test Subscriber".to_string(),
+                subscriber_id: "subscriber_123".to_string(),
+                subscription_id,
+            })
+        }
+
+        fn subscriber_approved_event(subscription_id: Uuid) -> LabourEvent {
+            LabourEvent::SubscriberApproved(SubscriberApproved {
+                labour_id: labour_id(),
+                subscription_id,
+            })
+        }
+
+        #[test]
+        fn request_access_creates_subscription() {
+            let harness = AggregateTestHarness::given(labour_with_token_events());
+
+            let result = harness.when(LabourCommand::RequestAccess(RequestAccess {
+                labour_id: labour_id(),
+                subscriber_name: "Test Subscriber".to_string(),
+                subscriber_id: "subscriber_123".to_string(),
+                token: TOKEN.to_string(),
+            }));
+
+            let events = result.expect("should succeed");
+            assert_eq!(events.len(), 1);
+            assert!(matches!(events[0], LabourEvent::SubscriberRequested(_)));
+        }
+
+        #[test]
+        fn request_access_rejects_subscribed_user() {
+            let subscription_id = Uuid::now_v7();
+            let mut events = labour_with_token_events();
+            events.push(subscriber_requested_event(subscription_id));
+            events.push(subscriber_approved_event(subscription_id));
+            let harness = AggregateTestHarness::given(events);
+
+            let result = harness.when(LabourCommand::RequestAccess(RequestAccess {
+                labour_id: labour_id(),
+                subscriber_name: "Test Subscriber".to_string(),
+                subscriber_id: "subscriber_123".to_string(),
+                token: TOKEN.to_string(),
+            }));
+
+            assert!(matches!(result, Err(LabourError::InvalidCommand(_))));
+        }
+
+        #[test]
+        fn request_access_rejects_blocked_user() {
+            let subscription_id = Uuid::now_v7();
+            let mut events = labour_with_token_events();
+            events.push(subscriber_requested_event(subscription_id));
+            events.push(LabourEvent::SubscriberBlocked(SubscriberBlocked {
+                labour_id: labour_id(),
+                subscription_id,
+            }));
+            let harness = AggregateTestHarness::given(events);
+
+            let result = harness.when(LabourCommand::RequestAccess(RequestAccess {
+                labour_id: labour_id(),
+                subscriber_name: "Test Subscriber".to_string(),
+                subscriber_id: "subscriber_123".to_string(),
+                token: TOKEN.to_string(),
+            }));
+
+            assert!(matches!(result, Err(LabourError::InvalidCommand(_))));
+        }
+
+        #[test]
+        fn removed_subscriber_can_request_access_again() {
+            let subscription_id = Uuid::now_v7();
+            let mut events = labour_with_token_events();
+            events.push(subscriber_requested_event(subscription_id));
+            events.push(subscriber_approved_event(subscription_id));
+            events.push(LabourEvent::SubscriberRemoved(SubscriberRemoved {
+                labour_id: labour_id(),
+                subscription_id,
+            }));
+            let harness = AggregateTestHarness::given(events);
+
+            let result = harness.when(LabourCommand::RequestAccess(RequestAccess {
+                labour_id: labour_id(),
+                subscriber_name: "Test Subscriber".to_string(),
+                subscriber_id: "subscriber_123".to_string(),
+                token: TOKEN.to_string(),
+            }));
+
+            let events = result.expect("should succeed");
+            assert_eq!(events.len(), 1);
+            assert!(matches!(events[0], LabourEvent::SubscriberRequested(_)));
+        }
+
+        #[test]
+        fn approve_requires_requested_status() {
+            let subscription_id = Uuid::now_v7();
+            let mut events = labour_with_token_events();
+            events.push(subscriber_requested_event(subscription_id));
+            events.push(subscriber_approved_event(subscription_id));
+            let harness = AggregateTestHarness::given(events);
+
+            let result = harness.when(LabourCommand::ApproveSubscriber(ApproveSubscriber {
+                labour_id: labour_id(),
+                subscription_id,
+            }));
+
+            assert!(matches!(result, Err(LabourError::InvalidCommand(_))));
+        }
+
+        #[test]
+        fn block_then_unblock_restores_removed_status() {
+            let subscription_id = Uuid::now_v7();
+            let mut events = labour_with_token_events();
+            events.push(subscriber_requested_event(subscription_id));
+            events.push(subscriber_approved_event(subscription_id));
+            events.push(LabourEvent::SubscriberBlocked(SubscriberBlocked {
+                labour_id: labour_id(),
+                subscription_id,
+            }));
+            let harness = AggregateTestHarness::given(events);
+
+            let result = harness.when(LabourCommand::UnblockSubscriber(UnblockSubscriber {
+                labour_id: labour_id(),
+                subscription_id,
+            }));
+
+            let events = result.expect("should succeed");
+            assert_eq!(events.len(), 1);
+            assert!(matches!(events[0], LabourEvent::SubscriberUnblocked(_)));
+        }
+
+        #[test]
+        fn unblock_requires_blocked_status() {
+            let subscription_id = Uuid::now_v7();
+            let mut events = labour_with_token_events();
+            events.push(subscriber_requested_event(subscription_id));
+            events.push(subscriber_approved_event(subscription_id));
+            let harness = AggregateTestHarness::given(events);
+
+            let result = harness.when(LabourCommand::UnblockSubscriber(UnblockSubscriber {
+                labour_id: labour_id(),
+                subscription_id,
+            }));
+
+            assert!(matches!(result, Err(LabourError::InvalidCommand(_))));
+        }
+
+        #[test]
+        fn unsubscribe_requires_subscribed_status() {
+            let subscription_id = Uuid::now_v7();
+            let mut events = labour_with_token_events();
+            events.push(subscriber_requested_event(subscription_id));
+            let harness = AggregateTestHarness::given(events);
+
+            let result = harness.when(LabourCommand::Unsubscribe(Unsubscribe {
+                labour_id: labour_id(),
+                subscription_id,
+            }));
+
+            assert!(matches!(result, Err(LabourError::InvalidCommand(_))));
+        }
+
+        #[test]
+        fn unsubscribe_succeeds_when_subscribed() {
+            let subscription_id = Uuid::now_v7();
+            let mut events = labour_with_token_events();
+            events.push(subscriber_requested_event(subscription_id));
+            events.push(subscriber_approved_event(subscription_id));
+            let harness = AggregateTestHarness::given(events);
+
+            let result = harness.when(LabourCommand::Unsubscribe(Unsubscribe {
+                labour_id: labour_id(),
+                subscription_id,
+            }));
+
+            let events = result.expect("should succeed");
+            assert_eq!(events.len(), 1);
+            assert!(matches!(events[0], LabourEvent::SubscriberUnsubscribed(_)));
+        }
+
+        #[test]
+        fn remove_rejects_blocked_subscriber() {
+            let subscription_id = Uuid::now_v7();
+            let mut events = labour_with_token_events();
+            events.push(subscriber_requested_event(subscription_id));
+            events.push(LabourEvent::SubscriberBlocked(SubscriberBlocked {
+                labour_id: labour_id(),
+                subscription_id,
+            }));
+            let harness = AggregateTestHarness::given(events);
+
+            let result = harness.when(LabourCommand::RemoveSubscriber(RemoveSubscriber {
+                labour_id: labour_id(),
+                subscription_id,
+            }));
+
+            assert!(matches!(result, Err(LabourError::InvalidCommand(_))));
+        }
+
+        #[test]
+        fn request_with_wrong_token_fails() {
+            let harness = AggregateTestHarness::given(labour_with_token_events());
+
+            let result = harness.when(LabourCommand::RequestAccess(RequestAccess {
+                labour_id: labour_id(),
+                subscriber_name: "Test Subscriber".to_string(),
+                subscriber_id: "subscriber_123".to_string(),
+                token: "wrong_token".to_string(),
+            }));
+
+            assert!(matches!(result, Err(LabourError::InvalidCommand(_))));
+        }
+
+        #[test]
+        fn request_access_to_own_labour_fails() {
+            let harness = AggregateTestHarness::given(labour_with_token_events());
+
+            let result = harness.when(LabourCommand::RequestAccess(RequestAccess {
+                labour_id: labour_id(),
+                subscriber_name: "Mother Name".to_string(),
+                subscriber_id: "mother_123".to_string(),
+                token: TOKEN.to_string(),
+            }));
+
+            assert!(matches!(result, Err(LabourError::InvalidCommand(_))));
         }
     }
 }
