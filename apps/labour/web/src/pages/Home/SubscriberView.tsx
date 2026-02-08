@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SubscriberRole } from '@base/clients/labour_service';
 import { PageSkeleton } from '@base/components/Cards/CardSkeleton';
 import { FloatingPanel } from '@base/components/Controls/FloatingPanel';
+import { PwaInstallButton } from '@base/components/PwaInstall/PwaInstallButton';
 import { SubscriberSessionState, useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
 import { flattenContractions, useContractionsInfinite } from '@base/hooks/useInfiniteQueries';
@@ -207,6 +208,7 @@ export const SubscriberView = () => {
               <ManageSubscriptions />
               <Space h="xl" />
               <ShareFernLabour />
+              <PwaInstallButton />
             </>
           );
         case 'details':
