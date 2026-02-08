@@ -1,31 +1,8 @@
 import { motion } from 'motion/react';
 import { Container, Text, Title } from '@mantine/core';
+import { fadeUp, scaleUp, staggerContainer } from '@/lib/motion';
 import { RoleBadge, SubscriberRole } from '../../AppPreview/RoleBadge';
 import classes from './LabourCirclePreview.module.css';
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 16, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.5,
-      ease: [0.25, 0.1, 0.25, 1] as const,
-    },
-  },
-};
 
 const connectorVariants = {
   hidden: { scaleY: 0, opacity: 0 },
@@ -45,9 +22,9 @@ export function LabourCirclePreview() {
       <Container size="lg" className={classes.inner}>
         <motion.div
           className={classes.content}
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           <Title className={classes.title}>One moment shared with your inner circle.</Title>
@@ -59,19 +36,19 @@ export function LabourCirclePreview() {
 
         <motion.div
           className={classes.visual}
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           <motion.div
             className={classes.diagramContainer}
-            variants={containerVariants}
+            variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-10%' }}
           >
-            <motion.div className={classes.roleCard} variants={cardVariants}>
+            <motion.div className={classes.roleCard} variants={scaleUp}>
               <RoleBadge role={SubscriberRole.BIRTH_PARTNER} />
               <div className={classes.roleText}>
                 <Text size="sm" fw={600}>
@@ -89,7 +66,7 @@ export function LabourCirclePreview() {
               style={{ originY: 0 }}
             />
 
-            <motion.div className={classes.roleCard} variants={cardVariants}>
+            <motion.div className={classes.roleCard} variants={scaleUp}>
               <RoleBadge role={SubscriberRole.LOVED_ONE} />
               <div className={classes.roleText}>
                 <Text size="sm" fw={600}>

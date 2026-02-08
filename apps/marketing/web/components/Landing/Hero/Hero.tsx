@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { Button, Container, Group, Text, Title } from '@mantine/core';
+import { fadeUp } from '@/lib/motion';
 import CSSParticles from '../../CSSParticles/CSSParticles';
 import { SectionSeparator } from '../../SectionSeparator/SectionSeparator';
 import classes from './Hero.module.css';
@@ -14,11 +15,7 @@ export function Hero() {
 
       <Container size="lg" className={classes.inner}>
         <div className={classes.content}>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-          >
+          <motion.div variants={fadeUp} initial="hidden" animate="visible">
             <Title className={classes.title}>
               Be present for your birth.
               <br />
@@ -27,9 +24,10 @@ export function Hero() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.2 }}
           >
             <Text className={classes.description}>
               Focus on your labour, not your phone. We'll update your chosen circle so you don't
@@ -40,7 +38,9 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.4, ease: 'easeOut' }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <Group justify="center" gap="md">
               <Link

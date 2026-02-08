@@ -1,6 +1,7 @@
 import { IconChartBar, IconClick, IconUsersGroup } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { Container, Text, Title } from '@mantine/core';
+import { fadeUp, iconPop, staggerContainer } from '@/lib/motion';
 import classes from './MotherBenefits.module.css';
 
 const benefits = [
@@ -23,50 +24,15 @@ const benefits = [
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: 'circIn' as const,
-    },
-  },
-};
-
-const iconVariants = {
-  hidden: { scale: 0.8, opacity: 0 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    transition: {
-      duration: 0.4,
-      ease: 'easeOut' as const,
-    },
-  },
-};
-
 export function MotherBenefits() {
   return (
     <div className={classes.root}>
       <Container size="lg" className={classes.inner}>
         <motion.div
           className={classes.header}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           <Title className={classes.title}>Designed for your labour.</Title>
@@ -74,14 +40,14 @@ export function MotherBenefits() {
 
         <motion.div
           className={classes.benefitsGrid}
-          variants={containerVariants}
+          variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           {benefits.map((benefit) => (
-            <motion.div key={benefit.title} className={classes.benefitItem} variants={itemVariants}>
-              <motion.div className={classes.iconWrapper} variants={iconVariants}>
+            <motion.div key={benefit.title} className={classes.benefitItem} variants={fadeUp}>
+              <motion.div className={classes.iconWrapper} variants={iconPop}>
                 <benefit.icon size={30} />
               </motion.div>
               <Text className={classes.benefitTitle}>{benefit.title}</Text>

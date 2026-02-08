@@ -24,6 +24,7 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
+import { fadeUp, scaleUp, staggerContainer } from '@/lib/motion';
 import { JumboTitle } from '../../JumboTitle/JumboTitle';
 import { SectionSeparator } from '../../SectionSeparator/SectionSeparator';
 import classes from './Pricing.module.css';
@@ -108,30 +109,6 @@ type Pricing01Props = {
   callToActionUrl?: string;
 };
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.15,
-    },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 24, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.5,
-      ease: [0.25, 0.1, 0.25, 1] as const,
-    },
-  },
-};
-
 export const Pricing01 = ({ title, description, callToActionUrl = '#' }: Pricing01Props) => {
   return (
     <div style={{ position: 'relative', backgroundColor: 'var(--mantine-color-pink-0)' }}>
@@ -139,9 +116,9 @@ export const Pricing01 = ({ title, description, callToActionUrl = '#' }: Pricing
       <Container py={120} px="15px" fluid>
         <Container size="md" style={{ position: 'relative' }}>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true, margin: '-10%' }}
           >
             <Stack align="center" gap="xs">
@@ -160,7 +137,7 @@ export const Pricing01 = ({ title, description, callToActionUrl = '#' }: Pricing
           </motion.div>
         </Container>
         <motion.div
-          variants={containerVariants}
+          variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
@@ -172,7 +149,7 @@ export const Pricing01 = ({ title, description, callToActionUrl = '#' }: Pricing
             wrap="wrap"
             px="md"
           >
-            <motion.div variants={cardVariants} className={classes.pricingCardWrapper}>
+            <motion.div variants={scaleUp} className={classes.pricingCardWrapper}>
               <PricingCard
                 shadow="sm"
                 title="The App"
@@ -227,7 +204,7 @@ export const Pricing01 = ({ title, description, callToActionUrl = '#' }: Pricing
                 ]}
               />
             </motion.div>
-            <motion.div variants={cardVariants} className={classes.pricingCardWrapper}>
+            <motion.div variants={scaleUp} className={classes.pricingCardWrapper}>
               <PricingCard
                 shadow="sm"
                 title="SMS & WhatsApp"

@@ -1,6 +1,7 @@
 import { IconAmbulance, IconBackpack, IconPhone } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { Alert, Container, Text, Title } from '@mantine/core';
+import { fadeUp, scaleUp, staggerContainer } from '@/lib/motion';
 import classes from './AlertsFeature.module.css';
 
 const alerts = [
@@ -24,43 +25,19 @@ const alerts = [
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const alertVariants = {
-  hidden: { opacity: 0, scale: 0.92, y: 12 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: [0.25, 0.1, 0.25, 1] as const,
-    },
-  },
-};
-
 export function AlertsFeature() {
   return (
     <div className={classes.root}>
       <Container size="lg" className={classes.inner}>
         <motion.div
           className={classes.visual}
-          variants={containerVariants}
+          variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           {alerts.map((alert) => (
-            <motion.div key={alert.title} variants={alertVariants}>
+            <motion.div key={alert.title} variants={scaleUp}>
               <Alert
                 variant="light"
                 color={alert.color}
@@ -79,9 +56,9 @@ export function AlertsFeature() {
 
         <motion.div
           className={classes.content}
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           <Title className={classes.title}>Guidance when you need it</Title>

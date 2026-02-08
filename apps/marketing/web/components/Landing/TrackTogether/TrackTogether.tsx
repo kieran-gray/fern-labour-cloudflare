@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Container, Text, Title } from '@mantine/core';
+import { fadeUp } from '@/lib/motion';
 import classes from './TrackTogether.module.css';
 
 export function TrackTogether() {
@@ -48,9 +49,9 @@ export function TrackTogether() {
       <Container size="md" className={classes.inner}>
         <motion.div
           className={classes.content}
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           <Title className={classes.title}>Track together, from anywhere</Title>
@@ -62,9 +63,9 @@ export function TrackTogether() {
 
         <motion.div
           className={classes.deviceContainer}
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           <div className={classes.deviceWrapper}>

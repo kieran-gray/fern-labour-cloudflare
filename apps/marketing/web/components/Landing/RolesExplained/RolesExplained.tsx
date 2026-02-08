@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { Container, Text, Title } from '@mantine/core';
+import { fadeUp, scaleUp, staggerContainer } from '@/lib/motion';
 import { RoleBadge, SubscriberRole } from '../../AppPreview/RoleBadge';
 import classes from './RolesExplained.module.css';
 
@@ -18,38 +19,14 @@ const roles = [
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.15,
-    },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 20, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.5,
-      ease: [0.25, 0.1, 0.25, 1] as const,
-    },
-  },
-};
-
 export function RolesExplained() {
   return (
     <div className={classes.root}>
       <Container size="lg">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           <Title className={classes.title}>The right details, for the right people</Title>
@@ -58,13 +35,13 @@ export function RolesExplained() {
 
         <motion.div
           className={classes.grid}
-          variants={containerVariants}
+          variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           {roles.map((item) => (
-            <motion.div key={item.role} className={classes.card} variants={cardVariants}>
+            <motion.div key={item.role} className={classes.card} variants={scaleUp}>
               <RoleBadge role={item.role} />
               <Text className={classes.roleDescription}>{item.description}</Text>
             </motion.div>

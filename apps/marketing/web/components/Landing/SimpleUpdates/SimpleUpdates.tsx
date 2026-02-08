@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { Container, Stack, Text, Title } from '@mantine/core';
+import { fadeUp, slideLeft, staggerContainer } from '@/lib/motion';
 import { LabourUpdate } from '../../AppPreview/LabourUpdate';
 import classes from './SimpleUpdates.module.css';
 
@@ -23,39 +24,15 @@ const ANNOUNCEMENT = {
 
 const updates = [STATUS_UPDATE, ANNOUNCEMENT];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, x: 20, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    scale: 1,
-    transition: {
-      duration: 0.5,
-      ease: [0.25, 0.1, 0.25, 1] as const,
-    },
-  },
-};
-
 export function SimpleUpdates() {
   return (
     <div className={classes.root}>
       <Container size="lg" className={classes.inner}>
         <motion.div
           className={classes.content}
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           <Title className={classes.title}>Update everyone on your terms</Title>
@@ -67,14 +44,14 @@ export function SimpleUpdates() {
 
         <motion.div
           className={classes.visual}
-          variants={containerVariants}
+          variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           <Stack gap="md">
             {updates.map((update) => (
-              <motion.div key={update.id} className={classes.updateCard} variants={cardVariants}>
+              <motion.div key={update.id} className={classes.updateCard} variants={slideLeft}>
                 <LabourUpdate data={update} />
               </motion.div>
             ))}

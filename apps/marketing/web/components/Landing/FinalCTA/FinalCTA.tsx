@@ -3,6 +3,7 @@ import { IconArrowRight } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { Box, Button, Container, Space, Stack, Text, Title } from '@mantine/core';
 import { SectionSeparator } from '@/components/SectionSeparator/SectionSeparator';
+import { fadeUp } from '@/lib/motion';
 import CSSParticles from '../../CSSParticles/CSSParticles';
 
 type FinalCTAProps = {
@@ -29,9 +30,9 @@ export const FinalCTA = ({ title, description, cta, subtitle }: FinalCTAProps) =
 
       <Container size="xl" pos="relative" style={{ zIndex: 10 }}>
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true }}
         >
           <Stack align="center" gap="xl" ta="center" maw={600} mx="auto">

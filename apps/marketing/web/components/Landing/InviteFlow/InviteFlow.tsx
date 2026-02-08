@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { motion } from 'motion/react';
 import { Avatar, Container, Group, Stack, Text, Title } from '@mantine/core';
 import { RoleBadge, SubscriberRole } from '@/components/AppPreview/RoleBadge';
+import { fadeUp, slideRight } from '@/lib/motion';
 import { SubscriberRequestFlow } from '../../AppPreview/SubscriberRequestFlow';
 import classes from './InviteFlow.module.css';
 
@@ -78,9 +79,9 @@ export function InviteFlow() {
       <Container size="lg" className={classes.inner}>
         <motion.div
           className={classes.visual}
-          initial={{ opacity: 0, x: -24 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          variants={slideRight}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           <Stack gap="lg" w="100%">
@@ -91,9 +92,9 @@ export function InviteFlow() {
 
         <motion.div
           className={classes.content}
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
           <Title className={classes.title}>Gather your support circle</Title>
