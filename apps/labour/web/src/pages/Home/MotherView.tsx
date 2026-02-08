@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FloatingPanel } from '@base/components/Controls/FloatingPanel';
+import { PwaInstallButton } from '@base/components/PwaInstall/PwaInstallButton';
 import { useLabourSession } from '@base/contexts/LabourSessionContext';
 import { useLabourClient } from '@base/hooks';
 import { flattenContractions, useContractionsInfinite } from '@base/hooks/useInfiniteQueries';
@@ -138,6 +139,7 @@ export const MotherView = () => {
               <LabourDetails activeContraction={activeContraction} labour={labour} />
               <Space h="xl" />
               <SubscribersContainer />
+              <PwaInstallButton />
             </>
           );
         case 'track':
