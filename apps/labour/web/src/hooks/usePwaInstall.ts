@@ -9,12 +9,30 @@ interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
 }
 
+let globalDeferredPrompt: BeforeInstallPromptEvent | null = null;
+const listeners = new Set<(isInstallable: boolean) => void>();
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    globalDeferredPrompt = e as BeforeInstallPromptEvent;
+
+    for (const listener of listeners) {
+      listener(true);
+    }
+  });
+}
+
 export function usePwaInstall() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isInstallable, setIsInstallable] = useState(false);
+  const [isInstallable, setIsInstallable] = useState<boolean>(!!globalDeferredPrompt);
   const [isStandalone, setIsStandalone] = useState(false);
+  const [isIos, setIsIos] = useState(false);
 
   useEffect(() => {
+    listeners.add(setIsInstallable);
+
+    setIsInstallable(!!globalDeferredPrompt);
+
     const isStandaloneMode =
       window.matchMedia('(display-mode: standalone)').matches ||
       (window.navigator as any).standalone ||
@@ -22,27 +40,23 @@ export function usePwaInstall() {
 
     setIsStandalone(isStandaloneMode);
 
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setIsInstallable(true);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
+    setIsIos(isIosDevice);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      listeners.delete(setIsInstallable);
     };
   }, []);
 
   const install = async () => {
-    if (!deferredPrompt) {
+    if (!globalDeferredPrompt) {
       return;
     }
 
-    await deferredPrompt.prompt();
+    await globalDeferredPrompt.prompt();
 
-    const choiceResult = await deferredPrompt.userChoice;
+    const choiceResult = await globalDeferredPrompt.userChoice;
 
     if (choiceResult.outcome === 'accepted') {
       console.log('User accepted the install prompt');
@@ -50,9 +64,12 @@ export function usePwaInstall() {
       console.log('User dismissed the install prompt');
     }
 
-    setDeferredPrompt(null);
-    setIsInstallable(false);
+    globalDeferredPrompt = null;
+
+    for (const listener of listeners) {
+      listener(false);
+    }
   };
 
-  return { isInstallable, isStandalone, install };
+  return { isInstallable, isStandalone, isIos, install };
 }

@@ -71,6 +71,8 @@ export default defineConfig(({ mode }) => ({
         start_url: '/',
         scope: '/',
         display: 'standalone',
+        orientation: 'portrait-primary',
+        categories: ['health', 'medical', 'lifestyle'],
         background_color: '#ffffff',
         theme_color: '#ff7964',
         icons: [
