@@ -15,7 +15,7 @@
   },
   "workers_dev": false,
   "route": {
-    "pattern": "notifications-cf.fernlabour.com",
+    "pattern": "notifications.fernlabour.com",
     "custom_domain": true
   },
   "placement": {

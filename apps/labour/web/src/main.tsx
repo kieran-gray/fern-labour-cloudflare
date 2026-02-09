@@ -17,6 +17,7 @@ import { PWAUpdateHandler } from './components/PWAUpdateHandler';
 import { queryClient } from './config/index';
 import { appRoutes } from './lib/constants';
 import { initializeQueryPersistence } from './offline/persistence/queryPersistence';
+import { BirthPlanPage } from './pages/BirthPlan/Page';
 import { OnboardingPage } from './pages/Onboarding/OnboardingPage';
 import { theme } from './theme';
 
@@ -45,6 +46,7 @@ reactDom.createRoot(document.getElementById('root')!).render(
           <QueryClientProvider client={queryClient}>
             <Routes>
               <Route path={appRoutes.onboarding} element={<OnboardingPage />} />
+              <Route path={appRoutes.birthPlan} element={<BirthPlanPage />} />
               <Route
                 path="/*"
                 element={

@@ -1,5 +1,6 @@
 import { forwardRef, memo, useCallback } from 'react';
 import { AppMode, useLabourSession } from '@base/contexts';
+import { appRoutes } from '@base/lib/constants';
 import { useClerk, useUser } from '@clerk/clerk-react';
 import {
   IconArrowLeft,
@@ -9,6 +10,7 @@ import {
   IconLogout,
   IconMessageCircleQuestion,
   IconMoon,
+  IconNotes,
   IconSun,
   IconSwitchHorizontal,
 } from '@tabler/icons-react';
@@ -53,20 +55,24 @@ export const HeaderMenu = memo(() => {
   }, [colorScheme, setColorScheme]);
 
   const handleNavigateHome = useCallback(() => {
-    navigate('/');
+    navigate(appRoutes.home);
   }, [navigate]);
 
   const handleSwitchMode = useCallback(() => {
     setMode(switchToMode);
-    navigate('/');
+    navigate(appRoutes.home);
   }, [setMode, switchToMode, navigate]);
 
   const handleNavigateHistory = useCallback(() => {
-    navigate('/history');
+    navigate(appRoutes.history);
   }, [navigate]);
 
   const handleNavigateContact = useCallback(() => {
-    navigate('/contact');
+    navigate(appRoutes.contact);
+  }, [navigate]);
+
+  const handleNavigateBirthPlan = useCallback(() => {
+    navigate(appRoutes.birthPlanAuth);
   }, [navigate]);
 
   const handleOpenProfile = useCallback(() => {
@@ -103,7 +109,7 @@ export const HeaderMenu = memo(() => {
           >
             {colorScheme === 'light' ? 'Night mode' : 'Day mode'}
           </Button>
-          {mode === null && pathname !== '/' && (
+          {mode === null && pathname !== appRoutes.home && (
             <Button
               key="home"
               className={classes.mainLink}
@@ -129,22 +135,25 @@ export const HeaderMenu = memo(() => {
               >
                 {switchToMode === AppMode.Subscriber ? 'Support mode' : 'Birth mode'}
               </Button>
-              {mode === AppMode.Birth && ['/history', '/contact'].includes(pathname) && (
-                <Button
-                  key="history"
-                  onClick={handleNavigateHome}
-                  leftSection={<IconArrowLeft size={16} stroke={1.5} />}
-                  className={classes.mainLink}
-                  size="md"
-                  w="100%"
-                  variant="transparent"
-                >
-                  Go to your labour
-                </Button>
-              )}
+              {mode === AppMode.Birth &&
+                (
+                  [appRoutes.history, appRoutes.contact, appRoutes.birthPlanAuth] as string[]
+                ).includes(pathname) && (
+                  <Button
+                    key="history"
+                    onClick={handleNavigateHome}
+                    leftSection={<IconArrowLeft size={16} stroke={1.5} />}
+                    className={classes.mainLink}
+                    size="md"
+                    w="100%"
+                    variant="transparent"
+                  >
+                    Go to your labour
+                  </Button>
+                )}
             </>
           )}
-          {pathname !== '/history' && (
+          {pathname !== appRoutes.history && (
             <Button
               key="labour"
               onClick={handleNavigateHistory}
@@ -155,6 +164,19 @@ export const HeaderMenu = memo(() => {
               variant="transparent"
             >
               Labour history
+            </Button>
+          )}
+          {pathname !== appRoutes.birthPlanAuth && (
+            <Button
+              key="birth-plan"
+              onClick={handleNavigateBirthPlan}
+              className={classes.mainLink}
+              leftSection={<IconNotes size={16} stroke={1.5} />}
+              size="md"
+              w="100%"
+              variant="transparent"
+            >
+              Birth plan
             </Button>
           )}
         </Group>
@@ -176,7 +198,7 @@ export const HeaderMenu = memo(() => {
         >
           Logout
         </Button>
-        {pathname !== '/contact' && (
+        {pathname !== appRoutes.contact && (
           <Button
             key="contact"
             onClick={handleNavigateContact}
