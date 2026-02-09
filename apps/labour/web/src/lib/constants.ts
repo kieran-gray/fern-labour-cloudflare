@@ -6,6 +6,8 @@ export const appRoutes = {
   contact: '/contact',
   completed: '/completed',
   onboarding: '/get-started',
+  birthPlan: '/birth-plan',
+  birthPlanAuth: '/my/birth-plan',
 } as const;
 
 export const EMAIL_REGEX = /^[\w-+.]+@([\w-]+.)+[\w-]{2,4}$/;
