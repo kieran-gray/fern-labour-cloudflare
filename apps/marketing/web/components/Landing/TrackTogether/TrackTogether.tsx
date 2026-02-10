@@ -54,7 +54,7 @@ export function TrackTogether() {
           whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
-          <Title className={classes.title}>Track together, from anywhere</Title>
+          <Title className={classes.title}>Track contractions together, from anywhere</Title>
           <Text className={classes.description}>
             Your birth partner can track from their own phone. Everything stays in sync. One less
             thing to think about.

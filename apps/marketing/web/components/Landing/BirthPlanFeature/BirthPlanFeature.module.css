@@ -1,0 +1,214 @@
+.root {
+    padding: calc(var(--mantine-spacing-xl) * 2) var(--mantine-spacing-lg);
+    background-color: #fdfaf8;
+
+    @media (max-width: 48em) {
+        padding: calc(var(--mantine-spacing-xl) * 2) var(--mantine-spacing-xs);
+    }
+}
+
+.inner {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    gap: calc(var(--mantine-spacing-xl) * 2);
+
+    @media (max-width: 62em) {
+        flex-direction: column-reverse;
+        text-align: center;
+        gap: calc(var(--mantine-spacing-xl) * 1.5);
+    }
+}
+
+.content {
+    flex: 1;
+    max-width: 420px;
+    padding: 0 var(--mantine-spacing-md);
+
+    @media (max-width: 62em) {
+        max-width: 100%;
+        padding: 0 var(--mantine-spacing-lg);
+    }
+}
+
+.title {
+    font-family: var(--mantine-font-family-headings);
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1.2;
+    margin-bottom: var(--mantine-spacing-md);
+    color: var(--mantine-color-dark-7);
+
+    @media (max-width: 48em) {
+        font-size: 26px;
+        margin-bottom: var(--mantine-spacing-sm);
+    }
+}
+
+.description {
+    color: var(--mantine-color-gray-7);
+    font-size: 17px;
+    line-height: 1.6;
+    margin-bottom: var(--mantine-spacing-xl);
+
+    @media (max-width: 48em) {
+        font-size: 16px;
+        line-height: 1.65;
+    }
+}
+
+.visual {
+    flex: 1;
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 var(--mantine-spacing-md);
+
+    @media (max-width: 62em) {
+        padding: 0 var(--mantine-spacing-lg);
+        max-width: 100%;
+    }
+}
+
+.paper {
+    background: white;
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 3/3.5;
+    border-radius: 10px;
+    box-shadow: 0 20px 40px -4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--mantine-color-gray-2);
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    height: auto;
+    background: white;
+    border-bottom: 2px solid #ff7964;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+    margin: 0 var(--mantine-spacing-md);
+    margin-top: var(--mantine-spacing-md);
+}
+
+.brand {
+    font-family: var(--mantine-font-family-headings);
+    font-weight: 700;
+    color: #ff7964;
+    font-size: 13px;
+}
+
+.docInfo {
+    font-size: 9px;
+    color: var(--mantine-color-gray-6);
+    text-align: right;
+    line-height: 1.2;
+}
+
+.body {
+    padding: var(--mantine-spacing-md);
+    display: flex;
+    flex-direction: column;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+}
+
+.sectionHeading {
+    height: 5px;
+    width: 40%;
+    background-color: #ff7964;
+    opacity: 0.3;
+    border-radius: 3px;
+    margin-bottom: var(--mantine-spacing-sm);
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0ebe8;
+}
+
+.label {
+    height: 4px;
+    width: 30%;
+    background-color: var(--mantine-color-gray-4);
+    border-radius: 2px;
+}
+
+.value {
+    height: 4px;
+    flex: 1;
+    background-color: var(--mantine-color-gray-2);
+    border-radius: 2px;
+}
+
+.highlightSection {
+    background: #fff8f6;
+    border: 1px solid #ffeae6;
+    border-radius: 4px;
+    padding: 10px;
+    /* Reduced from 12px */
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--mantine-spacing-md);
+}
+
+.highlightHeading {
+    height: 5px;
+    /* Reduced from 6px */
+    width: 50%;
+    background-color: #ff7964;
+    opacity: 0.5;
+    border-radius: 3px;
+    margin-bottom: 6px;
+    /* Reduced from 8px */
+}
+
+/* Checkbox styles adapted for the mock */
+.item {
+    display: flex;
+    align-items: center;
+    gap: var(--mantine-spacing-sm);
+    margin-bottom: 4px;
+    padding: 2px 0;
+}
+
+.checkbox {
+    width: 14px;
+    /* Reduced from 16px */
+    height: 14px;
+    border-radius: 3px;
+    border: 1.5px solid #ff7964;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.check {
+    width: 8px;
+    /* Reduced from 10px */
+    height: 8px;
+    background-color: #ff7964;
+    border-radius: 1px;
+}
+
+.line {
+    height: 5px;
+    /* Reduced from 6px */
+    border-radius: 3px;
+    background-color: var(--mantine-color-gray-1);
+    width: 100%;
+}

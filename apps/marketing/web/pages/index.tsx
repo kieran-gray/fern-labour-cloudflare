@@ -3,6 +3,7 @@ import { ContactMessageFloating } from '@/components/ContactUsFloating/ContactUs
 import { FooterSimple } from '@/components/Footer/Footer';
 import { Header01 } from '@/components/Header/Header';
 import { AlertsFeature } from '@/components/Landing/AlertsFeature/AlertsFeature';
+import { BirthPlanFeature } from '@/components/Landing/BirthPlanFeature/BirthPlanFeature';
 import { BlogTeaser } from '@/components/Landing/BlogTeaser/BlogTeaser';
 import { FAQ } from '@/components/Landing/FAQ/FAQ';
 import { faqs } from '@/components/Landing/FAQ/faqData';
@@ -87,9 +88,12 @@ export default function HomePage({ posts }: HomePageProps) {
       <div style={{ backgroundColor: '#fdfaf8', padding: 'var(--mantine-spacing-xl) 0' }}>
         <div id="#features" />
         <MotherBenefits />
-        <LabourCirclePreview />
+        <BirthPlanFeature
+          callToActionUrl={`${process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || 'https://app.fernlabour.com'}/birth-plan`}
+        />
         <TrackTogether />
         <AlertsFeature />
+        <LabourCirclePreview />
         <SimpleUpdates />
       </div>
 
