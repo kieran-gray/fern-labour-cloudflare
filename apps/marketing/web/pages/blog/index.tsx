@@ -1,16 +1,7 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import { IconHeartHandshake } from '@tabler/icons-react';
-import {
-  Box,
-  Container,
-  Group,
-  SegmentedControl,
-  SimpleGrid,
-  Text,
-  ThemeIcon,
-  Title,
-} from '@mantine/core';
+import { Box, Button, Container, Group, SimpleGrid, Text, ThemeIcon, Title } from '@mantine/core';
 import { BlogCard } from '../../components/Blog/BlogCard';
 import { ContactMessageFloating } from '../../components/ContactUsFloating/ContactUsFloating';
 import { FooterSimple } from '../../components/Footer/Footer';
@@ -90,22 +81,19 @@ export default function BlogIndex({ posts }: BlogIndexProps) {
             </Text>
           </Box>
 
-          <Group justify="center" mb={30}>
-            <SegmentedControl
-              radius="xl"
-              size="md"
-              data={categories}
-              value={selectedCategory}
-              onChange={setSelectedCategory}
-              color="var(--mantine-color-pink-4)"
-              withItemsBorders={false}
-              transitionDuration={400}
-              styles={{
-                root: {
-                  backgroundColor: '#f1f3f5',
-                },
-              }}
-            />
+          <Group justify="start" mb={50}>
+            {categories.map((category) => (
+              <Button
+                key={category}
+                radius="xl"
+                size="sm"
+                variant={selectedCategory === category ? 'filled' : 'default'}
+                color={selectedCategory === category ? 'var(--mantine-color-pink-5)' : 'gray'}
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </Button>
+            ))}
           </Group>
 
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
