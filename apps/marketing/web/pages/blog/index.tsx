@@ -1,6 +1,16 @@
+import { useState } from 'react';
 import Head from 'next/head';
 import { IconHeartHandshake } from '@tabler/icons-react';
-import { Box, Container, Group, SimpleGrid, Text, ThemeIcon, Title } from '@mantine/core';
+import {
+  Box,
+  Container,
+  Group,
+  SegmentedControl,
+  SimpleGrid,
+  Text,
+  ThemeIcon,
+  Title,
+} from '@mantine/core';
 import { BlogCard } from '../../components/Blog/BlogCard';
 import { ContactMessageFloating } from '../../components/ContactUsFloating/ContactUsFloating';
 import { FooterSimple } from '../../components/Footer/Footer';
@@ -12,6 +22,13 @@ interface BlogIndexProps {
 }
 
 export default function BlogIndex({ posts }: BlogIndexProps) {
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
+  const categories = ['All', ...Array.from(new Set(posts.map((post) => post.category)))];
+
+  const filteredPosts =
+    selectedCategory === 'All' ? posts : posts.filter((post) => post.category === selectedCategory);
+
   return (
     <>
       <Head>
@@ -42,7 +59,7 @@ export default function BlogIndex({ posts }: BlogIndexProps) {
           pb={{ base: 40, sm: 80 }}
           px={{ base: 30, sm: 50 }}
         >
-          <Box mb={60} style={{ maxWidth: 700 }}>
+          <Box mb={30} style={{ maxWidth: 700 }}>
             <Group mb="md">
               <ThemeIcon variant="light" color="pink" size="lg" radius="xl">
                 <IconHeartHandshake style={{ width: '70%', height: '70%' }} />
@@ -73,8 +90,26 @@ export default function BlogIndex({ posts }: BlogIndexProps) {
             </Text>
           </Box>
 
+          <Group justify="center" mb={30}>
+            <SegmentedControl
+              radius="xl"
+              size="md"
+              data={categories}
+              value={selectedCategory}
+              onChange={setSelectedCategory}
+              color="var(--mantine-color-pink-4)"
+              withItemsBorders={false}
+              transitionDuration={400}
+              styles={{
+                root: {
+                  backgroundColor: '#f1f3f5',
+                },
+              }}
+            />
+          </Group>
+
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
-            {posts.map((post) => (
+            {filteredPosts.map((post) => (
               <BlogCard
                 key={post.slug}
                 title={post.title}
