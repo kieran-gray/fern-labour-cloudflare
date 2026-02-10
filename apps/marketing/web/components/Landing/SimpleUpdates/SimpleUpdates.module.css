@@ -14,7 +14,7 @@
     gap: calc(var(--mantine-spacing-xl) * 2);
 
     @media (max-width: 62em) {
-        flex-direction: column;
+        flex-direction: column-reverse;
         text-align: center;
         gap: calc(var(--mantine-spacing-xl) * 1.5);
     }
@@ -46,7 +46,7 @@
 }
 
 .description {
-    color: var(--mantine-color-gray-6);
+    color: var(--mantine-color-gray-7);
     font-size: 17px;
     line-height: 1.6;
 

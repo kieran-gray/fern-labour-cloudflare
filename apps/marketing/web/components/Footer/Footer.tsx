@@ -11,6 +11,7 @@ const footerSections = [
       { name: 'How It Works', href: '#features' },
       { name: 'Pricing', href: '#pricing' },
       { name: 'Blog', href: '/blog' },
+      { name: 'Birth Plan', href: 'https://app.fernlabour.com/birth-plan' },
     ],
   },
   {

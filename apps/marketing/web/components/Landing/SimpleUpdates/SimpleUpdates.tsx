@@ -29,20 +29,6 @@ export function SimpleUpdates() {
     <div className={classes.root}>
       <Container size="lg" className={classes.inner}>
         <motion.div
-          className={classes.content}
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-10%' }}
-        >
-          <Title className={classes.title}>Update everyone on your terms</Title>
-          <Text className={classes.description}>
-            Send news when you're ready. With one tap everyone in your circle gets the same update,
-            so you can get back to what matters.
-          </Text>
-        </motion.div>
-
-        <motion.div
           className={classes.visual}
           variants={staggerContainer}
           initial="hidden"
@@ -56,6 +42,20 @@ export function SimpleUpdates() {
               </motion.div>
             ))}
           </Stack>
+        </motion.div>
+
+        <motion.div
+          className={classes.content}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-10%' }}
+        >
+          <Title className={classes.title}>Update everyone on your terms</Title>
+          <Text className={classes.description}>
+            Send news when you're ready. With one tap everyone in your circle gets the same update,
+            so you can get back to what matters.
+          </Text>
         </motion.div>
       </Container>
     </div>

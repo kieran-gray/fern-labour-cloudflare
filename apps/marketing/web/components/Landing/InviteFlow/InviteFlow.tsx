@@ -78,19 +78,6 @@ export function InviteFlow() {
     <div className={classes.root}>
       <Container size="lg" className={classes.inner}>
         <motion.div
-          className={classes.visual}
-          variants={slideRight}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-10%' }}
-        >
-          <Stack gap="lg" w="100%">
-            <SubscriberRequestFlow onAccept={handleAccept} onReset={handleReset} />
-            <SubscribedUsers subscribers={subscribers} />
-          </Stack>
-        </motion.div>
-
-        <motion.div
           className={classes.content}
           variants={fadeUp}
           initial="hidden"
@@ -101,6 +88,19 @@ export function InviteFlow() {
           <Text className={classes.description}>
             Choose who is part of your circle. When someone asks to join, you decide.
           </Text>
+        </motion.div>
+
+        <motion.div
+          className={classes.visual}
+          variants={slideRight}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-10%' }}
+        >
+          <Stack gap="lg" w="100%">
+            <SubscriberRequestFlow onAccept={handleAccept} onReset={handleReset} />
+            <SubscribedUsers subscribers={subscribers} />
+          </Stack>
         </motion.div>
       </Container>
     </div>
