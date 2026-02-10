@@ -30,8 +30,7 @@ export function Hero() {
             transition={{ delay: 0.2 }}
           >
             <Text className={classes.description}>
-              Focus on your labour, not your phone. We'll update your chosen circle so you don't
-              have to.
+              Track contractions, get calm guidance, and keep your chosen circle updated.
             </Text>
           </motion.div>
 
