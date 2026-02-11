@@ -88,9 +88,6 @@ export default function HomePage({ posts }: HomePageProps) {
       <div style={{ backgroundColor: '#fdfaf8', padding: 'var(--mantine-spacing-xl) 0' }}>
         <div id="#features" />
         <MotherBenefits />
-        <BirthPlanFeature
-          callToActionUrl={`${process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || 'https://app.fernlabour.com'}/birth-plan`}
-        />
         <TrackTogether />
         <AlertsFeature />
         <LabourCirclePreview />
@@ -107,6 +104,10 @@ export default function HomePage({ posts }: HomePageProps) {
         <SubscriberBenefits />
         <SubscriberExperience />
       </div>
+
+      <BirthPlanFeature
+        callToActionUrl={`${process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || 'https://app.fernlabour.com'}/birth-plan`}
+      />
 
       <div style={{ backgroundColor: '#fdfaf8' }}>
         <div id="#pricing" />

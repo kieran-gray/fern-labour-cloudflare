@@ -112,7 +112,7 @@ type Pricing01Props = {
 export const Pricing01 = ({ title, description, callToActionUrl = '#' }: Pricing01Props) => {
   return (
     <div style={{ position: 'relative', backgroundColor: 'var(--mantine-color-pink-0)' }}>
-      <SectionSeparator position="top" color="#fff9f7" style={{ zIndex: 1 }} />
+      <SectionSeparator position="top" color="#fff5f5" style={{ zIndex: 1 }} />
       <Container py={120} px="15px" fluid>
         <Container size="md" style={{ position: 'relative' }}>
           <motion.div

@@ -1,6 +1,6 @@
 .root {
     padding: calc(var(--mantine-spacing-xl) * 2) var(--mantine-spacing-lg);
-    background-color: #fdfaf8;
+    background-color: #fff5f5;
 
     @media (max-width: 48em) {
         padding: calc(var(--mantine-spacing-xl) * 2) var(--mantine-spacing-xs);
@@ -15,7 +15,7 @@
     gap: calc(var(--mantine-spacing-xl) * 2);
 
     @media (max-width: 62em) {
-        flex-direction: column-reverse;
+        flex-direction: column;
         text-align: center;
         gap: calc(var(--mantine-spacing-xl) * 1.5);
     }

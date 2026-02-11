@@ -98,6 +98,36 @@ export function BirthPlanFeature({ callToActionUrl }: BirthPlanFeatureProps) {
     <div className={classes.root}>
       <Container size="lg" className={classes.inner}>
         <motion.div
+          className={classes.content}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-10%' }}
+        >
+          <Title className={classes.title}>Create your birth plan</Title>
+          <Text className={classes.description}>
+            Preferences, companions, and pain relief options. Build a plan that helps your birth
+            partner and care team understand exactly what you need.
+          </Text>
+          <Stack align="center" gap="xs">
+            <Button
+              component="a"
+              href={callToActionUrl || 'https://app.fernlabour.com/birth-plan'}
+              size="lg"
+              rightSection={<IconArrowRight size={18} />}
+              variant="light"
+              color="teal"
+              radius="xl"
+            >
+              Create your plan
+            </Button>
+            <Text c="dimmed" size="xs">
+              No sign-up required
+            </Text>
+          </Stack>
+        </motion.div>
+
+        <motion.div
           className={classes.visual}
           variants={fadeUp}
           initial="hidden"
@@ -155,35 +185,6 @@ export function BirthPlanFeature({ callToActionUrl }: BirthPlanFeatureProps) {
               </div>
             </div>
           </motion.div>
-        </motion.div>
-        <motion.div
-          className={classes.content}
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-10%' }}
-        >
-          <Title className={classes.title}>Create your birth plan</Title>
-          <Text className={classes.description}>
-            Preferences, companions, and pain relief options. Build a plan that helps your birth
-            partner and care team understand exactly what you need.
-          </Text>
-          <Stack align="center" gap="xs">
-            <Button
-              component="a"
-              href={callToActionUrl || 'https://app.fernlabour.com/birth-plan'}
-              size="lg"
-              rightSection={<IconArrowRight size={18} />}
-              variant="light"
-              color="teal"
-              radius="xl"
-            >
-              Create your plan
-            </Button>
-            <Text c="dimmed" size="xs">
-              No sign-up required
-            </Text>
-          </Stack>
         </motion.div>
       </Container>
     </div>
