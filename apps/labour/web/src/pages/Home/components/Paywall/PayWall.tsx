@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useLabourSession } from '@base/contexts';
 import { useCreateCheckoutSession, useLabourClient } from '@base/hooks';
 import { Card } from '@components/Cards/Card';
 import { IconArrowUp } from '@tabler/icons-react';
 import { Button, Text } from '@mantine/core';
 import image from './ShareMore.svg';
+import { SupportedCountriesModal } from './SupportedCountriesModal';
 import baseClasses from '@styles/base.module.css';
 
 export const PayWall = () => {
@@ -39,27 +41,41 @@ export const PayWall = () => {
     </>
   );
 
+  const [modalOpened, setModalOpened] = useState(false);
+
   return (
-    <Card
-      title="Want live notifications?"
-      description={description}
-      image={{ src: image, width: 460, height: 356 }}
-      mobileImage={{ src: image, width: 280, height: 220 }}
-    >
-      <Button
-        leftSection={<IconArrowUp size={18} stroke={1.5} />}
-        variant="filled"
-        radius="xl"
-        size="lg"
-        mt={10}
-        disabled={createCheckout.isPending}
-        onClick={handleUpgrade}
+    <>
+      <SupportedCountriesModal opened={modalOpened} onClose={() => setModalOpened(false)} />
+      <Card
+        title="Want live notifications?"
+        description={description}
+        image={{ src: image, width: 460, height: 356 }}
+        mobileImage={{ src: image, width: 280, height: 220 }}
       >
-        Upgrade now
-      </Button>
-      <Text mt={15} size="xs" className={baseClasses.description}>
-        *SMS messages are only supported for UK (+44) phone numbers{' '}
-      </Text>
-    </Card>
+        <Button
+          leftSection={<IconArrowUp size={18} stroke={1.5} />}
+          variant="filled"
+          radius="xl"
+          size="lg"
+          mt={10}
+          disabled={createCheckout.isPending}
+          onClick={handleUpgrade}
+        >
+          Upgrade now
+        </Button>
+        <Text mt={15} size="xs" className={baseClasses.description}>
+          *SMS messages are only supported for specific countries.{' '}
+          <Text
+            span
+            td="underline"
+            c="blue"
+            style={{ cursor: 'pointer' }}
+            onClick={() => setModalOpened(true)}
+          >
+            See full list
+          </Text>
+        </Text>
+      </Card>
+    </>
   );
 };
