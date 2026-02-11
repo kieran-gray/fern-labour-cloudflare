@@ -21,13 +21,6 @@ function warnNoNumberSet(contactMethods: string[], phoneNumber: string | null): 
   return null;
 }
 
-function warnNonUKNumber(contactMethods: string[], phoneNumber: string | null): string | null {
-  if (contactMethods.includes('SMS') && phoneNumber && !phoneNumber.startsWith('+44')) {
-    return 'SMS is only available for UK numbers (+44). Please switch to WhatsApp for international messaging.';
-  }
-  return null;
-}
-
 function getMethodConfig(method: SubscriberContactMethod) {
   switch (method) {
     case SubscriberContactMethod.WHATSAPP:
@@ -57,9 +50,7 @@ export default function ContactMethods({ subscription }: { subscription: Subscri
   let warning: string | null = null;
   if (isLoaded) {
     const phoneNumber = user?.primaryPhoneNumber?.phoneNumber || null;
-    warning =
-      warnNoNumberSet(subscription.contact_methods, phoneNumber) ||
-      warnNonUKNumber(subscription.contact_methods, phoneNumber);
+    warning = warnNoNumberSet(subscription.contact_methods, phoneNumber);
   }
 
   const hasContactMethod = subscription.contact_methods.length > 0;
