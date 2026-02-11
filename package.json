@@ -15,7 +15,7 @@
     "services/contact-service"
   ],
   "scripts": {
-    "dev": "concurrently -n labour,auth,web \"npm run dev --workspace=apps/labour/worker\"  \"npm run dev --workspace=services/auth-service\" \"npm run dev --prefix=apps/labour/web\"",
+    "dev": "concurrently -n labour,auth,web,marketing \"npm run dev --workspace=apps/labour/worker\"  \"npm run dev --workspace=services/auth-service\" \"npm run dev --prefix=apps/labour/web\" \"npm run dev --prefix=apps/marketing/web\"",
     "dev:services": "concurrently -n notifications,contact,admin \"npm run dev --prefix=services/notification-service\" \"npm run dev --workspace=services/contact-service\" \"npm run dev --workspace=apps/admin/web\"",
     "preview": "concurrently -n labour,auth,web \"npm run dev --workspace=apps/labour/worker\"  \"npm run dev --workspace=services/auth-service\" \"npm run preview --prefix=apps/labour/web\"",
     "build": "npm run build --workspaces --if-present",
