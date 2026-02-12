@@ -106,8 +106,7 @@ export function BirthPlanFeature({ callToActionUrl }: BirthPlanFeatureProps) {
         >
           <Title className={classes.title}>Create your birth plan</Title>
           <Text className={classes.description}>
-            Preferences, companions, and pain relief options. Build a plan that helps your birth
-            partner and care team understand exactly what you need.
+            Preferences, companions, and pain relief, organised clearly and privately in minutes.
           </Text>
           <Stack align="center" gap="xs">
             <Button
@@ -119,7 +118,7 @@ export function BirthPlanFeature({ callToActionUrl }: BirthPlanFeatureProps) {
               color="teal"
               radius="xl"
             >
-              Create your plan
+              Start planning
             </Button>
             <Text c="dimmed" size="xs">
               No sign-up required
