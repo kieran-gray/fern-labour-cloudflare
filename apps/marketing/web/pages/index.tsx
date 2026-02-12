@@ -4,6 +4,7 @@ import { FooterSimple } from '@/components/Footer/Footer';
 import { Header01 } from '@/components/Header/Header';
 import { AlertsFeature } from '@/components/Landing/AlertsFeature/AlertsFeature';
 import { BirthPlanFeature } from '@/components/Landing/BirthPlanFeature/BirthPlanFeature';
+import { BirthPlanIntroduction } from '@/components/Landing/BirthPlanIntroduction/BirthPlanIntroduction';
 import { BlogTeaser } from '@/components/Landing/BlogTeaser/BlogTeaser';
 import { FAQ } from '@/components/Landing/FAQ/FAQ';
 import { faqs } from '@/components/Landing/FAQ/faqData';
@@ -105,9 +106,12 @@ export default function HomePage({ posts }: HomePageProps) {
         <SubscriberExperience />
       </div>
 
-      <BirthPlanFeature
-        callToActionUrl={`${process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || 'https://app.fernlabour.com'}/birth-plan`}
-      />
+      <div style={{ backgroundColor: '#fff5f5' }}>
+        <BirthPlanIntroduction />
+        <BirthPlanFeature
+          callToActionUrl={`${process.env.NEXT_PUBLIC_APP_LABOUR_WEB_URL || 'https://app.fernlabour.com'}/birth-plan`}
+        />
+      </div>
 
       <div style={{ backgroundColor: '#fdfaf8' }}>
         <div id="#pricing" />

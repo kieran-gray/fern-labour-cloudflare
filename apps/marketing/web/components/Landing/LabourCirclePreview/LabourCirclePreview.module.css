@@ -1,5 +1,5 @@
 .root {
-    padding: calc(var(--mantine-spacing-xl) * 2.5) var(--mantine-spacing-lg);
+    padding: calc(var(--mantine-spacing-xl) * 3) var(--mantine-spacing-lg);
     background-color: #fdfaf8;
 
     @media (max-width: 48em) {

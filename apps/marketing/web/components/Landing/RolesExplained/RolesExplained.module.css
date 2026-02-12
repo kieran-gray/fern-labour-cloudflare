@@ -1,5 +1,5 @@
 .root {
-    padding-top: calc(var(--mantine-spacing-xl) * 2.5);
+    padding-top: calc(var(--mantine-spacing-xl) * 3);
     padding-bottom: calc(var(--mantine-spacing-xl) * 2);
     background-color: transparent;
     text-align: center;
