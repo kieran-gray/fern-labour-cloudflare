@@ -33,12 +33,14 @@
     {
       "binding": "NOTIFICATIONS_API",
       "service": "fern-labour-notifications-worker"
+    },
+    {
+      "binding": "NOTIFICATION_GENERATION_API",
+      "service": "fern-labour-notification-generation-worker"
     }
   ],
   "vars": {
-    "ENVIRONMENT": "production",
-    "CONTACT_US_API_URL": "https://contact-us.fernlabour.com",
-    "NOTIFICATIONS_API_URL": "https://notifications.fernlabour.com"
+    "ENVIRONMENT": "production"
   },
   "env": {
     "dev": {
@@ -50,12 +52,14 @@
         {
           "binding": "NOTIFICATIONS_API",
           "service": "fern-labour-notifications-worker-dev"
+        },
+        {
+          "binding": "NOTIFICATION_GENERATION_API",
+          "service": "fern-labour-notification-generation-worker-dev"
         }
       ],
       "vars": {
-        "ENVIRONMENT": "production",
-        "CONTACT_US_API_URL": "https://contact-us.fernlabour.com",
-        "NOTIFICATIONS_API_URL": "https://notifications.fernlabour.com"
+        "ENVIRONMENT": "dev"
       },
     }
   }

@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { ArrowRight, Send, CheckCircle2, XCircle, Loader2 } from "lucide-react";
-import { type Command } from "@/config/commandCenter";
+import { ArrowRight, Send, CheckCircle2, XCircle, Loader2, Info, Eye } from "lucide-react";
+import { type Command, TEMPLATE_SCHEMAS } from "@/config/commandCenter";
 import { Button } from "@/components/ui/button";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { NotificationContentRenderer } from "@/components/notification/NotificationContentRenderer";
+import type { RenderedContent } from "@/components/notification/NotificationTypes";
 
 interface DynamicCommandFormProps {
   command: Command;
@@ -18,10 +20,16 @@ export function DynamicCommandForm({
   onSuccess,
 }: DynamicCommandFormProps) {
   const [formData, setFormData] = useState<Record<string, string>>({});
+  const [templateData, setTemplateData] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  // Preview State
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewContent, setPreviewContent] = useState<RenderedContent | null>(null);
+  const [previewError, setPreviewError] = useState<string | null>(null);
 
   const handleChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -36,10 +44,22 @@ export function DynamicCommandForm({
           destination: formData.destination,
           template_data: {
             type: formData.template,
-            name: formData.name,
+            ...templateData,
           },
           metadata: formData.metadata ? JSON.parse(formData.metadata) : null,
           priority: formData.priority || "Normal",
+        };
+      }
+
+      if (command.id === "delete_durable_object") {
+        return {
+          type: "Admin",
+          payload: {
+            type: "DeleteDurableObject",
+            payload: {
+              aggregate_id: formData.aggregate_id,
+            },
+          },
         };
       }
 
@@ -132,6 +152,47 @@ export function DynamicCommandForm({
     setShowConfirmModal(true);
   };
 
+  const handlePreview = async () => {
+    if (!formData.template || !formData.channel) {
+      setPreviewError("Please select a channel and template first");
+      return;
+    }
+
+    setPreviewLoading(true);
+    setPreviewError(null);
+    setPreviewContent(null);
+
+    try {
+      const payload = {
+        notification_id: crypto.randomUUID(),
+        channel: formData.channel,
+        template_data: {
+          type: formData.template,
+          ...templateData,
+        },
+      };
+
+      const response = await fetch("/api/v1/render", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error("Template not supported for this channel");
+      }
+
+      const data = await response.json();
+      const content: RenderedContent = data.rendered_content;
+
+      setPreviewContent(content);
+    } catch (err) {
+      setPreviewError(err instanceof Error ? err.message : "Preview failed");
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
   const getConfirmationMessage = () => {
     return `You are about to execute ${command.name} on ${serviceName}. This action will be processed immediately. Are you sure you want to continue?`;
   };
@@ -159,6 +220,7 @@ export function DynamicCommandForm({
 
       setSuccess(true);
       setFormData({});
+      setTemplateData({});
 
       // Auto-dismiss success message after 5 seconds
       setTimeout(() => {
@@ -250,7 +312,13 @@ export function DynamicCommandForm({
                 {field.type === "select" ? (
                   <select
                     value={formData[field.name] || ""}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      handleChange(field.name, newValue);
+                      if (field.name === "template") {
+                        setTemplateData({});
+                      }
+                    }}
                     required={field.required}
                     className="w-full px-3 py-2 border-2 border-cp-black bg-cp-paper text-cp-charcoal font-mono text-sm focus:outline-none focus:ring-2 focus:ring-cp-orange focus:border-cp-orange"
                   >
@@ -281,30 +349,177 @@ export function DynamicCommandForm({
                   />
                 )}
               </label>
+
+              {/* Dynamic Template Fields */}
+              {field.name === "template" &&
+                formData.template &&
+                TEMPLATE_SCHEMAS[formData.template] && (
+                  <div className="mt-6 border-2 border-cp-black bg-cp-beige shadow-hard overflow-hidden">
+                    {/* Header Bar */}
+                    <div className="bg-cp-black px-3 py-1.5 flex items-center gap-2 text-cp-paper border-b-2 border-cp-black">
+                      <Info className="size-3.5" />
+                      <span className="text-xs font-bold font-mono uppercase tracking-widest">
+                        TEMPLATE_DATA :: {formData.template.toUpperCase()}
+                      </span>
+                    </div>
+
+                    {/* Dynamic Inputs */}
+                    <div className="p-4 space-y-4">
+                      {Object.entries(TEMPLATE_SCHEMAS[formData.template]).map(
+                        ([key, typeDesc]) => (
+                          <div key={key} className="space-y-1">
+                            <label className="block text-xs font-bold font-mono uppercase tracking-wider text-cp-charcoal">
+                              &gt; {key.replace(/_/g, " ")}
+                              {!typeDesc.includes("optional") && (
+                                <span className="text-red-600 ml-1">*</span>
+                              )}
+                            </label>
+
+                            {key === "notes" ||
+                              key === "update" ||
+                              key === "announcement" ? (
+                              <textarea
+                                value={templateData[key] || ""}
+                                onChange={(e) =>
+                                  setTemplateData((prev) => ({
+                                    ...prev,
+                                    [key]: e.target.value,
+                                  }))
+                                }
+                                placeholder={`Enter ${key}...`}
+                                rows={3}
+                                className="w-full px-3 py-2 border-2 border-cp-black bg-cp-paper text-cp-charcoal font-mono text-xs focus:outline-none focus:ring-2 focus:ring-cp-blue focus:border-cp-blue resize-none shadow-sm"
+                                required={!typeDesc.includes("optional")}
+                              />
+                            ) : (
+                              <input
+                                type="text"
+                                value={templateData[key] || ""}
+                                onChange={(e) =>
+                                  setTemplateData((prev) => ({
+                                    ...prev,
+                                    [key]: e.target.value,
+                                  }))
+                                }
+                                placeholder={`Enter ${key}...`}
+                                className="w-full px-3 py-2 border-2 border-cp-black bg-cp-paper text-cp-charcoal font-mono text-xs focus:outline-none focus:ring-2 focus:ring-cp-blue focus:border-cp-blue shadow-sm"
+                                required={!typeDesc.includes("optional")}
+                              />
+                            )}
+                            <p className="text-[10px] text-cp-gray font-mono uppercase">
+                              Type: {typeDesc}
+                            </p>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                )}
             </div>
           ))
         )}
 
-        {/* Submit Button */}
-        <div className="pt-4 border-t-2 border-cp-black">
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full font-mono font-bold uppercase text-sm px-6 py-3 border-2 border-cp-black bg-cp-orange text-cp-paper shadow-hard hover:bg-[#ff7722] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <Loader2 className="size-4 animate-spin" />
-                EXECUTING_COMMAND...
-              </span>
-            ) : (
-              <span className="flex items-center justify-center gap-2">
-                <Send className="size-4" />
-                [EXECUTE_COMMAND]
-              </span>
+        {/* Preview Section */}
+        {command.id === "request_notification" && (
+          <div className="pt-4 border-t-2 border-cp-black space-y-4">
+            <div className="flex gap-4">
+              <Button
+                type="button"
+                disabled={previewLoading || loading}
+                onClick={handlePreview}
+                className="flex-1 font-mono font-bold uppercase text-sm px-6 py-3 border-2 border-cp-black bg-cp-blue text-cp-paper shadow-hard hover:bg-[#3366cc] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {previewLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="size-4 animate-spin" />
+                    GENERATING_PREVIEW...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <Eye className="size-4" />
+                    [PREVIEW_NOTIFICATION]
+                  </span>
+                )}
+              </Button>
+
+              <Button
+                type="submit"
+                disabled={loading || previewLoading}
+                className="flex-1 font-mono font-bold uppercase text-sm px-6 py-3 border-2 border-cp-black bg-cp-orange text-cp-paper shadow-hard hover:bg-[#ff7722] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="size-4 animate-spin" />
+                    EXECUTING...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <Send className="size-4" />
+                    [EXECUTE_COMMAND]
+                  </span>
+                )}
+              </Button>
+            </div>
+
+            {/* Preview Results */}
+            {previewContent && (
+              <div className="border-2 border-cp-black bg-cp-paper shadow-hard overflow-hidden">
+                <div className="bg-cp-black px-3 py-1.5 flex items-center justify-between text-cp-paper border-b-2 border-cp-black">
+                  <div className="flex items-center gap-2">
+                    <Eye className="size-3.5" />
+                    <span className="text-xs font-bold font-mono uppercase tracking-widest">
+                      PREVIEW_RESULT
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewContent(null)}
+                    className="text-[10px] font-mono hover:text-cp-orange"
+                  >
+                    [CLOSE]
+                  </button>
+                </div>
+                <div className="p-4 bg-paper max-h-[400px] overflow-auto">
+                  <NotificationContentRenderer content={previewContent} />
+                </div>
+              </div>
             )}
-          </Button>
-        </div>
+
+            {previewError && (
+              <div className="border-2 border-red-600 bg-red-50 p-3 shadow-hard">
+                <div className="flex items-center gap-2 text-red-600">
+                  <XCircle className="size-4" />
+                  <span className="text-xs font-bold font-mono uppercase">
+                    [PREVIEW_ERROR] {previewError}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Standard Submit Button (for non-request commands) */}
+        {command.id !== "request_notification" && (
+          <div className="pt-4 border-t-2 border-cp-black">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full font-mono font-bold uppercase text-sm px-6 py-3 border-2 border-cp-black bg-cp-orange text-cp-paper shadow-hard hover:bg-[#ff7722] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="size-4 animate-spin" />
+                  EXECUTING_COMMAND...
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <Send className="size-4" />
+                  [EXECUTE_COMMAND]
+                </span>
+              )}
+            </Button>
+          </div>
+        )}
       </form>
 
       {/* Confirmation Modal */}

@@ -17,7 +17,6 @@ import {
   ShieldOff,
   Trash2,
 } from "lucide-react";
-import DOMPurify from "dompurify";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { Button } from "@/components/ui/button";
 import { SectionCard } from "@/components/dashboard/SectionCard";
@@ -31,8 +30,8 @@ import {
 import { EventTimeline } from "@/components/notification_event_timeline/EventTimeline";
 import type {
   NotificationDetail,
-  RenderedContent,
 } from "@/components/notification/NotificationTypes";
+import { NotificationContentRenderer } from "@/components/notification/NotificationContentRenderer";
 import type { CloudflareAccessIdentity } from "@/hooks/useCloudflareAccess";
 
 interface NotificationDetailViewProps {
@@ -195,64 +194,6 @@ const NotificationDetailView = ({
       second: "2-digit",
       hour12: true,
     });
-  };
-
-  const renderContent = (content: RenderedContent) => {
-    if ("Email" in content) {
-      return (
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-cp-gray mb-2">
-              &gt; SUBJECT
-            </h3>
-            <p className="text-xs text-cp-charcoal bg-cp-beige border-2 border-cp-black px-3 py-2">
-              {content.Email.subject}
-            </p>
-          </div>
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-cp-gray mb-2">
-              &gt; HTML_BODY
-            </h3>
-            <div className="border-2 border-cp-black bg-white p-6">
-              <div
-                className="prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(content.Email.html_body),
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if ("Sms" in content) {
-      return (
-        <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-cp-gray mb-2">
-            &gt; MESSAGE
-          </h3>
-          <p className="text-xs text-cp-charcoal bg-cp-beige border-2 border-cp-black px-3 py-2 whitespace-pre-wrap">
-            {content.Sms.body}
-          </p>
-        </div>
-      );
-    }
-
-    if ("WhatsApp" in content) {
-      return (
-        <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-cp-gray mb-2">
-            &gt; MESSAGE
-          </h3>
-          <p className="text-xs text-cp-charcoal bg-cp-beige border-2 border-cp-black px-3 py-2 whitespace-pre-wrap">
-            {content.WhatsApp.body}
-          </p>
-        </div>
-      );
-    }
-
-    return null;
   };
 
   if (loading) {
@@ -528,7 +469,7 @@ const NotificationDetailView = ({
             {notification.rendered_content && (
               <SectionCard title="RENDERED_CONTENT">
                 <div className="font-mono">
-                  {renderContent(notification.rendered_content)}
+                  <NotificationContentRenderer content={notification.rendered_content} />
                 </div>
               </SectionCard>
             )}

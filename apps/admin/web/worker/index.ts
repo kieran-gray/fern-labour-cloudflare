@@ -37,6 +37,8 @@ export default {
         return await env.NOTIFICATIONS_API.fetch(modifiedRequest);
       } else if (url.pathname.startsWith("/api/v1/admin")) {
         return await env.NOTIFICATIONS_API.fetch(modifiedRequest);
+      } else if (url.pathname.startsWith("/api/v1/render")) {
+        return await env.NOTIFICATION_GENERATION_API.fetch(modifiedRequest);
       }
     }
     return new Response(null, { status: 404 });

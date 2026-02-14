@@ -20,4 +20,5 @@ export default defineConfig(() => ({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  // server: { allowedHosts: ["admin-local.quest-lock.com"] },
 }));

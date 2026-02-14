@@ -73,16 +73,20 @@ export const services: Service[] = [
             type: "select",
             required: true,
             options: [
-              { value: "HelloWorld", label: "HELLO_WORLD" },
               { value: "ContactUs", label: "CONTACT_US" },
+              { value: "LabourUpdateData", label: "LABOUR_UPDATE" },
+              { value: "LabourAnnouncementData", label: "LABOUR_ANNOUNCEMENT" },
+              { value: "LabourBegunData", label: "LABOUR_BEGUN" },
+              { value: "LabourCompletedData", label: "LABOUR_COMPLETED" },
+              {
+                value: "LabourCompletedWithNoteData",
+                label: "LABOUR_COMPLETED_WITH_NOTE",
+              },
+              { value: "LabourInviteData", label: "LABOUR_INVITE" },
+              { value: "SubscriberInviteData", label: "SUBSCRIBER_INVITE" },
+              { value: "SubscriberRequestedData", label: "SUBSCRIBER_REQUESTED" },
+              { value: "SubscriberApprovedData", label: "SUBSCRIBER_APPROVED" },
             ],
-          },
-          {
-            name: "name",
-            label: "NAME",
-            type: "text",
-            placeholder: "John Doe",
-            required: true,
           },
           {
             name: "metadata",
@@ -285,6 +289,24 @@ export const services: Service[] = [
         category: "MAINTENANCE",
         fields: [],
       },
+      {
+        id: "delete_durable_object",
+        name: "DELETE_DURABLE_OBJECT",
+        description: "Delete a Durable Object by its aggregate ID",
+        endpoint: "/api/v1/admin/command",
+        method: "POST",
+        category: "MAINTENANCE",
+        fields: [
+          {
+            name: "aggregate_id",
+            label: "AGGREGATE_ID",
+            type: "text",
+            placeholder: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            required: true,
+            description: "Aggregate ID (UUID) of the Durable Object",
+          },
+        ],
+      },
     ],
   },
   {
@@ -295,6 +317,64 @@ export const services: Service[] = [
     commands: [],
   },
 ];
+
+export const TEMPLATE_SCHEMAS: Record<string, Record<string, string>> = {
+  ContactUs: {
+    name: "string",
+  },
+  LabourUpdateData: {
+    birthing_person_name: "string",
+    subscriber_first_name: "string",
+    update: "string",
+    link: "string",
+    notes: "string (optional)",
+  },
+  LabourAnnouncementData: {
+    birthing_person_name: "string",
+    birthing_person_first_name: "string",
+    subscriber_first_name: "string",
+    announcement: "string",
+    link: "string",
+  },
+  LabourBegunData: {
+    birthing_person_name: "string",
+    birthing_person_first_name: "string",
+    subscriber_first_name: "string",
+    link: "string",
+  },
+  LabourCompletedData: {
+    birthing_person_name: "string",
+    birthing_person_first_name: "string",
+    subscriber_first_name: "string",
+    link: "string",
+  },
+  LabourCompletedWithNoteData: {
+    birthing_person_name: "string",
+    birthing_person_first_name: "string",
+    subscriber_first_name: "string",
+    update: "string",
+    link: "string",
+  },
+  LabourInviteData: {
+    birthing_person_name: "string",
+    birthing_person_first_name: "string",
+    link: "string",
+  },
+  SubscriberInviteData: {
+    subscriber_name: "string",
+    link: "string",
+  },
+  SubscriberRequestedData: {
+    birthing_person_first_name: "string",
+    subscriber_name: "string",
+    link: "string",
+  },
+  SubscriberApprovedData: {
+    subscriber_first_name: "string",
+    birthing_person_name: "string",
+    link: "string",
+  },
+};
 
 export function getServiceById(id: string): Service | undefined {
   return services.find((s) => s.id === id);
