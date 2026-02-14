@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { ArrowRight, Send, CheckCircle2, XCircle, Loader2, Info, Eye } from "lucide-react";
+import {
+  ArrowRight,
+  Send,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  Info,
+  Eye,
+} from "lucide-react";
 import { type Command, TEMPLATE_SCHEMAS } from "@/config/commandCenter";
 import { Button } from "@/components/ui/button";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
@@ -28,7 +36,9 @@ export function DynamicCommandForm({
 
   // Preview State
   const [previewLoading, setPreviewLoading] = useState(false);
-  const [previewContent, setPreviewContent] = useState<RenderedContent | null>(null);
+  const [previewContent, setPreviewContent] = useState<RenderedContent | null>(
+    null,
+  );
   const [previewError, setPreviewError] = useState<string | null>(null);
 
   const handleChange = (name: string, value: string) => {
@@ -376,8 +386,8 @@ export function DynamicCommandForm({
                             </label>
 
                             {key === "notes" ||
-                              key === "update" ||
-                              key === "announcement" ? (
+                            key === "update" ||
+                            key === "announcement" ? (
                               <textarea
                                 value={templateData[key] || ""}
                                 onChange={(e) =>

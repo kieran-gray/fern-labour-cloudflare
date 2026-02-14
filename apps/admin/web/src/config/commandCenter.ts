@@ -84,7 +84,10 @@ export const services: Service[] = [
               },
               { value: "LabourInviteData", label: "LABOUR_INVITE" },
               { value: "SubscriberInviteData", label: "SUBSCRIBER_INVITE" },
-              { value: "SubscriberRequestedData", label: "SUBSCRIBER_REQUESTED" },
+              {
+                value: "SubscriberRequestedData",
+                label: "SUBSCRIBER_REQUESTED",
+              },
               { value: "SubscriberApprovedData", label: "SUBSCRIBER_APPROVED" },
             ],
           },

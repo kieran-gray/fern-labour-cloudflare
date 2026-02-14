@@ -28,9 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EventTimeline } from "@/components/notification_event_timeline/EventTimeline";
-import type {
-  NotificationDetail,
-} from "@/components/notification/NotificationTypes";
+import type { NotificationDetail } from "@/components/notification/NotificationTypes";
 import { NotificationContentRenderer } from "@/components/notification/NotificationContentRenderer";
 import type { CloudflareAccessIdentity } from "@/hooks/useCloudflareAccess";
 
@@ -469,7 +467,9 @@ const NotificationDetailView = ({
             {notification.rendered_content && (
               <SectionCard title="RENDERED_CONTENT">
                 <div className="font-mono">
-                  <NotificationContentRenderer content={notification.rendered_content} />
+                  <NotificationContentRenderer
+                    content={notification.rendered_content}
+                  />
                 </div>
               </SectionCard>
             )}
