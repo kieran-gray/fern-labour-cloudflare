@@ -7,11 +7,30 @@
   }
 
   .menuSection {
-    flex: 1;
-    overflow-y: auto;
     margin-bottom: var(--mantine-spacing-sm);
+    overflow-y: auto;
   }
-  
+
+  .menuSection:first-of-type {
+    flex: 1;
+  }
+
+  .sectionLabel {
+    font-size: var(--mantine-font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+    padding: 0 var(--mantine-spacing-md);
+    margin-bottom: 6px;
+  }
+
+  .sectionItems {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
   .mainLink {
     border-radius: 20px;
     font-size: var(--mantine-font-size-sm);
@@ -88,4 +107,3 @@
     align-items: center;
     gap: var(--mantine-spacing-xs);
   }
-  
