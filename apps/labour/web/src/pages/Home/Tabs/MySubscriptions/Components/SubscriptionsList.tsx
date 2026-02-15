@@ -18,7 +18,7 @@ export function SubscriptionsList() {
   const navigate = useNavigate();
 
   const client = useLabourClient();
-  const { isPending, isError, data, error } = useUserSubscriptions(client);
+  const { isPending, isError, data } = useUserSubscriptions(client);
   const { data: labours, isPending: laboursLoading } = useUserSubscribedLabours(client);
 
   if (isPending || laboursLoading) {
@@ -27,9 +27,14 @@ export function SubscriptionsList() {
 
   if (isError) {
     return (
-      <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.importantText}>
-        {error.message}
-      </Text>
+      <div className={baseClasses.emptyState}>
+        <Text
+          size="sm"
+          style={{ color: 'light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2))' }}
+        >
+          Unable to load subscriptions. Please try refreshing the page.
+        </Text>
+      </div>
     );
   }
 

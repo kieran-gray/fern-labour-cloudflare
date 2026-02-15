@@ -96,19 +96,26 @@ export const HeaderMenu = memo(() => {
 
   return (
     <div className={classes.linksDrawer}>
+      {/* Navigation Section */}
       <div className={classes.menuSection}>
-        <Group>
-          <Button
-            key="theme"
-            className={classes.mainLink}
-            onClick={handleThemeToggle}
-            leftSection={themeIcon}
-            size="md"
-            w="100%"
-            variant="transparent"
-          >
-            {colorScheme === 'light' ? 'Night mode' : 'Day mode'}
-          </Button>
+        <div className={classes.sectionLabel}>Navigate</div>
+        <div className={classes.sectionItems}>
+          {mode === AppMode.Birth &&
+            ([appRoutes.history, appRoutes.contact, appRoutes.birthPlanAuth] as string[]).includes(
+              pathname
+            ) && (
+              <Button
+                key="back"
+                onClick={handleNavigateHome}
+                leftSection={<IconArrowLeft size={16} stroke={1.5} />}
+                className={classes.mainLink}
+                size="md"
+                w="100%"
+                variant="transparent"
+              >
+                Go to your labour
+              </Button>
+            )}
           {mode === null && pathname !== appRoutes.home && (
             <Button
               key="home"
@@ -121,37 +128,6 @@ export const HeaderMenu = memo(() => {
             >
               Home
             </Button>
-          )}
-          {mode !== null && (
-            <>
-              <Button
-                key="update"
-                className={classes.mainLink}
-                onClick={handleSwitchMode}
-                leftSection={<IconSwitchHorizontal size={16} stroke={1.5} />}
-                size="md"
-                w="100%"
-                variant="transparent"
-              >
-                {switchToMode === AppMode.Subscriber ? 'Support mode' : 'Birth mode'}
-              </Button>
-              {mode === AppMode.Birth &&
-                (
-                  [appRoutes.history, appRoutes.contact, appRoutes.birthPlanAuth] as string[]
-                ).includes(pathname) && (
-                  <Button
-                    key="history"
-                    onClick={handleNavigateHome}
-                    leftSection={<IconArrowLeft size={16} stroke={1.5} />}
-                    className={classes.mainLink}
-                    size="md"
-                    w="100%"
-                    variant="transparent"
-                  >
-                    Go to your labour
-                  </Button>
-                )}
-            </>
           )}
           {pathname !== appRoutes.history && (
             <Button
@@ -179,25 +155,46 @@ export const HeaderMenu = memo(() => {
               Birth plan
             </Button>
           )}
-        </Group>
+        </div>
       </div>
 
+      {/* Preferences Section */}
+      <div className={classes.menuSection}>
+        <div className={classes.sectionLabel}>Preferences</div>
+        <div className={classes.sectionItems}>
+          <Button
+            key="theme"
+            className={classes.mainLink}
+            onClick={handleThemeToggle}
+            leftSection={themeIcon}
+            size="md"
+            w="100%"
+            variant="transparent"
+          >
+            {colorScheme === 'light' ? 'Night mode' : 'Day mode'}
+          </Button>
+          {mode !== null && (
+            <Button
+              key="mode"
+              className={classes.mainLink}
+              onClick={handleSwitchMode}
+              leftSection={<IconSwitchHorizontal size={16} stroke={1.5} />}
+              size="md"
+              w="100%"
+              variant="transparent"
+            >
+              {switchToMode === AppMode.Subscriber ? 'Support mode' : 'Birth mode'}
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Footer: Account & Help */}
       <div className={classes.footer}>
         <UserButton
           name={user?.fullName ?? user?.primaryEmailAddress?.emailAddress ?? ''}
           onClick={handleOpenProfile}
         />
-        <Button
-          key="logout"
-          className={classes.logoutLink}
-          onClick={handleLogout}
-          size="md"
-          w="100%"
-          variant="transparent"
-          leftSection={<IconLogout size={16} stroke={1.5} />}
-        >
-          Logout
-        </Button>
         {pathname !== appRoutes.contact && (
           <Button
             key="contact"
@@ -211,6 +208,17 @@ export const HeaderMenu = memo(() => {
             Contact us
           </Button>
         )}
+        <Button
+          key="logout"
+          className={classes.logoutLink}
+          onClick={handleLogout}
+          size="md"
+          w="100%"
+          variant="transparent"
+          leftSection={<IconLogout size={16} stroke={1.5} />}
+        >
+          Logout
+        </Button>
       </div>
     </div>
   );

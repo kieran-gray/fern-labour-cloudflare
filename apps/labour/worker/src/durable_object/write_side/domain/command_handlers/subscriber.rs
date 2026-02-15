@@ -47,17 +47,23 @@ pub fn handle_request_access(
     let mut events = vec![];
 
     if let Some(subscription) = labour.find_subscription_from_subscriber_id(&cmd.subscriber_id) {
-        if [
-            SubscriberStatus::BLOCKED,
-            SubscriberStatus::SUBSCRIBED,
-            SubscriberStatus::REQUESTED,
-        ]
-        .contains(subscription.status())
-        {
-            return Err(LabourError::InvalidCommand(
-                "Cannot subscribe to labour".to_string(),
-            ));
-        }
+        let error = "Cannot subscribe to labour";
+        match subscription.status() {
+            SubscriberStatus::SUBSCRIBED => {
+                return Err(LabourError::InvalidCommand(format!(
+                    "{error}: Already subscribed"
+                )));
+            }
+            SubscriberStatus::REQUESTED => {
+                return Err(LabourError::InvalidCommand(format!(
+                    "{error}: Request pending"
+                )));
+            }
+            SubscriberStatus::BLOCKED => {
+                return Err(LabourError::InvalidCommand(error.to_string()));
+            }
+            _ => (),
+        };
         events.push(LabourEvent::SubscriberRequested(SubscriberRequested {
             labour_id: cmd.labour_id,
             subscriber_name: cmd.subscriber_name,
