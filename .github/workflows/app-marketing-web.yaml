@@ -54,7 +54,7 @@ jobs:
       - name: Build project
         run: npm run build
         env:
-          NEXT_PUBLIC_CONTACT_SERVICE_URL: ${{ vars.CONTACT_SERVICE_URL }}
+          NEXT_PUBLIC_CONTACT_SERVICE_URL: ${{ vars.CONTACT_WORKER_URL }}
           NEXT_PUBLIC_FRONTEND_URL: ${{ vars.FRONTEND_URL }}
           NEXT_PUBLIC_INSTAGRAM_URL: ${{ vars.INSTAGRAM_URL }}
           NEXT_PUBLIC_CLOUDFLARE_SITEKEY: ${{ vars.CLOUDFLARE_SITEKEY }}
