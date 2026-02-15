@@ -74,32 +74,33 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    var(--mantine-color-green-5),
-    var(--mantine-color-green-6)
-  );
+  background-color: light-dark(var(--mantine-color-green-0), rgba(0, 128, 0, 0.1));
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  box-shadow: 0 4px 16px rgba(var(--mantine-color-green-5), 0.3);
+  color: var(--mantine-color-green-6);
 }
 
 .errorIcon {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    var(--mantine-color-red-5),
-    var(--mantine-color-red-6)
-  );
+  background-color: light-dark(var(--mantine-color-red-0), rgba(255, 0, 0, 0.1));
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  box-shadow: 0 4px 16px rgba(var(--mantine-color-red-5), 0.3);
+  color: var(--mantine-color-red-6);
+}
+
+.infoIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: light-dark(var(--mantine-color-yellow-0), rgba(255, 165, 0, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mantine-color-yellow-6);
 }
 
 .messageCard {

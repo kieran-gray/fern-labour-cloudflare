@@ -206,7 +206,10 @@ export function SubscribersView() {
   if (isError) {
     return (
       <div className={baseClasses.emptyState}>
-        <Text size="sm" c="dimmed">
+        <Text
+          size="sm"
+          style={{ color: 'light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-2))' }}
+        >
           Unable to load subscribers. Please try refreshing the page.
         </Text>
       </div>

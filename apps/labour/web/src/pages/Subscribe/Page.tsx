@@ -3,12 +3,25 @@ import { AppMode, useLabourSession } from '@base/contexts';
 import { useLabourClient, useRequestAccess } from '@base/hooks';
 import { useUser } from '@clerk/clerk-react';
 import { AppShell } from '@components/AppShell';
-import { IconAlertCircle, IconCheck, IconHome, IconLoader2 } from '@tabler/icons-react';
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconClock,
+  IconHeart,
+  IconHome,
+  IconLoader2,
+} from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import classes from './Page.module.css';
 import baseClasses from '@styles/base.module.css';
 
-type Status = 'pending' | 'success' | 'error' | 'missing-name';
+type Status =
+  | 'pending'
+  | 'success'
+  | 'error'
+  | 'missing-name'
+  | 'already-subscribed'
+  | 'request-pending';
 
 export const SubscribePage: React.FC = () => {
   const { id, token } = useParams();
@@ -43,8 +56,16 @@ export const SubscribePage: React.FC = () => {
         await mutateAsync({ labourId, token, subscriberName: user.fullName! });
         setMode(AppMode.Subscriber);
         setStatus('success');
-      } catch {
-        setStatus('error');
+      } catch (err) {
+        const message = err instanceof Error ? err.message : '';
+        if (message.includes('Already subscribed')) {
+          setMode(AppMode.Subscriber);
+          setStatus('already-subscribed');
+        } else if (message.includes('Request pending')) {
+          setStatus('request-pending');
+        } else {
+          setStatus('error');
+        }
       }
     };
 
@@ -92,6 +113,34 @@ export const SubscribePage: React.FC = () => {
                 </>
               )}
 
+              {status === 'already-subscribed' && (
+                <>
+                  <div className={classes.iconContainer}>
+                    <div className={classes.successIcon}>
+                      <IconHeart size={32} stroke={2} />
+                    </div>
+                  </div>
+                  <p className={classes.greeting}>Welcome back</p>
+                  <h1 className={classes.title}>
+                    <span className={classes.titleAccent}>Already subscribed</span>
+                  </h1>
+                </>
+              )}
+
+              {status === 'request-pending' && (
+                <>
+                  <div className={classes.iconContainer}>
+                    <div className={classes.infoIcon}>
+                      <IconClock size={32} stroke={2} />
+                    </div>
+                  </div>
+                  <p className={classes.greeting}>Hang tight</p>
+                  <h1 className={classes.title}>
+                    <span className={classes.titleAccent}>Request already sent</span>
+                  </h1>
+                </>
+              )}
+
               {status === 'error' && (
                 <>
                   <div className={classes.iconContainer}>
@@ -128,6 +177,24 @@ export const SubscribePage: React.FC = () => {
                 </p>
                 <p className={classes.messageText}>
                   They will need to approve your request before you can access their labour.
+                </p>
+                <p className={classes.messageText}>
+                  You'll get an email as soon as you're approved, thanks for your patience!
+                </p>
+              </div>
+            )}
+
+            {status === 'already-subscribed' && (
+              <div className={classes.messageCard}>
+                <p className={classes.messageText}>You're already part of this labour circle.</p>
+                <p className={classes.messageText}>Head home to view the latest updates.</p>
+              </div>
+            )}
+
+            {status === 'request-pending' && (
+              <div className={classes.messageCard}>
+                <p className={classes.messageText}>
+                  Your request to join has already been sent and is waiting for approval.
                 </p>
                 <p className={classes.messageText}>
                   You'll get an email as soon as you're approved, thanks for your patience!
