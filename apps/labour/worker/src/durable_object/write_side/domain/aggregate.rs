@@ -166,7 +166,11 @@ impl Aggregate for Labour {
                 }
             }
             LabourEvent::ContractionEnded(e) => {
-                if let Some(contraction) = self.contractions.last_mut() {
+                if let Some(contraction) = self
+                    .contractions
+                    .iter_mut()
+                    .find(|c| c.id() == e.contraction_id)
+                {
                     contraction
                         .end(e.end_time, e.intensity)
                         .expect("Failed to end contraction");
@@ -184,7 +188,7 @@ impl Aggregate for Labour {
                 }
             }
             LabourEvent::ContractionDeleted(e) => {
-                self.contractions.pop_if(|c| c.id() == e.contraction_id);
+                self.contractions.retain_mut(|c| c.id() != e.contraction_id);
             }
             LabourEvent::LabourUpdatePosted(e) => {
                 let labour_update = LabourUpdate::create(
