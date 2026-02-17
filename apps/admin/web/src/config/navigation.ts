@@ -1,4 +1,12 @@
-import { LucideIcon, Inbox, Bell, Terminal, Home } from "lucide-react";
+import {
+  LucideIcon,
+  Inbox,
+  Bell,
+  Terminal,
+  Home,
+  Baby,
+  Users,
+} from "lucide-react";
 
 export interface NavigationItem {
   name: string;
@@ -27,17 +35,21 @@ export const navigationItems: NavigationItem[] = [
     current: false,
   },
   {
+    name: "Labours",
+    href: "/labours",
+    icon: Baby,
+    current: false,
+  },
+  {
+    name: "Subscriptions",
+    href: "/subscriptions",
+    icon: Users,
+    current: false,
+  },
+  {
     name: "Command Center",
     href: "/command-center",
     icon: Terminal,
     current: false,
   },
-  // Add more navigation items here as the admin dashboard expands
-  // Example:
-  // {
-  //   name: 'Users',
-  //   href: '/users',
-  //   icon: Users,
-  //   current: false
-  // }
 ];

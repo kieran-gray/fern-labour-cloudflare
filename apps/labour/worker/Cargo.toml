@@ -24,6 +24,7 @@ hmac = "0.12"
 sha2 = "0.10"
 hex = "0.4"
 rand.workspace = true
+serde_qs = "0.15.0"
 
 fern-labour-event-sourcing-rs.workspace = true
 fern-labour-workers-shared.workspace = true
