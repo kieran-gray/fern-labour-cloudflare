@@ -53,7 +53,7 @@ where
         Err(e) => {
             info!(error = ?e, "User verification failed");
             let response =
-                Response::error("Unauthorised: User verification failed".to_string(), 404)?;
+                Response::error("Unauthorised: User verification failed".to_string(), 403)?;
             return Ok(cors_context.add_to_response(response));
         }
     };
@@ -92,7 +92,7 @@ where
         Err(e) => {
             info!(error = ?e, "User verification failed");
             let response =
-                Response::error("Unauthorised: User verification failed".to_string(), 404)?;
+                Response::error("Unauthorised: User verification failed".to_string(), 403)?;
             return Ok(cors_context.add_to_response(response));
         }
     };
@@ -146,7 +146,7 @@ where
         Err(e) => {
             info!(error = ?e, "User verification failed");
             let response =
-                Response::error("Unauthorised: User verification failed".to_string(), 404)?;
+                Response::error("Unauthorised: User verification failed".to_string(), 403)?;
             return Ok(cors_context.add_to_response(response));
         }
     };
