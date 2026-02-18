@@ -12,7 +12,7 @@ export function SubscribersContainer() {
   return (
     <CardContentBottom
       title="Your labour circle"
-      description="The people who are following your journey. Birth partners and support people can see real-time updates, while loved ones receive milestone notifications."
+      description="The people who are following your journey. Click the help button for more information."
       image={image}
       mobileImage={image}
       helpButton={

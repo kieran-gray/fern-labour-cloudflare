@@ -6,6 +6,8 @@ import NotificationsList from "./views/NotificationsList";
 import NotificationDetail from "./views/NotificationDetail";
 import CommandCenter from "./views/CommandCenter";
 import ContactUsMessages from "./views/ContactUsMessages";
+import LaboursList from "./views/LaboursList";
+import SubscriptionsList from "./views/SubscriptionsList";
 
 function App() {
   const { user, isLoading, error, logout } = useCloudflareAccess();
@@ -35,6 +37,14 @@ function App() {
           <Route
             path="/notifications/:notificationId"
             element={<NotificationDetail user={user} onLogout={logout} />}
+          />
+          <Route
+            path="/labours"
+            element={<LaboursList user={user} onLogout={logout} />}
+          />
+          <Route
+            path="/subscriptions"
+            element={<SubscriptionsList user={user} onLogout={logout} />}
           />
           <Route
             path="/command-center"

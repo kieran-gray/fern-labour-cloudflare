@@ -37,6 +37,10 @@
     {
       "binding": "NOTIFICATION_GENERATION_API",
       "service": "fern-labour-notification-generation-worker"
+    },
+    {
+      "binding": "LABOUR_API",
+      "service": "fern-labour-track-worker"
     }
   ],
   "vars": {
@@ -56,6 +60,10 @@
         {
           "binding": "NOTIFICATION_GENERATION_API",
           "service": "fern-labour-notification-generation-worker-dev"
+        },
+        {
+          "binding": "LABOUR_API",
+          "service": "fern-labour-track-worker-dev"
         }
       ],
       "vars": {

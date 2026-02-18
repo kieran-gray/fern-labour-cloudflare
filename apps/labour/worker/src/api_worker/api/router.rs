@@ -1,6 +1,7 @@
 use worker::Router;
 
 use crate::api_worker::AppState;
+use crate::api_worker::api::middleware::admin_auth;
 use crate::api_worker::api::middleware::authenticated;
 use crate::api_worker::api::middleware::create_options_handler;
 use crate::api_worker::api::middleware::websocket_authenticated;
@@ -9,10 +10,12 @@ use crate::api_worker::api::routes::checkout::handle_stripe_webhook;
 use crate::api_worker::api::routes::commands::handle_command;
 use crate::api_worker::api::routes::labour::get_active_labour;
 use crate::api_worker::api::routes::labour::get_labour_history;
+use crate::api_worker::api::routes::labour::get_labours;
 use crate::api_worker::api::routes::labour::handle_plan_labour;
 use crate::api_worker::api::routes::queries::get_server_timestamp;
 use crate::api_worker::api::routes::queries::handle_query;
 use crate::api_worker::api::routes::subscriptions::get_subscribed_labours;
+use crate::api_worker::api::routes::subscriptions::get_subscriptions;
 use crate::api_worker::api::routes::subscriptions::get_user_subscriptions;
 use crate::api_worker::api::routes::websocket::handle_websocket_connect;
 
@@ -60,4 +63,12 @@ pub fn create_router(app_state: AppState) -> Router<'static, AppState> {
         .post_async("/api/v1/payments/webhook", |req, ctx| async move {
             handle_stripe_webhook(req, ctx).await
         })
+        .get_async("/api/v1/admin/labours", |req, ctx| {
+            admin_auth(get_labours, req, ctx)
+        })
+        .options("/api/v1/admin/labours", create_options_handler)
+        .get_async("/api/v1/admin/subscriptions", |req, ctx| {
+            admin_auth(get_subscriptions, req, ctx)
+        })
+        .options("/api/v1/admin/subscriptions", create_options_handler)
 }

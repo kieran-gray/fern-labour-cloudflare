@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { Sidebar } from "@/components/ui/Sidebar";
 import type { ContactMessage } from "@/components/contact_message/ContactMessage";
 import type { NotificationStatus } from "@/components/notification/NotificationTypes";
+import type { PaginatedResponse } from "@/components/notification/NotificationTypes";
+import type { LabourStatus } from "@/components/labour/LabourTypes";
+import type { SubscriptionStatus } from "@/components/subscription/SubscriptionTypes";
 import type { CloudflareAccessIdentity } from "@/hooks/useCloudflareAccess";
-import { Bell, Mail } from "lucide-react";
+import { Baby, Bell, Mail, Users } from "lucide-react";
 import { generateAsciiArtText } from "@/components/AsciiArt";
 import { StatusCard } from "@/components/dashboard/StatusCard";
 import { PageHeader } from "@/components/dashboard/PageHeader";
@@ -18,14 +21,20 @@ interface AdminDashboardProps {
 const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
   const [notifications, setNotifications] = useState<NotificationStatus[]>([]);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [labours, setLabours] = useState<LabourStatus[]>([]);
+  const [subscriptions, setSubscriptions] = useState<SubscriptionStatus[]>([]);
   const [loading, setLoading] = useState(true);
   const [newNotificationsCount, setNewNotificationsCount] = useState(0);
   const [newMessagesCount, setNewMessagesCount] = useState(0);
+  const [newLaboursCount, setNewLaboursCount] = useState(0);
+  const [newSubscriptionsCount, setNewSubscriptionsCount] = useState(0);
   const [asciiMaxWidth, setAsciiMaxWidth] = useState(15);
   const [displayedLetters, setDisplayedLetters] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [loadingNotificationCount, setLoadingNotificationCount] = useState(0);
   const [loadingMessageCount, setLoadingMessageCount] = useState(0);
+  const [loadingLabourCount, setLoadingLabourCount] = useState(0);
+  const [loadingSubscriptionCount, setLoadingSubscriptionCount] = useState(0);
 
   const headerText = "FERN LABOUR ADMIN";
 
@@ -48,6 +57,8 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
       const interval = setInterval(() => {
         setLoadingNotificationCount(Math.floor(Math.random() * 1000));
         setLoadingMessageCount(Math.floor(Math.random() * 1000));
+        setLoadingLabourCount(Math.floor(Math.random() * 1000));
+        setLoadingSubscriptionCount(Math.floor(Math.random() * 1000));
       }, 100);
 
       return () => clearInterval(interval);
@@ -85,10 +96,13 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
         const lastVisit = localStorage.getItem(LAST_VISIT_KEY);
         const lastVisitTime = lastVisit ? new Date(lastVisit) : new Date(0);
 
-        const [notificationsRes, messagesRes] = await Promise.all([
-          fetch("/api/v1/notifications?limit=100"),
-          fetch("/api/v1/contact-messages/"),
-        ]);
+        const [notificationsRes, messagesRes, laboursRes, subscriptionsRes] =
+          await Promise.all([
+            fetch("/api/v1/notifications?limit=100"),
+            fetch("/api/v1/contact-messages/"),
+            fetch("/api/v1/admin/labours?limit=100"),
+            fetch("/api/v1/admin/subscriptions?limit=100"),
+          ]);
 
         if (notificationsRes.ok) {
           const notificationsData = await notificationsRes.json();
@@ -109,6 +123,30 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
             (m: ContactMessage) => new Date(m.received_at) > lastVisitTime,
           ).length;
           setNewMessagesCount(newCount);
+        }
+
+        if (laboursRes.ok) {
+          const laboursData: PaginatedResponse<LabourStatus> =
+            await laboursRes.json();
+          const allLabours = laboursData.data || [];
+          setLabours(allLabours);
+
+          const newCount = allLabours.filter(
+            (l: LabourStatus) => new Date(l.updated_at) > lastVisitTime,
+          ).length;
+          setNewLaboursCount(newCount);
+        }
+
+        if (subscriptionsRes.ok) {
+          const subscriptionsData: PaginatedResponse<SubscriptionStatus> =
+            await subscriptionsRes.json();
+          const allSubscriptions = subscriptionsData.data || [];
+          setSubscriptions(allSubscriptions);
+
+          const newCount = allSubscriptions.filter(
+            (s: SubscriptionStatus) => new Date(s.updated_at) > lastVisitTime,
+          ).length;
+          setNewSubscriptionsCount(newCount);
         }
 
         localStorage.setItem(LAST_VISIT_KEY, new Date().toISOString());
@@ -171,6 +209,28 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
               totalCount={notifications.length}
               loading={loading}
               loadingCount={loadingNotificationCount}
+              asciiMaxWidth={asciiMaxWidth}
+              isMobile={isMobile}
+            />
+
+            <StatusCard
+              title="LABOURS"
+              icon={Baby}
+              newCount={newLaboursCount}
+              totalCount={labours.length}
+              loading={loading}
+              loadingCount={loadingLabourCount}
+              asciiMaxWidth={asciiMaxWidth}
+              isMobile={isMobile}
+            />
+
+            <StatusCard
+              title="SUBSCRIPTIONS"
+              icon={Users}
+              newCount={newSubscriptionsCount}
+              totalCount={subscriptions.length}
+              loading={loading}
+              loadingCount={loadingSubscriptionCount}
               asciiMaxWidth={asciiMaxWidth}
               isMobile={isMobile}
             />

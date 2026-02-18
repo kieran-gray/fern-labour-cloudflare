@@ -35,6 +35,11 @@ export default {
         return await env.NOTIFICATIONS_API.fetch(modifiedRequest);
       } else if (url.pathname.startsWith("/api/v1/command")) {
         return await env.NOTIFICATIONS_API.fetch(modifiedRequest);
+      } else if (
+        url.pathname.startsWith("/api/v1/admin/labours") ||
+        url.pathname.startsWith("/api/v1/admin/subscriptions")
+      ) {
+        return await env.LABOUR_API.fetch(modifiedRequest);
       } else if (url.pathname.startsWith("/api/v1/admin")) {
         return await env.NOTIFICATIONS_API.fetch(modifiedRequest);
       } else if (url.pathname.startsWith("/api/v1/render")) {

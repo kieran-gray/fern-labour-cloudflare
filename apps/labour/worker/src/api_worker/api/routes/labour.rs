@@ -7,7 +7,11 @@ use worker::{Request, Response, RouteContext};
 
 use crate::api_worker::{
     AppState,
-    api::{exceptions::ApiError, schemas::requests::PlanLabourRequest},
+    api::{
+        exceptions::ApiError,
+        schemas::requests::PlanLabourRequest,
+        utils::{build_paginated_response, decode_paginated_query},
+    },
 };
 
 #[derive(Serialize)]
@@ -64,10 +68,7 @@ pub async fn handle_plan_labour(
         .await
         .map_err(|e| format!("Failed to send command to labour aggregate: {e}"))?;
 
-    info!(
-        labour_id = %labour_id,
-        "Labour planned successfully"
-    );
+    info!(labour_id = %labour_id, "Labour planned successfully");
 
     let response_body = PlanLabourResponse {
         labour_id: labour_id.to_string(),
@@ -114,5 +115,29 @@ pub async fn get_active_labour(
     let response = Response::from_json(&labour_status)
         .map_err(|e| format!("Failed to serialize response: {e}"))?;
 
+    Ok(cors_context.add_to_response(response))
+}
+
+pub async fn get_labours(
+    req: Request,
+    ctx: RouteContext<AppState>,
+    cors_context: CorsContext,
+    user: User,
+) -> worker::Result<Response> {
+    info!(user_id = %user.user_id, "List labours request");
+
+    let (limit, decoded_cursor) = decode_paginated_query(&req)
+        .map_err(|_| worker::Error::RustError("Invalid query params".into()))?;
+
+    let labours = ctx
+        .data
+        .labour_status_repository
+        .get(limit, decoded_cursor)
+        .await
+        .map_err(|e| format!("Failed to query labours: {e}"))?;
+
+    let response_body = build_paginated_response(labours, limit);
+    let response = Response::from_json(&response_body)
+        .map_err(|e| format!("Failed to serialize response: {e}"))?;
     Ok(cors_context.add_to_response(response))
 }

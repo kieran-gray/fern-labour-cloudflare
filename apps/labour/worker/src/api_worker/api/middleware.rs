@@ -53,7 +53,46 @@ where
         Err(e) => {
             info!(error = ?e, "User verification failed");
             let response =
-                Response::error("Unauthorised: User verification failed".to_string(), 404)?;
+                Response::error("Unauthorised: User verification failed".to_string(), 403)?;
+            return Ok(cors_context.add_to_response(response));
+        }
+    };
+
+    handler(req, ctx, cors_context, user).await
+}
+
+pub async fn admin_auth<F, Fut>(
+    handler: F,
+    req: Request,
+    ctx: RouteContext<AppState>,
+) -> Result<Response>
+where
+    F: Fn(Request, RouteContext<AppState>, CorsContext, User) -> Fut,
+    Fut: std::future::Future<Output = Result<Response>>,
+{
+    let cors_context = CorsContext::new(ctx.data.config.allowed_origins.clone(), &req);
+    if let Err(response) = cors_context.validate(&req) {
+        return Ok(response);
+    }
+
+    let authorization = match req.headers().get("Authorization").ok().flatten() {
+        Some(auth_header) => auth_header,
+        None => {
+            let response = Response::error("Unauthorised: Not Authenticated".to_string(), 401)?;
+            return Ok(cors_context.add_to_response(response));
+        }
+    };
+    let user = match ctx
+        .data
+        .auth_service
+        .authenticate(&authorization, vec![auth_issuers::CLOUDFLARE.to_string()])
+        .await
+    {
+        Ok(user) => user,
+        Err(e) => {
+            info!(error = ?e, "User verification failed");
+            let response =
+                Response::error("Unauthorised: User verification failed".to_string(), 403)?;
             return Ok(cors_context.add_to_response(response));
         }
     };
@@ -107,7 +146,7 @@ where
         Err(e) => {
             info!(error = ?e, "User verification failed");
             let response =
-                Response::error("Unauthorised: User verification failed".to_string(), 404)?;
+                Response::error("Unauthorised: User verification failed".to_string(), 403)?;
             return Ok(cors_context.add_to_response(response));
         }
     };
