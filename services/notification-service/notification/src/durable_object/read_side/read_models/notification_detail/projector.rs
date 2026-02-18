@@ -2,6 +2,7 @@ use anyhow::{Context, Result};
 use async_trait::async_trait;
 use tracing::info;
 
+use fern_labour_notifications_shared::value_objects::NotificationStatus as VONotificationStatus;
 use fern_labour_event_sourcing_rs::{AsyncProjector, AsyncRepositoryTrait, EventEnvelope};
 
 use crate::durable_object::{
@@ -44,15 +45,24 @@ impl NotificationDetailProjector {
 
             NotificationEvent::RenderedContentStored(e) => {
                 let mut detail = model?;
-                detail.status = "RENDERED".to_string();
+                detail.status = VONotificationStatus::RENDERED.to_string();
                 detail.rendered_content = Some(e.rendered_content.clone());
+                detail.updated_at = timestamp;
+                Some(detail)
+            }
+
+            NotificationEvent::NotificationScheduled(e) => {
+                let mut detail = model?;
+                detail.status = VONotificationStatus::SCHEDULED.to_string();
+                detail.external_id = e.external_id.clone();
+                detail.dispatched_at = Some(timestamp);
                 detail.updated_at = timestamp;
                 Some(detail)
             }
 
             NotificationEvent::NotificationDispatched(e) => {
                 let mut detail = model?;
-                detail.status = "SENT".to_string();
+                detail.status = VONotificationStatus::SENT.to_string();
                 detail.external_id = e.external_id.clone();
                 detail.dispatched_at = Some(timestamp);
                 detail.updated_at = timestamp;
@@ -61,7 +71,7 @@ impl NotificationDetailProjector {
 
             NotificationEvent::NotificationDelivered(_) => {
                 let mut detail = model?;
-                detail.status = "DELIVERED".to_string();
+                detail.status = VONotificationStatus::DELIVERED.to_string();
                 detail.delivered_at = Some(timestamp);
                 detail.updated_at = timestamp;
                 Some(detail)
@@ -69,7 +79,7 @@ impl NotificationDetailProjector {
 
             NotificationEvent::NotificationDeliveryFailed(_) => {
                 let mut detail = model?;
-                detail.status = "FAILED".to_string();
+                detail.status = VONotificationStatus::FAILED.to_string();
                 detail.failed_at = Some(timestamp);
                 detail.updated_at = timestamp;
                 Some(detail)
@@ -77,7 +87,7 @@ impl NotificationDetailProjector {
 
             NotificationEvent::NotificationContentRedacted(_) => {
                 let mut detail = model?;
-                detail.status = "REDACTED".to_string();
+                detail.status = VONotificationStatus::REDACTED.to_string();
                 detail.rendered_content = None;
                 detail.updated_at = timestamp;
                 Some(detail)
@@ -85,7 +95,7 @@ impl NotificationDetailProjector {
 
             NotificationEvent::NotificationDeleted { .. } => {
                 let mut detail = model?;
-                detail.status = "DELETED".to_string();
+                detail.status = VONotificationStatus::DELETED.to_string();
                 detail.updated_at = timestamp;
                 Some(detail)
             }

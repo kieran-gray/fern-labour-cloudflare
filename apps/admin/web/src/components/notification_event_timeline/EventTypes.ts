@@ -17,6 +17,7 @@ export interface NotificationRequestedData {
     type: string;
     [key: string]: unknown;
   };
+  scheduled_at?: string | null;
   metadata: Record<string, unknown> | null;
 }
 
@@ -42,13 +43,22 @@ export interface NotificationDispatchedData {
   external_id: string;
 }
 
+export interface NotificationScheduledData {
+  notification_id: string;
+  external_id: string | null;
+  provider: string;
+}
+
 export interface NotificationDeliveredData {
   notification_id: string;
 }
 
 export interface NotificationFailedData {
   notification_id: string;
-  error: string;
+  error?: string;
+  reason?: string | null;
+  provider?: string;
+  external_id?: string;
 }
 
 export interface NotificationContentRedacted {
@@ -62,9 +72,11 @@ export interface NotificationDeleted {
 export type NotificationEvent =
   | { type: "NotificationRequested"; data: NotificationRequestedData }
   | { type: "RenderedContentStored"; data: RenderedContentStoredData }
+  | { type: "NotificationScheduled"; data: NotificationScheduledData }
   | { type: "NotificationDispatched"; data: NotificationDispatchedData }
   | { type: "NotificationDelivered"; data: NotificationDeliveredData }
   | { type: "NotificationFailed"; data: NotificationFailedData }
+  | { type: "NotificationDeliveryFailed"; data: NotificationFailedData }
   | { type: "NotificationContentRedacted"; data: NotificationContentRedacted }
   | { type: "NotificationDeleted"; data: NotificationDeleted };
 

@@ -4,7 +4,7 @@ use fern_labour_notifications_shared::{
     NotificationCommand,
     value_objects::{
         NotificationChannel, NotificationDestination, NotificationStatus, NotificationTemplateData,
-        RenderedContent,
+        RenderedContent, ScheduledAt,
     },
 };
 use serde::{Deserialize, Serialize};
@@ -14,6 +14,7 @@ use fern_labour_event_sourcing_rs::Aggregate;
 
 use crate::durable_object::write_side::domain::{
     NotificationContentRedacted, NotificationDeleted, NotificationError, NotificationEvent,
+    NotificationScheduled,
     events::{
         NotificationDelivered, NotificationDeliveryFailed, NotificationDispatched,
         NotificationRequested, RenderedContentStored,
@@ -27,6 +28,7 @@ pub struct Notification {
     channel: NotificationChannel,
     destination: NotificationDestination,
     template_data: NotificationTemplateData,
+    scheduled_at: Option<ScheduledAt>,
     metadata: Option<HashMap<String, String>>,
     external_id: Option<String>,
     sent_via_provider: Option<String>,
@@ -53,6 +55,10 @@ impl Notification {
 
     pub fn template_data(&self) -> &NotificationTemplateData {
         &self.template_data
+    }
+
+    pub fn scheduled_at(&self) -> Option<&ScheduledAt> {
+        self.scheduled_at.as_ref()
     }
 
     pub fn metadata(&self) -> Option<&HashMap<String, String>> {
@@ -88,12 +94,18 @@ impl Aggregate for Notification {
                 self.channel = e.channel.clone();
                 self.destination = e.destination.clone();
                 self.template_data = e.template_data.clone();
+                self.scheduled_at = e.scheduled_at.clone();
                 self.metadata = e.metadata.clone();
                 self.status = NotificationStatus::REQUESTED;
             }
             NotificationEvent::RenderedContentStored(e) => {
                 self.rendered_content = Some(e.rendered_content.clone());
                 self.status = NotificationStatus::RENDERED;
+            }
+            NotificationEvent::NotificationScheduled(e) => {
+                self.external_id = e.external_id.clone();
+                self.sent_via_provider = Some(e.provider.clone());
+                self.status = NotificationStatus::SCHEDULED;
             }
             NotificationEvent::NotificationDispatched(e) => {
                 self.external_id = e.external_id.clone();
@@ -125,6 +137,7 @@ impl Aggregate for Notification {
                 channel,
                 destination,
                 template_data,
+                scheduled_at,
                 metadata,
             } => {
                 if state.is_some() {
@@ -144,6 +157,7 @@ impl Aggregate for Notification {
                         channel: channel.clone(),
                         destination,
                         template_data: template_data.clone(),
+                        scheduled_at,
                         metadata,
                     },
                 )]
@@ -172,6 +186,31 @@ impl Aggregate for Notification {
                     RenderedContentStored {
                         notification_id,
                         rendered_content: rendered_content.clone(),
+                    },
+                )]
+            }
+            NotificationCommand::MarkAsScheduled {
+                notification_id,
+                provider,
+                external_id,
+            } => {
+                let Some(notification) = &state else {
+                    return Err(NotificationError::NotFound);
+                };
+
+                if ![NotificationStatus::RENDERED, NotificationStatus::FAILED]
+                    .contains(&notification.status)
+                {
+                    return Err(NotificationError::InvalidStateTransition(
+                        "Cannot schedule notification in current state".to_string(),
+                    ));
+                }
+
+                vec![NotificationEvent::NotificationScheduled(
+                    NotificationScheduled {
+                        notification_id,
+                        external_id,
+                        provider,
                     },
                 )]
             }
@@ -208,9 +247,11 @@ impl Aggregate for Notification {
                     return Err(NotificationError::NotFound);
                 };
 
-                if notification.status != NotificationStatus::SENT {
+                if ![NotificationStatus::SENT, NotificationStatus::SCHEDULED]
+                    .contains(&notification.status)
+                {
                     return Err(NotificationError::InvalidStateTransition(
-                        "Cannot mark as delivered if not in SENT state".to_string(),
+                        "Cannot mark as delivered if not in SENT or SCHEDULED state".to_string(),
                     ));
                 }
 
@@ -243,9 +284,11 @@ impl Aggregate for Notification {
                     ));
                 };
 
-                if NotificationStatus::SENT != notification.status {
+                if ![NotificationStatus::SENT, NotificationStatus::SCHEDULED]
+                    .contains(&notification.status)
+                {
                     return Err(NotificationError::InvalidStateTransition(
-                        "Can only mark as failed from SENT state".to_string(),
+                        "Can only mark as failed from SENT or SCHEDULED state".to_string(),
                     ));
                 }
 
@@ -302,6 +345,7 @@ impl Aggregate for Notification {
                 channel: e.channel.clone(),
                 destination: e.destination.clone(),
                 template_data: e.template_data.clone(),
+                scheduled_at: e.scheduled_at.clone(),
                 metadata: e.metadata.clone(),
                 external_id: None,
                 sent_via_provider: None,
@@ -322,6 +366,7 @@ impl Aggregate for Notification {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use chrono::{Duration, Utc};
     use fern_labour_notifications_shared::value_objects::EmailAddress;
 
     fn create_test_notification_id() -> Uuid {
@@ -348,6 +393,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: data.clone(),
+            scheduled_at: None,
             metadata: None,
         };
 
@@ -357,6 +403,33 @@ mod tests {
             events[0],
             NotificationEvent::NotificationRequested { .. }
         ));
+    }
+
+    #[test]
+    fn test_request_notification_with_scheduled_at_creates_event() {
+        let notification_id = create_test_notification_id();
+        let data = create_test_data();
+        let now = Utc::now();
+        let scheduled_at = ScheduledAt::new_with_now(now + Duration::minutes(31), now).unwrap();
+
+        let command = NotificationCommand::RequestNotification {
+            notification_id,
+            channel: NotificationChannel::EMAIL,
+            destination: create_test_destination(),
+            template_data: data,
+            scheduled_at: Some(scheduled_at.clone()),
+            metadata: None,
+        };
+
+        let events = Notification::handle_command(None, command).unwrap();
+
+        assert_eq!(events.len(), 1);
+        match &events[0] {
+            NotificationEvent::NotificationRequested(e) => {
+                assert_eq!(e.scheduled_at, Some(scheduled_at));
+            }
+            _ => panic!("Expected NotificationRequested event"),
+        }
     }
 
     #[test]
@@ -370,6 +443,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: data.clone(),
+            scheduled_at: None,
             metadata: None,
             external_id: None,
             sent_via_provider: None,
@@ -382,6 +456,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: data,
+            scheduled_at: None,
             metadata: None,
         };
 
@@ -400,6 +475,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: create_test_data(),
+            scheduled_at: None,
             metadata: None,
             external_id: None,
             sent_via_provider: None,
@@ -433,6 +509,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: create_test_data(),
+            scheduled_at: None,
             metadata: None,
             external_id: Some("ext-123".to_string()),
             sent_via_provider: None,
@@ -466,6 +543,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: create_test_data(),
+            scheduled_at: None,
             metadata: None,
             external_id: None,
             sent_via_provider: None,
@@ -504,6 +582,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: create_test_data(),
+            scheduled_at: None,
             metadata: None,
             external_id: Some("ext-123".to_string()),
             sent_via_provider: None,
@@ -529,6 +608,77 @@ mod tests {
     }
 
     #[test]
+    fn test_mark_as_scheduled() {
+        let notification_id = create_test_notification_id();
+
+        let notification = Notification {
+            id: notification_id,
+            status: NotificationStatus::RENDERED,
+            channel: NotificationChannel::EMAIL,
+            destination: create_test_destination(),
+            template_data: create_test_data(),
+            scheduled_at: None,
+            metadata: None,
+            external_id: None,
+            sent_via_provider: None,
+            rendered_content: Some(RenderedContent::Email {
+                subject: "Test Subject".into(),
+                html_body: "<h1>TestBody</h1>".into(),
+            }),
+            failure_reason: None,
+        };
+
+        let command = NotificationCommand::MarkAsScheduled {
+            notification_id,
+            provider: "twilio".to_string(),
+            external_id: Some("sch-123".to_string()),
+        };
+
+        let events = Notification::handle_command(Some(&notification), command).unwrap();
+
+        assert_eq!(events.len(), 1);
+        assert!(matches!(
+            events[0],
+            NotificationEvent::NotificationScheduled(NotificationScheduled {
+                external_id: Some(_),
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn test_mark_as_scheduled_from_wrong_state_fails() {
+        let notification_id = create_test_notification_id();
+
+        let notification = Notification {
+            id: notification_id,
+            status: NotificationStatus::REQUESTED,
+            channel: NotificationChannel::EMAIL,
+            destination: create_test_destination(),
+            template_data: create_test_data(),
+            scheduled_at: None,
+            metadata: None,
+            external_id: None,
+            sent_via_provider: None,
+            rendered_content: None,
+            failure_reason: None,
+        };
+
+        let command = NotificationCommand::MarkAsScheduled {
+            notification_id,
+            provider: "twilio".to_string(),
+            external_id: Some("sch-123".to_string()),
+        };
+
+        let result = Notification::handle_command(Some(&notification), command);
+
+        assert!(matches!(
+            result,
+            Err(NotificationError::InvalidStateTransition(_))
+        ));
+    }
+
+    #[test]
     fn test_mark_as_delivered() {
         let notification_id = create_test_notification_id();
 
@@ -538,6 +688,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: create_test_data(),
+            scheduled_at: None,
             metadata: None,
             external_id: Some("ext-123".to_string()),
             sent_via_provider: None,
@@ -563,6 +714,41 @@ mod tests {
     }
 
     #[test]
+    fn test_mark_as_delivered_from_scheduled() {
+        let notification_id = create_test_notification_id();
+
+        let notification = Notification {
+            id: notification_id,
+            status: NotificationStatus::SCHEDULED,
+            channel: NotificationChannel::EMAIL,
+            destination: create_test_destination(),
+            template_data: create_test_data(),
+            scheduled_at: None,
+            metadata: None,
+            external_id: Some("sch-123".to_string()),
+            sent_via_provider: Some("twilio".to_string()),
+            rendered_content: Some(RenderedContent::Email {
+                subject: "Test Subject".into(),
+                html_body: "<h1>TestBody</h1>".into(),
+            }),
+            failure_reason: None,
+        };
+
+        let command = NotificationCommand::MarkAsDelivered {
+            notification_id,
+            provider: "twilio".to_string(),
+        };
+
+        let events = Notification::handle_command(Some(&notification), command).unwrap();
+
+        assert_eq!(events.len(), 1);
+        assert!(matches!(
+            events[0],
+            NotificationEvent::NotificationDelivered { .. }
+        ));
+    }
+
+    #[test]
     fn test_mark_as_delivered_from_wrong_state_fails() {
         let notification_id = create_test_notification_id();
 
@@ -572,6 +758,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: create_test_data(),
+            scheduled_at: None,
             metadata: None,
             external_id: None,
             sent_via_provider: None,
@@ -602,6 +789,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: create_test_data(),
+            scheduled_at: None,
             metadata: None,
             external_id: None,
             sent_via_provider: None,
@@ -635,6 +823,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: create_test_data(),
+            scheduled_at: None,
             metadata: None,
             external_id: Some("ext-123".to_string()),
             sent_via_provider: None,
@@ -661,6 +850,42 @@ mod tests {
     }
 
     #[test]
+    fn test_mark_as_failed_from_scheduled() {
+        let notification_id = create_test_notification_id();
+
+        let notification = Notification {
+            id: notification_id,
+            status: NotificationStatus::SCHEDULED,
+            channel: NotificationChannel::EMAIL,
+            destination: create_test_destination(),
+            template_data: create_test_data(),
+            scheduled_at: None,
+            metadata: None,
+            external_id: Some("sch-123".to_string()),
+            sent_via_provider: Some("twilio".to_string()),
+            rendered_content: Some(RenderedContent::Email {
+                subject: "Test Subject".into(),
+                html_body: "<h1>TestBody</h1>".into(),
+            }),
+            failure_reason: None,
+        };
+
+        let command = NotificationCommand::MarkAsFailed {
+            notification_id,
+            reason: Some("Something went wrong".to_string()),
+            provider: "twilio".to_string(),
+        };
+
+        let events = Notification::handle_command(Some(&notification), command).unwrap();
+
+        assert_eq!(events.len(), 1);
+        assert!(matches!(
+            events[0],
+            NotificationEvent::NotificationDeliveryFailed { .. }
+        ));
+    }
+
+    #[test]
     fn test_mark_as_failed_without_external_id_fails() {
         let notification_id = create_test_notification_id();
 
@@ -670,6 +895,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: create_test_data(),
+            scheduled_at: None,
             metadata: None,
             external_id: None,
             sent_via_provider: None,
@@ -702,6 +928,7 @@ mod tests {
                 channel: NotificationChannel::EMAIL,
                 destination: create_test_destination(),
                 template_data: data.clone(),
+                scheduled_at: None,
                 metadata: None,
             }),
             NotificationEvent::RenderedContentStored(RenderedContentStored {
@@ -745,6 +972,7 @@ mod tests {
             channel: NotificationChannel::EMAIL,
             destination: create_test_destination(),
             template_data: data.clone(),
+            scheduled_at: None,
             metadata: None,
             external_id: None,
             sent_via_provider: None,

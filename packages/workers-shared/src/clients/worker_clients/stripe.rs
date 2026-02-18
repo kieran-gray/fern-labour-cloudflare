@@ -22,7 +22,7 @@ pub struct StripePriceList {
 
 #[derive(Debug, Clone)]
 pub struct AutomaticTax {
-    pub enabled: bool
+    pub enabled: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -137,10 +137,16 @@ impl WorkerStripeClient {
             ("mode".to_string(), "payment".to_string()),
             ("success_url".to_string(), request.success_url.clone()),
             ("cancel_url".to_string(), request.cancel_url.clone()),
-            ("allow_promotion_codes".to_string(), request.allow_promotion_codes.to_string()),
+            (
+                "allow_promotion_codes".to_string(),
+                request.allow_promotion_codes.to_string(),
+            ),
             ("line_items[0][price]".to_string(), price_id.to_string()),
             ("line_items[0][quantity]".to_string(), "1".to_string()),
-            ("automatic_tax[enabled]".to_string(), request.automatic_tax.enabled.to_string()),
+            (
+                "automatic_tax[enabled]".to_string(),
+                request.automatic_tax.enabled.to_string(),
+            ),
         ];
 
         if let Some(email) = request.customer_email.clone() {

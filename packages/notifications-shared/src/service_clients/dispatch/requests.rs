@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -9,6 +10,16 @@ pub struct DispatchRequest {
     pub channel: NotificationChannel,
     pub destination: NotificationDestination,
     pub rendered_content: RenderedContent,
+    pub idempotency_key: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ScheduleRequest {
+    pub notification_id: Uuid,
+    pub channel: NotificationChannel,
+    pub destination: NotificationDestination,
+    pub rendered_content: RenderedContent,
+    pub scheduled_at: DateTime<Utc>,
     pub idempotency_key: String,
 }
 

@@ -135,6 +135,13 @@ const NotificationDetailView = ({
           color: "text-cp-blue",
           bgColor: "bg-cp-blue",
         };
+      case "SCHEDULED":
+        return {
+          label: "SCHEDULED",
+          icon: <Clock className="size-5" />,
+          color: "text-cp-blue",
+          bgColor: "bg-cp-blue",
+        };
       case "RENDERED":
         return {
           label: "RENDERED",

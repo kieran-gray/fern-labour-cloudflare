@@ -2,7 +2,8 @@ use anyhow::{Context, Result, anyhow};
 use fern_labour_notifications_shared::{
     NotificationCommand, ServiceCommand,
     service_clients::{
-        DispatchClient, DispatchRequest, GenerationClient, dispatch::requests::RedactRequest,
+        DispatchClient, DispatchRequest, GenerationClient,
+        dispatch::requests::{RedactRequest, ScheduleRequest},
     },
 };
 use tracing::info;
@@ -39,6 +40,34 @@ impl ServiceCommandProcessor {
                 Ok(NotificationCommand::StoreRenderedContent {
                     notification_id,
                     rendered_content,
+                })
+            }
+            ServiceCommand::ScheduleNotification {
+                notification_id,
+                channel,
+                destination,
+                rendered_content,
+                scheduled_at,
+            } => {
+                let request = ScheduleRequest {
+                    notification_id,
+                    channel,
+                    destination,
+                    rendered_content,
+                    scheduled_at: scheduled_at.into_inner(),
+                    idempotency_key: format!("notification-{}", notification_id),
+                };
+
+                let response = self
+                    .dispatch_client
+                    .schedule(request)
+                    .await
+                    .context("Failed to schedule notification")?;
+
+                Ok(NotificationCommand::MarkAsScheduled {
+                    notification_id,
+                    external_id: response.external_id,
+                    provider: response.provider,
                 })
             }
             ServiceCommand::DispatchNotification {

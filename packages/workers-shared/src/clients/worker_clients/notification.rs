@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use async_trait::async_trait;
+use chrono::{DateTime, Utc};
 use fern_labour_notifications_shared::service_clients::notification::{
     NotificationClient, NotificationClientError, NotificationRequest,
 };
@@ -34,12 +35,14 @@ impl NotificationClient for FetcherNotificationClient {
         channel: NotificationChannel,
         destination: String,
         template_data: NotificationTemplateData,
+        scheduled_at: Option<DateTime<Utc>>,
         metadata: Option<HashMap<String, String>>,
     ) -> Result<(), NotificationClientError> {
         let request = NotificationRequest {
             channel: channel.to_string(),
             destination,
             template_data,
+            scheduled_at,
             metadata,
         };
 

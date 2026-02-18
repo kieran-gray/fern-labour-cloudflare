@@ -1,5 +1,6 @@
 use anyhow::{Context, Result};
 use async_trait::async_trait;
+use fern_labour_notifications_shared::value_objects::NotificationStatus as VONotificationStatus;
 use tracing::info;
 
 use fern_labour_event_sourcing_rs::{AsyncProjector, AsyncRepositoryTrait, EventEnvelope};
@@ -37,42 +38,49 @@ impl NotificationStatusProjector {
 
             NotificationEvent::RenderedContentStored { .. } => {
                 let mut model = model?;
-                model.status = "RENDERED".to_string();
+                model.status = VONotificationStatus::RENDERED.to_string();
+                model.updated_at = timestamp;
+                Some(model)
+            }
+
+            NotificationEvent::NotificationScheduled { .. } => {
+                let mut model = model?;
+                model.status = VONotificationStatus::SCHEDULED.to_string();
                 model.updated_at = timestamp;
                 Some(model)
             }
 
             NotificationEvent::NotificationDispatched { .. } => {
                 let mut model = model?;
-                model.status = "SENT".to_string();
+                model.status = VONotificationStatus::SENT.to_string();
                 model.updated_at = timestamp;
                 Some(model)
             }
 
             NotificationEvent::NotificationDelivered { .. } => {
                 let mut model = model?;
-                model.status = "DELIVERED".to_string();
+                model.status = VONotificationStatus::DELIVERED.to_string();
                 model.updated_at = timestamp;
                 Some(model)
             }
 
             NotificationEvent::NotificationDeliveryFailed { .. } => {
                 let mut model = model?;
-                model.status = "FAILED".to_string();
+                model.status = VONotificationStatus::FAILED.to_string();
                 model.updated_at = timestamp;
                 Some(model)
             }
 
             NotificationEvent::NotificationContentRedacted { .. } => {
                 let mut model = model?;
-                model.status = "REDACTED".to_string();
+                model.status = VONotificationStatus::REDACTED.to_string();
                 model.updated_at = timestamp;
                 Some(model)
             }
 
             NotificationEvent::NotificationDeleted { .. } => {
                 let mut model = model?;
-                model.status = "DELETED".to_string();
+                model.status = VONotificationStatus::DELETED.to_string();
                 model.updated_at = timestamp;
                 Some(model)
             }

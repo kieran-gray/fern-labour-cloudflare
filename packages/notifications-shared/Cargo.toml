@@ -7,9 +7,10 @@ edition.workspace = true
 crate-type = ["rlib"]
 
 [dependencies]
-serde.workspace = true
-uuid.workspace = true
-async-trait.workspace = true
-strum.workspace = true
 anyhow.workspace = true
+async-trait.workspace = true
+chrono.workspace = true
+serde.workspace = true
+strum.workspace = true
+uuid.workspace = true
 worker.workspace = true

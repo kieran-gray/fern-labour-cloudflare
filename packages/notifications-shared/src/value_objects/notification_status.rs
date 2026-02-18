@@ -7,6 +7,8 @@ pub enum NotificationStatus {
     REQUESTED,
     #[strum(serialize = "RENDERED", serialize = "rendered")]
     RENDERED,
+    #[strum(serialize = "SCHEDULED", serialize = "scheduled")]
+    SCHEDULED,
     #[strum(serialize = "SENT", serialize = "sent")]
     SENT,
     #[strum(serialize = "FAILED", serialize = "failed")]
@@ -24,6 +26,7 @@ impl std::fmt::Display for NotificationStatus {
         match self {
             NotificationStatus::REQUESTED => write!(f, "REQUESTED"),
             NotificationStatus::RENDERED => write!(f, "RENDERED"),
+            NotificationStatus::SCHEDULED => write!(f, "SCHEDULED"),
             NotificationStatus::SENT => write!(f, "SENT"),
             NotificationStatus::FAILED => write!(f, "FAILED"),
             NotificationStatus::DELIVERED => write!(f, "DELIVERED"),

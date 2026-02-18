@@ -1,5 +1,6 @@
 use fern_labour_notifications_shared::value_objects::{
     NotificationChannel, NotificationDestination, NotificationTemplateData, RenderedContent,
+    ScheduledAt,
 };
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fmt::Debug};
@@ -13,6 +14,7 @@ pub struct NotificationRequested {
     pub channel: NotificationChannel,
     pub destination: NotificationDestination,
     pub template_data: NotificationTemplateData,
+    pub scheduled_at: Option<ScheduledAt>,
     pub metadata: Option<HashMap<String, String>>,
 }
 
@@ -20,6 +22,13 @@ pub struct NotificationRequested {
 pub struct RenderedContentStored {
     pub notification_id: Uuid,
     pub rendered_content: RenderedContent,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct NotificationScheduled {
+    pub notification_id: Uuid,
+    pub external_id: Option<String>,
+    pub provider: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -56,6 +65,7 @@ pub struct NotificationDeleted {
 
 impl_event!(NotificationRequested, notification_id);
 impl_event!(RenderedContentStored, notification_id);
+impl_event!(NotificationScheduled, notification_id);
 impl_event!(NotificationDispatched, notification_id);
 impl_event!(NotificationDelivered, notification_id);
 impl_event!(NotificationDeliveryFailed, notification_id);
@@ -69,6 +79,7 @@ use fern_labour_event_sourcing_rs::StoredEvent;
 pub enum NotificationEvent {
     NotificationRequested(NotificationRequested),
     RenderedContentStored(RenderedContentStored),
+    NotificationScheduled(NotificationScheduled),
     NotificationDispatched(NotificationDispatched),
     NotificationDelivered(NotificationDelivered),
     NotificationDeliveryFailed(NotificationDeliveryFailed),
@@ -112,6 +123,7 @@ macro_rules! delegate_event_impl {
 delegate_event_impl!(
     NotificationRequested,
     RenderedContentStored,
+    NotificationScheduled,
     NotificationDispatched,
     NotificationDelivered,
     NotificationDeliveryFailed,

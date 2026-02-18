@@ -57,7 +57,7 @@ export function DynamicCommandForm({
             ...templateData,
           },
           metadata: formData.metadata ? JSON.parse(formData.metadata) : null,
-          priority: formData.priority || "Normal",
+          scheduled_at: formData.scheduled_at || null,
         };
       }
 
@@ -98,6 +98,20 @@ export function DynamicCommandForm({
         };
       }
 
+      if (command.id === "mark_as_scheduled") {
+        return {
+          type: "Internal",
+          payload: {
+            type: "MarkAsScheduled",
+            payload: {
+              notification_id: formData.notification_id,
+              external_id: formData.external_id || null,
+              provider: formData.provider,
+            },
+          },
+        };
+      }
+
       if (command.id === "mark_as_dispatched") {
         return {
           type: "Internal",
@@ -106,6 +120,7 @@ export function DynamicCommandForm({
             payload: {
               notification_id: formData.notification_id,
               external_id: formData.external_id || null,
+              sent_via_provider: formData.sent_via_provider,
             },
           },
         };
@@ -118,6 +133,7 @@ export function DynamicCommandForm({
             type: "MarkAsDelivered",
             payload: {
               notification_id: formData.notification_id,
+              provider: formData.provider,
             },
           },
         };
@@ -131,6 +147,7 @@ export function DynamicCommandForm({
             payload: {
               notification_id: formData.notification_id,
               reason: formData.reason || null,
+              provider: formData.provider,
             },
           },
         };
@@ -432,7 +449,7 @@ export function DynamicCommandForm({
         {/* Preview Section */}
         {command.id === "request_notification" && (
           <div className="pt-4 border-t-2 border-cp-black space-y-4">
-            <div className="flex gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row">
               <Button
                 type="button"
                 disabled={previewLoading || loading}

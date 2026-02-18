@@ -4,7 +4,7 @@ use anyhow::{Context, Result};
 use fern_labour_notifications_shared::NotificationCommand;
 use fern_labour_notifications_shared::service_clients::notification::NotificationRequest;
 use fern_labour_notifications_shared::value_objects::{
-    NotificationChannel, NotificationDestination,
+    NotificationChannel, NotificationDestination, ScheduledAt,
 };
 use strum::VariantNames;
 use uuid::Uuid;
@@ -38,11 +38,20 @@ impl NotificationRequestExt for NotificationRequest {
                     )
                 })?;
 
+        let scheduled_at = self
+            .scheduled_at
+            .map(ScheduledAt::new)
+            .transpose()
+            .context(
+                "Invalid scheduled_at. Must be at least 30 minutes and less than 30 days in the future",
+            )?;
+
         Ok(NotificationCommand::RequestNotification {
             notification_id,
             channel,
             destination,
             template_data: self.template_data,
+            scheduled_at,
             metadata: self.metadata,
         })
     }
@@ -52,6 +61,7 @@ impl NotificationRequestExt for NotificationRequest {
 mod tests {
     use std::collections::HashMap;
 
+    use chrono::{Duration, Utc};
     use fern_labour_notifications_shared::service_clients::notification::NotificationRequest;
     use fern_labour_notifications_shared::value_objects::NotificationTemplateData;
     use uuid::Uuid;
@@ -66,6 +76,7 @@ mod tests {
             template_data: NotificationTemplateData::ContactUs {
                 name: "TEST".to_string(),
             },
+            scheduled_at: None,
             metadata: None,
         };
 
@@ -96,6 +107,7 @@ mod tests {
             template_data: NotificationTemplateData::ContactUs {
                 name: "TEST".to_string(),
             },
+            scheduled_at: None,
             metadata: None,
         };
 
@@ -114,6 +126,7 @@ mod tests {
             template_data: NotificationTemplateData::ContactUs {
                 name: "TEST".to_string(),
             },
+            scheduled_at: None,
             metadata: None,
         };
 
@@ -125,7 +138,9 @@ mod tests {
     }
 
     #[test]
-    fn includes_metadata_and_priority() {
+    fn includes_optional_fields() {
+        let scheduled_at = Utc::now() + Duration::minutes(31);
+
         let mut metadata = HashMap::new();
         metadata.insert("key".to_string(), "value".to_string());
 
@@ -135,15 +150,43 @@ mod tests {
             template_data: NotificationTemplateData::ContactUs {
                 name: "TEST".to_string(),
             },
+            scheduled_at: Some(scheduled_at),
             metadata: Some(metadata.clone()),
         };
 
         let result = dto.try_into_domain(Uuid::now_v7()).unwrap();
         match result {
-            NotificationCommand::RequestNotification { metadata: m, .. } => {
+            NotificationCommand::RequestNotification {
+                metadata: m,
+                scheduled_at: s,
+                ..
+            } => {
                 assert_eq!(m, Some(metadata));
+                assert_eq!(s.unwrap().as_datetime(), &scheduled_at);
             }
             _ => panic!("Expected RequestNotification variant"),
         }
+    }
+
+    #[test]
+    fn returns_error_for_schedule_too_soon() {
+        let dto = NotificationRequest {
+            channel: "EMAIL".to_string(),
+            destination: "user@example.com".to_string(),
+            template_data: NotificationTemplateData::ContactUs {
+                name: "TEST".to_string(),
+            },
+            scheduled_at: Some(Utc::now() + Duration::minutes(10)),
+            metadata: None,
+        };
+
+        let result = dto.try_into_domain(Uuid::now_v7());
+        assert!(result.is_err());
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("Invalid scheduled_at")
+        );
     }
 }
