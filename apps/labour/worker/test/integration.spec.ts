@@ -82,7 +82,7 @@ describe("Labour Worker", () => {
         body: JSON.stringify({}),
       });
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(403);
       expect(await response.text()).toContain("User verification failed");
     });
 
