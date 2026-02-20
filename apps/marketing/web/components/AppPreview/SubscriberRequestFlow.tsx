@@ -10,8 +10,8 @@ interface SubscriberData {
 }
 
 const subscriber: SubscriberData = {
-  firstName: 'Sarah',
-  lastName: 'Miller',
+  firstName: 'Amy',
+  lastName: 'Cole',
 };
 
 function PendingRequestCard({
@@ -30,7 +30,7 @@ function PendingRequestCard({
         <Avatar size={44} radius="xl" color="orange" variant="light">
           {initials}
         </Avatar>
-        <div style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, textAlign: 'start' }}>
           <Text fw={600} size="sm" className={classes.cropText}>
             {name}
           </Text>

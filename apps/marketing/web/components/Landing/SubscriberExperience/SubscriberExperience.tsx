@@ -16,7 +16,7 @@ export function SubscriberExperience() {
           viewport={{ once: true, margin: '-10%' }}
         >
           <Title className={classes.title}>
-            Be there, without being <i>in there</i>.
+            Be there, without being <i>in there</i>
           </Title>
           <Text className={classes.description}>
             The constant check-ins can add pressure. Let her focus. She shares the news once and it

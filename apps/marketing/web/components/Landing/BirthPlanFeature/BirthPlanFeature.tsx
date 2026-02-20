@@ -175,7 +175,7 @@ export function BirthPlanFeature({ callToActionUrl }: BirthPlanFeatureProps) {
 
               <div className={classes.section} style={{ marginTop: 'var(--mantine-spacing-md)' }}>
                 <div className={classes.sectionHeading} />
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                {[1, 2, 3, 4, 5, 6].map((i) => (
                   <motion.div key={i} className={classes.row} variants={itemVariants}>
                     <motion.div className={classes.label} variants={lineVariants} />
                     <motion.div className={classes.value} variants={lineVariants} />

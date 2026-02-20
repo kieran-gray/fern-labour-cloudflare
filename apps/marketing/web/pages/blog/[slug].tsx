@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { format } from 'date-fns';
+import { motion, useScroll } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
-import { Avatar, Badge, Box, Button, Group, Paper, Text, Title } from '@mantine/core';
+import { Affix, Avatar, Badge, Box, Button, Group, Paper, Text, Title } from '@mantine/core';
 import { ContactMessageFloating } from '../../components/ContactUsFloating/ContactUsFloating';
 import { FooterSimple } from '../../components/Footer/Footer';
 import { Header01 } from '../../components/Header/Header';
@@ -18,6 +19,7 @@ interface BlogPostProps {
 
 export default function BlogPost({ post }: BlogPostProps) {
   const router = useRouter();
+  const { scrollYProgress } = useScroll();
 
   if (!router.isFallback && !post?.slug) {
     return <ErrorPage statusCode={404} />;
@@ -49,6 +51,18 @@ export default function BlogPost({ post }: BlogPostProps) {
           }}
         />
       </Head>
+
+      <Affix position={{ top: 0, left: 0 }} zIndex={100}>
+        <motion.div
+          style={{
+            scaleY: scrollYProgress,
+            transformOrigin: 'top',
+            width: 4,
+            height: '100vh',
+            backgroundColor: 'var(--mantine-color-pink-3)',
+          }}
+        />
+      </Affix>
 
       <Header01
         breakpoint="sm"

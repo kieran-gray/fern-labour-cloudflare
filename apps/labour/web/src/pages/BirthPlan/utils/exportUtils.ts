@@ -527,8 +527,19 @@ export function exportAsPDF(data: BirthPlanData): void {
   `;
 
   printWindow.document.write(html);
-  printWindow.document.close();
-  printWindow.onload = () => {
+
+  let printed = false;
+  const triggerPrint = () => {
+    if (printed) {
+      return;
+    }
+    printed = true;
+    printWindow.focus();
     printWindow.print();
   };
+
+  printWindow.onload = triggerPrint;
+  printWindow.document.close();
+
+  setTimeout(triggerPrint, 500);
 }

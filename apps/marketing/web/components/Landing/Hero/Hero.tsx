@@ -17,9 +17,9 @@ export function Hero() {
         <div className={classes.content}>
           <motion.div variants={fadeUp} initial="hidden" animate="visible">
             <Title className={classes.title}>
-              Be present for your birth.
+              Be present for your birth
               <br />
-              <span className={classes.highlight}>We'll keep your people close.</span>
+              <span className={classes.highlight}>We'll keep your people close</span>
             </Title>
           </motion.div>
 
@@ -30,7 +30,7 @@ export function Hero() {
             transition={{ delay: 0.2 }}
           >
             <Text className={classes.description}>
-              Track contractions, get calm guidance, and keep your chosen circle updated.
+              Track contractions, get calm guidance, and keep your chosen circle updated
             </Text>
           </motion.div>
 

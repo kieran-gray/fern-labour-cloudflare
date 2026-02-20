@@ -28,7 +28,7 @@ const DEFAULT_SUBSCRIBERS: Subscriber[] = [
 const SARAH: Subscriber = {
   id: '3',
   initials: 'SM',
-  name: 'Sarah Miller',
+  name: 'Amy Cole',
   role: SubscriberRole.LOVED_ONE,
   color: 'orange',
 };
@@ -45,8 +45,8 @@ function SubscribedUsers({ subscribers }: { subscribers: Subscriber[] }) {
             <Avatar size={44} radius="xl" color={sub.color} variant="light">
               {sub.initials}
             </Avatar>
-            <div style={{ minWidth: 0 }}>
-              <Text fw={600} size="sm" className={classes.cropText}>
+            <div style={{ minWidth: 0, textAlign: 'start' }}>
+              <Text fw={600} size="sm" className={classes.cropText} style={{ paddingLeft: '2px' }}>
                 {sub.name}
               </Text>
               <RoleBadge role={sub.role} />

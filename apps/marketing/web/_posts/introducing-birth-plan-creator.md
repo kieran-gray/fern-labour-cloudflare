@@ -12,6 +12,14 @@ The **Birth Plan Creator** is a simple tool to help you write down your preferen
 
 ![Screenshot of the Birth Plan Creator form](/images/blog/introducing-birth-plan-creator/birth-plan-form.png)
 
+## A Simple Approach
+
+We built the Birth Plan Creator using the NHS birth plan template as its foundation. The structure, wording, and topics follow the same format, so it feels familiar and practical.
+
+The form guides you through the main areas people usually want to think about, without turning the process into something technical or overwhelming. You can move through it at your own pace, skip anything that does not apply to you, and return to it later.
+
+There is no account required, and nothing is saved online.
+
 ## Why Write a Birth Plan?
 
 A birth plan gives you space to think through choices before they become time-sensitive. It helps you reflect on what matters to you, and it gives your care team and birth partner a clear reference if decisions need to be made quickly.
@@ -24,13 +32,11 @@ Both the NHS and NCT recommend writing a birth plan as part of preparing for lab
 
 The goal is not to predict or control how labour will unfold. Plans change. Birth is unpredictable. A birth plan is simply a way to communicate your preferences clearly, so the people around you understand what you value and what you would like to avoid if possible.
 
-## A Simple Approach
+## When to Write One
 
-We built the Birth Plan Creator using the NHS birth plan template as its foundation. The structure, wording, and topics follow the same format, so it feels familiar and practical.
+Some people like to write a birth plan early and refine it over time. Others prefer to wait until later in pregnancy, once antenatal classes and appointments have given them more context.
 
-The form guides you through the main areas people usually want to think about, without turning the process into something technical or overwhelming. You can move through it at your own pace, skip anything that does not apply to you, and return to it later.
-
-There is no account required, and nothing is saved online.
+There is no right moment. The tool is there whenever you feel ready to use it.
 
 ## Privacy by Design
 
@@ -47,12 +53,6 @@ Once your plan is complete, you can export a clean PDF that is easy to read in c
 Many people keep a printed copy in their hospital bag and share a digital version with their midwife, consultant, or birth partner. Having the same document in front of everyone can make conversations clearer and reduce the need to repeat yourself.
 
 ![Example birth plan](/images/blog/introducing-birth-plan-creator/example-birth-plan.png)
-
-## When to Write One
-
-Some people like to write a birth plan early and refine it over time. Others prefer to wait until later in pregnancy, once antenatal classes and appointments have given them more context.
-
-There is no right moment. The tool is there whenever you feel ready to use it.
 
 ## Getting Started
 
