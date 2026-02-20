@@ -15,7 +15,7 @@ const benefits = [
   {
     icon: IconDeviceMobile,
     title: 'No extra apps',
-    description: 'Updates come directly to your existing SMS or WhatsApp. No new apps.',
+    description: 'Updates come directly to your existing SMS or WhatsApp.',
     bgColor: 'var(--mantine-color-indigo-0)',
     color: 'var(--mantine-color-indigo-6)',
   },

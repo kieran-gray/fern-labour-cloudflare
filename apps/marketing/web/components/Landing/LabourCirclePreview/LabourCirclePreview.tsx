@@ -27,7 +27,7 @@ export function LabourCirclePreview() {
           whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
-          <Title className={classes.title}>One moment shared with your inner circle.</Title>
+          <Title className={classes.title}>One moment shared with your inner circle</Title>
           <Text className={classes.description}>
             You and your birth partner track together. Your wider family stays close, without
             interrupting.

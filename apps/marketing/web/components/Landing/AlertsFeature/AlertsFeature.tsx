@@ -15,7 +15,7 @@ const alerts = [
     color: 'orange',
     title: 'Time to go to the hospital',
     icon: IconAmbulance,
-    text: 'Your contractions are regular and strong. Labour is well underway.',
+    text: 'Your contractions are regular and strong. Labour is well under way.',
   },
   {
     color: 'red',

@@ -16,8 +16,7 @@ export function BirthPlanIntroduction() {
           <Text className={classes.label}>LOOKING AHEAD</Text>
           <Title className={classes.title}>Make your wishes clear</Title>
           <Text className={classes.description}>
-            Turn what matters to you into a calm, clear birth plan your care team can follow at a
-            glance.
+            Turn what matters to you into a clear birth plan your care team can follow at a glance.
           </Text>
         </motion.div>
       </Container>

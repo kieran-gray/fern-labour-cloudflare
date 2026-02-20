@@ -11,7 +11,7 @@ const roles = [
   },
   {
     role: SubscriberRole.SUPPORT_PERSON,
-    description: 'For those following closely. They see your updates and contraction patterns.',
+    description: 'For those that need the details. They see your updates and contraction patterns.',
   },
   {
     role: SubscriberRole.LOVED_ONE,

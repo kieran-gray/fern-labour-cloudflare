@@ -14,7 +14,7 @@ const benefits = [
     icon: IconChartBar,
     title: 'Clear Insights',
     description:
-      "We handle the numbers. You see what matters: how you're progressing and when it's time to move.",
+      'We handle the numbers, giving you a clear picture of your progress and when to prepare for the next steps.',
   },
   {
     icon: IconUsersGroup,
@@ -35,7 +35,7 @@ export function MotherBenefits() {
           whileInView="visible"
           viewport={{ once: true, margin: '-10%' }}
         >
-          <Title className={classes.title}>Designed for your labour.</Title>
+          <Title className={classes.title}>Designed for your labour</Title>
         </motion.div>
 
         <motion.div

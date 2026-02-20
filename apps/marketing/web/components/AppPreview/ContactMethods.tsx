@@ -37,8 +37,10 @@ export function ContactMethodItem({ type }: MethodProps) {
         <div className={classes.methodIconWrapper} data-method={currentMethod.dataMethod}>
           <currentMethod.icon size={22} />
         </div>
-        <div className={classes.methodDetails}>
-          <Text className={classes.methodName}>{currentMethod.name}</Text>
+        <div className={classes.methodDetails} style={{ textAlign: 'start' }}>
+          <Text className={classes.methodName} style={{ paddingLeft: '2px' }}>
+            {currentMethod.name}
+          </Text>
           <Text className={classes.methodStatus} data-active>
             Notifications enabled
           </Text>
