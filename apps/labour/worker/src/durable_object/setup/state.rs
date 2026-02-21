@@ -36,7 +36,7 @@ use crate::durable_object::{
         },
     },
     setup::config::Config,
-    websocket::event_broadcaster::WebSocketEventBroadcaster,
+    websocket::{event_broadcaster::WebSocketEventBroadcaster, service::WebSocketService},
     write_side::{
         application::{AdminCommandProcessor, CheckoutService, LabourCommandProcessor},
         domain::{Labour, LabourEvent},
@@ -49,6 +49,7 @@ pub struct WriteModel {
     pub labour_command_processor: LabourCommandProcessor,
     pub admin_command_processor: AdminCommandProcessor,
     pub checkout_service: CheckoutService,
+    pub websocket_service: WebSocketService,
 }
 
 pub struct ReadModel {
@@ -88,7 +89,7 @@ impl LabourCircleServices {
         let labour_command_processor = LabourCommandProcessor::new(aggregate_repository.clone());
 
         let stripe_client = Box::new(WorkerStripeClient::new(config.stripe_secret_key.clone()));
-        let checkout_service = CheckoutService::new(aggregate_repository, stripe_client);
+        let checkout_service = CheckoutService::new(aggregate_repository.clone(), stripe_client);
 
         let checkpoint_repository = Box::new(SqlCheckpointRepository::create(sql.clone()));
         checkpoint_repository.init_schema()?;
@@ -96,10 +97,13 @@ impl LabourCircleServices {
         let admin_command_processor =
             AdminCommandProcessor::create(checkpoint_repository, state.storage());
 
+        let websocket_service = WebSocketService::new(aggregate_repository.clone());
+
         Ok(WriteModel {
             labour_command_processor,
             admin_command_processor,
             checkout_service,
+            websocket_service,
         })
     }
 

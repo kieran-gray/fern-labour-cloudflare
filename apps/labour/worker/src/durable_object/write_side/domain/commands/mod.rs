@@ -31,6 +31,7 @@ use crate::durable_object::write_side::domain::commands::{
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum LabourCommand {
+    // Labour Commands
     PlanLabour(PlanLabour),
     UpdateLabourPlan(UpdateLabourPlan),
     BeginLabour(BeginLabour),

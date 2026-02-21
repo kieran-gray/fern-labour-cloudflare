@@ -4,7 +4,7 @@ export const appRoutes = {
   history: '/history',
   subscribe: '/s/:id/:token',
   contact: '/contact',
-  completed: '/completed',
+  completed: '/completed/:labourId',
   onboarding: '/get-started',
   birthPlan: '/birth-plan',
   birthPlanAuth: '/my/birth-plan',

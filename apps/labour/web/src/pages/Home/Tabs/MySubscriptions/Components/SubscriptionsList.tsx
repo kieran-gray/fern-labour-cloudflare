@@ -5,7 +5,7 @@ import { useLabourClient } from '@base/hooks';
 import { useUserSubscribedLabours, useUserSubscriptions } from '@base/hooks/useLabourData';
 import { IconArrowRight, IconX } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Button, Card, Group, Stack, Text } from '@mantine/core';
+import { Avatar, Badge, Button, Card, Group, Stack, Text } from '@mantine/core';
 import { ManageSubscriptionMenu } from './SubscriptionMenu';
 import { SubscriptionsSkeleton } from './SubscriptionsSkeleton';
 import classes from './SubscriptionsList.module.css';
@@ -18,7 +18,7 @@ export function SubscriptionsList() {
   const navigate = useNavigate();
 
   const client = useLabourClient();
-  const { isPending, isError, data } = useUserSubscriptions(client);
+  const { isPending, isError, data: subscriptions } = useUserSubscriptions(client);
   const { data: labours, isPending: laboursLoading } = useUserSubscribedLabours(client);
 
   if (isPending || laboursLoading) {
@@ -55,8 +55,6 @@ export function SubscriptionsList() {
     }
   };
 
-  const subscriptions = data.filter((sub) => sub.status === 'SUBSCRIBED');
-
   if (subscriptions.length === 0) {
     return (
       <Text fz={{ base: 'sm', xs: 'md' }} className={baseClasses.emptyState}>
@@ -92,26 +90,34 @@ export function SubscriptionsList() {
                 </Text>
               </Group>
               <Group gap="xs" wrap="nowrap">
-                <Button
-                  rightSection={
-                    isSelected ? (
-                      <IconX size={16} stroke={1.5} />
-                    ) : (
-                      <IconArrowRight size={16} stroke={1.5} />
-                    )
-                  }
-                  variant={isSelected ? 'filled' : 'light'}
-                  radius="xl"
-                  size="sm"
-                  loading={isLoading}
-                  onClick={() => toggleSubscription(sub)}
-                >
-                  {isSelected ? 'Close' : 'View'}
-                </Button>
-                <ManageSubscriptionMenu
-                  labourId={sub.labour_id}
-                  subscriptionId={sub.subscription_id}
-                />
+                {sub.status === 'REQUESTED' ? (
+                  <Badge variant="light" color="gray" radius="xl">
+                    Requested
+                  </Badge>
+                ) : (
+                  <>
+                    <Button
+                      rightSection={
+                        isSelected ? (
+                          <IconX size={16} stroke={1.5} />
+                        ) : (
+                          <IconArrowRight size={16} stroke={1.5} />
+                        )
+                      }
+                      variant={isSelected ? 'filled' : 'light'}
+                      radius="xl"
+                      size="sm"
+                      loading={isLoading}
+                      onClick={() => toggleSubscription(sub)}
+                    >
+                      {isSelected ? 'Close' : 'View'}
+                    </Button>
+                    <ManageSubscriptionMenu
+                      labourId={sub.labour_id}
+                      subscriptionId={sub.subscription_id}
+                    />
+                  </>
+                )}
               </Group>
             </Group>
           </Card>

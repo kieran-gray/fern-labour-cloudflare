@@ -1,211 +1,111 @@
-/* RegistrationPrompt Component */
-
 .container {
   width: 100%;
-  max-width: 680px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: 0;
 }
 
-/* Header Section */
 .header {
   text-align: center;
-  margin-bottom: clamp(24px, 5vw, 32px);
-  position: relative;
-}
-
-.headerDecoration {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 4px;
-  background-color: var(--mantine-primary-color-4);
-  border-radius: 2px;
+  margin-bottom: var(--mantine-spacing-lg);
 }
 
 .headerIcon {
-  margin: 0 auto 16px;
+  margin: 0 auto var(--mantine-spacing-md);
 }
 
 .title {
+  margin: 0;
   font-family: Poppins, sans-serif;
-  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  font-size: clamp(1.55rem, 5vw, 2.25rem);
+  line-height: 1.15;
   font-weight: 700;
   color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
-  line-height: 1.15;
-  margin-bottom: 12px;
-  letter-spacing: -0.02em;
-}
-
-.titleAccent {
-  color: var(--mantine-primary-color-6);
 }
 
 .subtitle {
-  font-size: clamp(0.9rem, 2vw, 1.05rem);
-  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  margin: var(--mantine-spacing-sm) auto 0;
+  max-width: 500px;
+  font-size: clamp(0.95rem, 2vw, 1.05rem);
   line-height: 1.6;
-  max-width: 440px;
-  margin: 0 auto;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
 }
 
-/* Summary Card */
 .summaryCard {
-  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
-  border-radius: 16px;
-  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
-  padding: 20px;
-  margin-bottom: 24px;
+  border-radius: var(--mantine-radius-lg);
+  border-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-2));
+  margin-bottom: var(--mantine-spacing-lg);
 }
 
 .summaryTitle {
-  font-family: Poppins, sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.summaryList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  color: #24968b;
 }
 
 .summaryItem {
   display: flex;
   align-items: center;
   padding: 10px 0;
-  border-bottom: 1px solid light-dark(
-    rgba(0, 0, 0, 0.06),
-    rgba(255, 255, 255, 0.06)
-  );
+  border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
 }
 
 .summaryItem:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+  border-bottom: 0;
 }
 
 .summaryIcon {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 8px;
-  background-color: light-dark(var(--mantine-primary-color-0), var(--mantine-primary-color-9));
-  color: var(--mantine-primary-color-6);
+  border-radius: var(--mantine-radius-md);
+  color: #24968b;
+  background: light-dark(rgba(36, 150, 139, 0.1), rgba(36, 150, 139, 0.2));
   margin-right: 12px;
   flex-shrink: 0;
 }
 
 .summaryLabel {
-  font-size: 0.9rem;
-  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  color: #24968b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  font-size: 0.73rem;
   flex: 1;
 }
 
 .summaryValue {
-  font-weight: 600;
   font-size: 0.95rem;
+  font-weight: 700;
   color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
 }
 
-/* Auth Actions */
 .authActions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: var(--mantine-spacing-lg);
 }
 
 .signUpButton {
-  padding: 16px 28px;
-  border-radius: 14px;
-  font-weight: 700;
-  font-size: 1.05rem;
-  background-color: var(--mantine-primary-color-5);
-  border: none;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  background: var(--mantine-color-pink-5);
 }
 
 .signUpButton:hover {
-  background-color: var(--mantine-primary-color-6);
-  transform: translateY(-1px);
-}
-
-.signUpButton:active {
-  background-color: var(--mantine-primary-color-7);
-  transform: translateY(0);
+  background: var(--mantine-color-pink-6);
 }
 
 .signInButton {
-  padding: 14px 24px;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  background: transparent;
-  border: 2px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-gray-7));
-  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.signInButton:hover {
-  border-color: light-dark(var(--mantine-color-gray-4), var(--mantine-color-gray-6));
+  border-color: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
   color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
-  background: light-dark(rgba(0, 0, 0, 0.02), rgba(255, 255, 255, 0.03));
 }
 
-/* Navigation */
 .navigation {
-  display: flex;
-  justify-content: center;
-  padding-top: 16px;
-  border-top: 1px solid light-dark(
-    rgba(0, 0, 0, 0.06),
-    rgba(255, 255, 255, 0.06)
-  );
+  border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  padding-top: var(--mantine-spacing-md);
 }
 
 .backButton {
-  padding: 12px 20px;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  background: transparent;
-  border: none;
-  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
 }
 
 .backButton:hover {
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
-}
-
-/* Responsive adjustments */
-@media (max-width: $mantine-breakpoint-sm) {
-  .authActions {
-    gap: 10px;
-  }
+  background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-3));
 }

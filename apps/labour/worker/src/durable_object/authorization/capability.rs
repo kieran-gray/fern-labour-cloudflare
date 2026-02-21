@@ -23,6 +23,7 @@ pub enum Capability {
     ManageSubscriptionToken,
     ReadSubscriptions,
     ReadOwnSubscription,
+    UpgradeConnection,
 }
 
 pub fn capabilities_for(principal: &Principal) -> HashSet<Capability> {
@@ -34,6 +35,7 @@ pub fn capabilities_for(principal: &Principal) -> HashSet<Capability> {
             Capability::ReadLabour,
             Capability::ManageLabourSubscriptions,
             Capability::ReadSubscriptions,
+            Capability::UpgradeConnection,
         ]),
 
         Principal::Subscriber { role, status, .. } => {
@@ -47,11 +49,13 @@ pub fn capabilities_for(principal: &Principal) -> HashSet<Capability> {
                     Capability::ReadLabour,
                     Capability::ManageOwnSubscription,
                     Capability::ReadOwnSubscription,
+                    Capability::UpgradeConnection,
                 ]),
                 SubscriberRole::LOVED_ONE | SubscriberRole::SUPPORT_PERSON => HashSet::from([
                     Capability::ReadLabour,
                     Capability::ManageOwnSubscription,
                     Capability::ReadOwnSubscription,
+                    Capability::UpgradeConnection,
                 ]),
             }
         }
@@ -123,5 +127,7 @@ pub fn required_capability(action: &Action) -> Capability {
                 Capability::ReadSubscriptions
             }
         },
+
+        Action::UpgradeConnection => Capability::UpgradeConnection,
     }
 }

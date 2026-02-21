@@ -7,6 +7,7 @@ pub enum Action {
     Command(LabourCommand),
     CheckoutCommand(CheckoutCommand),
     Query(QueryAction),
+    UpgradeConnection,
 }
 
 #[derive(Debug, Clone)]

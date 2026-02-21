@@ -1,99 +1,297 @@
-.container {
-  width: 100%;
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 0;
-}
-
-/* Header Section */
-.header {
-  text-align: center;
-  margin-bottom: clamp(24px, 5vw, 40px);
-  position: relative;
-}
-
-.headerDecoration {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 4px;
-  background-color: var(--mantine-primary-color-4);
-  border-radius: 2px;
-}
-
-.greeting {
-  font-size: clamp(1rem, 2.5vw, 1.125rem);
-  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-}
-
-.title {
-  font-family: Poppins, sans-serif;
-  font-size: clamp(1.75rem, 5vw, 2.5rem);
-  font-weight: 700;
-  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
-  line-height: 1.15;
-  margin-bottom: 12px;
-  letter-spacing: -0.02em;
-}
-
-.titleAccent {
-  color: var(--mantine-primary-color-5);
-}
-
-.celebration {
-  text-align: center;
-}
-
-.celebrationTitle {
-  font-family: Poppins, sans-serif;
-  font-size: clamp(1.25rem, 4vw, 1.5rem);
-  font-weight: 600;
-  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
-  margin-bottom: 8px;
-}
-
-.celebrationText {
-  font-size: 0.95rem;
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
-  line-height: 1.6;
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-/* Image Container */
-.imageContainer {
-  display: flex;
-  justify-content: center;
-  margin: clamp(24px, 5vw, 40px) 0;
-}
-
-.image {
-  border-radius: var(--mantine-radius-lg);
-}
-
-/* Feedback Card */
-.feedbackCard {
+.wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 24px;
-  background: light-dark(var(--mantine-color-pink-0), var(--mantine-color-dark-1));
-  border-radius: 16px;
-  border: 1px solid light-dark(var(--mantine-color-pink-1), var(--mantine-color-dark-4));
+  justify-content: center;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  position: relative;
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-2));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: var(--mantine-radius-xl);
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+  /* Subtle shadow for standalone card look */
+}
+
+/* Soft background texture */
+.wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-2));
+  pointer-events: none;
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 32px;
+  text-align: center;
+  width: 100%;
+}
+
+.bloom {
+  width: 160px;
+  height: 160px;
+  position: relative;
+  margin-bottom: 36px;
+  animation: breathe 3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+.bloomRing {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid;
+}
+
+.bloomRing:nth-child(1) {
+  inset: 0;
+  border-color: var(--mantine-color-pink-1);
+  animation: pulse-ring 2s ease-in-out infinite;
+}
+
+.bloomRing:nth-child(2) {
+  inset: 12px;
+  border-color: var(--mantine-color-pink-2);
+  animation: pulse-ring 2s ease-in-out 0.1s infinite;
+}
+
+.bloomRing:nth-child(3) {
+  inset: 24px;
+  border-color: var(--mantine-color-pink-3);
+  animation: pulse-ring 2s ease-in-out 0.2s infinite;
+}
+
+[data-mantine-color-scheme='dark'] .bloomRing:nth-child(1) {
+  border-color: var(--mantine-color-pink-3);
+}
+
+[data-mantine-color-scheme='dark'] .bloomRing:nth-child(2) {
+  border-color: var(--mantine-color-pink-4);
+}
+
+[data-mantine-color-scheme='dark'] .bloomRing:nth-child(3) {
+  border-color: var(--mantine-color-pink-4);
+}
+
+@keyframes pulse-ring {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.03);
+    opacity: 0.7;
+  }
+}
+
+.bloomCenter {
+  position: absolute;
+  inset: 36px;
+  background: radial-gradient(circle at 40% 35%, var(--mantine-color-pink-2), var(--mantine-color-pink-4));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px var(--mantine-color-pink-3);
+}
+
+[data-mantine-color-scheme='dark'] .bloomCenter {
+  background: radial-gradient(circle at 40% 35%, var(--mantine-color-pink-2), var(--mantine-color-pink-4));
+  box-shadow: 0 8px 32px var(--mantine-color-pink-5);
+}
+
+/* Tiny heart SVG in center */
+.bloomHeart {
+  width: 32px;
+  height: 32px;
+  fill: white;
+  opacity: 0.9;
+  animation: heartbeat 1.4s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  14% {
+    transform: scale(1.15);
+  }
+
+  28% {
+    transform: scale(1);
+  }
+
+  42% {
+    transform: scale(1.08);
+  }
+
+  56% {
+    transform: scale(1);
+  }
+}
+
+.headline {
+  font-family: Poppins, sans-serif;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 1.25;
+  color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+  margin-bottom: 8px;
+  margin-top: 0;
+  opacity: 0;
+  animation: fade-up 0.35s ease forwards 0.1s;
+}
+
+.headline em {
+  font-style: normal;
+  color: var(--mantine-color-pink-4);
+}
+
+.subhead {
+  font-family: Poppins, sans-serif;
+  font-weight: 500;
+  font-size: 17px;
+  color: var(--mantine-color-pink-4);
+  margin-bottom: 28px;
+  margin-top: 0;
+  opacity: 0;
+  animation: fade-up 0.35s ease forwards 0.16s;
+}
+
+.bodyText {
+  font-family: Quicksand, sans-serif;
+  font-weight: 400;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  max-width: 290px;
+  margin-bottom: 40px;
+  margin-top: 0;
+  opacity: 0;
+  animation: fade-up 0.35s ease forwards 0.22s;
+}
+
+.stats {
+  display: flex;
+  gap: 1px;
+  background: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: var(--mantine-radius-md);
+  overflow: hidden;
+  width: 100%;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fade-up 0.35s ease forwards 0.28s;
+}
+
+.stat {
+  flex: 1;
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-2));
+  padding: 16px 8px;
   text-align: center;
 }
 
-.feedbackText {
-  font-size: 0.95rem;
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
-  line-height: 1.6;
-  max-width: 400px;
-  margin: 0;
+.statValue {
+  font-family: Poppins, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--mantine-color-pink-6);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.statLabel {
+  font-family: Quicksand, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #24968b;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fade-up 0.35s ease forwards 0.32s;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+}
+
+.dividerLeaf {
+  font-size: 14px;
+}
+
+/* Save button */
+.btnPrimary {
+  width: 100%;
+  margin-bottom: 14px;
+  transition: background 0.1s, transform 0.08s;
+  opacity: 0;
+  animation: fade-up 0.35s ease forwards 0.36s;
+}
+
+/* Feedback link */
+.feedbackLink {
+  font-family: Quicksand, sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  text-decoration: none;
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 0;
+  padding-bottom: 1px;
+  cursor: pointer;
+  opacity: 0;
+  animation: fade-up 0.35s ease forwards 0.4s;
+  transition: all 0.1s;
+}
+
+.feedbackLink:hover {
+  color: var(--mantine-color-pink-5);
+  border-bottom-color: var(--mantine-color-pink-5);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
