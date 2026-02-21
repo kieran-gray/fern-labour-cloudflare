@@ -2,8 +2,8 @@ use anyhow::{Context, Result};
 use async_trait::async_trait;
 use tracing::info;
 
-use fern_labour_notifications_shared::value_objects::NotificationStatus as VONotificationStatus;
 use fern_labour_event_sourcing_rs::{AsyncProjector, AsyncRepositoryTrait, EventEnvelope};
+use fern_labour_notifications_shared::value_objects::NotificationStatus as VONotificationStatus;
 
 use crate::durable_object::{
     read_side::read_models::NotificationDetail, write_side::domain::NotificationEvent,
