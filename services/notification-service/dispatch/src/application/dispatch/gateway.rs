@@ -1,10 +1,11 @@
 use anyhow::Result;
 use async_trait::async_trait;
 use fern_labour_notifications_shared::{
-    service_clients::DispatchResponse, value_objects::NotificationChannel,
+    service_clients::{DispatchResponse, dispatch::responses::ScheduleResponse},
+    value_objects::NotificationChannel,
 };
 
-use super::context::DispatchContext;
+use super::context::{DispatchContext, ScheduleContext};
 
 pub enum DispatchResult {
     Tracked {
@@ -16,7 +17,27 @@ pub enum DispatchResult {
     },
 }
 
+pub type ScheduleResult = DispatchResult;
+
 impl From<DispatchResult> for DispatchResponse {
+    fn from(value: DispatchResult) -> Self {
+        match value {
+            DispatchResult::Tracked {
+                external_id,
+                provider,
+            } => Self {
+                external_id: Some(external_id),
+                provider,
+            },
+            DispatchResult::Untracked { provider } => Self {
+                external_id: None,
+                provider,
+            },
+        }
+    }
+}
+
+impl From<DispatchResult> for ScheduleResponse {
     fn from(value: DispatchResult) -> Self {
         match value {
             DispatchResult::Tracked {
@@ -41,6 +62,8 @@ pub trait NotificationGatewayTrait: Send + Sync {
     fn provider(&self) -> &str;
 
     async fn dispatch(&self, context: &DispatchContext) -> Result<DispatchResult>;
+
+    async fn schedule(&self, context: &ScheduleContext) -> Result<ScheduleResult>;
 
     async fn redact(&self, external_id: String) -> Result<bool>;
 }

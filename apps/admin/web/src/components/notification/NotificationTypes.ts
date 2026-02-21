@@ -1,7 +1,17 @@
+export type NotificationLifecycleStatus =
+  | "REQUESTED"
+  | "RENDERED"
+  | "SCHEDULED"
+  | "SENT"
+  | "FAILED"
+  | "DELIVERED"
+  | "REDACTED"
+  | "DELETED";
+
 export interface NotificationStatus {
   notification_id: string;
   user_id: string;
-  status: string;
+  status: NotificationLifecycleStatus | string;
   updated_at: string;
 }
 
@@ -13,7 +23,7 @@ export type RenderedContent =
 export interface NotificationDetail {
   notification_id: string;
   user_id: string;
-  status: string;
+  status: NotificationLifecycleStatus | string;
   channel: string;
   destination: string;
   template: string;

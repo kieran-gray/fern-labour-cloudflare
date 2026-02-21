@@ -6,12 +6,18 @@ use crate::service_clients::{
     dispatch::{
         WebhookInterpretationResponse,
         exceptions::DispatchClientError,
-        requests::{DispatchRequest, RedactRequest},
+        requests::{DispatchRequest, RedactRequest, ScheduleRequest},
+        responses::ScheduleResponse,
     },
 };
 
 #[async_trait(?Send)]
 pub trait DispatchClient {
+    async fn schedule(
+        &self,
+        request: ScheduleRequest,
+    ) -> Result<ScheduleResponse, DispatchClientError>;
+
     async fn dispatch(
         &self,
         request: DispatchRequest,

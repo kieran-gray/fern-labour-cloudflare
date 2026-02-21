@@ -1,7 +1,11 @@
 use async_trait::async_trait;
 use fern_labour_notifications_shared::service_clients::{
     DispatchClient, DispatchClientError, DispatchRequest, DispatchResponse,
-    dispatch::{WebhookInterpretationResponse, requests::RedactRequest, responses::RedactResponse},
+    dispatch::{
+        WebhookInterpretationResponse,
+        requests::{RedactRequest, ScheduleRequest},
+        responses::{RedactResponse, ScheduleResponse},
+    },
 };
 use serde::Serialize;
 use tracing::{debug, error};
@@ -44,6 +48,35 @@ impl FetcherDispatchClient {
 
 #[async_trait(?Send)]
 impl DispatchClient for FetcherDispatchClient {
+    async fn schedule(
+        &self,
+        request: ScheduleRequest,
+    ) -> Result<ScheduleResponse, DispatchClientError> {
+        let mut response = self
+            .post(request, "https://fernlabour.com/api/v1/schedule")
+            .await?;
+
+        let status = response.status_code();
+        match StatusCodeCategory::from_code(status) {
+            StatusCodeCategory::Success => {
+                debug!("Notification scheduled successfully");
+                let schedule_response: ScheduleResponse = response.json().await.map_err(|e| {
+                    DispatchClientError::InternalError(format!("Failed to parse response: {e}"))
+                })?;
+                Ok(schedule_response)
+            }
+            StatusCodeCategory::ClientError => Err(DispatchClientError::RequestFailed(format!(
+                "Client error: {status}"
+            ))),
+            StatusCodeCategory::ServerError => Err(DispatchClientError::InternalError(format!(
+                "Server error: {status}"
+            ))),
+            StatusCodeCategory::Unknown => Err(DispatchClientError::RequestFailed(format!(
+                "Unexpected status: {status}"
+            ))),
+        }
+    }
+
     async fn dispatch(
         &self,
         request: DispatchRequest,

@@ -34,6 +34,14 @@ function getStatusInfo(status: string) {
         borderColor: "border-cp-blue",
         bgColor: "bg-cp-blue",
       };
+    case "SCHEDULED":
+      return {
+        label: "SCHEDULED",
+        icon: <Clock className="size-4" />,
+        color: "text-cp-blue",
+        borderColor: "border-cp-blue",
+        bgColor: "bg-cp-blue",
+      };
     case "RENDERED":
       return {
         label: "RENDERED",

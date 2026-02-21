@@ -1,9 +1,10 @@
 use std::{collections::HashMap, rc::Rc};
 
 use crate::application::dispatch::{
-    DispatchContext, NotificationGatewayTrait, gateway::DispatchResult,
+    DispatchContext, NotificationGatewayTrait, ScheduleContext, gateway::DispatchResult,
+    gateway::ScheduleResult,
 };
-use anyhow::{Context, Result, anyhow};
+use anyhow::{Result, anyhow};
 use fern_labour_notifications_shared::value_objects::NotificationChannel;
 
 pub struct NotificationRouter {
@@ -28,25 +29,42 @@ impl NotificationRouter {
     }
 
     pub async fn dispatch(&self, context: DispatchContext) -> Result<DispatchResult> {
-        context.validate().context("Invalid dispatch context")?;
-        let gateway = self.gateways.get(&context.channel()).ok_or_else(|| {
-            anyhow!(
-                "No gateway found for channel: {}. Available gateways: {:?}",
-                context.channel(),
-                self.gateways.keys().collect::<Vec<_>>()
-            )
-        })?;
+        context.validate().map_err(|e| anyhow!(e.to_string()))?;
+        let gateway = self.gateway_for_channel(context.channel())?;
         gateway.dispatch(&context).await
     }
 
+    pub async fn schedule(&self, context: ScheduleContext) -> Result<ScheduleResult> {
+        context.validate().map_err(|e| anyhow!(e.to_string()))?;
+        let gateway = self.gateway_for_channel(context.channel())?;
+        gateway.schedule(&context).await
+    }
+
     pub async fn redact(&self, provider: String, external_id: String) -> Result<bool> {
-        let gateway = self.providers.get(&provider).ok_or_else(|| {
+        let gateway = self.gateway_for_provider(&provider)?;
+        gateway.redact(external_id).await
+    }
+
+    fn gateway_for_channel(
+        &self,
+        channel: NotificationChannel,
+    ) -> Result<&Rc<dyn NotificationGatewayTrait>> {
+        self.gateways.get(&channel).ok_or_else(|| {
+            anyhow!(
+                "No gateway found for channel: {}. Available gateways: {:?}",
+                channel,
+                self.gateways.keys().collect::<Vec<_>>()
+            )
+        })
+    }
+
+    fn gateway_for_provider(&self, provider: &str) -> Result<&Rc<dyn NotificationGatewayTrait>> {
+        self.providers.get(provider).ok_or_else(|| {
             anyhow!(
                 "No gateway found for provider: {}. Available gateways: {:?}",
                 provider,
                 self.providers.keys().collect::<Vec<_>>()
             )
-        })?;
-        gateway.redact(external_id).await
+        })
     }
 }

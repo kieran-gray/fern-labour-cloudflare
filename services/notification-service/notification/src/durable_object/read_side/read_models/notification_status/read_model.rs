@@ -1,6 +1,7 @@
 use anyhow::{Result, anyhow};
 use chrono::{DateTime, Utc};
 use fern_labour_event_sourcing_rs::Cursor;
+use fern_labour_notifications_shared::value_objects::NotificationStatus as VONotificationStatus;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -17,7 +18,7 @@ impl NotificationStatus {
         Self {
             notification_id,
             user_id,
-            status: "REQUESTED".to_string(),
+            status: VONotificationStatus::REQUESTED.to_string(),
             updated_at: created_at,
         }
     }

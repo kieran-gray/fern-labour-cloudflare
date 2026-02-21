@@ -9,6 +9,12 @@ pub struct DispatchResponse {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
+pub struct ScheduleResponse {
+    pub external_id: Option<String>,
+    pub provider: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub struct RedactResponse {
     pub redacted: bool,
 }

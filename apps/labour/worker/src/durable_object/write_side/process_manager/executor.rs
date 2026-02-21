@@ -196,6 +196,7 @@ impl LabourEffectExecutor {
                 destination,
                 template_data,
                 None,
+                None,
             )
             .await
             .map_err(|e| anyhow!(e.to_string()))
@@ -236,6 +237,7 @@ impl LabourEffectExecutor {
                 destination,
                 template_data,
                 None,
+                None,
             )
             .await
             .map_err(|e| anyhow!(e.to_string()))
@@ -266,6 +268,7 @@ impl LabourEffectExecutor {
                 NotificationChannel::EMAIL,
                 email.to_string(),
                 template_data,
+                None,
                 None,
             )
             .await

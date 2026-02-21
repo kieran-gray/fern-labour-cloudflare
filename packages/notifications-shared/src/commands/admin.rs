@@ -34,6 +34,9 @@ impl AdminApiCommand {
                 NotificationCommand::StoreRenderedContent {
                     notification_id, ..
                 } => *notification_id,
+                NotificationCommand::MarkAsScheduled {
+                    notification_id, ..
+                } => *notification_id,
                 NotificationCommand::MarkAsDispatched {
                     notification_id, ..
                 } => *notification_id,
@@ -62,6 +65,9 @@ impl AdminApiCommand {
             }
             Self::Notification(NotificationCommand::StoreRenderedContent { .. }) => {
                 "AdminCommand::StoreRenderedContent"
+            }
+            Self::Notification(NotificationCommand::MarkAsScheduled { .. }) => {
+                "AdminCommand::MarkAsScheduled"
             }
             Self::Notification(NotificationCommand::MarkAsDispatched { .. }) => {
                 "AdminCommand::MarkAsDispatched"

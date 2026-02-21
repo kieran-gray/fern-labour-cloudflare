@@ -85,6 +85,9 @@ export const EventTimeline = ({ notificationId }: EventTimelineProps) => {
               }`,
             },
             { label: "TEMPLATE", value: data.template_data.type.toUpperCase() },
+            ...(data.scheduled_at
+              ? [{ label: "SCHEDULED_AT", value: data.scheduled_at }]
+              : []),
           ],
         };
 
@@ -102,6 +105,22 @@ export const EventTimeline = ({ notificationId }: EventTimelineProps) => {
           ],
         };
       }
+
+      case "NotificationScheduled":
+        return {
+          label: "NOTIFICATION_SCHEDULED",
+          code: "SCH",
+          icon: <Clock className="size-5" />,
+          color: "text-cp-blue",
+          bgColor: "bg-cp-blue",
+          borderColor: "border-cp-blue",
+          details: [
+            ...(data.external_id
+              ? [{ label: "EXTERNAL_ID", value: data.external_id }]
+              : []),
+            { label: "PROVIDER", value: data.provider.toUpperCase() },
+          ],
+        };
 
       case "NotificationDispatched":
         return {
@@ -126,6 +145,7 @@ export const EventTimeline = ({ notificationId }: EventTimelineProps) => {
         };
 
       case "NotificationFailed":
+      case "NotificationDeliveryFailed":
         return {
           label: "NOTIFICATION_FAILED",
           code: "ERR",
@@ -133,7 +153,15 @@ export const EventTimeline = ({ notificationId }: EventTimelineProps) => {
           color: "text-red-600",
           bgColor: "bg-red-600",
           borderColor: "border-red-600",
-          details: [{ label: "ERROR", value: data.error }],
+          details: [
+            {
+              label: "ERROR",
+              value: data.reason || data.error || "Unknown error",
+            },
+            ...(data.provider
+              ? [{ label: "PROVIDER", value: data.provider.toUpperCase() }]
+              : []),
+          ],
         };
 
       case "NotificationContentRedacted":
