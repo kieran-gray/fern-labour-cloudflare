@@ -40,16 +40,7 @@ export const CompletedLabourCard: React.FC<{ labour: LabourReadModel }> = ({ lab
   return (
     <div className={classes.wrapper}>
       <div className={classes.content}>
-        <div className={classes.bloom}>
-          <div className={classes.bloomRing} />
-          <div className={classes.bloomRing} />
-          <div className={classes.bloomRing} />
-          <div className={classes.bloomCenter}>
-            <svg className={classes.bloomHeart} viewBox="0 0 32 32">
-              <path d="M16 27s-13-8.35-13-16a7 7 0 0 1 13-3.65A7 7 0 0 1 29 11c0 7.65-13 16-13 16z" />
-            </svg>
-          </div>
-        </div>
+        <img src="/logo/logo.svg" alt="Fern Labour logo" className={classes.brandLogo} />
 
         <h1 className={classes.headline}>
           Welcome to the
@@ -61,6 +52,9 @@ export const CompletedLabourCard: React.FC<{ labour: LabourReadModel }> = ({ lab
         <p className={classes.bodyText}>
           Take all the time you need. Rest, breathe, and hold your baby close. Your labour journey
           has been recorded, we'll keep it safe for whenever you're ready.
+          <br />
+          <br />
+          Thank you for using Fern Labour.
         </p>
 
         <div className={classes.stats}>

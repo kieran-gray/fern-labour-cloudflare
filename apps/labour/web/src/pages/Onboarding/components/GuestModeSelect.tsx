@@ -14,6 +14,8 @@ export function GuestModeSelect({ onModeSelect }: GuestModeSelectProps) {
       <div className={baseClasses.card}>
         <div className={classes.container}>
           <header className={classes.header}>
+            <img src="/logo/logo.svg" alt="Fern Labour logo" className={classes.brandLogo} />
+
             <Badge variant="light" radius="xl" className={classes.greetingBadge}>
               Welcome to Fern Labour
             </Badge>
