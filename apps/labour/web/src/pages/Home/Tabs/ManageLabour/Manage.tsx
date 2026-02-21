@@ -86,7 +86,7 @@ export function LabourDetails({
       {
         onSuccess: () => {
           clearSession();
-          navigate('/completed');
+          navigate(`/completed/${labourId}`);
         },
       }
     );

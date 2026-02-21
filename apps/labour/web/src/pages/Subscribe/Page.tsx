@@ -82,8 +82,6 @@ export const SubscribePage: React.FC = () => {
         <div className={baseClasses.card}>
           <div className={classes.container}>
             <header className={classes.header}>
-              <div className={classes.headerDecoration} />
-
               {status === 'pending' && (
                 <>
                   <div className={classes.iconContainer}>

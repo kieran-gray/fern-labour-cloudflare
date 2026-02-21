@@ -150,7 +150,7 @@ export const MotherView = () => {
           return <LabourUpdates labour={labour} />;
         case 'share':
           return completed ? (
-            <CompletedLabourCard />
+            <CompletedLabourCard labour={labour} />
           ) : (
             <>
               <ShareLabour />

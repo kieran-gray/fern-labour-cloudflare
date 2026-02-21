@@ -680,3 +680,39 @@ export const useInvalidateSubscriptionToken = createMutation<{ labourId: string 
   successMessage: 'Subscription token invalidated',
   errorMessage: 'Failed to invalidate subscription token',
 });
+
+export function useContractionCount(client: LabourServiceClient, labourId: string | null) {
+  return useQuery({
+    queryKey: queryKeys.contractions.list(labourId || ''),
+    queryFn: async () => {
+      if (!labourId) {
+        return 0;
+      }
+      let count = 0;
+      let cursorStr: string | undefined = undefined;
+
+      while (true) {
+        const cursorPayload = cursorStr ? JSON.parse(cursorStr) : undefined;
+        const res = await client.getContractions(labourId, 100, cursorPayload);
+
+        if (!res.success || !res.data) {
+          throw new Error(res.error || 'Failed to fetch contractions for count');
+        }
+
+        count += res.data.data.length;
+
+        if (!res.data.has_more) {
+          break;
+        }
+
+        cursorStr = res.data.next_cursor || undefined;
+        if (!cursorStr) {
+          break;
+        }
+      }
+
+      return count;
+    },
+    enabled: !!labourId,
+  });
+}

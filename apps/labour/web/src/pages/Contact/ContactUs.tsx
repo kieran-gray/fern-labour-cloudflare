@@ -3,10 +3,10 @@ import { useSubmitContactForm } from '@base/hooks/useContactData';
 import { useUser } from '@clerk/clerk-react';
 import type { CreateContactMessageRequest } from '@clients/contact_service';
 import { validateMessage } from '@lib';
-import { IconAt, IconBrandInstagram, IconBulb, IconSend } from '@tabler/icons-react';
+import { IconAt, IconBrandInstagram, IconBulb, IconLoader, IconSend } from '@tabler/icons-react';
 import { useSearchParams } from 'react-router-dom';
 import Turnstile from 'react-turnstile';
-import { Checkbox, Rating, Select, Textarea } from '@mantine/core';
+import { Button, Checkbox, Rating, Select, Textarea } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import classes from './ContactUs.module.css';
 import baseClasses from '@styles/base.module.css';
@@ -74,8 +74,6 @@ export function ContactUs() {
     <div className={baseClasses.card}>
       <div className={classes.container}>
         <header className={classes.header}>
-          <div className={classes.headerDecoration} />
-          <p className={classes.greeting}>Get in touch</p>
           <h1 className={classes.title}>We'd love to hear from you</h1>
           <p className={classes.subtitle}>
             If you have feedback, an idea, or simply want to get in touch, we’re listening.
@@ -172,23 +170,19 @@ export function ContactUs() {
                   @fernlabour
                 </a>
               </div>
-              <button
+              <Button
                 type="submit"
+                size="md"
+                radius="xl"
+                h={48}
                 className={classes.submitButton}
                 disabled={contactUsMutation.isPending || turnstileToken === null || sent}
+                leftSection={
+                  contactUsMutation.isPending ? <IconLoader size={18} /> : <IconSend size={18} />
+                }
               >
-                {contactUsMutation.isPending ? (
-                  <>
-                    <span className={classes.loadingSpinner} />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <IconSend size={18} />
-                    Send Message
-                  </>
-                )}
-              </button>
+                {contactUsMutation.isPending ? 'Sending...' : 'Send Message'}
+              </Button>
             </div>
           </div>
         </form>

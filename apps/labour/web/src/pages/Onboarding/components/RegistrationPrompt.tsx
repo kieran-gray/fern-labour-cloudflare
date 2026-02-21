@@ -12,7 +12,7 @@ import {
   IconStethoscope,
   IconUserPlus,
 } from '@tabler/icons-react';
-import { ThemeIcon } from '@mantine/core';
+import { Button, Group, Paper, Stack, Text, ThemeIcon } from '@mantine/core';
 import classes from './RegistrationPrompt.module.css';
 import baseClasses from '@styles/base.module.css';
 
@@ -56,7 +56,6 @@ export function RegistrationPrompt({ mode, onBack }: RegistrationPromptProps) {
       <div className={baseClasses.card}>
         <div className={classes.container}>
           <header className={classes.header}>
-            <div className={classes.headerDecoration} />
             <ThemeIcon
               className={classes.headerIcon}
               size={64}
@@ -67,15 +66,7 @@ export function RegistrationPrompt({ mode, onBack }: RegistrationPromptProps) {
               {isBirthMode ? <IconBabyCarriage size={32} /> : <IconHeart size={32} />}
             </ThemeIcon>
             <h1 className={classes.title}>
-              {isBirthMode ? (
-                <>
-                  Your plan is <span className={classes.titleAccent}>ready!</span>
-                </>
-              ) : (
-                <>
-                  Ready to <span className={classes.titleAccent}>support?</span>
-                </>
-              )}
+              {isBirthMode ? 'Your Labour is ready!' : 'Ready to support?'}
             </h1>
             <p className={classes.subtitle}>
               {isBirthMode
@@ -85,12 +76,13 @@ export function RegistrationPrompt({ mode, onBack }: RegistrationPromptProps) {
           </header>
 
           {pendingPlan && isBirthMode && (
-            <div className={classes.summaryCard}>
-              <h3 className={classes.summaryTitle}>
+            <Paper className={classes.summaryCard} withBorder radius="lg" p="md">
+              <Group className={classes.summaryTitle} gap="xs" mb="sm">
                 <IconSparkles size={18} />
-                Your Labour Plan
-              </h3>
-              <div className={classes.summaryList}>
+                <Text fw={600}>Your Labour</Text>
+              </Group>
+
+              <Stack gap={6}>
                 <div className={classes.summaryItem}>
                   <span className={classes.summaryIcon}>
                     <IconCalendar size={16} />
@@ -116,27 +108,47 @@ export function RegistrationPrompt({ mode, onBack }: RegistrationPromptProps) {
                     <span className={classes.summaryValue}>{pendingPlan.labourName}</span>
                   </div>
                 )}
-              </div>
-            </div>
+              </Stack>
+            </Paper>
           )}
 
-          <div className={classes.authActions}>
-            <button type="button" className={classes.signUpButton} onClick={handleSignUp}>
-              <IconUserPlus size={20} />
+          <Stack className={classes.authActions} gap="sm">
+            <Button
+              type="button"
+              onClick={handleSignUp}
+              leftSection={<IconUserPlus size={18} />}
+              radius="xl"
+              size="md"
+              className={classes.signUpButton}
+            >
               Create Account
-            </button>
-            <button type="button" className={classes.signInButton} onClick={handleSignIn}>
-              <IconLogin size={18} />
-              Already have an account? Sign In
-            </button>
-          </div>
+            </Button>
 
-          <div className={classes.navigation}>
-            <button type="button" className={classes.backButton} onClick={onBack}>
-              <IconArrowLeft size={16} />
+            <Button
+              type="button"
+              onClick={handleSignIn}
+              leftSection={<IconLogin size={16} />}
+              radius="xl"
+              variant="default"
+              size="md"
+              className={classes.signInButton}
+            >
+              Already have an account? Sign In
+            </Button>
+          </Stack>
+
+          <Group justify="center" className={classes.navigation}>
+            <Button
+              type="button"
+              onClick={onBack}
+              leftSection={<IconArrowLeft size={16} />}
+              variant="subtle"
+              radius="xl"
+              className={classes.backButton}
+            >
               {isBirthMode ? 'Edit Plan' : 'Back'}
-            </button>
-          </div>
+            </Button>
+          </Group>
         </div>
       </div>
     </div>

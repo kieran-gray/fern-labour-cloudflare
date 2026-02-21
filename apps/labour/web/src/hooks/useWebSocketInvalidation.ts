@@ -53,13 +53,6 @@ function processEvent(
       break;
 
     case 'LabourPlanUpdated':
-      invalidateOrCollect(
-        queryClient,
-        queryKeys.labour.detail(data.labour_id!),
-        pendingInvalidations
-      );
-      break;
-
     case 'LabourPhaseChanged':
       invalidateOrCollect(
         queryClient,
@@ -82,10 +75,6 @@ function processEvent(
       break;
 
     case 'LabourCompleted':
-      queryClient.removeQueries({ queryKey: queryKeys.labour.detail(data.labour_id!) });
-      invalidateOrCollect(queryClient, queryKeys.labour.lists(), pendingInvalidations);
-      break;
-
     case 'LabourDeleted':
       queryClient.removeQueries({ queryKey: queryKeys.labour.detail(data.labour_id!) });
       invalidateOrCollect(queryClient, queryKeys.labour.lists(), pendingInvalidations);
@@ -95,21 +84,7 @@ function processEvent(
       break;
 
     case 'ContractionStarted':
-      invalidateOrCollect(
-        queryClient,
-        queryKeys.contractions.infinite(data.labour_id!),
-        pendingInvalidations
-      );
-      break;
-
     case 'ContractionEnded':
-      invalidateOrCollect(
-        queryClient,
-        queryKeys.contractions.infinite(data.labour_id!),
-        pendingInvalidations
-      );
-      break;
-
     case 'ContractionUpdated':
       invalidateOrCollect(
         queryClient,
@@ -128,22 +103,8 @@ function processEvent(
       break;
 
     case 'LabourUpdatePosted':
-      invalidateOrCollect(
-        queryClient,
-        queryKeys.labourUpdates.infinite(data.labour_id!),
-        pendingInvalidations
-      );
-      break;
-
-    case 'LabourUpdateMessageUpdated':
-      invalidateOrCollect(
-        queryClient,
-        queryKeys.labourUpdates.infinite(data.labour_id!),
-        pendingInvalidations
-      );
-      break;
-
     case 'LabourUpdateTypeUpdated':
+    case 'LabourUpdateMessageUpdated':
       invalidateOrCollect(
         queryClient,
         queryKeys.labourUpdates.infinite(data.labour_id!),
@@ -160,6 +121,8 @@ function processEvent(
       );
       break;
 
+    case 'SubscriberApproved':
+    case 'SubscriberRemoved':
     case 'SubscriberRequested':
     case 'SubscriberUnsubscribed':
     case 'SubscriberAccessLevelUpdated':
@@ -182,15 +145,7 @@ function processEvent(
       );
       break;
 
-    case 'SubscriberApproved':
-    case 'SubscriberRemoved':
-      invalidateOrCollect(queryClient, queryKeys.subscriptions.all, pendingInvalidations);
-      break;
-
     case 'SubscriptionTokenSet':
-      invalidateOrCollect(queryClient, queryKeys.subscriptionToken.all, pendingInvalidations);
-      break;
-
     case 'SubscriptionTokenInvalidated':
       invalidateOrCollect(queryClient, queryKeys.subscriptionToken.all, pendingInvalidations);
       break;

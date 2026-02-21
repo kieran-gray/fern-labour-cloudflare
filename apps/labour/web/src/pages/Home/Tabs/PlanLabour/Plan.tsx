@@ -5,12 +5,14 @@ import { validateLabourName } from '@lib';
 import {
   IconArrowLeft,
   IconArrowRight,
+  IconBabyCarriage,
   IconCalendar,
   IconCheck,
   IconInfoCircle,
   IconSparkles,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import { Button, Group, Radio, Stepper, Text, TextInput } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import classes from './Plan.module.css';
 import baseClasses from '@styles/base.module.css';
@@ -89,164 +91,162 @@ export default function Plan() {
     });
   }, [formData.dueDate]);
 
-  const renderProgressDots = () => (
-    <div className={classes.progressContainer}>
-      {[1, 2, 3].map((step, index) => (
-        <div key={step} className={classes.progressStep}>
-          <div
-            className={`${classes.progressDot} ${
-              step === currentStep
-                ? classes.progressDotActive
-                : step < currentStep
-                  ? classes.progressDotComplete
-                  : ''
-            }`}
-          />
-          {index < 2 && (
-            <div
-              className={`${classes.progressLine} ${
-                step < currentStep ? classes.progressLineActive : ''
-              }`}
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  );
-
   const renderStep1 = () => (
     <div className={classes.stepContainer} key="step1">
-      <div className={classes.stepHeader}>
-        <div className={classes.stepNumber}>1</div>
-        <h3 className={classes.stepTitle}>When is your baby due?</h3>
-      </div>
+      <h3 className={classes.stepTitle}>When is your baby due?</h3>
 
-      <div className={classes.fieldGroup}>
-        <DatePickerInput
-          placeholder="Select your due date"
-          rightSection={<IconCalendar size={20} stroke={1.5} />}
-          valueFormat="DD MMMM YYYY"
-          size="lg"
-          value={formData.dueDate}
-          onChange={(date) => date && updateFormData('dueDate', date)}
-          classNames={{
-            input: classes.datePickerInput,
-            section: classes.datePickerSection,
-            weekday: classes.datePickerWeekday,
-            levelsGroup: classes.datePickerDropdown,
-          }}
-        />
-      </div>
+      <DatePickerInput
+        placeholder="Select your due date"
+        rightSection={<IconCalendar size={18} stroke={1.5} />}
+        valueFormat="DD MMMM YYYY"
+        size="md"
+        value={formData.dueDate}
+        onChange={(date) => date && updateFormData('dueDate', date)}
+        classNames={{
+          input: classes.datePickerInput,
+          section: classes.inputSection,
+          weekday: classes.datePickerWeekday,
+          levelsGroup: classes.datePickerDropdown,
+        }}
+      />
 
       <div className={classes.tipBox}>
-        <IconInfoCircle size={20} className={classes.tipIcon} />
-        <p className={classes.tipText}>
+        <IconInfoCircle size={18} className={classes.tipIcon} />
+        <Text className={classes.tipText}>
           <span className={classes.tipHighlight}>Did you know?</span> Only about 4% of babies arrive
-          on their due date. We'll use this as a guide to help you prepare.
-        </p>
+          on their due date.
+        </Text>
       </div>
 
-      <div className={classes.navigation}>
-        <button type="button" className={classes.nextButton} onClick={handleNext}>
+      <Group justify="end" className={classes.navigation}>
+        <Button
+          type="button"
+          onClick={handleNext}
+          rightSection={<IconArrowRight size={16} />}
+          radius="xl"
+          className={classes.nextButton}
+        >
           Continue
-          <IconArrowRight size={18} />
-        </button>
-      </div>
+        </Button>
+      </Group>
     </div>
   );
 
   const renderStep2 = () => (
     <div className={classes.stepContainer} key="step2">
-      <div className={classes.stepHeader}>
-        <div className={classes.stepNumber}>2</div>
-        <h3 className={classes.stepTitle}>Is this your first labour?</h3>
-      </div>
+      <h3 className={classes.stepTitle}>Is this your first labour?</h3>
 
-      <div className={classes.fieldGroup}>
-        <p className={classes.fieldDescription}>
-          This helps us give you more accurate guidance on when to head to the hospital.
-        </p>
+      <Text className={classes.fieldDescription}>
+        This helps us give you more accurate guidance on when to head to the hospital.
+      </Text>
+
+      <Radio.Group
+        value={formData.firstLabour}
+        onChange={(value) => updateFormData('firstLabour', value as 'true' | 'false')}
+      >
         <div className={classes.radioGroup}>
-          <label
-            className={`${classes.radioCard} ${
-              formData.firstLabour === 'true' ? classes.radioCardSelected : ''
-            }`}
+          <div
+            className={classes.radioCard}
+            data-selected={formData.firstLabour === 'true' || undefined}
           >
-            <input
-              type="radio"
-              name="firstLabour"
+            <Radio
               value="true"
-              checked={formData.firstLabour === 'true'}
-              onChange={() => updateFormData('firstLabour', 'true')}
-              className={classes.radioInput}
+              classNames={{
+                root: classes.radioRoot,
+                body: classes.radioBody,
+                labelWrapper: classes.radioLabelWrapper,
+                label: classes.radioLabel,
+              }}
+              label={
+                <div>
+                  <span className={classes.radioCardIcon}>
+                    <IconBabyCarriage size={20} />
+                  </span>
+                  <span className={classes.radioCardTitle}>Yes, my first</span>
+                  <span className={classes.radioCardDescription}>
+                    First-time labours are often longer
+                  </span>
+                </div>
+              }
             />
-            <span className={classes.radioCardIcon}>&#x1F476;</span>
-            <span className={classes.radioCardLabel}>Yes, my first</span>
-            <br />
-            <span className={classes.radioCardDescription}>
-              First-time labours are often longer
-            </span>
-          </label>
+          </div>
 
-          <label
-            className={`${classes.radioCard} ${
-              formData.firstLabour === 'false' ? classes.radioCardSelected : ''
-            }`}
+          <div
+            className={classes.radioCard}
+            data-selected={formData.firstLabour === 'false' || undefined}
           >
-            <input
-              type="radio"
-              name="firstLabour"
+            <Radio
               value="false"
-              checked={formData.firstLabour === 'false'}
-              onChange={() => updateFormData('firstLabour', 'false')}
-              className={classes.radioInput}
+              classNames={{
+                root: classes.radioRoot,
+                body: classes.radioBody,
+                radio: classes.radioControl,
+                labelWrapper: classes.radioLabelWrapper,
+                label: classes.radioLabel,
+              }}
+              label={
+                <div>
+                  <span className={classes.radioCardIcon}>
+                    <IconSparkles size={20} />
+                  </span>
+                  <span className={classes.radioCardTitle}>No, I&apos;ve done this before</span>
+                  <span className={classes.radioCardDescription}>
+                    Subsequent labours can progress faster
+                  </span>
+                </div>
+              }
             />
-            <span className={classes.radioCardIcon}>&#x1F31F;</span>
-            <span className={classes.radioCardLabel}>No, I've done this before</span>
-            <br />
-            <span className={classes.radioCardDescription}>
-              Subsequent labours can progress faster
-            </span>
-          </label>
+          </div>
         </div>
-      </div>
+      </Radio.Group>
 
-      <div className={classes.navigation}>
-        <button type="button" className={classes.backButton} onClick={handleBack}>
-          <IconArrowLeft size={16} />
+      <Group justify="space-between" className={classes.navigation}>
+        <Button
+          type="button"
+          variant="default"
+          onClick={handleBack}
+          leftSection={<IconArrowLeft size={16} />}
+          radius="xl"
+          className={classes.backButton}
+        >
           Back
-        </button>
-        <button type="button" className={classes.nextButton} onClick={handleNext}>
+        </Button>
+        <Button
+          type="button"
+          onClick={handleNext}
+          rightSection={<IconArrowRight size={16} />}
+          radius="xl"
+          className={classes.nextButton}
+        >
           Continue
-          <IconArrowRight size={18} />
-        </button>
-      </div>
+        </Button>
+      </Group>
     </div>
   );
 
   const renderStep3 = () => (
     <div className={classes.stepContainer} key="step3">
-      <div className={classes.celebration}>
-        <h3 className={classes.celebrationTitle}>Almost there!</h3>
-        <p className={classes.celebrationText}>
-          Would you like to give your labour a name? This is completely optional, but it can be a
-          nice personal touch for you and your loved ones.
-        </p>
-      </div>
+      <h3 className={classes.stepTitle} style={{ textAlign: 'center' }}>
+        Almost there!
+      </h3>
+      <Text className={classes.fieldDescription}>
+        Would you like to give your labour a name? This is optional, but it can be a nice personal
+        touch for you and your loved ones.
+      </Text>
 
-      <div className={classes.fieldGroup}>
-        <div className={classes.inputWrapper}>
-          <input
-            type="text"
-            className={`${classes.customInput} ${nameError ? classes.inputError : ''}`}
-            placeholder="e.g. Baby Fern's arrival"
-            value={formData.labourName}
-            onChange={(e) => updateFormData('labourName', e.target.value)}
-          />
-          <IconSparkles size={20} className={classes.inputIcon} />
-        </div>
-        {nameError && <p className={classes.errorMessage}>{nameError}</p>}
-      </div>
+      <TextInput
+        placeholder="e.g. Baby Fern's arrival"
+        value={formData.labourName}
+        onChange={(e) => updateFormData('labourName', e.currentTarget.value)}
+        rightSection={<IconSparkles size={16} />}
+        error={nameError}
+        size="md"
+        classNames={{
+          input: baseClasses.input,
+          section: classes.inputSection,
+          error: classes.inputError,
+        }}
+      />
 
       <div className={classes.summaryList}>
         <div className={classes.summaryItem}>
@@ -267,30 +267,28 @@ export default function Plan() {
         )}
       </div>
 
-      <div className={classes.navigation}>
-        <button type="button" className={classes.backButton} onClick={handleBack}>
-          <IconArrowLeft size={16} />
-          Back
-        </button>
-        <button
+      <Group justify="space-between" className={classes.navigation}>
+        <Button
           type="button"
-          className={`${classes.nextButton} ${classes.submitButton}`}
-          onClick={handleSubmit}
-          disabled={mutation.isPending}
+          variant="default"
+          onClick={handleBack}
+          leftSection={<IconArrowLeft size={16} />}
+          radius="xl"
+          className={classes.backButton}
         >
-          {mutation.isPending ? (
-            <>
-              <span className={classes.loadingSpinner} />
-              Setting up...
-            </>
-          ) : (
-            <>
-              <IconCheck size={18} />
-              Start Tracking
-            </>
-          )}
-        </button>
-      </div>
+          Back
+        </Button>
+        <Button
+          type="button"
+          onClick={handleSubmit}
+          leftSection={<IconCheck size={16} />}
+          radius="xl"
+          loading={mutation.isPending}
+          className={`${classes.nextButton} ${classes.submitButton}`}
+        >
+          Start Tracking
+        </Button>
+      </Group>
     </div>
   );
 
@@ -298,17 +296,28 @@ export default function Plan() {
     <div className={baseClasses.card}>
       <div className={classes.container}>
         <header className={classes.header}>
-          <div className={classes.headerDecoration} />
-          <p className={classes.greeting}>Welcome to Fern Labour</p>
-          <h1 className={classes.title}>
-            Plan your <span className={classes.titleAccent}>journey</span>
-          </h1>
+          <h1 className={classes.title}>Create your Labour Circle</h1>
           <p className={classes.subtitle}>
-            Let's set up a few things so we can support you through every contraction.
+            Let&apos;s set up a few things so we can support you through every contraction.
           </p>
         </header>
 
-        {renderProgressDots()}
+        <Stepper
+          active={currentStep - 1}
+          size="sm"
+          allowNextStepsSelect={false}
+          px={20}
+          classNames={{
+            root: classes.stepper,
+            stepIcon: classes.stepperIcon,
+            stepLabel: classes.stepperLabel,
+            separator: classes.stepperSeparator,
+          }}
+        >
+          <Stepper.Step label="Due date" />
+          <Stepper.Step label="First labour" />
+          <Stepper.Step label="Name" />
+        </Stepper>
 
         <div className={classes.formCard}>
           {currentStep === 1 && renderStep1()}

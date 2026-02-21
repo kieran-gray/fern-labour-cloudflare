@@ -245,34 +245,15 @@
 
 
 .submitButton {
-  padding: 14px 28px;
-  border-radius: 14px;
-  font-weight: 700;
-  font-size: 1rem;
-  background-color: var(--mantine-primary-color-5);
-  border: none;
-  color: white;
-  cursor: pointer;
   transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .submitButton:hover:not(:disabled) {
-  background-color: var(--mantine-primary-color-6);
   transform: translateY(-1px);
 }
 
 .submitButton:active:not(:disabled) {
-  background-color: var(--mantine-primary-color-7);
   transform: translateY(0);
-}
-
-.submitButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  filter: grayscale(0.3);
 }
 
 .loadingSpinner {
