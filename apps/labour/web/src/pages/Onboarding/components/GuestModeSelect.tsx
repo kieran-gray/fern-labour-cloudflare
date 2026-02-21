@@ -48,13 +48,7 @@ export function GuestModeSelect({ onModeSelect }: GuestModeSelectProps) {
                 </Text>
               </div>
 
-              <Group
-                className={classes.tileMeta}
-                justify="space-between"
-                align="center"
-                wrap="nowrap"
-              >
-                <span className={classes.tileTag}>Primary mode</span>
+              <Group className={classes.tileMeta} justify="end" wrap="nowrap">
                 <IconArrowUpRight className={classes.tileArrow} size={20} />
               </Group>
             </UnstyledButton>
@@ -81,13 +75,7 @@ export function GuestModeSelect({ onModeSelect }: GuestModeSelectProps) {
                 </Text>
               </div>
 
-              <Group
-                className={classes.tileMeta}
-                justify="space-between"
-                align="center"
-                wrap="nowrap"
-              >
-                <span className={classes.tileTag}>Circle member</span>
+              <Group className={classes.tileMeta} justify="end" wrap="nowrap">
                 <IconArrowUpRight className={classes.tileArrow} size={20} />
               </Group>
             </UnstyledButton>
