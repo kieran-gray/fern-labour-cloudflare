@@ -144,7 +144,6 @@ export const EventTimeline = ({ notificationId }: EventTimelineProps) => {
           details: [],
         };
 
-      case "NotificationFailed":
       case "NotificationDeliveryFailed":
         return {
           label: "NOTIFICATION_FAILED",

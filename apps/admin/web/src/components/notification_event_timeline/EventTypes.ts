@@ -53,7 +53,7 @@ export interface NotificationDeliveredData {
   notification_id: string;
 }
 
-export interface NotificationFailedData {
+export interface NotificationDeliveryFailedData {
   notification_id: string;
   error?: string;
   reason?: string | null;
@@ -75,8 +75,7 @@ export type NotificationEvent =
   | { type: "NotificationScheduled"; data: NotificationScheduledData }
   | { type: "NotificationDispatched"; data: NotificationDispatchedData }
   | { type: "NotificationDelivered"; data: NotificationDeliveredData }
-  | { type: "NotificationFailed"; data: NotificationFailedData }
-  | { type: "NotificationDeliveryFailed"; data: NotificationFailedData }
+  | { type: "NotificationDeliveryFailed"; data: NotificationDeliveryFailedData }
   | { type: "NotificationContentRedacted"; data: NotificationContentRedacted }
   | { type: "NotificationDeleted"; data: NotificationDeleted };
 
