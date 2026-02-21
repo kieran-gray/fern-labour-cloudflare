@@ -142,9 +142,9 @@
 
 .testimonialCard {
   padding: 20px;
-  background: light-dark(var(--mantine-color-pink-0), var(--mantine-color-dark-2));
+  background: light-dark(#fff8ef, var(--mantine-color-dark-2));
   border-radius: 16px;
-  border: 1px solid light-dark(var(--mantine-color-pink-1), var(--mantine-color-dark-4));
+  border: 1px solid light-dark(#f2d5a6, #8d6b3e);
   margin-bottom: 20px;
 }
 
@@ -156,7 +156,7 @@
 }
 
 .testimonialIcon {
-  color: var(--mantine-primary-color-5);
+  color: #c0892e;
 }
 
 .testimonialTitle {
@@ -175,7 +175,7 @@
 
 .hintItem {
   font-size: 0.85rem;
-  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
   line-height: 1.4;
   display: flex;
   align-items: center;
@@ -184,24 +184,30 @@
 
 .hintItem::before {
   content: '→';
-  color: var(--mantine-primary-color-4);
+  color: #c0892e;
   font-size: 0.75rem;
 }
 
 .ratingRow {
-  display: flex;
+  display: block;
+  width: 100%;
+  padding-top: 16px;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding-top: 16px;
-  border-top: 1px solid light-dark(var(--mantine-color-pink-2), var(--mantine-color-dark-4));
+  border-top: 1px solid light-dark(#ead9bc, #8d6b3e);
 }
 
 .ratingLabel {
-  font-size: 0.9rem;
+  font-size: 0.82rem;
+  color: #8f6527;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ratingHelp {
+  font-size: 0.8rem;
   color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
-  font-weight: 500;
 }
 
 .textareaInput {
@@ -345,6 +351,7 @@
 
   .ratingRow {
     flex-direction: column;
-    align-items: flex-start;
+    display: flex;
+    align-items: center;
   }
 }

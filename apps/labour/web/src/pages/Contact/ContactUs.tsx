@@ -109,13 +109,22 @@ export function ContactUs() {
                 <span className={classes.testimonialTitle}>Share your experience</span>
               </div>
               <div className={classes.hintsList}>
-                <span className={classes.hintItem}>Your birth journey</span>
-                <span className={classes.hintItem}>Favourite features</span>
-                <span className={classes.hintItem}>Tips for others</span>
+                <span className={classes.hintItem}>Most meaningful moment</span>
+                <span className={classes.hintItem}>Most helpful feature</span>
+                <span className={classes.hintItem}>One tip for other families</span>
+                <span className={classes.hintItem}>How your circle stayed connected</span>
               </div>
               <div className={classes.ratingRow}>
                 <span className={classes.ratingLabel}>Your rating</span>
-                <Rating defaultValue={5} size="md" value={rating} onChange={setRating} />
+                <Rating
+                  defaultValue={5}
+                  size="xl"
+                  value={rating}
+                  onChange={setRating}
+                  aria-label="Rate your experience from one to five stars"
+                  className={classes.ratingControl}
+                />
+                <span className={classes.ratingHelp}>Tap a star to set your score</span>
               </div>
             </div>
           )}

@@ -2,9 +2,8 @@ import type { LabourReadModel } from '@base/clients/labour_service/types';
 import { useLabourClient } from '@base/hooks';
 import { useContractionCount, useLabourById } from '@base/hooks/useLabourData';
 import { AppShell } from '@components/AppShell';
-import { IconDownload } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Loader } from '@mantine/core';
+import { Loader } from '@mantine/core';
 import classes from './Page.module.css';
 import baseClasses from '@styles/base.module.css';
 
@@ -86,20 +85,10 @@ export const CompletedLabourCard: React.FC<{ labour: LabourReadModel }> = ({ lab
         <div className={classes.divider}>
           <div className={classes.dividerLine} />
         </div>
-
-        <Button
-          className={classes.btnPrimary}
-          size="md"
-          h={48}
-          radius="xl"
-          leftSection={<IconDownload />}
-        >
-          Save my labour summary
-        </Button>
         <button
           type="button"
           className={classes.feedbackLink}
-          onClick={() => navigate('/contact?show=testimonial')}
+          onClick={() => navigate('/contact?show=TESTIMONIAL')}
         >
           Share feedback when you're ready
         </button>
