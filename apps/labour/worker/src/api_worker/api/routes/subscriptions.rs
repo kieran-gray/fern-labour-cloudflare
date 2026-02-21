@@ -32,6 +32,9 @@ pub async fn get_subscribed_labours(
     cors_context: CorsContext,
     user: User,
 ) -> worker::Result<Response> {
+    // TODO: this is not efficient, whenever a user queries their subscriptions we do a call for
+    // their subscriptions, then here we call for the subscriptions again to get the labours
+
     let subscriptions = ctx
         .data
         .subscription_status_repository

@@ -21,7 +21,6 @@ use crate::durable_object::{
     setup::state::LabourCircleServices,
     websocket::{
         middleware::extract_auth_context_from_websocket,
-        routes::upgrade_connection,
         schemas::{WebSocketRequest, parse_websocket_message},
     },
     write_side::{
@@ -56,7 +55,12 @@ impl DurableObject for LabourCircle {
 
     async fn fetch(&self, req: Request) -> Result<Response> {
         if req.path() == "/websocket" {
-            return upgrade_connection(req, &self.state).await;
+            return self
+                .services
+                .write_model()
+                .websocket_service
+                .upgrade_connection(req, &self.state)
+                .await;
         }
 
         let result = route_request(req, &self.services).await?;

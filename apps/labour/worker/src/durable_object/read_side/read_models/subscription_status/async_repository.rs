@@ -152,7 +152,7 @@ impl AsyncRepositoryUserTrait<SubscriptionStatusReadModel> for D1SubscriptionSta
         cursor: Option<DecodedCursor>,
     ) -> Result<Vec<SubscriptionStatusReadModel>> {
         let (query, bindings) = PaginatedQueryBuilder::with_id_column(
-            "SELECT * FROM subscription_status WHERE subscriber_id = ?1 AND status='SUBSCRIBED'",
+            "SELECT * FROM subscription_status WHERE subscriber_id = ?1 AND status in ('SUBSCRIBED', 'REQUESTED')",
             "subscription_id",
         )
         .with_binding(user_id.into())

@@ -40,43 +40,53 @@ impl SubscriptionStatusReadModelProjector {
         let timestamp = metadata.timestamp;
 
         match event {
-            LabourEvent::SubscriberRequested(e) if model.is_none() => {
-                Some(SubscriptionStatusReadModel::new(
+            LabourEvent::SubscriberRequested(e) => match model {
+                Some(mut subscription) => {
+                    subscription.status = SubscriberStatus::REQUESTED;
+                    subscription.updated_at = timestamp;
+                    Some(subscription)
+                }
+                None => Some(SubscriptionStatusReadModel::new(
                     e.labour_id,
                     e.subscription_id,
                     e.subscriber_id.clone(),
                     SubscriberStatus::REQUESTED,
                     timestamp,
-                ))
-            }
+                )),
+            },
 
             LabourEvent::SubscriberApproved(_) => {
                 let mut subscription = model?;
                 subscription.status = SubscriberStatus::SUBSCRIBED;
+                subscription.updated_at = timestamp;
                 Some(subscription)
             }
 
             LabourEvent::SubscriberRemoved(_) => {
                 let mut subscription = model?;
                 subscription.status = SubscriberStatus::REMOVED;
+                subscription.updated_at = timestamp;
                 Some(subscription)
             }
 
             LabourEvent::SubscriberBlocked(_) => {
                 let mut subscription = model?;
                 subscription.status = SubscriberStatus::BLOCKED;
+                subscription.updated_at = timestamp;
                 Some(subscription)
             }
 
             LabourEvent::SubscriberUnblocked(_) => {
                 let mut subscription = model?;
                 subscription.status = SubscriberStatus::REMOVED;
+                subscription.updated_at = timestamp;
                 Some(subscription)
             }
 
             LabourEvent::SubscriberUnsubscribed(_) => {
                 let mut subscription = model?;
                 subscription.status = SubscriberStatus::UNSUBSCRIBED;
+                subscription.updated_at = timestamp;
                 Some(subscription)
             }
 
