@@ -9,6 +9,16 @@
   margin-bottom: clamp(24px, 5vw, 38px);
 }
 
+.brandLogo {
+  width: 74px;
+  height: 74px;
+  background-color: var(--mantine-color-pink-3);
+  padding: 10px;
+  border-radius: 16px;
+  display: block;
+  margin: 0 auto 12px;
+}
+
 .greetingBadge {
   margin-bottom: 10px;
   background: light-dark(rgba(36, 150, 139, 0.12), rgba(36, 150, 139, 0.28));

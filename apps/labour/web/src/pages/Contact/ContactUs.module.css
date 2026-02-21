@@ -46,7 +46,7 @@
 
 .title {
   font-family: Poppins, sans-serif;
-  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-size: clamp(1.55rem, 5vw, 2.5rem);
   font-weight: 700;
   color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
   line-height: 1.15;
