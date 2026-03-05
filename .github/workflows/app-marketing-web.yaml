@@ -61,7 +61,7 @@ jobs:
           NEXT_PUBLIC_APP_LABOUR_WEB_URL: ${{ vars.FRONTEND_URL }}
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: marketing-web-build-${{ github.sha }}
           path: ./apps/marketing/web/out/
