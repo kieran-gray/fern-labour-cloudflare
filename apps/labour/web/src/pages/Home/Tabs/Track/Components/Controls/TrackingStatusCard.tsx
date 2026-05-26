@@ -12,26 +12,12 @@ import baseClasses from '@styles/base.module.css';
 interface TrackingStatusCardProps {
   activeContraction: ContractionReadModel | undefined;
   lastContraction: ContractionReadModel | undefined;
-  contractionCount: number;
   completed: boolean;
-}
-
-const ENCOURAGING_MESSAGES = [
-  "You're doing wonderfully. Breathe through each wave.",
-  "Take it one contraction at a time. You've got this.",
-  'Rest between contractions. Your body knows what to do.',
-  'Each contraction brings you closer to meeting your baby.',
-  'You are strong. You are capable. You are ready.',
-];
-
-function getEncouragingMessage(contractionCount: number): string {
-  return ENCOURAGING_MESSAGES[contractionCount % ENCOURAGING_MESSAGES.length];
 }
 
 export function TrackingStatusCard({
   activeContraction,
   lastContraction,
-  contractionCount,
   completed,
 }: TrackingStatusCardProps) {
   const { labourId } = useLabourSession();
@@ -84,10 +70,6 @@ export function TrackingStatusCard({
                   </Text>
                 </div>
               )}
-
-              <Text className={classes.encouragingMessage}>
-                {getEncouragingMessage(contractionCount)}
-              </Text>
             </>
           )}
         </div>
