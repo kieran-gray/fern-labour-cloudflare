@@ -94,7 +94,6 @@ export const Contractions = memo(
     const completedContractions = sortedContractions.filter(
       (c) => c.duration.start_time !== c.duration.end_time
     );
-    const contractionCount = completedContractions.length;
 
     const hasContractions = sortedContractions.length > 0;
     const showEmptyState = !hasContractions && !completed;
@@ -205,7 +204,6 @@ export const Contractions = memo(
             <TrackingStatusCard
               activeContraction={activeContraction}
               lastContraction={completedContractions[completedContractions.length - 1]}
-              contractionCount={contractionCount}
               completed={completed}
             />
           )}

@@ -14,13 +14,6 @@
     text-align: center;
 }
 
-/* Last contraction info */
-.lastContractionInfo {
-    margin-bottom: var(--mantine-spacing-md);
-    padding-bottom: var(--mantine-spacing-md);
-    border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
-}
-
 .lastLabel {
     font-size: var(--mantine-font-size-xs);
     color: #24968b;
